@@ -7,6 +7,7 @@
 - language : java
 - framework : Spring boot
 - DB : Tibero
+- data access : jpa
 
 
 ## Versions
