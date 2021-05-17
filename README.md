@@ -1,26 +1,26 @@
-#eTest-Backend
+# eTest-Backend
 - KoFIA Prototype : "eTest"
 - Feature Coverage : Diagnosis / Mini-Tests / All-Problems(400)
 
 
-##Environments
+## Environments
 - language : java
 - framework : Spring boot
 - DB : Tibero
 
 
-##Versions
+## Versions
 - java : 1.8.0_241
 - Spring : 2.4.5
 - Gradle : 6.8.3
 - jdbc : tibero6-jdbc.zip
 
 
-##Configuration
+## Configuration
 - [Spring Initilaizer](https://start.spring.io/) 를 이용한 초기 프로젝트 생성 옵션
 
 
-##Dependencies
+## Dependencies
 - Spring Boot DevTools
 - Spring Web
 - Lombok
