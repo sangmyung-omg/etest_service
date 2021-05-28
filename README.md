@@ -1,6 +1,6 @@
 # eTest-Backend
 - KoFIA Prototype : "eTest"
-- Feature Coverage : Diagnosis / Mini-Tests / All-Problems(400)
+- Feature Coverage : Diagnosis / Mini-Test / Analysis-Report
 
 
 ## Environments
