@@ -1,4 +1,4 @@
-package com.tmax.eTest.Contents.dao;
+package com.tmax.eTest.Contents.model;
 
 import java.io.Serializable;
 
@@ -10,7 +10,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import com.tmax.eTest.dao.UkDAO;
+import com.tmax.eTest.Test.model.UkMaster;
 
 import lombok.Data;
 
@@ -18,16 +18,16 @@ import lombok.Data;
 @Entity
 @IdClass(ProbUKCompositeKey.class)
 @Table(name="PROBLEM_UK_REL")
-public class ProblemUKRelDAO{
+public class ProblemUKRelation{
 	@Id
 	@ManyToOne
 	@JoinColumn(name="PROB_ID")
-	private ProblemDAO probID;
+	private Problem probID;
 	
 	@Id
 	@ManyToOne
 	@JoinColumn(name="UK_UUID")
-	private UkDAO ukUuid;
+	private UkMaster ukUuid;
 	
 	
 //	@Id

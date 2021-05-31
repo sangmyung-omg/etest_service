@@ -11,8 +11,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
-import com.tmax.eTest.Contents.dao.ProblemChoiceDAO;
-import com.tmax.eTest.Contents.dao.ProblemUKRelDAO;
+import com.tmax.eTest.Contents.model.ProblemChoice;
+import com.tmax.eTest.Contents.model.ProblemUKRelation;
 
 import lombok.Data;
 
@@ -34,9 +34,9 @@ public class UkMaster {
 
 	
 	@OneToMany(mappedBy="ukUuid")
-	private List<ProblemChoiceDAO> problemChoices = new ArrayList<ProblemChoiceDAO>();
+	private List<ProblemChoice> problemChoices = new ArrayList<ProblemChoice>();
 	
 	@OneToMany(mappedBy="ukUuid")
-	private List<ProblemUKRelDAO> problemUkRels = new ArrayList<ProblemUKRelDAO>();
+	private List<ProblemUKRelation> problemUkRels = new ArrayList<ProblemUKRelation>();
 
 }

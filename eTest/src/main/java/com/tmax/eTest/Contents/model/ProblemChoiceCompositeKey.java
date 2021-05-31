@@ -1,4 +1,4 @@
-package com.tmax.eTest.Contents.dao;
+package com.tmax.eTest.Contents.model;
 
 import java.io.Serializable;
 

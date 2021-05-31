@@ -8,16 +8,16 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.tmax.eTest.Contents.dao.DiagnosisProblemRepository;
-import com.tmax.eTest.Contents.dao.ProblemChoiceDAO;
-import com.tmax.eTest.Contents.dao.ProblemChoiceRepository;
-import com.tmax.eTest.Contents.dao.ProblemDAO;
-import com.tmax.eTest.Contents.dao.ProblemRepository;
-import com.tmax.eTest.Contents.dao.ProblemUKRelRepository;
-import com.tmax.eTest.Contents.dao.TestProblemRepository;
-
 import com.tmax.eTest.Contents.exception.problem.NoDataException;
-import com.tmax.eTest.dao.UkRepository;
+import com.tmax.eTest.Contents.model.ProblemChoice;
+import com.tmax.eTest.Contents.model.Problem;
+import com.tmax.eTest.Contents.repository.DiagnosisProblemRepository;
+import com.tmax.eTest.Contents.repository.ProblemChoiceRepository;
+import com.tmax.eTest.Contents.repository.ProblemRepository;
+import com.tmax.eTest.Contents.repository.ProblemUKRelRepository;
+import com.tmax.eTest.Contents.repository.TestProblemRepository;
+import com.tmax.eTest.Test.repository.UkRepository;
+
 
 @Service
 public class ProblemServices {
@@ -41,18 +41,18 @@ public class ProblemServices {
 	
 	public Map<String, Object> getProblem(long problemID) throws Exception{
 		Map<String, Object> output = new HashMap<String, Object>();
-		Optional<ProblemDAO> problemOpt = problemRepo.findById(problemID);
+		Optional<Problem> problemOpt = problemRepo.findById(problemID);
 		
 		if(problemOpt.isPresent()) {
-			ProblemDAO problem = problemOpt.get();
+			Problem problem = problemOpt.get();
 			Map<Long, String> choices = new HashMap<Long, String>();
 			output.put("type", problem.getAnswerType());
 			output.put("question", problem.getQuestion());
 			output.put("passage", null);
 			output.put("preface", null);
 			output.put("difficulty", problem.getDifficulty());
-			List<ProblemChoiceDAO> choiceList = probChoiceRepo.findAllByProbID(problem);
-			for(ProblemChoiceDAO choice:choiceList) {
+			List<ProblemChoice> choiceList = probChoiceRepo.findAllByProbID(problem);
+			for(ProblemChoice choice:choiceList) {
 				choices.put(choice.getChoiceNum(), choice.getText());
 			}
 			output.put("choices", choices);

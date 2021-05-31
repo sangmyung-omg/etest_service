@@ -1,4 +1,4 @@
-package com.tmax.eTest.Contents.dao;
+package com.tmax.eTest.Contents.model;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -16,7 +16,7 @@ import lombok.Data;
 @Data
 @Entity
 @Table(name="PROBLEM")
-public class ProblemDAO {
+public class Problem {
 	@Id
 	@Column(name="PROB_ID")
 	private long probID;
@@ -70,14 +70,14 @@ public class ProblemDAO {
 	private String intention;
 	
 	@OneToMany(mappedBy="probID")
-	private List<ProblemUKRelDAO> problemUKReleations = new ArrayList<ProblemUKRelDAO>();
+	private List<ProblemUKRelation> problemUKReleations = new ArrayList<ProblemUKRelation>();
 	
 	@OneToMany(mappedBy="probID")
-	private List<ProblemChoiceDAO> problemChoices = new ArrayList<ProblemChoiceDAO>();
+	private List<ProblemChoice> problemChoices = new ArrayList<ProblemChoice>();
 	
 	@OneToMany(mappedBy="problem")
-	private List<DiagnosisProblemDAO> diagnosisInfo = new ArrayList<DiagnosisProblemDAO>();
+	private List<DiagnosisProblem> diagnosisInfo = new ArrayList<DiagnosisProblem>();
 	
 	@OneToMany(mappedBy="problem")
-	private List<TestProblemDAO> testInfo = new ArrayList<TestProblemDAO>();
+	private List<TestProblem> testInfo = new ArrayList<TestProblem>();
 }
