@@ -1,0 +1,205 @@
+openapi: '3.0.1'
+info:
+  title: 금투협 문제 API
+  version: '0.0.1'
+servers:
+- url: http://192.168.153.159:8080/
+paths:
+  /problems/{id}:
+    get:
+      tags:
+      - problem set info
+      summary: 문제 정보 받아오기
+      description: 미니테스트 문제 정보를 받아옵니다.
+      parameters:
+      - name: id
+        in: path
+        description: 문제아이디
+        required: true
+        schema:
+          type: string
+          format: string
+      responses:
+        200:
+          description: OK
+          content:
+            json:
+              schema:
+                type: object
+                example:
+                  type: 'MULTIPLE_CHOICE_WO_PASSAGE/ MULTIPLE_CHOICE_W_PASSAGE/ SHORT_ANSWER_WO_PASSAGE/
+                    SHORT_ANSWER_W_PASSAGE '
+                  question: 질문에 들어갈 텍스트
+                  passage: 보기에 들어갈 텍스트
+                  preface: (가)/ (ㄱ)/ ()/ (.)
+                  choices:
+                    1: 객관식1번
+                    2: 객관식2번
+                  difficulty: 상/중/하
+  /problems/test:
+    get:
+      tags:
+      - problem set info
+      summary: 미니테스트 문제 리스트받아오기
+      description: 미니테스트 문제 아이디의 리스트를 받아옵니다.
+      parameters:
+      - name: setNum
+        in: query
+        description: 세트 번호
+        required: true
+        schema:
+          type: integer
+          format: integer
+      - name: index
+        in: query
+        description: 몇번째 문제부터 풀게될지
+        schema:
+          type: integer
+          format: integer
+      responses:
+        200:
+          description: OK
+          content:
+            json:
+              schema:
+                type: array
+                items:
+                  type: string
+  /problems/diagnosis:
+    get:
+      tags:
+      - problem set info
+      summary: 진단고사 문제 리스트받아오기
+      description: 진단고사의 문제 아이디의 리스트를 받아옵니다.
+      parameters:
+      - name: index
+        in: query
+        description: 몇번째 문제부터 풀게될지
+        schema:
+          type: integer
+          format: integer
+      responses:
+        200:
+          description: OK
+          content:
+            json:
+              schema:
+                type: array
+                items:
+                  type: string
+  /problems/{id}/answer-check:
+    get:
+      tags:
+      - problem set info
+      summary: 정답 체크하기
+      description: 유저가 제출한 정답에 대한 채점결과를 true/false로 반환합니다.
+      parameters:
+      - name: id
+        in: path
+        description: 문제아이디
+        required: true
+        schema:
+          type: string
+          format: string
+      - name: answer
+        in: query
+        description: 유저가 입력한 정답
+        required: true
+        schema:
+          type: string
+          format: string
+      responses:
+        200:
+          description: OK
+          content:
+            json:
+              schema:
+                type: boolean
+  /problems/{id}/solution:
+    get:
+      tags:
+      - problem set info
+      summary: 해설 받아오기
+      description: 유저가 제출한 정답에 대한 채점결과를 true/false로 반환합니다. *내부적으로 유저가 풀었는지 안풀었는지 확인하고
+        받아와야 할듯?
+      parameters:
+      - name: id
+        in: path
+        description: 문제아이디
+        required: true
+        schema:
+          type: string
+          format: string
+      responses:
+        200:
+          description: OK
+          content:
+            json:
+              schema:
+                type: object
+                example:
+                  answer:
+                  - 정답1
+                  - 정답2
+                  - ..
+                  solution: 해설 텍스트
+                  material: 참고자료(교재 정보)
+  /sets/staus:
+    get:
+      tags:
+      - AE1-1 요청
+      summary: 세트 정보 받아오기
+      description: 유저 아이디에 대해 유저가 모든 세트에 대해서 각각 몇 번까지 풀었는지를 반환합니다.
+      parameters:
+      - name: id
+        in: query
+        description: 유저 아이디
+        required: true
+        schema:
+          type: string
+          format: string
+      responses:
+        200:
+          description: OK
+          content:
+            json:
+              schema:
+                type: object
+                example:
+                  0: 20
+                  1: 17
+                  2: 0
+                  20: 0
+  /problems/{problem_id}/save_result:
+    post:
+      tags:
+      - AE1-1 요청
+      summary: 1팀 DB에 유저 문제풀이 결과 저장하기
+      description: 유저 아이디에 대해 유저가 모든 세트에 대해서 각각 몇 번까지 풀었는지를 반환합니다.
+      parameters:
+      - name: problem_id
+        in: path
+        description: 문제아이디
+        required: true
+        schema:
+          type: string
+          format: string
+      - name: id
+        in: query
+        description: 유저 아이디
+        required: true
+        schema:
+          type: string
+          format: string
+      - name: is_correct
+        in: query
+        description: 정답여부 (True/False)
+        required: true
+        schema:
+          type: boolean
+          format: boolean
+      responses:
+        200:
+          description: Successfully saved
+          content: {}
+components: {}
