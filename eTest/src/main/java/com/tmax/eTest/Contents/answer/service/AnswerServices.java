@@ -34,5 +34,20 @@ public class AnswerServices {
 		return output;
 	}
 	
+	public Map<String, Object> getSolutionMaterial(long problemID) throws Exception{
+		Map<String, Object> output = new HashMap<String, Object>();
+		Optional<Problem> problemOpt = problemRepo.findById(problemID);
+		
+		if(problemOpt.isPresent()) {
+			Problem problem = problemOpt.get();
+			output.put("solution",problem.getSolution());
+			output.put("material",problem.getSource());
+			
+		}else {
+			throw new NoDataException(problemID);
+		}
+		return output;
+	}
+	
 
 }
