@@ -23,7 +23,7 @@ import com.tmax.eTest.Contents.dto.problem.TestProblemDTO;
 import com.tmax.eTest.Contents.exception.problem.NoDataException;
 import com.tmax.eTest.Contents.model.DiagnosisProblemBody;
 import com.tmax.eTest.Contents.model.TestProblemBody;
-import com.tmax.eTest.Contents.service.problem.ProblemServices;
+import com.tmax.eTest.Contents.service.ProblemServices;
 
 
 @RestController

@@ -9,9 +9,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import com.tmax.eTest.Contents.answer.service.AnswerServices;
+
 import com.tmax.eTest.Contents.exception.problem.NoDataException;
-import com.tmax.eTest.Contents.service.problem.ProblemServices;
+import com.tmax.eTest.Contents.service.AnswerServices;
+import com.tmax.eTest.Contents.service.ProblemServices;
 
 
 
