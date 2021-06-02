@@ -21,7 +21,7 @@ public class Problem {
 	@Column(name="PROB_ID")
 	private long probID;
 	
-	@Column(name="ANSWER_TYPE", length=20)
+	@Column(name="ANSWER_TYPE", length=50)
 	private String answerType;
 	
 	@Column(name="QUESTION", length=4000)

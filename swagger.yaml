@@ -27,15 +27,26 @@ paths:
               schema:
                 type: object
                 example:
-                  type: 'MULTIPLE_CHOICE_WO_PASSAGE/ MULTIPLE_CHOICE_W_PASSAGE/ SHORT_ANSWER_WO_PASSAGE/
-                    SHORT_ANSWER_W_PASSAGE '
-                  question: 질문에 들어갈 텍스트
-                  passage: 보기에 들어갈 텍스트
-                  preface: (가)/ (ㄱ)/ ()/ (.)
-                  choices:
-                    1: 객관식1번
-                    2: 객관식2번
-                  difficulty: 상/중/하
+                  message: success
+                  data:
+                    type: 'MULTIPLE_CHOICE_WO_PASSAGE/ MULTIPLE_CHOICE_W_PASSAGE/ SHORT_ANSWER_WO_PASSAGE/
+                      SHORT_ANSWER_W_PASSAGE '
+                    question: 질문에 들어갈 텍스트
+                    passage: 보기에 들어갈 텍스트
+                    preface: (가)/ (ㄱ)/ ()/ (.)
+                    choices:
+                      1: 객관식1번
+                      2: 객관식2번
+                    difficulty: 상/중/하
+        400:
+          description: Data not found
+          content:
+            json:
+              schema:
+                type: object
+                example:
+                  message: 'Failed: {id}에 해당하는 데이터가 없습니다'
+                  data: {}
   /problems/test:
     get:
       tags:
@@ -62,9 +73,19 @@ paths:
           content:
             json:
               schema:
-                type: array
-                items:
-                  type: string
+                type: object
+                example:
+                  message: success
+                  data: [1, 2, 3]
+        400:
+          description: Data not found
+          content:
+            json:
+              schema:
+                type: object
+                example:
+                  message: 'Failed: {setNum}에 해당하는 데이터가 없습니다'
+                  data: null
   /problems/diagnosis:
     get:
       tags:
@@ -72,9 +93,9 @@ paths:
       summary: 진단고사 문제 리스트받아오기
       description: 진단고사의 문제 아이디의 리스트를 받아옵니다.
       parameters:
-      - name: index
+      - name: setNum
         in: query
-        description: 몇번째 문제부터 풀게될지
+        description: 세트 번호
         schema:
           type: integer
           format: integer
@@ -84,9 +105,10 @@ paths:
           content:
             json:
               schema:
-                type: array
-                items:
-                  type: string
+                type: object
+                example:
+                  message: success
+                  data: [1, 2, 3]
   /problems/{id}/answer-check:
     get:
       tags:

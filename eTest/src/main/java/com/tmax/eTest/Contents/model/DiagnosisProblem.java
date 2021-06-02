@@ -2,6 +2,7 @@ package com.tmax.eTest.Contents.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -19,9 +20,9 @@ public class DiagnosisProblem {
 	private long probID;
 	
 	@Column(name="SET_NUM")
-	private long setNum;
+	private int setNum;
 	
-	@ManyToOne
+	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name="PROB_ID", nullable=true, insertable = false, updatable = false)
 	private Problem problem;
 	

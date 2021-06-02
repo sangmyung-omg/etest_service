@@ -2,6 +2,7 @@ package com.tmax.eTest.Contents.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.JoinColumn;
@@ -28,7 +29,7 @@ public class ProblemChoice {
 	@Column(name="TEXT", length=256)
 	private String text;
 	
-	@ManyToOne
+	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name="UK_UUID")
 	private UkMaster ukUuid;
 	
