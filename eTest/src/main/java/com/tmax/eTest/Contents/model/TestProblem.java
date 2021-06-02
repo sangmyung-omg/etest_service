@@ -22,10 +22,10 @@ public class TestProblem {
 	private long probID;
 	
 	@Column(name="SET_NUM")
-	private long setNum;
+	private int setNum;
 	
 	@Column(name="SEQUENCE")
-	private long sequence;
+	private int sequence;
 
 	@ManyToOne
 	@JoinColumn(name="PROB_ID", nullable=true, insertable = false, updatable = false)
