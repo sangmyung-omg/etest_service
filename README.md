@@ -1,4 +1,4 @@
-# eTest-Backend
+# eTest-SAP(Student Analysis Platform)-Backend
 - KoFIA Prototype : "eTest"
 - Feature Coverage : Diagnosis / Mini-Test / Analysis-Report
 

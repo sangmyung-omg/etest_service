@@ -1,0 +1,150 @@
+openapi: '3.0.2'
+info:
+  title: eTest Problem & Analysis Report API
+  version: '0.1'
+  description: 문제 풀이 및 진단 리포트 페이지 관련 API
+servers:
+  - url: http://192.168.153.212:8080/
+  - description: example server address
+tags:
+- name: Problem
+  description: 문제 풀이 페이지 관련
+- name: Test
+  description: 출제 문제 선정
+- name: Analysis Report
+  description: 진단 리포트 관련
+
+paths:
+  /DiagnosisTendencyProblems:
+    get:
+      tags: [Test]
+      operationId: DiagnosisTendencyProblemsGet
+      summary: 자가진단 성향문제 set (6 문항 예상) 요청
+      responses:
+        '200':
+          description: 성공
+          content:
+            application/json:
+              schema:
+                $ref:  "#/components/schemas/tendencyProblemList"
+        
+        '500':
+          description: 실패
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  resultMessage:
+                    type: string
+                    example: "Error: status code 500"
+
+  /DiagnosisKnowledgeProblems:
+    get:
+      tags: [Test]
+      operationId: DiagnosisKnowledgeProblemsGet
+      summary: 자가진단 지식문제 set (9 문항 예상) 요청
+      responses:
+        '200':
+          description: 성공
+          content:
+            application/json:
+              schema:
+                $ref:  "#/components/schemas/knowledgeProblemList"
+        '500':
+          description: 실패
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  resultMessage:
+                    type: string
+                    example: "Error: status code 500"
+
+  /MinitestProblems:
+    get:
+      tags: [Test]
+      operationId: MinitestProblemsGet
+      summary: 미니테스트 set (20문항) 요청
+      responses:
+        '200':
+          description: 성공
+          content:
+            application/json:
+              schema:
+                $ref:  "#/components/schemas/minitestmProblemList"
+        '500':
+          description: 실패
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  resultMessage:
+                    type: string
+                    example: "Error: status code 500"
+
+
+components:
+  schemas:
+    tendencyProblemList:
+      properties:
+        resultMessage:
+          type: string
+          example: "Successfully returned"
+        tendencyProblems:
+          type: array
+          example:
+            - 11
+            - 12
+            - 13
+            - 14
+            - 15
+            - 16
+    knowledgeProblemList:
+      properties:
+        resultMessage:
+          type: string
+          example: "Successfully returned"
+        tendencyProblems:
+          type: array
+          example:
+            - [1,2,3]
+            - [4,5,6]
+            - [7,8,9]
+            - [10,11,12]
+            - [13,14,15]
+            - [16,17,18]
+            - [19,20,21]
+            - [22,23,24]
+            - [25,26,27]
+
+    minitestmProblemList:
+      properties:
+        resultMessage:
+          type: string
+          example: "Successfully returned"
+        tendencyProblems:
+          type: array
+          example:
+            - 1
+            - 2
+            - 3
+            - 4
+            - 5
+            - 6
+            - 7
+            - 8
+            - 9
+            - 10
+            - 11
+            - 12
+            - 13
+            - 14
+            - 15
+            - 16
+            - 17
+            - 18
+            - 19
+            - 20
