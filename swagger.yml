@@ -5,7 +5,7 @@ info:
   description: 문제 풀이 및 진단 리포트 페이지 관련 API
 servers:
   - url: http://192.168.153.212:8080/
-  - description: example server address
+    description: example server address
 tags:
 - name: Problem
   description: 문제 풀이 페이지 관련
