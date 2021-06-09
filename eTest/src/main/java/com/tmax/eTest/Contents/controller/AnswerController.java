@@ -22,7 +22,6 @@ import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.tmax.eTest.Contents.exception.problem.NoDataException;
-import com.tmax.eTest.Contents.model.LRS;
 import com.tmax.eTest.Contents.service.AnswerServices;
 import com.tmax.eTest.Contents.service.ProblemServices;
 
