@@ -8,8 +8,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -71,22 +74,22 @@ public class AnswerController {
 		return output;
 	}
 	
-//	@GetMapping(value="/test", produces = "application/json; charset=utf-8")
-//	public boolean test(
-//			@RequestParam String actionType, 
-//			@RequestParam String isCorrect, 
-//			@RequestParam String sourceType, 
-//			@RequestParam String timestamp,  
-//			@RequestParam String userId
-//			) 
-//	{
-//		final String url = "http://192.168.153.132:8080/SaveStatement";
-//		
-//		RestTemplate restTemplate = new RestTemplate();
-//		
-//		
-////		LRS lrs= new LRS(actionType,isCorrect,sourceType,timestamp,userId);
-//		
+	@GetMapping(value="/test", produces = "application/json; charset=utf-8")
+	public boolean test(
+			@RequestParam String actionType, 
+			@RequestParam String isCorrect, 
+			@RequestParam String sourceType, 
+			@RequestParam String timestamp,  
+			@RequestParam String userId
+			) 
+	{
+		final String url = "http://192.168.153.132:8080/SaveStatement";
+		
+		RestTemplate restTemplate = new RestTemplate();
+		
+		
+//		LRS lrs= new LRS(actionType,isCorrect,sourceType,timestamp,userId);
+		
 //		Map<String, String> map = new HashMap<>();
 //		
 //		map.put("actionType", actionType);
@@ -95,28 +98,39 @@ public class AnswerController {
 //		map.put("timestamp", timestamp);
 //		map.put("userId", userId);
 //		
-//		HttpHeaders headers = new HttpHeaders();
-//		headers.add("","");
+		MultiValueMap<String, String> params = new LinkedMultiValueMap<String, String>();
+		
+		params.add("actionType", actionType);
+		params.add("isCorrect", isCorrect);
+		params.add("sourceType", sourceType);
+		params.add("timestamp", timestamp);
+		params.add("userId", userId);
+		
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_JSON);
+		
+//		HttpEntity<Map<String,String>> entity = new HttpEntity<Map<String,String>>(map,headers);
+		HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<MultiValueMap<String, String>>(params, headers);
+		
+//		ResponseEntity<String> response = restTemplate.exchange(url,
+//				HttpMethod.POST,
+//				entity,
+//				String.class);
+		
+//		System.out.println(response.getBody());
+		
+		
+		
+		
 //		
-//		HttpEntity<Map<String,String>> entity = new HttpEntity<>(map,headers);
-//		
-////		ResponseEntity<String> response = restTemplate.exchange(url,
-////				HttpMethod.POST,
-////				entity,
-////				String.class);
-//		
-////		System.out.println(response.getBody());
-//		
-//		
-//		
-////		
-//		ResponseEntity<Void> result = restTemplate.postForEntity(url, entity, Void.class);
-////		
-////		System.out.println(result.getBody());
-//
-//		
-//		
-//		return true;
-//	}
+//		ResponseEntity<String> result = restTemplate.exchange(url, HttpMethod.POST,params,String.class);
+		ResponseEntity<String> result = restTemplate.postForEntity(url, request, String.class);
+
+		System.out.println("Result = " + result.getBody());
+		
+		
+		
+		return true;
+	}
 
 }
