@@ -48,7 +48,7 @@ public class MasteryService {
 
 		for (String ukId : ukIdList) {
 			UserKnowledgeKey userKnowledgeKey = new UserKnowledgeKey();
-			userKnowledgeKey.setUkUuid(ukId);
+			userKnowledgeKey.setUkId(ukId);
 			userKnowledgeKey.setUserUuid(userId);
 			UserKnowledge userKnowledge;
 			try {
@@ -109,7 +109,7 @@ public class MasteryService {
 		masteryJson.keySet().forEach(ukId -> {
 			UserKnowledge userKnowledge = new UserKnowledge();
 			userKnowledge.setUserUuid(userId);
-			userKnowledge.setUkUuid(ukId);
+			userKnowledge.setUkId(ukId);
 			userKnowledge.setUkMastery(masteryJson.get(ukId).getAsFloat());
 			userKnowledge.setUpdateDate(Timestamp.valueOf(LocalDateTime.now()));
 			userKnowledgeSet.add(userKnowledge);
