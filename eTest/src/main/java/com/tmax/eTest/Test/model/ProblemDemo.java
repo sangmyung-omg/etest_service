@@ -16,7 +16,7 @@ public class ProblemDemo {
 	@Id
 	private String probUuid;
 	
-	private String ukUuid;
+	private String ukId;
 	
 	private String chapter;
 	private String difficulty;
@@ -27,7 +27,7 @@ public class ProblemDemo {
 	private CurriculumMaster curriculumDao;
 	
 	@OneToOne(cascade=(CascadeType.ALL))
-	@JoinColumn(name="ukUuid", insertable = false, updatable = false)
+	@JoinColumn(name="ukId", insertable = false, updatable = false)
 	private UkMaster ukDao;
 	
 	@OneToOne(cascade=(CascadeType.ALL))

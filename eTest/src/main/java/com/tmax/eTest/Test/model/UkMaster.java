@@ -21,7 +21,7 @@ import lombok.Data;
 @Table(name="UK_MASTER")
 public class UkMaster {
 	@Id
-	private String ukUuid;
+	private String ukId;
 	
 	private String ukName;
 	private String ukDescription;
