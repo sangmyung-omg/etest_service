@@ -21,8 +21,8 @@ public class TestProblem {
 	@Column(name="PROB_ID")
 	private long probID;
 	
-	@Column(name="SET_NUM")
-	private int setNum;
+	@Column(name="SUBJECT")
+	private int subject;
 	
 	@Column(name="SEQUENCE")
 	private int sequence;
