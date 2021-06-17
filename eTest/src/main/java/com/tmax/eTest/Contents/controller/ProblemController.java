@@ -59,7 +59,7 @@ public class ProblemController {
         Integer newIndex = requestBody.getIndex().orElseGet(()->0);
         
 		try {
-			TestProblemDTO body = new TestProblemDTO(problemService.getTestProblem(requestBody.getSetNum(), newIndex));
+			TestProblemDTO body = new TestProblemDTO(problemService.getTestProblem(requestBody.getSubject(), newIndex));
 			
 			output = new ResponseEntity<>(body, headers, HttpStatus.OK);
 		}catch(NoDataException e) {
@@ -82,7 +82,7 @@ public class ProblemController {
         ResponseEntity<DiagnosisProblemDTO> output;
         
         try {
-        	DiagnosisProblemDTO body = new DiagnosisProblemDTO(problemService.getDiagnosisProblem(requestBody.getSetNum()));
+        	DiagnosisProblemDTO body = new DiagnosisProblemDTO(problemService.getDiagnosisProblem(requestBody.getSubject()));
 			
 			output = new ResponseEntity<>(body, headers, HttpStatus.OK);
 		}catch(NoDataException e) {

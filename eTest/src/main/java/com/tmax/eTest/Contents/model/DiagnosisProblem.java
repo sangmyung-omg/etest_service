@@ -19,8 +19,8 @@ public class DiagnosisProblem {
 	@Column(name="PROB_ID")
 	private long probID;
 	
-	@Column(name="SET_NUM")
-	private int setNum;
+	@Column(name="SUBJECT")
+	private int subject;
 	
 	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name="PROB_ID", nullable=true, insertable = false, updatable = false)
