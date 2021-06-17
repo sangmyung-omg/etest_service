@@ -22,12 +22,12 @@ public class UserKnowledge {
 	private String userUuid;
 
 	@Id
-	private String ukUuid;
+	private String ukId;
 	
 	private Float ukMastery;
 	private Timestamp updateDate;
 	
 	@OneToOne(cascade=(CascadeType.ALL))
-	@JoinColumn(name="ukUuid", insertable = false, updatable = false)
+	@JoinColumn(name="ukId", insertable = false, updatable = false)
 	private UkMaster ukDao;
 }

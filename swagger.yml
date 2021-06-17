@@ -1,14 +1,24 @@
-openapi: '3.0.1'
+openapi: '3.0.2'
 info:
-  title: 금투협 문제 API
-  version: '0.0.1'
+  title: eTest Problem & Analysis Report API
+  version: '0.1'
+  description: 문제 풀이 및 진단 리포트 페이지 관련 API
 servers:
-- url: http://192.168.153.159:8080/
+  - url: http://192.168.153.212:8080/
+    description: example server address
+tags:
+- name: Problem
+  description: 문제 풀이 페이지 관련
+- name: Test
+  description: 출제 문제 선정
+- name: Analysis Report
+  description: 진단 리포트 관련
+
 paths:
   /problems/{id}:
     get:
       tags:
-      - problem set info
+      - Problem
       summary: 문제 정보 받아오기
       description: 미니테스트 문제 정보를 받아옵니다.
       parameters:
@@ -50,7 +60,7 @@ paths:
   /problems/test:
     get:
       tags:
-      - problem set info
+      - Problem
       summary: 미니테스트 문제 리스트받아오기
       description: 미니테스트 문제 아이디의 리스트를 받아옵니다.
       parameters:
@@ -89,7 +99,7 @@ paths:
   /problems/diagnosis:
     get:
       tags:
-      - problem set info
+      - Problem
       summary: 진단고사 문제 리스트받아오기
       description: 진단고사의 문제 아이디의 리스트를 받아옵니다.
       parameters:
@@ -112,7 +122,7 @@ paths:
   /problems/{id}/answer-check:
     get:
       tags:
-      - problem set info
+      - Problem
       summary: 정답 체크하기
       description: 유저가 제출한 정답에 대한 채점결과를 true/false로 반환합니다.
       parameters:
@@ -140,7 +150,7 @@ paths:
   /problems/{id}/solution:
     get:
       tags:
-      - problem set info
+      - Problem
       summary: 해설 받아오기
       description: 유저가 제출한 정답에 대한 채점결과를 true/false로 반환합니다. *내부적으로 유저가 풀었는지 안풀었는지 확인하고
         받아와야 할듯?
@@ -166,11 +176,35 @@ paths:
                   - ..
                   solution: 해설 텍스트
                   material: 참고자료(교재 정보)
+  /DiagnosisTendencyProblems:
+    get:
+      tags: [Test]
+      operationId: DiagnosisTendencyProblemsGet
+      summary: 자가진단 성향문제 set (6 문항 예상) 요청
+      responses:
+        '200':
+          description: 성공
+          content:
+            application/json:
+              schema:
+                $ref:  "#/components/schemas/tendencyProblemList"
+        
+        '500':
+          description: 실패
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  resultMessage:
+                    type: string
+                    example: "Error: status code 500"
+
   /sets/staus:
     get:
       tags:
-      - AE1-1 요청
-      summary: 세트 정보 받아오기
+      - Problem
+      summary: (AE1-1 요청) 세트 정보 받아오기
       description: 유저 아이디에 대해 유저가 모든 세트에 대해서 각각 몇 번까지 풀었는지를 반환합니다.
       parameters:
       - name: id
@@ -195,8 +229,8 @@ paths:
   /problems/{problem_id}/save_result:
     post:
       tags:
-      - AE1-1 요청
-      summary: 1팀 DB에 유저 문제풀이 결과 저장하기
+      - Problem
+      summary: (AE1-1 요청) 1팀 DB에 유저 문제풀이 결과 저장하기
       description: 유저 아이디에 대해 유저가 모든 세트에 대해서 각각 몇 번까지 풀었는지를 반환합니다.
       parameters:
       - name: problem_id
@@ -224,4 +258,113 @@ paths:
         200:
           description: Successfully saved
           content: {}
-components: {}
+
+  /DiagnosisKnowledgeProblems:
+    get:
+      tags: [Test]
+      operationId: DiagnosisKnowledgeProblemsGet
+      summary: 자가진단 지식문제 set (9 문항 예상) 요청
+      responses:
+        '200':
+          description: 성공
+          content:
+            application/json:
+              schema:
+                $ref:  "#/components/schemas/knowledgeProblemList"
+        '500':
+          description: 실패
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  resultMessage:
+                    type: string
+                    example: "Error: status code 500"
+
+  /MinitestProblems:
+    get:
+      tags: [Test]
+      operationId: MinitestProblemsGet
+      summary: 미니테스트 set (20문항) 요청
+      responses:
+        '200':
+          description: 성공
+          content:
+            application/json:
+              schema:
+                $ref:  "#/components/schemas/minitestmProblemList"
+        '500':
+          description: 실패
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  resultMessage:
+                    type: string
+                    example: "Error: status code 500"
+
+
+components:
+  schemas:
+    tendencyProblemList:
+      properties:
+        resultMessage:
+          type: string
+          example: "Successfully returned"
+        tendencyProblems:
+          type: array
+          example:
+            - 11
+            - 12
+            - 13
+            - 14
+            - 15
+            - 16
+    knowledgeProblemList:
+      properties:
+        resultMessage:
+          type: string
+          example: "Successfully returned"
+        tendencyProblems:
+          type: array
+          example:
+            - [1,2,3]
+            - [4,5,6]
+            - [7,8,9]
+            - [10,11,12]
+            - [13,14,15]
+            - [16,17,18]
+            - [19,20,21]
+            - [22,23,24]
+            - [25,26,27]
+
+    minitestmProblemList:
+      properties:
+        resultMessage:
+          type: string
+          example: "Successfully returned"
+        tendencyProblems:
+          type: array
+          example:
+            - 1
+            - 2
+            - 3
+            - 4
+            - 5
+            - 6
+            - 7
+            - 8
+            - 9
+            - 10
+            - 11
+            - 12
+            - 13
+            - 14
+            - 15
+            - 16
+            - 17
+            - 18
+            - 19
+            - 20

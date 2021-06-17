@@ -21,7 +21,7 @@ import lombok.Data;
 @Table(name="UK_MASTER")
 public class UkMaster {
 	@Id
-	private String ukUuid;
+	private String ukId;
 	
 	private String ukName;
 	private String ukDescription;
@@ -33,10 +33,10 @@ public class UkMaster {
 	private CurriculumMaster curriculumDao;
 
 	
-	@OneToMany(mappedBy="ukUuid")
+	@OneToMany(mappedBy="ukId")
 	private List<ProblemChoice> problemChoices = new ArrayList<ProblemChoice>();
 	
-	@OneToMany(mappedBy="ukUuid")
+	@OneToMany(mappedBy="ukId")
 	private List<ProblemUKRelation> problemUkRels = new ArrayList<ProblemUKRelation>();
 
 }

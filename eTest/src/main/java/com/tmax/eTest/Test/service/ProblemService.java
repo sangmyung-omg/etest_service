@@ -169,7 +169,7 @@ public class ProblemService {
 			map.put("chapterId", pddao.getChapter());
 			map.put("chapter", pddao.getCurriculumDao().getChapter());
 			map.put("uk", pddao.getUkDao().getUkName());
-			map.put("ukId", pddao.getUkUuid());
+			map.put("ukId", pddao.getUkId());
 			
 			// 아직 2학기 내용에 대한 문제유형이 등록되어 있지 않음.
 			if (pddao.getProbTypeUuid() != null) {
