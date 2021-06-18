@@ -25,6 +25,10 @@ import com.tmax.eTest.Contents.repository.TestProblemRepository;
 import com.tmax.eTest.Test.repository.UkRepository;
 
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.json.simple.JSONArray;
+
 @Service
 public class ProblemServices {
 	@Autowired
@@ -45,6 +49,8 @@ public class ProblemServices {
 	@Autowired
 	UkRepository uKMasterRepo;
 	
+	private final Logger logger = LoggerFactory.getLogger(this.getClass());
+	
 	public ProblemDTO getProblem(long problemID) throws Exception{
 		ProblemDTO output;
 		Optional<Problem> problemOpt = problemRepo.findById(problemID);
@@ -53,14 +59,18 @@ public class ProblemServices {
 			Problem problem = problemOpt.get();
 			Map<Long, String> choices = new HashMap<Long, String>();
 			String type = problem.getAnswerType();
-			String questionJsonString = problem.getQuestion();
-			JsonObject questionJson= JsonParser.parseString(questionJsonString).getAsJsonObject();
+//			String questionJsonString = problem.getQuestion();
+//			JsonObject questionJson= JsonParser.parseString(questionJsonString).getAsJsonObject();
 
-			//asString 쓰면 null인경우에 에러남
-			String question = questionJson.get("question").toString().replaceAll("\"", "");
-			String passage = questionJson.get("passage").toString().replaceAll("\"", "");
-			String preface = questionJson.get("preface").toString().replaceAll("\"", "");
-
+			//asStrin
+//			String question = questionJson.get("question").toString().replaceAll("\"", "");
+//			String passage = questionJson.get("passage").toString().replaceAll("\"", "");
+//			String preface = questionJson.get("preface").toString().replaceAll("\"", "");
+	        String question = problem.getQuestion();
+			String passage = "";
+			String preface = "";
+			
+			
 			String difficulty = problem.getDifficulty();
 			
 			List<ProblemChoice> choiceList = probChoiceRepo.findAllByProbID(problem);
