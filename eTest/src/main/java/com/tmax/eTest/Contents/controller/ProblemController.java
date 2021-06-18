@@ -21,10 +21,14 @@ import com.tmax.eTest.Contents.model.DiagnosisProblemBody;
 import com.tmax.eTest.Contents.model.TestProblemBody;
 import com.tmax.eTest.Contents.service.ProblemServices;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 @CrossOrigin(origins="*")
 @RestController
 public class ProblemController {
-	
+	private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
 	@Autowired
 	ProblemServices problemService;
 	
@@ -34,8 +38,10 @@ public class ProblemController {
 		HttpHeaders headers= new HttpHeaders();
         headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
         ResponseEntity<ProblemDTO> output;
+
 		try {
 			ProblemDTO body = problemService.getProblem(id);
+			
 			body.setMessage("success");
 			output = new ResponseEntity<>(body, headers, HttpStatus.OK);
 		}catch(NoDataException e) {
@@ -47,7 +53,6 @@ public class ProblemController {
 			body.setMessage("Failed: "+e.getMessage());
 			output = new ResponseEntity<>(body, headers, HttpStatus.NOT_FOUND);
 		}
-		
 		return output;
 	}
 	
