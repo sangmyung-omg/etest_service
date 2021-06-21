@@ -26,8 +26,8 @@ public class ProblemUKRelation{
 	
 	@Id
 	@ManyToOne
-	@JoinColumn(name="UK_UUID")
-	private UkMaster ukUuid;
+	@JoinColumn(name="UK_ID")
+	private UkMaster ukId;
 	
 	
 //	@Id

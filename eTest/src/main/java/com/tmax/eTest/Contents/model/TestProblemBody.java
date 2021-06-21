@@ -6,6 +6,6 @@ import lombok.Data;
 
 @Data
 public class TestProblemBody {
-	private int setNum;
+	private int subject;
 	private Optional<Integer> index = Optional.empty();
 }

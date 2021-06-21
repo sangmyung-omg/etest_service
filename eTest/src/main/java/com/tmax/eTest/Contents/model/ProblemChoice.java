@@ -30,7 +30,7 @@ public class ProblemChoice {
 	private String text;
 	
 	@ManyToOne(fetch=FetchType.LAZY)
-	@JoinColumn(name="UK_UUID")
-	private UkMaster ukUuid;
+	@JoinColumn(name="UK_ID")
+	private UkMaster ukId;
 	
 }
