@@ -20,14 +20,14 @@ public class DiagnosisResultDTO {
 //			value = "해당 활동의 동사.",
 //			required = true)
 	
-	int giPoint = 0;
+	int giScore = 0;
 	int giPercentage = 0;
 	
 	Map<String, Integer> partDiagnosisResult = new HashMap<String, Integer>();
 	List<String> diagnosisDescription = new ArrayList<>();
 	
 	public boolean initForDummy() {
-		giPoint = 63;
+		giScore = 63;
 		giPercentage = 20;
 		
 		partDiagnosisResult.put("리스크 적합도", 72);
