@@ -15,7 +15,7 @@ public class MiniTestReportController {
 	
 	
 	@GetMapping(value="/report/miniTestResult/{id}", produces = "application/json; charset=utf-8")
-	public MiniTestResultDTO miniTestResult(@PathVariable("id") long id) throws Exception{
+	public MiniTestResultDTO miniTestResult(@PathVariable("id") String id) throws Exception{
 		MiniTestResultDTO output = new MiniTestResultDTO();
 		
 		output.initForDummy();
