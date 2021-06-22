@@ -10,6 +10,6 @@ import com.tmax.eTest.Contents.model.DiagnosisProblem;
 import com.tmax.eTest.Contents.model.TestProblem;
 
 public interface DiagnosisProblemRepository extends JpaRepository<DiagnosisProblem, Long>{
-	@Query(value="select d from DiagnosisProblem d where d.setNum = :setNum")
-	public ArrayList<DiagnosisProblem>findDiagnosisProblems(@Param("setNum") int setNum);
+	@Query(value="select d from DiagnosisProblem d where d.subject = :subject")
+	public ArrayList<DiagnosisProblem>findDiagnosisProblems(@Param("subject") int setNum);
 }
