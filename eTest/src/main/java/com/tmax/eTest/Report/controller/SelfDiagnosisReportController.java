@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.tmax.eTest.Report.dto.DiagnosisResultDTO;
 import com.tmax.eTest.Report.dto.PartUnderstandingDTO;
+import com.tmax.eTest.Report.util.LRSAPIManager;
 
 @RestController
 public class SelfDiagnosisReportController {
@@ -18,6 +19,8 @@ public class SelfDiagnosisReportController {
 			@PathVariable("id") String id) throws Exception{
 		DiagnosisResultDTO output = new DiagnosisResultDTO();
 
+		LRSAPIManager.getLRSUpdateProblemSequence(id);
+		
 		output.initForDummy();
 		
 		return output;
