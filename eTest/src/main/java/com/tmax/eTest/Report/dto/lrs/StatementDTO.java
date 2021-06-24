@@ -1,4 +1,4 @@
-package com.tmax.eTest.Report.dto;
+package com.tmax.eTest.Report.dto.lrs;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;

@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.tmax.eTest.Report.dto.DiagnosisResultDTO;
-import com.tmax.eTest.Report.dto.GetStatementInfoDTO;
+import com.tmax.eTest.Report.dto.lrs.GetStatementInfoDTO;
 import com.tmax.eTest.Report.util.LRSAPIManager;
 
 @Service

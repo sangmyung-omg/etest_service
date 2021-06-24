@@ -14,7 +14,8 @@ public class TritonAPIManager {
 
 	private final Logger logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
 
-	private final String HOST = "http://192.168.153.132:8080";
-//	private static final String HOST = System.getenv("LRS_HOST");
+	private final String HOST = "http://192.168.153.212:8003/v2/models/kt-rule/versions/1";
+	
+	
 
 }
