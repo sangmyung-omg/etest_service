@@ -264,6 +264,8 @@ paths:
       tags: [Test]
       operationId: DiagnosisKnowledgeProblemsGet
       summary: 자가진단 지식문제 set (9 문항 예상) 요청
+      parameters:
+        - $ref: "#/components/parameters/SetNum"
       responses:
         '200':
           description: 성공
@@ -368,3 +370,12 @@ components:
             - 18
             - 19
             - 20
+  parameters:
+    SetNum:
+      in: "path"
+      name: "set_num"
+      required: false
+      description: "선택할 미니테스트 세트 번호. null이면 random 세트 반환"
+      schema:
+        type: integer
+        example: 1
