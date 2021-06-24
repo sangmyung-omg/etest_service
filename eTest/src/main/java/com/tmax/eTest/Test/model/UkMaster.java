@@ -28,11 +28,6 @@ public class UkMaster {
 	private String trainUnseen;
 	private String curriculumId;
 	
-	@OneToOne(cascade=(CascadeType.ALL))
-	@JoinColumn(name="curriculumId", insertable = false, updatable = false)
-	private CurriculumMaster curriculumDao;
-
-	
 	@OneToMany(mappedBy="ukId")
 	private List<ProblemChoice> problemChoices = new ArrayList<ProblemChoice>();
 	
