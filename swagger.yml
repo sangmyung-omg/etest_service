@@ -287,6 +287,8 @@ paths:
       tags: [Test]
       operationId: MinitestProblemsGet
       summary: 미니테스트 set (20문항) 요청
+      parameters:
+        - $ref: "#/components/parameters/SetNum"
       responses:
         '200':
           description: 성공
@@ -368,3 +370,12 @@ components:
             - 18
             - 19
             - 20
+  parameters:
+    SetNum:
+      in: "query"
+      name: "set_num"
+      description: "선택할 미니테스트 세트 번호. 없으면 random 세트 반환"
+      schema:
+        type: integer
+        example: 1
+      required: false

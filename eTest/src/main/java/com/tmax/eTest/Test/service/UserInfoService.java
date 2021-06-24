@@ -16,53 +16,25 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.tmax.eTest.Test.model.CurriculumMaster;
 import com.tmax.eTest.Test.model.UserMaster;
-import com.tmax.eTest.Test.repository.CurriculumRepository;
 import com.tmax.eTest.Test.repository.UserRepository;
 
 @Service
 public class UserInfoService {
 	private final Logger logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
 
-	@Autowired
-	private CurriculumRepository curriculumRepository;
 
 	@Autowired
 	private UserRepository userRepository;
 
 	public List<String> getChapterNameList(String grade, String semester) {
 		List<String> list = new ArrayList<String>();
-		String queryString = "중등-중" + grade + "-" + semester + "학-%";
-		logger.info("Getting chapter name list...");
-		List<String> queryList = curriculumRepository.findAllByCurriculumIdLike(queryString);
-		for (String str : queryList) {
-			list.add(str);
-		}
 
 		return list;
 	}
 
 	public String updateUserCurrentInfo(String userId, String grade, String semester, String chapter) {
-		UserMaster user = new UserMaster();
-		user.setUserUuid(userId);
-		user.setGrade(grade);
-		user.setSemester(semester);
-		System.out.println("updateUserCurrentInfo CHAPTER : " + chapter);
-		logger.info("Getting chapter id...");
-		try {
-			CurriculumMaster dao = curriculumRepository.findByChapter(grade, chapter);
-			System.out.println("DAO of CURRICULUM_MASTER : " + dao + chapter);
-			user.setCurrentCurriculumId(dao.getChapterId());
-		} catch (Exception e) {
-			e.printStackTrace();
-			return "error : SELECTing chapterId by chapter's name SQL went wrong";
-		}
-		if (user.getCurrentCurriculumId() != null) {
-			logger.info("Updating user info...");
-			userRepository.save(user);
-		} else
-			return "error : Check the chatper! No chapterId matched with the chapter name";
+
 		return "Successfully updated";
 	}
 
