@@ -47,13 +47,13 @@ import com.tmax.eTest.Report.dto.StatementDTO;
 @Component
 public class LRSAPIManager {
 
-	private static final Logger logger = LoggerFactory.getLogger("LRSAPIManager");
+	private final Logger logger = LoggerFactory.getLogger("LRSAPIManager");
 
-	private static final String HOST = "http://192.168.153.132:8080";
+	private final String HOST = "http://192.168.153.132:8080";
 //	private static final String HOST = System.getenv("LRS_HOST");
 
 
-	public static void getStatementList(GetStatementInfoDTO input) throws ParseException {
+	public void getStatementList(GetStatementInfoDTO input) throws ParseException {
 		//Create a http timeout handler
 		HttpClient httpClient = HttpClient.create()
 									.option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 5000)
@@ -70,13 +70,20 @@ public class LRSAPIManager {
 							.clientConnector(new ReactorClientHttpConnector(httpClient))
 							.build();
 		
-		Flux<StatementDTO> info =  webClient.post()
+		logger.info(input.toString());
+		
+		List<StatementDTO> info =  webClient.post()
 				  .uri("/StatementList")
 				  .bodyValue(input)
 				  .retrieve()
 				  //.onStatus(HttpStatus::is4xxClientError, __ -> Mono.error(new GenericInternalException("ERR-LRS-400", "LRS 400 error")))
 				  //.onStatus(HttpStatus::is5xxServerError, __ -> Mono.error(new GenericInternalException("ERR-LRS-500", "LRS 500 error")))
-				  .bodyToFlux(StatementDTO.class);
+				  .bodyToFlux(StatementDTO.class)
+				  .collectList()
+				  .block();
+		
+		for(StatementDTO test : info)
+			logger.info(test.toString());
 	}
 
 
@@ -86,7 +93,7 @@ public class LRSAPIManager {
 	 * @author Jonghyun Seong
 	 * @since 2021-06-16
 	 */
-	public static ProblemSolveListDTO getLRSUpdateProblemSequence(String token) {
+	public ProblemSolveListDTO getLRSUpdateProblemSequence(String token) {
 		//Create a http timeout handler
 		HttpClient httpClient = HttpClient.create()
 									.option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 5000)

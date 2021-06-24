@@ -1,5 +1,6 @@
 package com.tmax.eTest.Report.dto;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import lombok.Data;
@@ -12,4 +13,12 @@ public class GetStatementInfoDTO {
 	public Integer recentStatementNum;
 	public List<String> sourceTypeList;
 	public List<String> userIdList;
+	
+	public boolean pushUserId(String id)
+	{
+		if(userIdList == null)
+			userIdList = new ArrayList<String>();
+		
+		return userIdList.add(id);
+	}
 }
