@@ -80,9 +80,6 @@ public class LRSAPIManager {
 				  .bodyToFlux(StatementDTO.class)
 				  .collectList()
 				  .block();
-		
-		for(StatementDTO test : info)
-			logger.info(test.toString());
 	}
 
 
