@@ -26,6 +26,7 @@ public class SelfDiagnosisReportService {
 		
 		GetStatementInfoDTO getStateInfo = new GetStatementInfoDTO();
 		TritonRequestDTO getInferInfo = new TritonRequestDTO();
+		getInferInfo.initForDummy();
 		getStateInfo.pushUserId(id);
 		
 		try {

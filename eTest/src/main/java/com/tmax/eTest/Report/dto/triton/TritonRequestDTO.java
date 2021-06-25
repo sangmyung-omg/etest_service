@@ -2,6 +2,10 @@ package com.tmax.eTest.Report.dto.triton;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.Arrays;
 
 import lombok.AllArgsConstructor;
@@ -15,6 +19,8 @@ public class TritonRequestDTO {
     private String id;
     private List<TritonDataDTO> inputs;
     private List<TritonDataDTO> outputs;
+    
+    private final Logger logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
     
     public boolean initOutputsDefault()
     {
@@ -64,8 +70,8 @@ public class TritonRequestDTO {
     	diffDTO.setShape(Arrays.asList(diffData.size()));
     	
     	TritonDataDTO embedDTO = new TritonDataDTO();
-    	List<Object> embedData = new ArrayList<Object>();
-    	embedData.add("");
+    	String[] arr = {""};
+    	List<Object> embedData = Arrays.asList(arr);
     	embedDTO.setName("Embeddings");
     	embedDTO.setDatatype("BYTES");
     	embedDTO.setData(embedData);

@@ -54,17 +54,23 @@ public class TritonAPIManager {
 							.clientConnector(new ReactorClientHttpConnector(httpClient))
 							.build();
 		
-		input.initForDummy();
+		logger.info(input.toString());
 		
-		TritonResponseDTO dto  =  webClient.post()
+		Mono<String> dto  =  webClient.post()
 			  .bodyValue(input)
 			  .retrieve()
-			  .onStatus(HttpStatus::is4xxClientError, __ -> Mono.error(new Exception("triton 400 error")))
-			  .onStatus(HttpStatus::is5xxServerError, __ -> Mono.error(new Exception("triton 500 error")))
-			  .bodyToMono(TritonResponseDTO.class)
-			  .block();
+			  //.onStatus(HttpStatus::is4xxClientError, __ -> Mono.error(new Exception("triton 400 error")))
+			  //.onStatus(HttpStatus::is5xxServerError, __ -> Mono.error(new Exception("triton 500 error")))
+			  .bodyToMono(String.class);
+			  //.block();
+		try {
+			TritonResponseDTO result = new ObjectMapper().readValue(dto.block(), TritonResponseDTO.class);
+			logger.info(result.toString());
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+
 		
-		 logger.info(dto.toString());
 	}
 
 }
