@@ -304,6 +304,49 @@ paths:
                   resultMessage:
                     type: string
                     example: "Error: status code 500"
+  /report/diagnosisResult/{id}:
+    get:
+      tags:
+      - Analysis Report
+      summary: 자가진단 리포트의 첫페이지 정보를 가져옵니다.
+      description: 자가진단 리포트의 GI 지수, 영역별 진단 결과, 진단 결과 텍스트, AI 예측 Part 별 이해도를 반환합니다.
+      parameters:
+      - name: id
+        in: path
+        description: 문제아이디
+        required: true
+        schema:
+          type: string
+          format: string
+      responses:
+        200:
+          description: OK
+          content:
+            json:
+              schema:
+                type: object
+                example:
+                  giScore: 63
+                  giPercentage: 20
+                  partDiagnosisResult:
+                    리스크 적합도: 72
+                    투자 의사결정: 65
+                    투자 지식: 52
+                  diagnosisDescription: [
+                    "리스크가 있더라도 높은 수익을 추구하며, 의사결정도 계획적이고 명확히 하는 경향이 있습니다.",
+                    "투자경험이나 공부를 한다면 좋은 시너지가 날 수 있습니다.",
+                    "더미 테스트 1",
+                    "더미 테스트 2"
+                  ]
+        400:
+          description: Data not found
+          content:
+            json:
+              schema:
+                type: object
+                example:
+                  message: 'Failed: {id}에 해당하는 데이터가 없습니다'
+                  data: {}
 
 
 components:
