@@ -397,21 +397,14 @@ paths:
                 example:
                   score: 70
                   percentage: 88
-                  partUnderstading:
-                    파트 1:C
-                    파트 2:E
-                    파트 3:D
-                    파트의 이름 및 갯수는 변화할 수 있음:D
-                    내부 값은 String. A~F로 이뤄짐:F
-                  weakPartDetail:[
+                  weakPartDetail: [
                     ["파트 5 상세 1", "F", "C"],
                     ["파트 5 상세 2", "F", "C"],
                     ["파트 5 상세 3", "F", "C"],
                     ["파트 5 상세 4", "F", "C"],
                     ["파트 5 상세 5", "F", "C"]
                   ]
-                  diagnosisQuestionInfo:[7,1,2]
-                    
+                  diagnosisQuestionInfo: [7,1,2]
 components:
   schemas:
     tendencyProblemList:
