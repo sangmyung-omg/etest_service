@@ -309,11 +309,11 @@ paths:
       tags:
       - Analysis Report
       summary: 자가진단 리포트의 첫페이지 정보를 가져옵니다.
-      description: 자가진단 리포트의 GI 지수, 영역별 진단 결과, 진단 결과 텍스트, AI 예측 Part 별 이해도를 반환합니다.
+      description: 자가진단 리포트의 GI 지수, 영역별 진단 결과, 진단 결과 텍스트, AI 예측 Part 별 이해도를 반환합니다. UX 예시와 값을 대체로 맞췄으니 참고하여 해당 값들의 역할을 파악 바랍니다.
       parameters:
       - name: id
         in: path
-        description: 문제아이디
+        description: 유저 ID
         required: true
         schema:
           type: string
@@ -338,17 +338,80 @@ paths:
                     "더미 테스트 1",
                     "더미 테스트 2"
                   ]
-        400:
-          description: Data not found
+  /report/diagnosisResult/{id}/{part}:
+    get:
+      tags:
+      - Analysis Report
+      summary: 자가진단 리포트의 파트 상세 정보 페이지의 정보를 가져옵니다.
+      description: 파트 이해도 점수, 상세 UK별 점수를 가져옵니다. UX 예시와 값을 대체로 맞췄으니 참고하여 해당 값들의 역할을 파악 바랍니다.
+      parameters:
+      - name: id
+        in: path
+        description: 유저 ID
+        required: true
+        schema:
+          type: string
+          format: string
+      - name: part
+        in: path
+        description: Part ID
+        required: true
+        schema:
+          type: string
+          format: string
+      responses:
+        200:
+          description: OK
           content:
             json:
               schema:
                 type: object
                 example:
-                  message: 'Failed: {id}에 해당하는 데이터가 없습니다'
-                  data: {}
-
-
+                  point: 75
+                  ukUnderstanding:
+                    상세 UK 1: 100
+                    상세 UK 2: 64
+                    UK의 이름과 갯수는 변화할 수 있음: 51
+                    상세 UK 4: 47
+  /report/miniTestResult/{id}:
+    get:
+      tags:
+      - Analysis Report
+      summary: 미니 테스트 리포트의 정보를 가져옵니다.
+      description: 투자 지식 평가 점수, 백분율, Part 별 이해도, 취약 영역 상세, 지식문제 수준 진단 기록을 가져옵니다. UX 예시와 값을 대체로 맞췄으니 참고하여 해당 값들의 역할을 파악 바랍니다.
+      parameters:
+      - name: id
+        in: path
+        description: 유저 ID
+        required: true
+        schema:
+          type: string
+          format: string
+      responses:
+        200:
+          description: OK
+          content:
+            json:
+              schema:
+                type: object
+                example:
+                  score: 70
+                  percentage: 88
+                  partUnderstading:
+                    파트 1:C
+                    파트 2:E
+                    파트 3:D
+                    파트의 이름 및 갯수는 변화할 수 있음:D
+                    내부 값은 String. A~F로 이뤄짐:F
+                  weakPartDetail:[
+                    ["파트 5 상세 1", "F", "C"],
+                    ["파트 5 상세 2", "F", "C"],
+                    ["파트 5 상세 3", "F", "C"],
+                    ["파트 5 상세 4", "F", "C"],
+                    ["파트 5 상세 5", "F", "C"]
+                  ]
+                  diagnosisQuestionInfo:[7,1,2]
+                    
 components:
   schemas:
     tendencyProblemList:
