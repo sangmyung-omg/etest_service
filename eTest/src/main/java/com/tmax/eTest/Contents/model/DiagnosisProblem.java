@@ -17,7 +17,7 @@ public class DiagnosisProblem {
 	
 	@Id
 	@Column(name="PROB_ID")
-	private long probID;
+	private Integer probID;
 	
 	@Column(name="SUBJECT")
 	private int subject;

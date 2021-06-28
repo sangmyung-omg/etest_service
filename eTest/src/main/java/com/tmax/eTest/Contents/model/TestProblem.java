@@ -19,7 +19,7 @@ import lombok.Data;
 public class TestProblem {
 	@Id
 	@Column(name="PROB_ID")
-	private long probID;
+	private Integer probID;
 	
 	@Column(name="SUBJECT")
 	private int subject;
