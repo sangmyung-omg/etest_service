@@ -5,6 +5,6 @@ import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 
 import com.tmax.eTest.Contents.model.Problem;
 
-public interface ProblemRepository extends JpaRepository<Problem, Long>{
+public interface ProblemRepository extends JpaRepository<Problem, Integer>{
 
 }
