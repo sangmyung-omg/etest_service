@@ -37,7 +37,7 @@ public class TritonAPIManager {
 
 	private final String HOST = "http://192.168.153.212:8003/v2/models/kt-rule/versions/1/infer";
 	
-	public void getInfer(TritonRequestDTO input) throws ParseException {
+	public TritonResponseDTO getInfer(TritonRequestDTO input) throws ParseException {
 		//Create a http timeout handler
 		HttpClient httpClient = HttpClient.create()
 									.option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 5000)
@@ -56,21 +56,36 @@ public class TritonAPIManager {
 		
 		logger.info(input.toString());
 		
-		Mono<String> dto  =  webClient.post()
-			  .bodyValue(input)
-			  .retrieve()
-			  //.onStatus(HttpStatus::is4xxClientError, __ -> Mono.error(new Exception("triton 400 error")))
-			  //.onStatus(HttpStatus::is5xxServerError, __ -> Mono.error(new Exception("triton 500 error")))
-			  .bodyToMono(String.class);
-			  //.block();
+		TritonResponseDTO tritonResult = null;
+		String payload = null;
 		try {
-			TritonResponseDTO result = new ObjectMapper().readValue(dto.block(), TritonResponseDTO.class);
-			logger.info(result.toString());
-        } catch (JsonProcessingException e) {
+			payload = new ObjectMapper().writeValueAsString(input);
+		} catch (JsonProcessingException e) {
             e.printStackTrace();
         }
-
 		
+		logger.info(payload);
+		
+		if(payload != null)
+		{
+			logger.info("start info");
+			String info  = webClient.post()
+				  .body(Mono.just(payload), String.class)
+				  .retrieve()
+				  .onStatus(HttpStatus::is4xxClientError, __ -> Mono.error(new Exception("triton 400 error")))
+				  .onStatus(HttpStatus::is5xxServerError, __ -> Mono.error(new Exception("triton 500 error")))
+				  .bodyToMono(String.class)
+				  .block();
+			
+			try {	
+				tritonResult = new ObjectMapper().readValue(info, TritonResponseDTO.class);
+				
+	        } catch (JsonProcessingException e) {
+	            e.printStackTrace();
+	        }
+			return tritonResult;
+		}
+		return null;
 	}
 
 }

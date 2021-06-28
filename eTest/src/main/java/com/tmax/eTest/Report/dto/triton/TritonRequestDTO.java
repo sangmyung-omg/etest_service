@@ -20,8 +20,6 @@ public class TritonRequestDTO {
     private List<TritonDataDTO> inputs;
     private List<TritonDataDTO> outputs;
     
-    private final Logger logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
-    
     public boolean initOutputsDefault()
     {
     	outputs = new ArrayList<TritonDataDTO>();
@@ -70,8 +68,9 @@ public class TritonRequestDTO {
     	diffDTO.setShape(Arrays.asList(diffData.size()));
     	
     	TritonDataDTO embedDTO = new TritonDataDTO();
-    	String[] arr = {""};
-    	List<Object> embedData = Arrays.asList(arr);
+    	List<Object> embedData = new ArrayList<>();
+    	String temp = "";
+    	embedData.add(temp);
     	embedDTO.setName("Embeddings");
     	embedDTO.setDatatype("BYTES");
     	embedDTO.setData(embedData);

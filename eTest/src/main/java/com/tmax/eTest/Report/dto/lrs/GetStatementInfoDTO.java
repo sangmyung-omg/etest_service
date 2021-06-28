@@ -21,4 +21,20 @@ public class GetStatementInfoDTO {
 		
 		return userIdList.add(id);
 	}
+	
+	public boolean pushSourceType(String sourceType)
+	{
+		if(sourceTypeList == null)
+			sourceTypeList = new ArrayList<>();
+		
+		return sourceTypeList.add(sourceType);
+	}
+	
+	public boolean pushActionType(String actionType)
+	{
+		if(actionTypeList == null)
+			actionTypeList = new ArrayList<>();
+		
+		return actionTypeList.add(actionType);
+	}
 }
