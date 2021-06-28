@@ -86,8 +86,8 @@ public class ProblemServices {
 		return output;
 	}
 
-	public List<Long> getTestProblem(int setNum, int index) throws Exception{
-		List<Long> output = new ArrayList<Long>(); 
+	public List<Integer> getTestProblem(int setNum, int index) throws Exception{
+		List<Integer> output = new ArrayList<Integer>(); 
 
 		index = Math.max(0, index);
 		List<TestProblem> testProblems = testProblemRepo.findSetProblems(setNum, index);
@@ -101,8 +101,8 @@ public class ProblemServices {
 		}
 		return output;
 	}
-	public List<Long> getDiagnosisProblem(int setNum) throws Exception{
-		List<Long> output = new ArrayList<Long>(); 
+	public List<Integer> getDiagnosisProblem(int setNum) throws Exception{
+		List<Integer> output = new ArrayList<Integer>(); 
 
 		List<DiagnosisProblem> diagnosisProblems = diagProbRepo.findDiagnosisProblems(setNum);
 		if(diagnosisProblems.size()==0) {
