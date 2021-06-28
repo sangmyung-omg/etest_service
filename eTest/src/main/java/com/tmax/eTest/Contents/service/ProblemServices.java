@@ -51,7 +51,7 @@ public class ProblemServices {
 	
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 	
-	public ProblemDTO getProblem(long problemID) throws Exception{
+	public ProblemDTO getProblem(Integer problemID) throws Exception{
 		ProblemDTO output;
 		Optional<Problem> problemOpt = problemRepo.findById(problemID);
 		

@@ -44,7 +44,7 @@ public class AnswerController {
 	ProblemServices problemService;
 	
 	@PostMapping(value="problems/{id}/answer-check", produces = "application/json; charset=utf-8")
-	public boolean checkAnswer(@PathVariable("id") long id, @RequestParam String answer, @RequestBody String lrsbody) throws Exception {
+	public int checkAnswer(@PathVariable("id") Integer id, @RequestParam String answer, @RequestBody String lrsbody) throws Exception {
 		Map<String, Object> data = null;
 		data = answerServices.getProblemSolution(id);
 		String inputString = data.get("solution").toString();
@@ -69,7 +69,7 @@ public class AnswerController {
 		MediaType mediaType = new MediaType("application", "json", utf8);
 		WebClient client = WebClient
 				.builder()
-					.baseUrl(LRSServerURI + "/SaveStatement")
+					.baseUrl(LRSServerURI + "/SaveStatementList")
 					.defaultHeader(HttpHeaders.CONTENT_TYPE, mediaType.toString())
 				.build();
 		
@@ -81,14 +81,14 @@ public class AnswerController {
 		if(temp.equals(answer)) {
 			
 			
-			return true;
+			return 1;
 		} else {
-			return false;
+			return 0;
 		}
 	}
 	
 	@GetMapping(value="/problems/{id}/solution", produces = "application/json; charset=utf-8")
-	public Map<String, Object> problem(@PathVariable("id") long id) throws Exception{
+	public Map<String, Object> problem(@PathVariable("id") Integer id) throws Exception{
 		Map<String, Object> output = new HashMap<String, Object>();
 		Map<String, Object> data = null;
 		try {
