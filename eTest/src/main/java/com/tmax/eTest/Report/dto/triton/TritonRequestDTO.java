@@ -20,9 +20,10 @@ public class TritonRequestDTO {
     private List<TritonDataDTO> inputs;
     private List<TritonDataDTO> outputs;
     
-    public boolean initOutputsDefault()
+    private void initOutputsDefault()
     {
-    	outputs = new ArrayList<TritonDataDTO>();
+    	if(outputs == null)
+    		outputs = new ArrayList<TritonDataDTO>();
     	
     	TritonDataDTO masteryOutput = new TritonDataDTO();
     	masteryOutput.setName("Mastery");
@@ -31,8 +32,49 @@ public class TritonRequestDTO {
     	TritonDataDTO embedOutput = new TritonDataDTO();
     	embedOutput.setName("Embeddings");
     	outputs.add(embedOutput);
+
+    }
+    
+    private void initInputsEmptyEmbedding()
+    {
+    	if(inputs == null)
+    		inputs = new ArrayList<>();
     	
-    	return true;
+    	TritonDataDTO embedDTO = new TritonDataDTO();
+    	List<Object> embedData = new ArrayList<>();
+    	String temp = "";
+    	embedData.add(temp);
+    	embedDTO.setName("Embeddings");
+    	embedDTO.setDatatype("BYTES");
+    	embedDTO.setData(embedData);
+    	embedDTO.setShape(Arrays.asList(embedData.size()));
+    	inputs.add(embedDTO);
+
+    }
+    
+    public void pushInputData(
+    		String name, 
+    		String dataType,
+    		List<Object> dataList)
+    {
+    	if(inputs == null)
+    		inputs = new ArrayList<>();
+    	
+    	TritonDataDTO data = new TritonDataDTO();
+    	data.setName(name);
+    	data.setDatatype(dataType);
+    	data.setData(dataList);
+    	data.setShape(Arrays.asList(dataList.size()));
+    	
+    }
+    
+    public void initDefault()
+    {
+    	id = "1";
+    	
+    	initOutputsDefault();
+    	initInputsEmptyEmbedding();
+
     }
     
     public boolean initForDummy()
@@ -67,22 +109,15 @@ public class TritonRequestDTO {
     	diffDTO.setData(diffData);
     	diffDTO.setShape(Arrays.asList(diffData.size()));
     	
-    	TritonDataDTO embedDTO = new TritonDataDTO();
-    	List<Object> embedData = new ArrayList<>();
-    	String temp = "";
-    	embedData.add(temp);
-    	embedDTO.setName("Embeddings");
-    	embedDTO.setDatatype("BYTES");
-    	embedDTO.setData(embedData);
-    	embedDTO.setShape(Arrays.asList(embedData.size()));
-
+ 
+    	initInputsEmptyEmbedding();
     	
     	inputs = new ArrayList<TritonDataDTO>();
 
     	inputs.add(ukDTO);
     	inputs.add(isCorrectDTO);
     	inputs.add(diffDTO);
-    	inputs.add(embedDTO);
+    	
     	
     	initOutputsDefault();    	
 
