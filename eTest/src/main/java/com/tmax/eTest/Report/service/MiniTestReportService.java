@@ -75,13 +75,13 @@ public class MiniTestReportService {
 	private TritonResponseDTO getUnderstandingScoreInTriton(List<StatementDTO> miniTestResult)
 	{
 		// first process : 문제별 PK 얻어오기.
-		List<Long> probIdList = new ArrayList<>();
-		Map<Long, Integer> isCorrectMap = new HashMap<>();
+		List<Integer> probIdList = new ArrayList<>();
+		Map<Integer, Integer> isCorrectMap = new HashMap<>();
 		for(StatementDTO dto : miniTestResult)
 		{
 			try
 			{
-				long probId = Long.parseLong(dto.getSourceId());
+				int probId = Integer.parseInt(dto.getSourceId());
 				probIdList.add(probId);
 				isCorrectMap.put(probId, dto.getIsCorrect());
 			}
