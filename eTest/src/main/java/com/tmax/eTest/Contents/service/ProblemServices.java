@@ -62,7 +62,7 @@ public class ProblemServices {
 //			String questionJsonString = problem.getQuestion();
 //			JsonObject questionJson= JsonParser.parseString(questionJsonString).getAsJsonObject();
 
-			//asStrin
+			
 //			String question = questionJson.get("question").toString().replaceAll("\"", "");
 //			String passage = questionJson.get("passage").toString().replaceAll("\"", "");
 //			String preface = questionJson.get("preface").toString().replaceAll("\"", "");
@@ -101,7 +101,7 @@ public class ProblemServices {
 		}
 		return output;
 	}
-	public List<Integer> getDiagnosisProblem(int setNum) throws Exception{
+	public List<Integer> getDiagnosisProblem(String setNum) throws Exception{
 		List<Integer> output = new ArrayList<Integer>(); 
 
 		List<DiagnosisProblem> diagnosisProblems = diagProbRepo.findDiagnosisProblems(setNum);
