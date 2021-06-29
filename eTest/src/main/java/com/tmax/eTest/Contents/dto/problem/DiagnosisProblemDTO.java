@@ -6,12 +6,12 @@ import lombok.Data;
 @Data
 public class DiagnosisProblemDTO {
 	String message;
-	List<Long> data;
+	List<Integer> data;
 	
 	public DiagnosisProblemDTO() {
 		
 	}
-	public DiagnosisProblemDTO(List<Long> problems) {
+	public DiagnosisProblemDTO(List<Integer> problems) {
 		this.message = "success";
 		this.data = problems;
 	}
