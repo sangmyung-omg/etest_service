@@ -34,7 +34,7 @@ public class ProblemController {
 	
 	
 	@GetMapping(value="/problems/{id}")
-	public ResponseEntity<ProblemDTO> problem(@PathVariable("id") long id) throws Exception{
+	public ResponseEntity<ProblemDTO> problem(@PathVariable("id") Integer id) throws Exception{
 		HttpHeaders headers= new HttpHeaders();
         headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
         ResponseEntity<ProblemDTO> output;

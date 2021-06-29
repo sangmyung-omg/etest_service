@@ -5,6 +5,10 @@ public class NoDataException extends Exception{
 		super();
 	}
 	public NoDataException(long id){
-		super(Long.toString(id)+"에 해당하는 데이터가 없습니다.");
+		super(Long.toString(id)+"there is no data");
 	}
+	public NoDataException(String input) {
+		super(input+" = there is no data");
+	}
+	
 }
