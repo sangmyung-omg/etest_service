@@ -4,41 +4,23 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.tmax.eTest.Test.dto.ChapterMasteryDTO;
-import com.tmax.eTest.Test.dto.UKMasteryDTO;
-import com.tmax.eTest.Test.dto.UserCurrentInfoInput;
-import com.tmax.eTest.Test.service.CurriculumService;
-import com.tmax.eTest.Test.service.MasteryService;
 import com.tmax.eTest.Test.service.ProblemService;
-import com.tmax.eTest.Test.service.UserInfoService;
 
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 public class DiagnosisController {
 	
 	@Autowired
-	UserInfoService userService;
-	
-	@Autowired
 	ProblemService problemService;
-	
-	@Autowired
-	MasteryService	masteryService;
-	
-	@Autowired
-	CurriculumService curriculumService;
 	
 	@GetMapping(value = "/diagnosis/tendency", produces = "application/json; charset=utf-8")
 	public ResponseEntity<Object> getDiagnosisTendencyProblems() throws Exception {
@@ -53,11 +35,15 @@ public class DiagnosisController {
 		list.add(16);
 		map.put("tendencyProblems", list);
 		
-		if (map.containsKey("error")) {
-			map.put("resultMessage", map.get("error"));
-			map.remove("error");
-			return new ResponseEntity<>(map, HttpStatus.INTERNAL_SERVER_ERROR);
-		} 
+		// search tendency problems in DB
+//		Map<String, Object> re = problemService.getDiagnosisProblems("tendency");
+//		
+//		if (re.containsKey("error")) {
+//		map.put("resultMessage", re.get("error"));
+//		return new ResponseEntity<>(map, HttpStatus.INTERNAL_SERVER_ERROR);
+//		} else {
+//			map.put("tendencyProblems", re.get("tendencyProblems"));
+//		}
 		
 		return new ResponseEntity<>(map, HttpStatus.OK);
 	}
@@ -76,31 +62,40 @@ public class DiagnosisController {
 		}
 		map.put("knowledgeProblems", list);
 		
-		if (map.containsKey("error")) {
-			map.put("resultMessage", map.get("error"));
-			map.remove("error");
-			return new ResponseEntity<>(map, HttpStatus.INTERNAL_SERVER_ERROR);
-		} 
+		// search knowledge problems in DB
+//		Map<String, Object> re = problemService.getDiagnosisProblems("knowledge");
+//		
+//		if (re.containsKey("error")) {
+//		map.put("resultMessage", re.get("error"));
+//		return new ResponseEntity<>(map, HttpStatus.INTERNAL_SERVER_ERROR);
+//		} else {
+//			map.put("knowledgeProblems", re.get("knowledgeProblems"));
+//		}
 		
 		return new ResponseEntity<>(map, HttpStatus.OK);
 	}
 	
 	@GetMapping(value = "/minitest", produces = "application/json; charset=utf-8")
-	public ResponseEntity<Object> getMinitestProblems() throws Exception {
+	public ResponseEntity<Object> getMinitestProblems(@RequestParam(required=false) Integer set_num) throws Exception {
 		Map<String, Object> map = new HashMap<String, Object>();
-		map.put("resultMessage", "Successfully returned");
+		
+		// dummy return
 		List<Integer> list = new ArrayList<>();
-		for (int i=0; i<20; i++) {
+		for (int i=0; i<7; i++) {
 			list.add(i+1);
 		}
 		map.put("minitestProblems", list);
 		
-		if (map.containsKey("error")) {
-			map.put("resultMessage", map.get("error"));
-			map.remove("error");
-			return new ResponseEntity<>(map, HttpStatus.INTERNAL_SERVER_ERROR);
-		} 
+//		// search minitest with setnum
+//		Map<String, Object> re = problemService.getMinitestProblems(set_num);
+//		if (re.containsKey("error")) {
+//			map.put("resultMessage", re.get("error"));
+//			return new ResponseEntity<>(map, HttpStatus.INTERNAL_SERVER_ERROR);
+//		} else {
+//			map.put("minitestProblems", re.get("minitestProblems"));
+//		}
 		
+		map.put("resultMessage", "Successfully returned");
 		return new ResponseEntity<>(map, HttpStatus.OK);
 	}
 }

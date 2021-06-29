@@ -20,7 +20,7 @@ public class AnswerServices {
 	ProblemChoiceRepository probChoiceRepo;
 	
 	
-	public Map<String, Object> getProblemSolution(long problemID) throws Exception{
+	public Map<String, Object> getProblemSolution(Integer problemID) throws Exception{
 		Map<String, Object> output = new HashMap<String, Object>();
 		Optional<Problem> problemOpt = problemRepo.findById(problemID);
 		
@@ -34,7 +34,7 @@ public class AnswerServices {
 		return output;
 	}
 	
-	public Map<String, Object> getSolutionMaterial(long problemID) throws Exception{
+	public Map<String, Object> getSolutionMaterial(Integer problemID) throws Exception{
 		Map<String, Object> output = new HashMap<String, Object>();
 		Optional<Problem> problemOpt = problemRepo.findById(problemID);
 		

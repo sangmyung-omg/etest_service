@@ -19,13 +19,13 @@ import lombok.Data;
 public class TestProblem {
 	@Id
 	@Column(name="PROB_ID")
-	private long probID;
+	private Integer probID;
 	
-	@Column(name="SUBJECT")
-	private int subject;
+	@Column(name="SET_NUM")
+	private Integer setNum;
 	
 	@Column(name="SEQUENCE")
-	private int sequence;
+	private Integer sequence;
 
 	@ManyToOne
 	@JoinColumn(name="PROB_ID", nullable=true, insertable = false, updatable = false)
