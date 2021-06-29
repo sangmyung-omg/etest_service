@@ -4,5 +4,6 @@ import lombok.Data;
 
 @Data
 public class DiagnosisProblemBody {
-	private int subject;
+	private String subject;
+	
 }

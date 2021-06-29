@@ -8,11 +8,10 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import com.tmax.eTest.Contents.model.DiagnosisProblem;
-import com.tmax.eTest.Contents.model.TestProblem;
 
 public interface DiagnosisProblemRepository extends JpaRepository<DiagnosisProblem, Long>{
 	@Query(value="select d from DiagnosisProblem d where d.subject = :subject")
-	public ArrayList<DiagnosisProblem>findDiagnosisProblems(@Param("subject") int setNum);
+	public ArrayList<DiagnosisProblem>findDiagnosisProblems(@Param("subject") String setNum);
 	
 	@Query("SELECT dp.probID FROM DiagnosisProblem dp WHERE dp.problem.category = ?1")
 	List<Integer> findTendencyProblems(String queryType);

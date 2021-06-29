@@ -26,6 +26,4 @@ public class DiagnosisProblem {
 	@JoinColumn(name="PROB_ID", nullable=true, insertable = false, updatable = false)
 	private Problem problem;
 	
-	
-	
 }

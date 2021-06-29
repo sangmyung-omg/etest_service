@@ -19,7 +19,7 @@ import lombok.Data;
 public class Problem {
 	@Id
 	@Column(name="PROB_ID")
-	private long probID;
+	private Integer probID;
 	
 	@Column(name="ANSWER_TYPE", length=50)
 	private String answerType;
