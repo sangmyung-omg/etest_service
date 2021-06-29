@@ -20,7 +20,7 @@ public class DiagnosisProblem {
 	private Integer probID;
 	
 	@Column(name="SUBJECT")
-	private int subject;
+	private String subject;
 	
 	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name="PROB_ID", nullable=true, insertable = false, updatable = false)

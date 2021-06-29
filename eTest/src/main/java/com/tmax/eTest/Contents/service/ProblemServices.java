@@ -101,7 +101,7 @@ public class ProblemServices {
 		}
 		return output;
 	}
-	public List<Integer> getDiagnosisProblem(int setNum) throws Exception{
+	public List<Integer> getDiagnosisProblem(String setNum) throws Exception{
 		List<Integer> output = new ArrayList<Integer>(); 
 
 		List<DiagnosisProblem> diagnosisProblems = diagProbRepo.findDiagnosisProblems(setNum);
