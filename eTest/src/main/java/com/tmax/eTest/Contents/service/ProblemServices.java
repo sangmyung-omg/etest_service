@@ -101,6 +101,7 @@ public class ProblemServices {
 		}
 		return output;
 	}
+
 	public List<Integer> getDiagnosisProblem(String setNum) throws Exception{
 		List<Integer> output = new ArrayList<Integer>(); 
 
