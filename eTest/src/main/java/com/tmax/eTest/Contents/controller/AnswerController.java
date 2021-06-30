@@ -3,6 +3,7 @@ package com.tmax.eTest.Contents.controller;
 import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -62,16 +63,24 @@ public class AnswerController {
 					.defaultHeader(HttpHeaders.CONTENT_TYPE, mediaType.toString())
 				.build();
 		
-		Mono<String> response = client.post().body(BodyInserters.fromValue(lrsbody)).retrieve().bodyToMono(String.class);
 		
-		response.subscribe();
 		
 		
 		if(temp.equals(answer)) {
+			String body = lrsbody;
+			StringBuffer sb = new StringBuffer();
+			sb.append(body);
+			sb.replace(105,120, "\"isCorrect\":1,");
 			
+			Mono<String> response = client.post().body(BodyInserters.fromValue(sb.toString())).retrieve().bodyToMono(String.class);
+			
+			response.subscribe();
 			
 			return 1;
 		} else {
+			Mono<String> response = client.post().body(BodyInserters.fromValue(lrsbody)).retrieve().bodyToMono(String.class);
+
+			response.subscribe();
 			return 0;
 		}
 	}
