@@ -7,7 +7,7 @@ WORKDIR /home/tmax
 ENV SCRIPT_HOME /home/tmax/script
 
 #테스트용 환경변수
-ENV HTTP_PORT 8888
+#ENV HTTP_PORT 8888
 
 RUN mkdir -p ${SCRIPT_HOME}
 
