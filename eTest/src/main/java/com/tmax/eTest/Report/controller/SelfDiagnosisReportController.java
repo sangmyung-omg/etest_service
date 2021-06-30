@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
@@ -19,6 +20,7 @@ public class SelfDiagnosisReportController {
 	@Autowired
 	SelfDiagnosisReportService selfDiagnosisReportService;
 	
+	@CrossOrigin("*")
 	@GetMapping(value="/report/diagnosisResult/{id}", produces = "application/json; charset=utf-8")
 	public DiagnosisResultDTO diagnosisResult(
 			@PathVariable("id") String id) throws Exception{
@@ -27,6 +29,7 @@ public class SelfDiagnosisReportController {
 		return output;
 	}
 	
+	@CrossOrigin("*")
 	@GetMapping(value="/report/diagnosisResult/{id}/{part}", produces = "application/json; charset=utf-8")
 	public PartUnderstandingDTO partUnderstanding(
 			@PathVariable("id") String id,

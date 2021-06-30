@@ -11,6 +11,8 @@ import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -44,15 +46,16 @@ import com.tmax.eTest.Report.dto.lrs.StatementDTO;
  * @author sangheonLee
  */
 @Component
+@PropertySource("classpath:lrs.properties")
 public class LRSAPIManager {
 
 	private final Logger logger = LoggerFactory.getLogger("LRSAPIManager");
 
-	private final String HOST = "http://192.168.153.132:8080";
+	private String HOST = "http://192.168.153.132:8080";
 //	private static final String HOST = System.getenv("LRS_HOST");
 
 
-	public void getStatementList(GetStatementInfoDTO input) throws ParseException {
+	public List<StatementDTO> getStatementList(GetStatementInfoDTO input) throws ParseException {
 		//Create a http timeout handler
 		HttpClient httpClient = HttpClient.create()
 									.option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 5000)
@@ -80,8 +83,22 @@ public class LRSAPIManager {
 				  .bodyToFlux(StatementDTO.class)
 				  .collectList()
 				  .block();
+		
+		return info;
 	}
 
+	@Autowired
+	public LRSAPIManager(
+			@Value("${waplmath.recommend.lrs.host}") String IP, 
+			@Value("${waplmath.recommend.lrs.port}") String PORT) {
+		logger.info("constructor" + IP + PORT);
+		
+		if(IP != null && PORT != null)
+			this.HOST = String.format("http://%s:%s", IP, PORT);
+	}
+
+	public LRSAPIManager() {
+	}
 
 
 	/**
@@ -89,7 +106,7 @@ public class LRSAPIManager {
 	 * @author Jonghyun Seong
 	 * @since 2021-06-16
 	 */
-	public ProblemSolveListDTO getLRSUpdateProblemSequence(String token) {
+	public ProblemSolveListDTO getInfoForMastery(String token) {
 		//Create a http timeout handler
 		HttpClient httpClient = HttpClient.create()
 									.option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 5000)
@@ -124,8 +141,6 @@ public class LRSAPIManager {
 		catch (Throwable e) {
 			logger.warn("LRS return body : " + info.block());
 		}
-		
-		logger.info(result.toString());
 
 		return result;
 	}
