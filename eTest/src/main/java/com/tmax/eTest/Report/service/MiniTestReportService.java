@@ -13,6 +13,7 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -70,30 +71,164 @@ public class MiniTestReportService {
 		
 		for(TritonDataDTO dto : tritonResponse.getOutputs())
 		{
-			if(dto.getName().equals(""))
+			if(dto.getName().equals("Embeddings"))
 			{
-				
+				embeddingData = dto;
 			}
-			else if(dto.getName().equals(""))
+			else if(dto.getName().equals("Mastery"))
 			{
-				
+				masteryData = dto;
 			}
 		}
-		
 		
 		result.initForDummy();
 		result.setDiagnosisQuestionInfo(diagQuestionInfo);
 		
-		saveUKAndEmbedding(userId, tritonResponse);
+		if(embeddingData != null && masteryData != null)
+		{
+			Map<Integer, Float> ukScore = makeUKScore(masteryData);
+			List<List<String>> partScoreList = makePartScore(ukScore);
+			List<List<String>> weakPartDetail = makeWeakPartDetail(ukScore, partScoreList);
+			
+			result.setPartUnderstanding(partScoreList);
+			result.setWeakPartDetail(weakPartDetail);
+			
+			float avg = 0;
+			for(List<String> part : partScoreList)
+			{
+				avg += Float.parseFloat(part.get(2));
+			}
+			
+			result.setScore(Math.round(avg/partScoreList.size()));
+			
+			saveUKAndEmbedding(userId, ukScore, embeddingData);
+		}
 		
 		return result;
 	}
 	
-	private Map<Integer, Float> makeUnderstandingScore(TritonResponseDTO triton)
+	private String calculateUKScoreString(float ukScore)
+	{
+		if(ukScore >= 85.f)
+			return "A";
+		else if(ukScore >= 70.f)
+			return "B";
+		else if(ukScore >= 50.f)
+			return "C";
+		else if(ukScore >= 30.f)
+			return "D";
+		else if(ukScore >= 15.f)
+			return "E";
+		else
+			return "F";
+	}
+	
+	
+	// partScore example ["partname", "C", "50"]
+	private List<List<String>> makeWeakPartDetail(Map<Integer, Float> ukScore, List<List<String>> partScore)
+	{
+		List<List<String>> result = new ArrayList<>();
+		Pair<String, Integer> lowestScorePart = Pair.of("NULL", 100);
+		
+		// check lowest score
+		for(List<String> part : partScore)
+		{
+			String partName = part.get(0);
+			int score = Integer.parseInt(part.get(2));
+			
+			if(lowestScorePart.getSecond() > score)
+				lowestScorePart = Pair.of(partName, score);
+		}
+		
+		// 파트 구불법 필요.
+		String lowScorePartName = lowestScorePart.getFirst();
+		int lowScore = lowestScorePart.getSecond();
+		ukScore.forEach((uuid, score) ->{
+			
+			if( (lowScorePartName.equals("Part 1") && (uuid == 20 || uuid == 13 || uuid == 148))
+				|| ( lowScorePartName.equals("Part 2") && (uuid == 217 || uuid == 254 || uuid == 234 || uuid == 235) ))
+			{
+				// example
+				List<String> partUK = new ArrayList<>();
+				
+				partUK.add("UK "+uuid);
+				partUK.add(calculateUKScoreString(lowScore));
+				partUK.add("C");
+				
+				result.add(partUK);
+			}
+
+		});
+		
+		
+		return result;
+	}
+	
+	private List<List<String>> makePartScore(Map<Integer, Float> ukScore)
+	{
+		List<List<String>> result = new ArrayList<>();
+		Map<String, Pair<Float, Integer>> partInfo = new HashMap<>();
+		
+		
+		// 파트 구분법 필요.
+		ukScore.forEach((ukUuid, score) -> {
+			String partName = "Part 1";
+			if(ukUuid > 150)
+				partName = "Part 2";
+			
+			if(partInfo.get(partName) != null)
+			{
+				Pair<Float, Integer> scoreInfo = partInfo.get(partName);
+				
+				int partNum = scoreInfo.getSecond()+1;
+				float avg = (scoreInfo.getFirst()*scoreInfo.getSecond()+score*100)/(float)partNum;
+				
+				partInfo.put(partName, Pair.of(avg, partNum));
+				
+			}
+			else
+			{
+				Pair<Float, Integer> scoreInfo = Pair.of(score*100, 1);
+				partInfo.put(partName, scoreInfo);
+			}
+	
+		});
+		
+		partInfo.forEach((part, info) ->{
+			List<String> partScore = new ArrayList<>();
+			partScore.add(part);
+			
+			if(info.getFirst() >= 85.f)
+				partScore.add("A");
+			else if(info.getFirst() >= 70.f)
+				partScore.add("B");
+			else if(info.getFirst() >= 50.f)
+				partScore.add("C");
+			else if(info.getFirst() >= 30.f)
+				partScore.add("D");
+			else if(info.getFirst() >= 15.f)
+				partScore.add("E");
+			else
+				partScore.add("F");
+			
+			partScore.add(String.valueOf(Math.round(info.getFirst())));
+			
+			result.add(partScore);
+		});
+		
+		return result;
+	}
+	
+	private Map<Integer, Float> makeUKScore(TritonDataDTO mastery)
 	{
 		Map<Integer, Float> result = new HashMap<Integer, Float>();
 		
-		
+		JsonObject masteryJson = (JsonObject) JsonParser.parseString((String) mastery.getData().get(0));
+
+		masteryJson.keySet().forEach(ukId -> {
+			int ukUuid = Integer.parseInt(ukId);
+			result.put(ukUuid, masteryJson.get(ukId).getAsFloat());	
+		});
 		
 		return result;
 	}
@@ -234,49 +369,36 @@ public class MiniTestReportService {
 		return tritonResponse;
 	}
 	
-	private void saveUKAndEmbedding(String userId, TritonResponseDTO triton)
+	private void saveUKAndEmbedding(String userId, Map<Integer,Float> ukScoreList, TritonDataDTO embedding)
 	{
-		String userEmbedding = null;
-		for(TritonDataDTO dto : triton.getOutputs())
+		String userEmbedding = (String) embedding.getData().get(0);
+		UserEmbedding updateEmbedding = new UserEmbedding();
+		updateEmbedding.setUserUuid(userId);
+		updateEmbedding.setUserEmbedding(userEmbedding);
+		updateEmbedding.setUpdateDate(Timestamp.valueOf(LocalDateTime.now()));
+		logger.info(updateEmbedding.toString());
+		
+		Set<UserKnowledge> userKnowledgeSet = new HashSet<UserKnowledge>();
+		
+		ukScoreList.forEach((ukUuid, score) -> {
+			UserKnowledge userKnowledge = new UserKnowledge();
+			userKnowledge.setUserUuid(userId);
+			userKnowledge.setUkUuid(ukUuid);
+			userKnowledge.setUkId(ukUuid.toString());
+			userKnowledge.setUkMastery(score);
+			userKnowledge.setUpdateDate(Timestamp.valueOf(LocalDateTime.now()));
+			userKnowledgeSet.add(userKnowledge);
+	
+		});
+		
+		try {
+			userEmbeddingRepo.save(updateEmbedding);
+			userKnowledgeRepo.saveAll(userKnowledgeSet);
+		}
+		catch(Exception e)
 		{
-			if(dto.getName().compareTo("Embeddings") == 0)
-			{
-				userEmbedding = (String) dto.getData().get(0);
-				logger.info(userId);
-				logger.info(userEmbedding);
-				UserEmbedding updateEmbedding = new UserEmbedding();
-				updateEmbedding.setUserUuid(userId);
-				updateEmbedding.setUserEmbedding(userEmbedding);
-				updateEmbedding.setUpdateDate(Timestamp.valueOf(LocalDateTime.now()));
-				logger.info(updateEmbedding.toString());
-				userEmbeddingRepo.save(updateEmbedding);
-			}
-			if(dto.getName().compareTo("Mastery") == 0)
-			{
-				try {
-					JsonObject masteryJson = (JsonObject) JsonParser.parseString((String) dto.getData().get(0));
-					Set<UserKnowledge> userKnowledgeSet = new HashSet<UserKnowledge>();
-			
-					masteryJson.keySet().forEach(ukId -> {
-						int ukUuid = Integer.parseInt(ukId);
-						UserKnowledge userKnowledge = new UserKnowledge();
-						userKnowledge.setUserUuid(userId);
-						userKnowledge.setUkUuid(ukUuid);
-						userKnowledge.setUkId(ukId);
-						userKnowledge.setUkMastery(masteryJson.get(ukId).getAsFloat());
-						userKnowledge.setUpdateDate(Timestamp.valueOf(LocalDateTime.now()));
-						userKnowledgeSet.add(userKnowledge);
-				
-					});
-					
-					userKnowledgeRepo.saveAll(userKnowledgeSet);
-				}
-				catch(Exception e)
-				{
-					logger.info(e.toString());
-				}
-			}
-		}		
+			logger.info(e.toString());
+		}	
 	}
 	
 }
