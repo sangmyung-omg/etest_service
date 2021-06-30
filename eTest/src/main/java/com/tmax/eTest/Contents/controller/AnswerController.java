@@ -72,9 +72,6 @@ public class AnswerController {
 			sb.append(body);
 			sb.replace(105,120, "\"isCorrect\":1,");
 			
-			System.out.println(sb.toString());
-
-			
 			Mono<String> response = client.post().body(BodyInserters.fromValue(sb.toString())).retrieve().bodyToMono(String.class);
 			
 			response.subscribe();
@@ -82,7 +79,7 @@ public class AnswerController {
 			return 1;
 		} else {
 			Mono<String> response = client.post().body(BodyInserters.fromValue(lrsbody)).retrieve().bodyToMono(String.class);
-			System.out.println(lrsbody);
+
 			response.subscribe();
 			return 0;
 		}
