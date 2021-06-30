@@ -22,6 +22,8 @@ public class UserKnowledge {
 	private String userUuid;
 
 	@Id
+	private Integer ukUuid;
+	
 	private String ukId;
 	
 	private Float ukMastery;
