@@ -261,10 +261,10 @@ public class MiniTestReportService {
 		{
 			if(state.getIsCorrect() == 1)
 				diagQuestionInfo[0]++;
-			else if(state.getUserAnswer() != "PASS")
-				diagQuestionInfo[1]++;
-			else
+			else if(state.getUserAnswer().equalsIgnoreCase("pass"))
 				diagQuestionInfo[2]++;
+			else
+				diagQuestionInfo[1]++;
 		}
 		
 		return diagQuestionInfo;
