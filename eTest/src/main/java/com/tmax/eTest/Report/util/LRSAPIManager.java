@@ -52,7 +52,7 @@ public class LRSAPIManager {
 //	private static final String HOST = System.getenv("LRS_HOST");
 
 
-	public void getStatementList(GetStatementInfoDTO input) throws ParseException {
+	public List<StatementDTO> getStatementList(GetStatementInfoDTO input) throws ParseException {
 		//Create a http timeout handler
 		HttpClient httpClient = HttpClient.create()
 									.option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 5000)
@@ -80,6 +80,8 @@ public class LRSAPIManager {
 				  .bodyToFlux(StatementDTO.class)
 				  .collectList()
 				  .block();
+		
+		return info;
 	}
 
 
@@ -89,7 +91,7 @@ public class LRSAPIManager {
 	 * @author Jonghyun Seong
 	 * @since 2021-06-16
 	 */
-	public ProblemSolveListDTO getLRSUpdateProblemSequence(String token) {
+	public ProblemSolveListDTO getInfoForMastery(String token) {
 		//Create a http timeout handler
 		HttpClient httpClient = HttpClient.create()
 									.option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 5000)
@@ -124,8 +126,6 @@ public class LRSAPIManager {
 		catch (Throwable e) {
 			logger.warn("LRS return body : " + info.block());
 		}
-		
-		logger.info(result.toString());
 
 		return result;
 	}
