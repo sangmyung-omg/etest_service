@@ -1,26 +1,39 @@
 package com.tmax.eTest.Report.service;
 
+import java.sql.Timestamp;
 import java.text.ParseException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.tmax.eTest.Contents.model.Problem;
 import com.tmax.eTest.Contents.model.ProblemUKRelation;
 import com.tmax.eTest.Contents.repository.ProblemRepository;
 import com.tmax.eTest.Report.dto.MiniTestResultDTO;
 import com.tmax.eTest.Report.dto.lrs.GetStatementInfoDTO;
 import com.tmax.eTest.Report.dto.lrs.StatementDTO;
+import com.tmax.eTest.Report.dto.triton.TritonDataDTO;
 import com.tmax.eTest.Report.dto.triton.TritonRequestDTO;
 import com.tmax.eTest.Report.dto.triton.TritonResponseDTO;
 import com.tmax.eTest.Report.util.LRSAPIManager;
 import com.tmax.eTest.Report.util.TritonAPIManager;
+import com.tmax.eTest.Test.model.UserEmbedding;
+import com.tmax.eTest.Test.model.UserKnowledge;
+import com.tmax.eTest.Test.repository.UserEmbeddingRepository;
+import com.tmax.eTest.Test.repository.UserKnowledgeRepository;
 
 @Service
 public class MiniTestReportService {
@@ -34,7 +47,56 @@ public class MiniTestReportService {
 	@Autowired
 	ProblemRepository problemRepo;
 	
+	@Autowired
+	UserKnowledgeRepository userKnowledgeRepo;
+	
+	@Autowired
+	UserEmbeddingRepository userEmbeddingRepo;
+	
 	private final Logger logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
+	
+
+	public MiniTestResultDTO getMiniTestResult(String userId)
+	{
+		MiniTestResultDTO result = new MiniTestResultDTO();
+		
+		// Mini Test 관련 문제 풀이 정보 획득.
+		List<StatementDTO> miniTestRes = getMiniTestResultInLRS(userId);
+		int diagQuestionInfo[] = calculateDiagQuestionInfo(miniTestRes);
+		List<Problem> probInfos = getProblemInfos(miniTestRes);
+		TritonResponseDTO tritonResponse = getUnderstandingScoreInTriton(miniTestRes, probInfos);
+		TritonDataDTO embeddingData = null;
+		TritonDataDTO masteryData = null;
+		
+		for(TritonDataDTO dto : tritonResponse.getOutputs())
+		{
+			if(dto.getName().equals(""))
+			{
+				
+			}
+			else if(dto.getName().equals(""))
+			{
+				
+			}
+		}
+		
+		
+		result.initForDummy();
+		result.setDiagnosisQuestionInfo(diagQuestionInfo);
+		
+		saveUKAndEmbedding(userId, tritonResponse);
+		
+		return result;
+	}
+	
+	private Map<Integer, Float> makeUnderstandingScore(TritonResponseDTO triton)
+	{
+		Map<Integer, Float> result = new HashMap<Integer, Float>();
+		
+		
+		
+		return result;
+	}
 	
 	private List<StatementDTO> getMiniTestResultInLRS(String userID)
 	{
@@ -43,6 +105,7 @@ public class MiniTestReportService {
 		statementInput.pushUserId(userID);
 		statementInput.pushSourceType("mini_test_question");
 		statementInput.pushSourceType("diagnosis");
+		statementInput.pushSourceType("question");
 		statementInput.pushActionType("submit");
 		
 		try {
@@ -72,18 +135,18 @@ public class MiniTestReportService {
 		return diagQuestionInfo;
 	}
 	
-	private TritonResponseDTO getUnderstandingScoreInTriton(List<StatementDTO> miniTestResult)
+	private List<Problem> getProblemInfos(List<StatementDTO> miniTestResult)
 	{
-		// first process : 문제별 PK 얻어오기.
 		List<Integer> probIdList = new ArrayList<>();
-		Map<Integer, Integer> isCorrectMap = new HashMap<>();
+		List<Problem> probList = new ArrayList<>();
+		
 		for(StatementDTO dto : miniTestResult)
 		{
 			try
 			{
 				int probId = Integer.parseInt(dto.getSourceId());
 				probIdList.add(probId);
-				isCorrectMap.put(probId, dto.getIsCorrect());
+				probList = problemRepo.findAllById(probIdList);
 			}
 			catch(Exception e)
 			{
@@ -93,7 +156,30 @@ public class MiniTestReportService {
 		
 		
 		// problem 관련 정보를 가공하여 TritonInput 화.
-		List<Problem> ukResult =  problemRepo.findAllById(probIdList);
+		return probList;
+	}
+	
+	private TritonResponseDTO getUnderstandingScoreInTriton(
+			List<StatementDTO> miniTestResult,
+			List<Problem> probInfos)
+	{
+		// first process : 문제별 PK 얻어오기.
+		Map<Integer, Integer> isCorrectMap = new HashMap<>();
+		for(StatementDTO dto : miniTestResult)
+		{
+			try
+			{
+				int probId = Integer.parseInt(dto.getSourceId());
+				isCorrectMap.put(probId, dto.getIsCorrect());
+			}
+			catch(Exception e)
+			{
+				logger.info("getUnderstandingScoreInTriton : "+e.toString()+" id : "+dto.getSourceId()+" error!");
+			}
+		}
+		
+		// first process : 문제별 PK 얻어오기.
+		
 		TritonRequestDTO tritonReq = new TritonRequestDTO();
 		
 		tritonReq.initDefault();
@@ -102,12 +188,12 @@ public class MiniTestReportService {
 		List<Object> isCorrectList = new ArrayList<>();
 		List<Object> diffcultyList = new ArrayList<>();
 		
-		for(Problem prob : ukResult)
+		for(Problem prob : probInfos)
 		{
 			List<ProblemUKRelation> probUKRels = prob.getProblemUKReleations();
 			int diff = 1;
 			int isCorrect = isCorrectMap.get(prob.getProbID());
-			
+						
 			switch(prob.getDifficulty())
 			{
 			case "상":
@@ -134,7 +220,7 @@ public class MiniTestReportService {
 		
 		tritonReq.pushInputData("UKList", "INT32", ukList);
 		tritonReq.pushInputData("IsCorrectList", "INT32", isCorrectList);
-		tritonReq.pushInputData("DiffcultyList", "INT32", diffcultyList);
+		tritonReq.pushInputData("DifficultyList", "INT32", diffcultyList);
 		
 		// Triton에 데이터 요청.
 		TritonResponseDTO tritonResponse = null;
@@ -148,19 +234,49 @@ public class MiniTestReportService {
 		return tritonResponse;
 	}
 	
-	public MiniTestResultDTO getMiniTestResult(String userId)
+	private void saveUKAndEmbedding(String userId, TritonResponseDTO triton)
 	{
-		MiniTestResultDTO result = new MiniTestResultDTO();
-		
-		// Mini Test 관련 문제 풀이 정보 획득.
-		List<StatementDTO> miniTestRes = getMiniTestResultInLRS(userId);
-		int diagQuestionInfo[] = calculateDiagQuestionInfo(miniTestRes);
-		TritonResponseDTO tritonResponse = getUnderstandingScoreInTriton(miniTestRes);
-	
-		
-		result.setDiagnosisQuestionInfo(diagQuestionInfo);
-		
-		
-		return result;
+		String userEmbedding = null;
+		for(TritonDataDTO dto : triton.getOutputs())
+		{
+			if(dto.getName().compareTo("Embeddings") == 0)
+			{
+				userEmbedding = (String) dto.getData().get(0);
+				logger.info(userId);
+				logger.info(userEmbedding);
+				UserEmbedding updateEmbedding = new UserEmbedding();
+				updateEmbedding.setUserUuid(userId);
+				updateEmbedding.setUserEmbedding(userEmbedding);
+				updateEmbedding.setUpdateDate(Timestamp.valueOf(LocalDateTime.now()));
+				logger.info(updateEmbedding.toString());
+				userEmbeddingRepo.save(updateEmbedding);
+			}
+			if(dto.getName().compareTo("Mastery") == 0)
+			{
+				try {
+					JsonObject masteryJson = (JsonObject) JsonParser.parseString((String) dto.getData().get(0));
+					Set<UserKnowledge> userKnowledgeSet = new HashSet<UserKnowledge>();
+			
+					masteryJson.keySet().forEach(ukId -> {
+						int ukUuid = Integer.parseInt(ukId);
+						UserKnowledge userKnowledge = new UserKnowledge();
+						userKnowledge.setUserUuid(userId);
+						userKnowledge.setUkUuid(ukUuid);
+						userKnowledge.setUkId(ukId);
+						userKnowledge.setUkMastery(masteryJson.get(ukId).getAsFloat());
+						userKnowledge.setUpdateDate(Timestamp.valueOf(LocalDateTime.now()));
+						userKnowledgeSet.add(userKnowledge);
+				
+					});
+					
+					userKnowledgeRepo.saveAll(userKnowledgeSet);
+				}
+				catch(Exception e)
+				{
+					logger.info(e.toString());
+				}
+			}
+		}		
 	}
+	
 }

@@ -54,8 +54,6 @@ public class TritonAPIManager {
 							.clientConnector(new ReactorClientHttpConnector(httpClient))
 							.build();
 		
-		logger.info(input.toString());
-		
 		TritonResponseDTO tritonResult = null;
 		String payload = null;
 		try {
@@ -65,27 +63,24 @@ public class TritonAPIManager {
         }
 		
 		logger.info(payload);
-		
 		if(payload != null)
 		{
-			logger.info("start info");
-			String info  = webClient.post()
-				  .body(Mono.just(payload), String.class)
-				  .retrieve()
-				  .onStatus(HttpStatus::is4xxClientError, __ -> Mono.error(new Exception("triton 400 error")))
-				  .onStatus(HttpStatus::is5xxServerError, __ -> Mono.error(new Exception("triton 500 error")))
-				  .bodyToMono(String.class)
-				  .block();
-			
 			try {	
-				tritonResult = new ObjectMapper().readValue(info, TritonResponseDTO.class);
+				Mono<String> info  = webClient.post()
+						  .body(Mono.just(payload), String.class)
+						  .retrieve()
+						  .onStatus(HttpStatus::is4xxClientError, __ -> Mono.error(new Exception("triton 400 error")))
+						  .onStatus(HttpStatus::is5xxServerError, __ -> Mono.error(new Exception("triton 500 error")))
+						  .bodyToMono(String.class);
 				
-	        } catch (JsonProcessingException e) {
+				tritonResult = new ObjectMapper().readValue(info.block(), TritonResponseDTO.class);
+				
+	        } catch (Exception e) {
 	            e.printStackTrace();
 	        }
-			return tritonResult;
 		}
-		return null;
+		
+		return tritonResult;
 	}
 
 }

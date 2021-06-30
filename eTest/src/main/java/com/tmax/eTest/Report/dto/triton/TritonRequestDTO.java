@@ -66,6 +66,7 @@ public class TritonRequestDTO {
     	data.setData(dataList);
     	data.setShape(Arrays.asList(dataList.size()));
     	
+    	inputs.add(data);
     }
     
     public void initDefault()
