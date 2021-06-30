@@ -3,6 +3,7 @@ package com.tmax.eTest.Contents.controller;
 import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.StringTokenizer;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -68,9 +69,22 @@ public class AnswerController {
 		
 		if(temp.equals(answer)) {
 			String body = lrsbody;
+			
+//			System.out.println("=================BEFORE TRANSFER=================");
+//			System.out.println(body);
+			
+//			body.replace("\"isCorrect\": 0," , "\"isCorrect\": 1,");
+			
+//			System.out.println(body.lastIndexOf("\"isCorrect\":"));
+//			System.out.println(body.charAt(body.lastIndexOf("\"isCorrect\":")+13));
+
+			
+//			System.out.println("=================AFTER TRANSFER=================");
+//			System.out.println(body);
+			
 			StringBuffer sb = new StringBuffer();
 			sb.append(body);
-			sb.replace(105,120, "\"isCorrect\":1,");
+			sb.replace(67,81, "\"isCorrect\":1,");
 			
 			Mono<String> response = client.post().body(BodyInserters.fromValue(sb.toString())).retrieve().bodyToMono(String.class);
 			
