@@ -155,6 +155,7 @@ public class MiniTestReportService {
 		// Mini Test 관련 문제 풀이 정보 획득.
 		List<StatementDTO> miniTestRes = getMiniTestResultInLRS(userId);
 		int diagQuestionInfo[] = calculateDiagQuestionInfo(miniTestRes);
+		TritonResponseDTO tritonResponse = getUnderstandingScoreInTriton(miniTestRes);
 	
 		
 		result.setDiagnosisQuestionInfo(diagQuestionInfo);
