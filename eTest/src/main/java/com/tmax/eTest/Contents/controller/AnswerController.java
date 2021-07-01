@@ -3,7 +3,6 @@ package com.tmax.eTest.Contents.controller;
 import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.StringTokenizer;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -39,12 +38,8 @@ public class AnswerController {
 		Map<String, Object> data = null;
 		data = answerServices.getProblemSolution(id);
 		String inputString = data.get("solution").toString();
-		
 		String bug = inputString.substring(0,inputString.indexOf(","));
 		String jd = bug.replaceAll("\\[", "");
-		
-		
-
 		String temp = jd.substring(jd.length()-2).replaceAll("\\]", "");
 		
 //		JSONParser parser = new JSONParser();
@@ -64,36 +59,26 @@ public class AnswerController {
 					.defaultHeader(HttpHeaders.CONTENT_TYPE, mediaType.toString())
 				.build();
 		
-		
-		
-		
 		if(temp.equals(answer)) {
 			String body = lrsbody;
-			
-//			System.out.println("=================BEFORE TRANSFER=================");
-//			System.out.println(body);
-			
-//			body.replace("\"isCorrect\": 0," , "\"isCorrect\": 1,");
-			
-//			System.out.println(body.lastIndexOf("\"isCorrect\":"));
-//			System.out.println(body.charAt(body.lastIndexOf("\"isCorrect\":")+13));
+			int end=0;
+			int start = body.lastIndexOf("isCorrect")+8;
+			while(true) {
+				String buf = Character.toString(body.charAt(start));
+				if(buf.equals(",")) {
+					end = start;
+					break;
+				}
+				start++;
+			}
 
-			
-//			System.out.println("=================AFTER TRANSFER=================");
-//			System.out.println(body);
-			
-			StringBuffer sb = new StringBuffer();
-			sb.append(body);
-			sb.replace(67,81, "\"isCorrect\":1,");
-			
-			Mono<String> response = client.post().body(BodyInserters.fromValue(sb.toString())).retrieve().bodyToMono(String.class);
-			
+			StringBuilder changebody = new StringBuilder(body);
+			changebody.setCharAt(end-1, '1');
+			Mono<String> response = client.post().body(BodyInserters.fromValue(changebody.toString())).retrieve().bodyToMono(String.class);
 			response.subscribe();
-			
 			return 1;
 		} else {
 			Mono<String> response = client.post().body(BodyInserters.fromValue(lrsbody)).retrieve().bodyToMono(String.class);
-
 			response.subscribe();
 			return 0;
 		}
@@ -112,30 +97,6 @@ public class AnswerController {
 		}
 		
 		return output;
-	}
-	
-	@PostMapping(value="/test", consumes="application/json", produces = "application/json")
-	public boolean test(
-			@RequestBody String input
-			) 
-	{
-		final String LRSServerURI = "http://192.168.153.132:8080";
-		//header setting try 
-		
-		Charset utf8 = Charset.forName("UTF-8");
-		MediaType mediaType = new MediaType("application", "json", utf8);
-		WebClient client = WebClient
-				.builder()
-					.baseUrl(LRSServerURI + "/SaveStatement")
-					.defaultHeader(HttpHeaders.CONTENT_TYPE, mediaType.toString())
-				.build();
-		
-		Mono<String> response = client.post().body(BodyInserters.fromValue(input)).retrieve().bodyToMono(String.class);
-		
-		response.subscribe();
-
-		
-		return true;
 	}
 
 }
