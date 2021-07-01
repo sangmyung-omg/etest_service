@@ -36,7 +36,7 @@ public class UserInfoService {
 		}
 		
 		user.setUserUuid(user_uuid);
-		user.setUserType("etest_KOFIA");
+		user.setUserType("etest_BetaTest");
 		
 		userRepository.save(user);
 		
