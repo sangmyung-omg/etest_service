@@ -13,6 +13,7 @@ import com.tmax.eTest.Report.dto.DiagnosisResultDTO;
 import com.tmax.eTest.Report.dto.PartUnderstandingDTO;
 import com.tmax.eTest.Report.service.SelfDiagnosisReportService;
 import com.tmax.eTest.Report.util.LRSAPIManager;
+import com.tmax.eTest.Test.service.UserInfoService;
 
 @RestController
 public class SelfDiagnosisReportController {
@@ -20,10 +21,18 @@ public class SelfDiagnosisReportController {
 	@Autowired
 	SelfDiagnosisReportService selfDiagnosisReportService;
 	
+	@Autowired
+	UserInfoService userService;
+	
 	@CrossOrigin("*")
 	@GetMapping(value="/report/diagnosisResult/{id}", produces = "application/json; charset=utf-8")
 	public DiagnosisResultDTO diagnosisResult(
 			@PathVariable("id") String id) throws Exception{
+		
+		// Saving user ID of not-logged-in users - by S.M.
+		String queryResult = userService.updateUserInfo(id);
+		// ------------------------------------------------
+		
 		DiagnosisResultDTO output = selfDiagnosisReportService.calculateDiagnosisResult(id);
 		
 		return output;

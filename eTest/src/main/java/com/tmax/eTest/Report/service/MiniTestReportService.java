@@ -383,8 +383,7 @@ public class MiniTestReportService {
 		ukScoreList.forEach((ukUuid, score) -> {
 			UserKnowledge userKnowledge = new UserKnowledge();
 			userKnowledge.setUserUuid(userId);
-			userKnowledge.setUkUuid(ukUuid);
-			userKnowledge.setUkId(ukUuid.toString());
+			userKnowledge.setUkId(ukUuid);
 			userKnowledge.setUkMastery(score);
 			userKnowledge.setUpdateDate(Timestamp.valueOf(LocalDateTime.now()));
 			userKnowledgeSet.add(userKnowledge);
