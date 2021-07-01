@@ -22,9 +22,9 @@ public class UserKnowledge {
 	private String userUuid;
 
 	@Id
-	private Integer ukUuid;
+	private Integer ukId;
 	
-	private String ukId;
+//	private String ukId;
 	
 	private Float ukMastery;
 	private Timestamp updateDate;
