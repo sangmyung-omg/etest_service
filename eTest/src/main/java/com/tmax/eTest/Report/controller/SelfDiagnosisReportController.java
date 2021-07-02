@@ -30,7 +30,7 @@ public class SelfDiagnosisReportController {
 			@PathVariable("id") String id) throws Exception{
 		
 		// Saving user ID of not-logged-in users - by S.M.
-		//String queryResult = userService.updateUserInfo(id);
+		String queryResult = userService.updateUserInfo(id);
 		// ------------------------------------------------
 		
 		DiagnosisResultDTO output = selfDiagnosisReportService.calculateDiagnosisResult(id);

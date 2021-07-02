@@ -9,14 +9,15 @@ import org.springframework.stereotype.Component;
 public class SelfDiagnosisComment {
 
 	String[] finalResultComment ={
-		"하하하",
-		"하하상",
-		"하상하",
-		"하상상",
-		"상하하",
-		"상하상",
-		"상상하",
-		"상상상"
+		"하하하",	"하하중",	"하하상",
+		"하중하",	"하중중",	"하중상",
+		"하상하",	"하상중",	"하상상",
+		"중하하",	"중하중",	"중하상",
+		"중중하",	"중중중",	"중중상",
+		"중상하",	"중상중",	"중상상",
+		"상하하",	"상하중",	"상하상",
+		"상중하",	"상중중",	"상중상",
+		"상상하",	"상상중",	"상상상",
 	};
 	
 	String[] riskDiagnosisComment = {
@@ -37,14 +38,17 @@ public class SelfDiagnosisComment {
 		"리스크 성향, 감내역량 충족"		
 	};
 	
-	
-	String getFinalResultComment(int riskScore, int cogScore, int ukMasteryScore)
+	// 모두 트리톤을 타지 않고 나오는 점수들. (단순 알고리즘으로 나오는 점수)
+	// 위험 적합도 = riskScore
+	// 투자 결정 적합도 = investDecisionScore
+	// 지식 이해도 = knowledgeScore
+	String getFinalResultComment(int riskScore, int investDecisionScore, int knowledgeScore)
 	{
 		int idx = 0;
 		
-		idx += riskScore >= 65 ? 4 : 0;
-		idx += cogScore >= 65 ? 2 : 0;
-		idx += ukMasteryScore >= 60 ? 1 : 0;
+		idx += riskScore >= 75 ? 18 : riskScore >= 55 ? 9 : 0;
+		idx += investDecisionScore >= 75 ? 6 : riskScore >= 55 ? 3 : 0;
+		idx += knowledgeScore >= 70 ? 2 : knowledgeScore >= 50 ? 1 : 0;
 		
 		return finalResultComment[idx];
 	}

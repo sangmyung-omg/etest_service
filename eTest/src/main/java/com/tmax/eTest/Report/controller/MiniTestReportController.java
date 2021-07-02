@@ -28,7 +28,7 @@ public class MiniTestReportController {
 	public MiniTestResultDTO miniTestResult(@PathVariable("id") String id) throws Exception{
 		
 		// Saving user ID of not-logged-in users - by S.M.
-		//String updateResult = userService.updateUserInfo(id);
+		String updateResult = userService.updateUserInfo(id);
 		// ------------------------------------------------
 		
 		MiniTestResultDTO output = miniTestReportService.getMiniTestResult(id);
