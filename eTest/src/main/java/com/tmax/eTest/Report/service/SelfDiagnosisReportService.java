@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.tmax.eTest.Report.dto.DiagnosisResultDTO;
+import com.tmax.eTest.Report.dto.PartUnderstandingDTO;
 import com.tmax.eTest.Report.dto.lrs.GetStatementInfoDTO;
 import com.tmax.eTest.Report.dto.lrs.StatementDTO;
 import com.tmax.eTest.Report.dto.triton.TritonRequestDTO;
@@ -33,6 +34,13 @@ public class SelfDiagnosisReportService {
 		result.initForDummy();
 		
 		return result;
+	}
+	
+	public PartUnderstandingDTO getPartInfo(String id, String partName)
+	{
+		PartUnderstandingDTO res = new PartUnderstandingDTO();
+		
+		return res;
 	}
 	
 	private List<StatementDTO> getStatementInSelfDiagnosis(String id)

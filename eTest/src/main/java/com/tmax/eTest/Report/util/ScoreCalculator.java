@@ -20,9 +20,32 @@ public class ScoreCalculator {
 	final static String INVEST_RULE_SCORE_KEY = "투자원칙점수";
 	final static String COGNITIVE_BIAS_SCORE_KEY = "인지편향점수";
 	final static String DECISION_MAKING_SCORE_KEY = "의사결정적합도점수";
+	final static String[] SELF_DIAGNOSIS_TYPE = {
+		"AFB", // 공격적 / 감정적 / 초보자
+		"AFE", // 공격적 / 감정적 / 전문가
+		"ALB", // 공격적 / 논리적 / 초보자
+		"ALE", // 공격적 / 논리적 / 전문가
+		"SFB", // 보수적 / 감정적 / 초보자
+		"SFE", // 보수적 / 감정적 / 전문가
+		"SLB", // 보수적 / 논리적 / 초보자
+		"SLE"  // 보수적 / 논리적 / 전문가
+	};
 	
+	public String makeSelfDiagType(
+			int riskFidelityScore, 
+			int decisionMakingScore, 
+			int investKnowledgeScore)
+	{
+		int idx = 0;
+		
+		idx += riskFidelityScore < 65 ? 4 : 0;
+		idx += decisionMakingScore >= 65 ? 2 : 0;
+		idx += investKnowledgeScore >= 60 ? 1 : 0;
+		
+		return SELF_DIAGNOSIS_TYPE[idx];
+	}
 
-	// result = [투자현황 합계, 리스크 점수 합계, 위험 적합도 점수]
+	// result = [리스크점수, 투자현황점수, 위험적합도점수]
 	public Map<String, Integer> calculateRiskFidelityScore(List<Problem> investConditionProbList, 
 			List<Pair<Integer, Integer>> investCondAnswerList,
 			List<Problem> riskProbList,
@@ -56,7 +79,7 @@ public class ScoreCalculator {
 		return res;
 	}
 	
-	// result = [투자현황 합계, 리스크 점수 합계, 위험 적합도 점수]
+	// result = [투자원칙점수, 인지편향점수, 의사결정적합도점수]
 	public Map<String, Integer> calculateDecisionMakingScore(List<Problem> investRuleProbList, 
 			List<Pair<Integer, Integer>> investRuleAnswerList,
 			List<Problem> cognitiveBiasProbList,
@@ -87,6 +110,12 @@ public class ScoreCalculator {
 		res.put(DECISION_MAKING_SCORE_KEY, decisionMakingScore);
 		
 		return res;
+	}
+	
+	public int calculateInvestKnowledgeScore(List<Problem> investKnowledgeProbList, 
+			List<Pair<Integer, Integer>> investKnowledgeAnswerList)
+	{
+		return makeScore(investKnowledgeProbList, investKnowledgeAnswerList);
 	}
 	
 

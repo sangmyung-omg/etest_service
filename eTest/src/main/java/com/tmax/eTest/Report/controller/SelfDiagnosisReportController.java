@@ -44,8 +44,7 @@ public class SelfDiagnosisReportController {
 			@PathVariable("id") String id,
 			@PathVariable("part") String part) throws Exception{
 		
-		PartUnderstandingDTO output = new PartUnderstandingDTO();
-		output.initForDummy();
+		PartUnderstandingDTO output = selfDiagnosisReportService.getPartInfo(id, part);
 
 		return output;
 	}
