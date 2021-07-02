@@ -61,7 +61,7 @@ public class MiniTestReportService {
 		// Mini Test 관련 문제 풀이 정보 획득.
 		List<StatementDTO> miniTestRes = getMiniTestResultInLRS(userId);
 		List<Problem> probInfos = getProblemInfos(miniTestRes);
-		Map<String, Object> probInfoForTriton = stateAndProbProcess.makeInfoForTriton(miniTestRes, probInfos);
+		Map<String, List<Object>> probInfoForTriton = stateAndProbProcess.makeInfoForTriton(miniTestRes, probInfos);
 		TritonResponseDTO tritonResponse = getUnderstandingScoreInTriton(probInfoForTriton);
 
 		TritonDataDTO embeddingData = null;
@@ -79,13 +79,11 @@ public class MiniTestReportService {
 		result.setDiagnosisQuestionInfo(diagQuestionInfo);
 
 		if (embeddingData != null && masteryData != null) {
-			@SuppressWarnings("unchecked")
-			Map<Integer, UkMaster> ukMap = (Map<Integer, UkMaster>) probInfoForTriton
-					.get(stateAndProbProcess.UK_MAP_KEY);
+			Map<Integer, UkMaster> usedUkMap =stateAndProbProcess.makeUsedUkMap(probInfos);
 
 			Map<Integer, Float> ukScoreMap = scoreCalculator.makeUKScoreMap(masteryData);
-			List<List<String>> partScoreList = scoreCalculator.makePartScore(ukMap, ukScoreMap);
-			List<List<String>> weakPartDetail = scoreCalculator.makeWeakPartDetail(ukMap, ukScoreMap, partScoreList);
+			List<List<String>> partScoreList = scoreCalculator.makePartScore(usedUkMap, ukScoreMap);
+			List<List<String>> weakPartDetail = scoreCalculator.makeWeakPartDetail(usedUkMap, ukScoreMap, partScoreList);
 
 			result.setPartUnderstanding(partScoreList);
 			result.setWeakPartDetail(weakPartDetail);
@@ -132,7 +130,7 @@ public class MiniTestReportService {
 				probList = problemRepo.findAllById(probIdList);
 			} catch (Exception e) {
 				logger.info(
-						"getUnderstandingScoreInTriton : " + e.toString() + " id : " + dto.getSourceId() + " error!");
+					"getProblemInfos : " + e.toString() + " id : " + dto.getSourceId() + " error!");
 			}
 		}
 
@@ -140,8 +138,7 @@ public class MiniTestReportService {
 		return probList;
 	}
 
-	@SuppressWarnings("unchecked")
-	private TritonResponseDTO getUnderstandingScoreInTriton(Map<String, Object> probInfoForTriton) {
+	private TritonResponseDTO getUnderstandingScoreInTriton(Map<String, List<Object>> probInfoForTriton) {
 		// first process : 문제별 PK 얻어오기.
 
 		TritonRequestDTO tritonReq = new TritonRequestDTO();
@@ -149,11 +146,11 @@ public class MiniTestReportService {
 		tritonReq.initDefault();
 
 		tritonReq.pushInputData("UKList", "INT32",
-				(List<Object>) probInfoForTriton.get(stateAndProbProcess.UK_LIST_KEY));
+				probInfoForTriton.get(stateAndProbProcess.UK_LIST_KEY));
 		tritonReq.pushInputData("IsCorrectList", "INT32",
-				(List<Object>) probInfoForTriton.get(stateAndProbProcess.IS_CORRECT_LIST_KEY));
+				probInfoForTriton.get(stateAndProbProcess.IS_CORRECT_LIST_KEY));
 		tritonReq.pushInputData("DifficultyList", "INT32",
-				(List<Object>) probInfoForTriton.get(stateAndProbProcess.DIFF_LIST_KEY));
+				probInfoForTriton.get(stateAndProbProcess.DIFF_LIST_KEY));
 
 		// Triton에 데이터 요청.
 		TritonResponseDTO tritonResponse = null;

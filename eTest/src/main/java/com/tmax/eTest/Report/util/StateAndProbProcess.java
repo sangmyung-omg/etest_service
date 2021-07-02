@@ -20,7 +20,6 @@ public class StateAndProbProcess {
 	
 	private final Logger logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
 	
-	public final String UK_MAP_KEY = "ukMap";		// Map<Integer, UKMaster>
 	public final String UK_LIST_KEY = "ukList";			// List<String>
 	public final String IS_CORRECT_LIST_KEY = "isCorrectList";// List<String>
 	public final String DIFF_LIST_KEY = "diffcultyList";	// List<String>
@@ -43,17 +42,35 @@ public class StateAndProbProcess {
 		return diagQuestionInfo;
 	}
 	
+	public Map<Integer, UkMaster> makeUsedUkMap(List<Problem> probInfos)
+	{
+		Map<Integer, UkMaster> res = new HashMap<>();
+		
+		for(Problem prob : probInfos)
+		{
+			List<ProblemUKRelation> probUKRels = prob.getProblemUKReleations();
+			
+			for(ProblemUKRelation probUKRel : probUKRels)
+			{
+				int ukId = Integer.parseInt(probUKRel.getUkId().getUkId());
+				res.put(ukId, probUKRel.getUkId());
+			}
+		}
+		
+		return res;
+		
+	}
 	
-	public Map<String, Object> makeInfoForTriton(
+	
+	public Map<String, List<Object>> makeInfoForTriton(
 			List<StatementDTO> miniTestResult,
 			List<Problem> probInfos)
 	{
-		Map<String, Object> result = new HashMap<>();
+		Map<String, List<Object>> result = new HashMap<>();
 		
 		List<Object> ukList = new ArrayList<>();
 		List<Object> isCorrectList = new ArrayList<>();
 		List<Object> diffcultyList = new ArrayList<>();
-		Map<Integer, UkMaster> ukMap = new HashMap<>();
 		
 		// first process : 문제별 PK 얻어오기.
 		Map<Integer, Integer> isCorrectMap = new HashMap<>();
@@ -66,7 +83,7 @@ public class StateAndProbProcess {
 			}
 			catch(Exception e)
 			{
-				logger.info("getUnderstandingScoreInTriton : "+e.toString()+" id : "+dto.getSourceId()+" error!");
+				logger.info("makeInfoForTriton : "+e.toString()+" id : "+dto.getSourceId()+" error!");
 			}
 		}
 		
@@ -97,14 +114,12 @@ public class StateAndProbProcess {
 				ukList.add(ukId);
 				isCorrectList.add(isCorrect);
 				diffcultyList.add(diff);
-				ukMap.put(ukId, probUKRel.getUkId());
 			}
 		}
 				
 		result.put(UK_LIST_KEY, ukList);
 		result.put(IS_CORRECT_LIST_KEY, isCorrectList);
 		result.put(DIFF_LIST_KEY, diffcultyList);
-		result.put(UK_MAP_KEY, ukMap);
 		
 		return result;
 	}
