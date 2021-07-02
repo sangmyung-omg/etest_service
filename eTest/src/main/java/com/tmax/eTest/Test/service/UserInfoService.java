@@ -18,7 +18,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import com.tmax.eTest.Test.model.DiagnosisReport;
+import com.tmax.eTest.Test.model.MinitestReport;
 import com.tmax.eTest.Test.model.UserMaster;
+import com.tmax.eTest.Test.repository.DiagnosisReportRepo;
+import com.tmax.eTest.Test.repository.MinitestReportRepo;
 import com.tmax.eTest.Test.repository.UserRepository;
 
 @Service
@@ -27,6 +31,12 @@ public class UserInfoService {
 
 	@Autowired
 	private UserRepository userRepository;
+	
+	@Autowired
+	private DiagnosisReportRepo diagReportRepo;
+	
+	@Autowired
+	private MinitestReportRepo miniReportRepo;
 
 	public String updateUserInfo(String user_uuid) {
 		UserMaster user = new UserMaster();
@@ -41,6 +51,24 @@ public class UserInfoService {
 		userRepository.save(user);
 		
 		logger.info("Successfully updated user ID");
+		return "Successfully updated";
+	}
+	
+	public String updateDiagnosisReportValues(DiagnosisReport dto) {
+		if (dto.getUserUuid() == null || dto.getUserUuid().equalsIgnoreCase("")) {
+			logger.info("No user ID. Updating report info is not occurred.");
+			return "No user ID";
+		}
+		diagReportRepo.save(dto);
+		return "Successfully updated";
+	}
+	
+	public String updateMinitestReportValues(MinitestReport dto) {
+		if (dto.getUserUuid() == null || dto.getUserUuid().equalsIgnoreCase("")) {
+			logger.info("No user ID. Updating report info is not occurred.");
+			return "No user ID";
+		}
+		miniReportRepo.save(dto);
 		return "Successfully updated";
 	}
 }
