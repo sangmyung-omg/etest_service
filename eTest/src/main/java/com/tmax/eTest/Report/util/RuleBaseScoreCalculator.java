@@ -12,7 +12,8 @@ import com.tmax.eTest.Contents.model.Problem;
 import com.tmax.eTest.Contents.model.ProblemChoice;
 
 @Component
-public class ScoreCalculator {
+// Rule Base 점수, Triton 점수 관련 Method 집합 Class
+public class RuleBaseScoreCalculator {
 
 	final static String RISK_SCORE_KEY = "리스크점수";
 	final static String INVEST_COND_SCORE_KEY = "투자현황점수";
@@ -93,6 +94,22 @@ public class ScoreCalculator {
 			List<Pair<Integer, Integer>> investKnowledgeAnswerList) {
 		return makeScore(investKnowledgeProbList, investKnowledgeAnswerList);
 	}
+	
+	public String calculateUKScoreString(float ukScore)
+	{
+		if(ukScore >= 85.f)
+			return "A";
+		else if(ukScore >= 70.f)
+			return "B";
+		else if(ukScore >= 50.f)
+			return "C";
+		else if(ukScore >= 30.f)
+			return "D";
+		else if(ukScore >= 15.f)
+			return "E";
+		else
+			return "F";
+	}
 
 	private int makeScore(List<Problem> probList, List<Pair<Integer, Integer>> answerList) {
 		int res = 0;
@@ -120,4 +137,7 @@ public class ScoreCalculator {
 		return res;
 	}
 
+	
+	
+	
 }
