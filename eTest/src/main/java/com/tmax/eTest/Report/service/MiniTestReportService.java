@@ -4,7 +4,6 @@ import java.sql.Timestamp;
 import java.text.ParseException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -13,15 +12,9 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import com.tmax.eTest.Contents.model.Problem;
-import com.tmax.eTest.Contents.model.ProblemUKRelation;
 import com.tmax.eTest.Contents.repository.ProblemRepository;
 import com.tmax.eTest.Report.dto.MiniTestResultDTO;
 import com.tmax.eTest.Report.dto.lrs.GetStatementInfoDTO;
@@ -30,9 +23,9 @@ import com.tmax.eTest.Report.dto.triton.TritonDataDTO;
 import com.tmax.eTest.Report.dto.triton.TritonRequestDTO;
 import com.tmax.eTest.Report.dto.triton.TritonResponseDTO;
 import com.tmax.eTest.Report.util.LRSAPIManager;
-import com.tmax.eTest.Report.util.RuleBaseScoreCalculator;
 import com.tmax.eTest.Report.util.StateAndProbProcess;
 import com.tmax.eTest.Report.util.TritonAPIManager;
+import com.tmax.eTest.Report.util.UKScoreCalculator;
 import com.tmax.eTest.Test.model.UkMaster;
 import com.tmax.eTest.Test.model.UserEmbedding;
 import com.tmax.eTest.Test.model.UserKnowledge;
@@ -50,7 +43,7 @@ public class MiniTestReportService {
 	@Autowired
 	StateAndProbProcess stateAndProbProcess;
 	@Autowired
-	RuleBaseScoreCalculator scoreCalculator;
+	UKScoreCalculator scoreCalculator;
 
 	@Autowired
 	ProblemRepository problemRepo;
@@ -90,9 +83,9 @@ public class MiniTestReportService {
 			Map<Integer, UkMaster> ukMap = (Map<Integer, UkMaster>) probInfoForTriton
 					.get(stateAndProbProcess.UK_MAP_KEY);
 
-			Map<Integer, Float> ukScore = makeUKScore(masteryData);
-			List<List<String>> partScoreList = makePartScore(ukMap, ukScore);
-			List<List<String>> weakPartDetail = makeWeakPartDetail(ukMap, ukScore, partScoreList);
+			Map<Integer, Float> ukScoreMap = scoreCalculator.makeUKScoreMap(masteryData);
+			List<List<String>> partScoreList = scoreCalculator.makePartScore(ukMap, ukScoreMap);
+			List<List<String>> weakPartDetail = scoreCalculator.makeWeakPartDetail(ukMap, ukScoreMap, partScoreList);
 
 			result.setPartUnderstanding(partScoreList);
 			result.setWeakPartDetail(weakPartDetail);
@@ -104,115 +97,12 @@ public class MiniTestReportService {
 
 			result.setScore(Math.round(avg / partScoreList.size()));
 
-			saveUKAndEmbedding(userId, ukScore, embeddingData);
+			saveUserUKInfo(userId, ukScoreMap);
 		}
 
 		return result;
 	}
 
-	// partScore example ["partname", "C", "50"]
-	private List<List<String>> makeWeakPartDetail(
-			Map<Integer, UkMaster> ukMap, 
-			Map<Integer, Float> ukScore, 
-			List<List<String>> partScore) {
-		
-		List<List<String>> result = new ArrayList<>();
-		Pair<String, Integer> lowestScorePart = Pair.of("NULL", 100);
-
-		// check lowest score
-		for (List<String> part : partScore) {
-			String partName = part.get(0);
-			int score = Integer.parseInt(part.get(2));
-
-			if (lowestScorePart.getSecond() > score)
-				lowestScorePart = Pair.of(partName, score);
-		}
-
-		// 파트 구불법 필요.
-		String lowScorePartName = lowestScorePart.getFirst();
-		ukScore.forEach((ukId, score) -> {
-			UkMaster recentUK = ukMap.get(ukId);
-			if (recentUK != null 
-				&& lowScorePartName.equals(recentUK.getPart())) {
-				// example
-				List<String> partUK = new ArrayList<>();
-
-				partUK.add(recentUK.getUkName());
-				//partUK.add(ukScore.get(ukId).toString());
-				partUK.add(scoreCalculator.calculateUKScoreString(ukScore.get(ukId) * 100));
-				partUK.add("C");
-
-				result.add(partUK);
-			}
-
-		});
-
-		return result;
-	}
-
-	private List<List<String>> makePartScore(Map<Integer, UkMaster> ukMap, Map<Integer, Float> ukScore) {
-		List<List<String>> result = new ArrayList<>();
-		Map<String, Pair<Float, Integer>> partInfo = new HashMap<>();
-
-		// 파트 구분법 필요.
-		ukScore.forEach((ukUuid, score) -> {
-			UkMaster ukInfo = ukMap.get(ukUuid);
-			if (ukInfo != null) {
-				String partName = ukInfo.getPart();
-
-				if (partInfo.get(partName) != null) {
-					Pair<Float, Integer> scoreInfo = partInfo.get(partName);
-
-					int partNum = scoreInfo.getSecond() + 1;
-					float avg = (scoreInfo.getFirst() * scoreInfo.getSecond() + score * 100) / (float) partNum;
-
-					partInfo.put(partName, Pair.of(avg, partNum));
-
-				} else {
-					Pair<Float, Integer> scoreInfo = Pair.of(score * 100, 1);
-					partInfo.put(partName, scoreInfo);
-				}
-			}
-
-		});
-
-		partInfo.forEach((part, info) -> {
-			List<String> partScore = new ArrayList<>();
-			partScore.add(part);
-
-			if (info.getFirst() >= 85.f)
-				partScore.add("A");
-			else if (info.getFirst() >= 70.f)
-				partScore.add("B");
-			else if (info.getFirst() >= 50.f)
-				partScore.add("C");
-			else if (info.getFirst() >= 30.f)
-				partScore.add("D");
-			else if (info.getFirst() >= 15.f)
-				partScore.add("E");
-			else
-				partScore.add("F");
-
-			partScore.add(String.valueOf(Math.round(info.getFirst())));
-
-			result.add(partScore);
-		});
-
-		return result;
-	}
-
-	private Map<Integer, Float> makeUKScore(TritonDataDTO mastery) {
-		Map<Integer, Float> result = new HashMap<Integer, Float>();
-
-		JsonObject masteryJson = (JsonObject) JsonParser.parseString((String) mastery.getData().get(0));
-
-		masteryJson.keySet().forEach(ukId -> {
-			int ukUuid = Integer.parseInt(ukId);
-			result.put(ukUuid, masteryJson.get(ukId).getAsFloat());
-		});
-
-		return result;
-	}
 
 	private List<StatementDTO> getMiniTestResultInLRS(String userID) {
 		List<StatementDTO> result = new ArrayList<>();
@@ -276,14 +166,8 @@ public class MiniTestReportService {
 
 		return tritonResponse;
 	}
-
-	private void saveUKAndEmbedding(String userId, Map<Integer, Float> ukScoreList, TritonDataDTO embedding) {
-//		String userEmbedding = (String) embedding.getData().get(0);
-//		UserEmbedding updateEmbedding = new UserEmbedding();
-//		updateEmbedding.setUserUuid(userId);
-//		updateEmbedding.setUserEmbedding(userEmbedding);
-//		updateEmbedding.setUpdateDate(Timestamp.valueOf(LocalDateTime.now()));
-//		logger.info(updateEmbedding.toString());
+	
+	private void saveUserUKInfo(String userId, Map<Integer, Float> ukScoreList) {
 
 		Set<UserKnowledge> userKnowledgeSet = new HashSet<UserKnowledge>();
 
@@ -298,11 +182,28 @@ public class MiniTestReportService {
 		});
 
 		try {
-			// userEmbeddingRepo.save(updateEmbedding);
 			userKnowledgeRepo.saveAll(userKnowledgeSet);
 		} catch (Exception e) {
 			logger.info(e.toString());
 		}
 	}
+	
+	private void saveUserEmbeddingInfo(String userId, TritonDataDTO embedding)
+	{
+		String userEmbedding = (String) embedding.getData().get(0);
+		UserEmbedding updateEmbedding = new UserEmbedding();
+		updateEmbedding.setUserUuid(userId);
+		updateEmbedding.setUserEmbedding(userEmbedding);
+		updateEmbedding.setUpdateDate(Timestamp.valueOf(LocalDateTime.now()));
+		logger.info(updateEmbedding.toString());
+		
+		try {
+			userEmbeddingRepo.save(updateEmbedding);
+		} catch (Exception e) {
+			logger.info(e.toString());
+		}
+	}
+
+	
 
 }

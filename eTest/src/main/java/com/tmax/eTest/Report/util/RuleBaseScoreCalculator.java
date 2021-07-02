@@ -95,22 +95,6 @@ public class RuleBaseScoreCalculator {
 		return makeScore(investKnowledgeProbList, investKnowledgeAnswerList);
 	}
 	
-	public String calculateUKScoreString(float ukScore)
-	{
-		if(ukScore >= 85.f)
-			return "A";
-		else if(ukScore >= 70.f)
-			return "B";
-		else if(ukScore >= 50.f)
-			return "C";
-		else if(ukScore >= 30.f)
-			return "D";
-		else if(ukScore >= 15.f)
-			return "E";
-		else
-			return "F";
-	}
-
 	private int makeScore(List<Problem> probList, List<Pair<Integer, Integer>> answerList) {
 		int res = 0;
 
