@@ -25,6 +25,32 @@ public class DiagnosisResultDTO {
 	
 	Map<String, Integer> partDiagnosisResult = new HashMap<String, Integer>();
 	List<String> diagnosisDescription = new ArrayList<>();
+	List<List<String>> strongPartInfo = new ArrayList<>();
+	List<List<String>> weakPartInfo = new ArrayList<>();
+	List<String> similarTypeInfo = new ArrayList<>();
+	
+	
+	public boolean pushStrongPartInfo(String partName, String partDescription, int score)
+	{
+		List<String> partInfo = new ArrayList<>();
+		
+		partInfo.add(partName);
+		partInfo.add(partDescription);
+		partInfo.add(String.valueOf(score));
+		
+		return strongPartInfo.add(partInfo);
+	}
+	
+	public boolean pushWeakPartInfo(String partName, String partDescription, int score)
+	{
+		List<String> partInfo = new ArrayList<>();
+		
+		partInfo.add(partName);
+		partInfo.add(partDescription);
+		partInfo.add(String.valueOf(score));
+		
+		return weakPartInfo.add(partInfo);
+	}
 	
 	public boolean initForDummy() {
 		giScore = 63;
@@ -40,6 +66,16 @@ public class DiagnosisResultDTO {
 		diagnosisDescription.add("더미 테스트 1");
 		diagnosisDescription.add("더미 테스트 2");
 		diagnosisDescription.add("더미 테스트 3");		
+		
+		pushStrongPartInfo("Part 1", "Part 1 영역에서 상대적으로 높은 이해도를 갖고 있습니다.", 75);
+		pushStrongPartInfo("Part 3", "Part 3 영역에서 상대적으로 높은 이해도를 갖고 있습니다.", 75);
+		pushWeakPartInfo("Part 2", "Part 2는 더 많은 이해가 필요해 보입니다. AI가 학습 컨텐츠를 추천해드립니다.", 25);
+		pushWeakPartInfo("Part 4", "Part 4는 더 많은 이해가 필요해 보입니다. AI가 학습 컨텐츠를 추천해드립니다.", 25);
+		
+		similarTypeInfo.add("15%");
+		similarTypeInfo.add("5종목");
+		similarTypeInfo.add("40%");
+		
 		
 		return true;
 	}
