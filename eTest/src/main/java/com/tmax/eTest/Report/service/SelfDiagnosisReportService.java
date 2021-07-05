@@ -66,7 +66,7 @@ public class SelfDiagnosisReportService {
 		
 		
 		result.initForDummy();
-		
+				
 		result.setPartDiagnosisResult(scoreMap);
 		result.setGiScore(scoreMap.get("GI점수"));
 		
