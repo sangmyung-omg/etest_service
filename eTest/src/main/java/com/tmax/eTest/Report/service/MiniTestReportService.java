@@ -67,37 +67,39 @@ public class MiniTestReportService {
 		TritonDataDTO embeddingData = null;
 		TritonDataDTO masteryData = null;
 
-		for (TritonDataDTO dto : tritonResponse.getOutputs()) {
-			if (dto.getName().equals("Embeddings")) {
-				embeddingData = dto;
-			} else if (dto.getName().equals("Mastery")) {
-				masteryData = dto;
+		if(tritonResponse != null)
+		{
+			for (TritonDataDTO dto : tritonResponse.getOutputs()) {
+				if (dto.getName().equals("Embeddings")) {
+					embeddingData = dto;
+				} else if (dto.getName().equals("Mastery")) {
+					masteryData = dto;
+				}
+			}
+	
+			int diagQuestionInfo[] = stateAndProbProcess.calculateDiagQuestionInfo(miniTestRes);
+			result.setDiagnosisQuestionInfo(diagQuestionInfo);
+	
+			if (embeddingData != null && masteryData != null) {
+				Map<Integer, UkMaster> usedUkMap =stateAndProbProcess.makeUsedUkMap(probInfos);
+	
+				Map<Integer, Float> ukScoreMap = scoreCalculator.makeUKScoreMap(masteryData);
+				List<List<String>> partScoreList = scoreCalculator.makePartScore(usedUkMap, ukScoreMap);
+				List<List<String>> weakPartDetail = scoreCalculator.makeWeakPartDetail(usedUkMap, ukScoreMap, partScoreList);
+	
+				result.setPartUnderstanding(partScoreList);
+				result.setWeakPartDetail(weakPartDetail);
+	
+				float avg = 0;
+				for (List<String> part : partScoreList) {
+					avg += Float.parseFloat(part.get(2));
+				}
+	
+				result.setScore(Math.round(avg / partScoreList.size()));
+	
+				saveUserUKInfo(userId, ukScoreMap);
 			}
 		}
-
-		int diagQuestionInfo[] = stateAndProbProcess.calculateDiagQuestionInfo(miniTestRes);
-		result.setDiagnosisQuestionInfo(diagQuestionInfo);
-
-		if (embeddingData != null && masteryData != null) {
-			Map<Integer, UkMaster> usedUkMap =stateAndProbProcess.makeUsedUkMap(probInfos);
-
-			Map<Integer, Float> ukScoreMap = scoreCalculator.makeUKScoreMap(masteryData);
-			List<List<String>> partScoreList = scoreCalculator.makePartScore(usedUkMap, ukScoreMap);
-			List<List<String>> weakPartDetail = scoreCalculator.makeWeakPartDetail(usedUkMap, ukScoreMap, partScoreList);
-
-			result.setPartUnderstanding(partScoreList);
-			result.setWeakPartDetail(weakPartDetail);
-
-			float avg = 0;
-			for (List<String> part : partScoreList) {
-				avg += Float.parseFloat(part.get(2));
-			}
-
-			result.setScore(Math.round(avg / partScoreList.size()));
-
-			saveUserUKInfo(userId, ukScoreMap);
-		}
-
 		return result;
 	}
 
