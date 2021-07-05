@@ -73,7 +73,7 @@ public class SelfDiagnosisReportService {
 		partRes.put(RuleBaseScoreCalculator.INVEST_KNOWLEDGE_KEY, 
 				scoreMap.get(RuleBaseScoreCalculator.INVEST_KNOWLEDGE_KEY));
 		result.setPartDiagnosisResult(partRes);
-		result.setGiScore(scoreMap.get("GI점수"));
+		result.setGiScore(scoreMap.get(RuleBaseScoreCalculator.GI_SCORE_KEY));
 		
 		// Rule Based 점수들 산출
 		
