@@ -91,31 +91,34 @@ public class StateAndProbProcess {
 		
 		for(Problem prob : probList)
 		{
-			List<ProblemUKRelation> probUKRels = prob.getProblemUKReleations();
-			int diff = 1;
-			int isCorrect = isCorrectMap.get(prob.getProbID());
-						
-			switch(prob.getDifficulty())
+			if(prob.getDifficulty() != null)
 			{
-			case "상":
-				diff = 1;
-				break;
-			case "중":
-				diff = 2;
-				break;
-			case "하":
-				diff = 3;
-				break;
-			default:
-				break;
-			}
-			
-			for(ProblemUKRelation probUKRel : probUKRels)
-			{
-				int ukId = Integer.parseInt(probUKRel.getUkId().getUkId());
-				ukList.add(ukId);
-				isCorrectList.add(isCorrect);
-				diffcultyList.add(diff);
+				List<ProblemUKRelation> probUKRels = prob.getProblemUKReleations();
+				int diff = 1;
+				int isCorrect = isCorrectMap.get(prob.getProbID());
+							
+				switch(prob.getDifficulty())
+				{
+				case "상":
+					diff = 1;
+					break;
+				case "중":
+					diff = 2;
+					break;
+				case "하":
+					diff = 3;
+					break;
+				default:
+					break;
+				}
+				
+				for(ProblemUKRelation probUKRel : probUKRels)
+				{
+					int ukId = Integer.parseInt(probUKRel.getUkId().getUkId());
+					ukList.add(ukId);
+					isCorrectList.add(isCorrect);
+					diffcultyList.add(diff);
+				}
 			}
 		}
 				
