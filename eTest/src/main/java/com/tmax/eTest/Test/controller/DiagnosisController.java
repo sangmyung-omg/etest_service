@@ -24,55 +24,31 @@ public class DiagnosisController {
 	
 	@GetMapping(value = "/diagnosis/tendency", produces = "application/json; charset=utf-8")
 	public ResponseEntity<Object> getDiagnosisTendencyProblems() throws Exception {
-		Map<String, Object> map = new HashMap<String, Object>();
-//		List<Integer> list = new ArrayList<Integer>();
-//		list.add(11);
-//		list.add(12);
-//		list.add(13);
-//		list.add(14);
-//		list.add(15);
-//		list.add(16);
-//		map.put("tendencyProblems", list);
-		
-		// search tendency problems in DB
-		Map<String, Object> re = problemService.getDiagnosisProblems("tendency");
-		
-		if (re.containsKey("error")) {
-		map.put("resultMessage", re.get("error"));
-		return new ResponseEntity<>(map, HttpStatus.INTERNAL_SERVER_ERROR);
-		} else {
-			map.put("tendencyProblems", re.get("tendencyProblems"));
+
+		try{
+			Map<String, Object> res = problemService.getDiagnosisTendencyProblems();
+			res.put("resultMessage", "Successfully returned.");
+			return new ResponseEntity<>(res, HttpStatus.OK);
+
+		} catch (Exception E){
+			Map<String, Object> ret = new HashMap<String, Object>();
+			ret.put("resultMessage", "Internal Server Error.");
+			return new ResponseEntity<>(ret, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-		
-		map.put("resultMessage", "Successfully returned");
-		return new ResponseEntity<>(map, HttpStatus.OK);
 	}
 	
 	@GetMapping(value = "/diagnosis/knowledge", produces = "application/json; charset=utf-8")
 	public ResponseEntity<Object> getDiagnosisKnowledgeProblems() throws Exception {
-		Map<String, Object> map = new HashMap<String, Object>();
-//		List<List<Integer>> list = new ArrayList<List<Integer>>();
-//		for (int i=0; i<9; i++) {
-//			List<Integer> list2 = new ArrayList<Integer>();
-//			for (int j=3*i+1; j<3*(i+1)+1; j++) {
-//				list2.add(j);
-//			}
-//			list.add(list2);
-//		}
-//		map.put("knowledgeProblems", list);
-		
-		// search knowledge problems in DB
-		Map<String, Object> re = problemService.getDiagnosisProblems("knowledge");
-		
-		if (re.containsKey("error")) {
-		map.put("resultMessage", re.get("error"));
-		return new ResponseEntity<>(map, HttpStatus.INTERNAL_SERVER_ERROR);
-		} else {
-			map.put("knowledgeProblems", re.get("knowledgeProblems"));
+		try{
+			Map<String, Object> res = problemService.getDiagnosisKnowledgeProblems();
+			res.put("resultMessage", "Successfully returned.");
+			return new ResponseEntity<>(res, HttpStatus.OK);
+
+		} catch (Exception E){
+			Map<String, Object> ret = new HashMap<String, Object>();
+			ret.put("resultMessage", "Internal Server Error.");
+			return new ResponseEntity<>(ret, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-		
-		map.put("resultMessage", "Successfully returned");
-		return new ResponseEntity<>(map, HttpStatus.OK);
 	}
 	
 	@GetMapping(value = "/minitest", produces = "application/json; charset=utf-8")

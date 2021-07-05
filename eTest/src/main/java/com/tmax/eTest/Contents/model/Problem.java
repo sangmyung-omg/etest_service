@@ -75,8 +75,8 @@ public class Problem {
 	@OneToMany(mappedBy="probID")
 	private List<ProblemChoice> problemChoices = new ArrayList<ProblemChoice>();
 	
-	@OneToMany(mappedBy="problem")
-	private List<DiagnosisProblem> diagnosisInfo = new ArrayList<DiagnosisProblem>();
+	// @OneToMany(mappedBy="problem")
+	// private List<DiagnosisProblem> diagnosisInfo = new ArrayList<DiagnosisProblem>();
 	
 	@OneToMany(mappedBy="problem")
 	private List<TestProblem> testInfo = new ArrayList<TestProblem>();
