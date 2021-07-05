@@ -10,14 +10,18 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.tmax.eTest.Contents.dto.problem.DiagnosisProblemDTO;
+import com.tmax.eTest.Contents.dto.problem.ErrorDTO;
 import com.tmax.eTest.Contents.dto.problem.ProblemDTO;
 import com.tmax.eTest.Contents.dto.problem.TestProblemDTO;
 import com.tmax.eTest.Contents.exception.problem.NoDataException;
+import com.tmax.eTest.Contents.exception.problem.UnavailableTypeException;
 import com.tmax.eTest.Contents.model.DiagnosisProblemBody;
+import com.tmax.eTest.Contents.model.ErrorReportBody;
 import com.tmax.eTest.Contents.model.TestProblemBody;
 import com.tmax.eTest.Contents.service.ProblemServices;
 
@@ -100,6 +104,25 @@ public class ProblemController {
 			output = new ResponseEntity<>(body, headers, HttpStatus.NOT_FOUND);
 		}
 		
+		return output;
+	}
+	
+	@PostMapping(value = "problems/error/report")
+	public ResponseEntity<ErrorDTO> errorReport(@RequestBody ErrorReportBody errorReportBody) throws Exception{
+		HttpHeaders headers= new HttpHeaders();
+        headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
+		ResponseEntity<ErrorDTO> output;
+		String resultMessage;
+		try {
+			resultMessage = problemService.insertErrorReport(errorReportBody.getProblem_id(), errorReportBody.getId(), errorReportBody.getReport_type(), errorReportBody.getReport_text());
+			output = new ResponseEntity<>(new ErrorDTO(resultMessage),headers, HttpStatus.OK );
+		}catch(UnavailableTypeException e) {
+			output = new ResponseEntity<>(new ErrorDTO(e.toString()),headers, HttpStatus.NOT_FOUND );
+		}catch(Exception e) {
+			resultMessage = "failed";
+			output = new ResponseEntity<>(new ErrorDTO(resultMessage),headers, HttpStatus.NOT_FOUND );
+		}
+//		
 		return output;
 	}
 }

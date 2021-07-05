@@ -7,5 +7,5 @@ import lombok.Data;
 @Data
 public class UserKnowledgeKey implements Serializable {
 	String userUuid;
-	String ukId;
+	Integer ukId;
 }
