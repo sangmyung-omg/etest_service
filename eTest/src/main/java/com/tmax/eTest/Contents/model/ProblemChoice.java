@@ -34,6 +34,6 @@ public class ProblemChoice {
 	private UkMaster ukId;
 	
 	@Column(name="CHOICE_SCORE")
-	private int choiceScore;
+	private Integer choiceScore;
 	
 }
