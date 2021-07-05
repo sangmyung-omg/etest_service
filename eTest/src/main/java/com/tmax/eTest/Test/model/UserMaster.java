@@ -1,11 +1,14 @@
 package com.tmax.eTest.Test.model;
 
-import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
+
+import com.tmax.eTest.Contents.model.ErrorReport;
 
 import lombok.Data;
 
@@ -15,21 +18,9 @@ import lombok.Data;
 public class UserMaster {
 	@Id
 	private String userUuid;
-	
-	private String grade;
-	private String semester;
 	private String name;
-	private String currentCurriculumId;
-	
-	@Column(name="EXAM_TYPE")
-	private String examType;
-	
-	@Column(name="EXAM_START_DATE")
-	private Timestamp examStartDate;
+	private String userType;
 
-	@Column(name="EXAM_DUE_DATE")
-	private Timestamp examDueDate;
-	
-	@Column(name="EXAM_TARGET_SCORE")
-	private Integer examTargetScore;
+	@OneToMany(mappedBy="user")
+	private List<ErrorReport> errors = new ArrayList<ErrorReport>();
 }
