@@ -63,11 +63,16 @@ public class SelfDiagnosisReportService {
 		List<Pair<Problem, Integer>> probAndUserChoice = getProblemAndChoiceInfos(probList, diagnosisProbStatements);
 		Map<String, Integer> scoreMap = ruleBaseScoreCalculator.probDivideAndCalculateScores(probAndUserChoice);
 		
-		
-		
 		result.initForDummy();
 				
-		result.setPartDiagnosisResult(scoreMap);
+		Map<String, Integer> partRes = new HashMap<>();
+		partRes.put(RuleBaseScoreCalculator.RISK_SCORE_KEY, 
+				scoreMap.get(RuleBaseScoreCalculator.RISK_SCORE_KEY));
+		partRes.put(RuleBaseScoreCalculator.DECISION_MAKING_SCORE_KEY, 
+				scoreMap.get(RuleBaseScoreCalculator.DECISION_MAKING_SCORE_KEY));
+		partRes.put(RuleBaseScoreCalculator.INVEST_KNOWLEDGE_KEY, 
+				scoreMap.get(RuleBaseScoreCalculator.INVEST_KNOWLEDGE_KEY));
+		result.setPartDiagnosisResult(partRes);
 		result.setGiScore(scoreMap.get("GI점수"));
 		
 		// Rule Based 점수들 산출

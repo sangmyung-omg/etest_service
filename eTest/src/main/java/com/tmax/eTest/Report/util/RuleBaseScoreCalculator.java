@@ -20,12 +20,15 @@ import com.tmax.eTest.Contents.model.ProblemChoice;
 // Rule Base 점수, Triton 점수 관련 Method 집합 Class
 public class RuleBaseScoreCalculator {
 
-	final static String RISK_SCORE_KEY = "리스크점수";
-	final static String INVEST_COND_SCORE_KEY = "투자현황점수";
-	final static String RISK_FIDELITY_SCORE_KEY = "위험적합도점수";
-	final static String INVEST_RULE_SCORE_KEY = "투자원칙점수";
-	final static String COGNITIVE_BIAS_SCORE_KEY = "인지편향점수";
-	final static String DECISION_MAKING_SCORE_KEY = "의사결정적합도점수";
+	final public static String RISK_SCORE_KEY = "리스크점수";
+	final public static String INVEST_COND_SCORE_KEY = "투자현황점수";
+	final public static String RISK_FIDELITY_SCORE_KEY = "위험적합도점수";
+	final public static String INVEST_RULE_SCORE_KEY = "투자원칙점수";
+	final public static String COGNITIVE_BIAS_SCORE_KEY = "인지편향점수";
+	final public static String DECISION_MAKING_SCORE_KEY = "의사결정적합도점수";
+	final public static String INVEST_KNOWLEDGE_KEY = "지식이해도";
+	final public static String GI_SCORE_KEY = "GI점수";
+	
 	final static String[] SELF_DIAGNOSIS_TYPE = { "AFB", // 공격적 / 감정적 / 초보자
 			"AFE", // 공격적 / 감정적 / 전문가
 			"ALB", // 공격적 / 논리적 / 초보자
@@ -121,7 +124,7 @@ public class RuleBaseScoreCalculator {
 		
 		res.putAll(calculateRiskFidelityScore(investCondProb, riskProb));
 		res.putAll(calculateDecisionMakingScore(investRuleProb, cogBiasProb));
-		res.put("지식이해도", calculateInvestKnowledgeScore(investKnowledgeProb));
+		res.put(INVEST_KNOWLEDGE_KEY, calculateInvestKnowledgeScore(investKnowledgeProb));
 		res.put("GI점수", res.get(RISK_FIDELITY_SCORE_KEY) + res.get(DECISION_MAKING_SCORE_KEY) + res.get("지식이해도"));
 		
 		return res;
