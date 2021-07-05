@@ -75,6 +75,8 @@ public class SelfDiagnosisReportService {
 		result.setPartDiagnosisResult(partRes);
 		result.setGiScore(scoreMap.get(RuleBaseScoreCalculator.GI_SCORE_KEY));
 		
+		logger.info("WTF wwwwwwwwwwwwwwwwwwwww : "+ result.getGiScore());
+		
 		// Rule Based 점수들 산출
 		
 		Map<String, List<Object>> probInfoForTriton = stateAndProbProcess.makeInfoForTriton(diagnosisProbStatements, probList);
