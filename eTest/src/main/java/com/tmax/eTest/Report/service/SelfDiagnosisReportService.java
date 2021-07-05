@@ -59,12 +59,12 @@ public class SelfDiagnosisReportService {
 		List<StatementDTO> diagnosisProbStatements = getStatementDiagnosisProb(id);
 		List<Pair<Problem, Integer>> probInfos = getProblemAndChoiceInfos(diagnosisProbStatements);
 		Map<Integer, UkMaster> usedUkMap = stateAndProbProcess.makeUsedUkMapWithPair(probInfos);
-		Map<String, Integer> scores = ruleBaseScoreCalculator.probDivideAndCalculateScores(probInfos);
+		Map<String, Integer> scoreMap = ruleBaseScoreCalculator.probDivideAndCalculateScores(probInfos);
 		
 		result.initForDummy();
 		
-		result.setPartDiagnosisResult(scores);
-		result.setGiScore(scores.get("GI점수"));
+		result.setPartDiagnosisResult(scoreMap);
+		result.setGiScore(scoreMap.get("GI점수"));
 		
 		return result;
 	}
