@@ -115,12 +115,6 @@ public class RuleBaseScoreCalculator {
 			}
 		}
 		
-		logger.info("probDivideAndCalculateScores prob num : "
-				+ investCondProb.size() +" "
-				+ riskProb.size() +" "
-				+ investRuleProb.size() +" "
-				+ cogBiasProb.size() +" "
-				+ investKnowledgeProb.size() +" ");
 		
 		res.putAll(calculateRiskFidelityScore(investCondProb, riskProb));
 		res.putAll(calculateDecisionMakingScore(investRuleProb, cogBiasProb));
@@ -128,6 +122,16 @@ public class RuleBaseScoreCalculator {
 		res.put(GI_SCORE_KEY, Double.valueOf(res.get(RISK_FIDELITY_SCORE_KEY) * 0.3
 				+ res.get(DECISION_MAKING_SCORE_KEY) * 0.3
 				+ res.get(INVEST_KNOWLEDGE_KEY)* 0.4).intValue());
+		
+		logger.info("probDivideAndCalculateScores prob num : "
+				+ investCondProb.size() +" "
+				+ riskProb.size() +" "
+				+ investRuleProb.size() +" "
+				+ cogBiasProb.size() +" "
+				+ investKnowledgeProb.size() +" "
+				+ res.get(RISK_FIDELITY_SCORE_KEY) + " "
+				+ res.get(DECISION_MAKING_SCORE_KEY) + " "
+				+ res.get(INVEST_KNOWLEDGE_KEY));
 		
 		return res;
 	}

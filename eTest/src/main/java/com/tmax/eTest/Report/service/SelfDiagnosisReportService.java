@@ -66,16 +66,14 @@ public class SelfDiagnosisReportService {
 		result.initForDummy();
 				
 		Map<String, Integer> partRes = new HashMap<>();
-		partRes.put(RuleBaseScoreCalculator.RISK_SCORE_KEY, 
-				scoreMap.get(RuleBaseScoreCalculator.RISK_SCORE_KEY));
+		partRes.put(RuleBaseScoreCalculator.RISK_FIDELITY_SCORE_KEY, 
+				scoreMap.get(RuleBaseScoreCalculator.RISK_FIDELITY_SCORE_KEY));
 		partRes.put(RuleBaseScoreCalculator.DECISION_MAKING_SCORE_KEY, 
 				scoreMap.get(RuleBaseScoreCalculator.DECISION_MAKING_SCORE_KEY));
 		partRes.put(RuleBaseScoreCalculator.INVEST_KNOWLEDGE_KEY, 
 				scoreMap.get(RuleBaseScoreCalculator.INVEST_KNOWLEDGE_KEY));
 		result.setPartDiagnosisResult(partRes);
 		result.setGiScore(scoreMap.get(RuleBaseScoreCalculator.GI_SCORE_KEY));
-		
-		logger.info("WTF wwwwwwwwwwwwwwwwwwwww : "+ result.getGiScore());
 		
 		// Rule Based 점수들 산출
 		
@@ -127,6 +125,51 @@ public class SelfDiagnosisReportService {
 	public PartUnderstandingDTO getPartInfo(String id, String partName)
 	{
 		PartUnderstandingDTO res = new PartUnderstandingDTO();
+		
+		List<StatementDTO> diagnosisProbStatements = getStatementDiagnosisProb(id);
+		List<Problem> probList = getProblemInfos(diagnosisProbStatements);
+		Map<String, List<Object>> probInfoForTriton = stateAndProbProcess.makeInfoForTriton(diagnosisProbStatements, probList);
+		TritonResponseDTO tritonResponse = tritonAPIManager.getUnderstandingScoreInTriton(probInfoForTriton);
+		TritonDataDTO embeddingData = null;
+		TritonDataDTO masteryData = null;
+		
+		if(tritonResponse != null)
+		{
+			for (TritonDataDTO dto : tritonResponse.getOutputs()) {
+				if (dto.getName().equals("Embeddings")) {
+					embeddingData = dto;
+				} else if (dto.getName().equals("Mastery")) {
+					masteryData = dto;
+				}
+			}
+	
+			if (embeddingData != null && masteryData != null) {
+				Map<Integer, UkMaster> usedUkMap =stateAndProbProcess.makeUsedUkMap(probList);
+				Map<Integer, Float> ukScoreMap = ukScoreCalculator.makeUKScoreMap(masteryData);
+				
+				//[파트이름, 스코어 등급(A~F), 스코어 점수]
+				List<List<String>> partScoreList = ukScoreCalculator.makePartScore(usedUkMap, ukScoreMap);
+				
+				for(List<String> partScoreInfo : partScoreList)
+				{
+					if(partScoreInfo.get(0).equals(partName))
+					{
+						res.setPoint(Integer.parseInt(partScoreInfo.get(2)));
+						break;
+					}
+				}
+				
+				usedUkMap.forEach((ukId, ukMaster) -> {
+					if(ukMaster.getPart().equals(partName))
+					{
+						res.pushUKUnderstanding(ukMaster.getUkName(), 
+								Float.valueOf(ukScoreMap.get(ukId)*100).intValue());
+					}
+					
+				});
+
+			}
+		}
 		
 		return res;
 	}
