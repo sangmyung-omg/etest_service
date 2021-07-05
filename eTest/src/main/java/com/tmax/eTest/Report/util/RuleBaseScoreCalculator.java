@@ -42,12 +42,12 @@ public class RuleBaseScoreCalculator {
 	}
 
 	// result = [리스크점수, 투자현황점수, 위험적합도점수]
-	public Map<String, Integer> calculateRiskFidelityScore(List<Problem> investConditionProbList,
-			List<Pair<Integer, Integer>> investCondAnswerList, List<Problem> riskProbList,
-			List<Pair<Integer, Integer>> riskAnswerList) {
+	public Map<String, Integer> calculateRiskFidelityScore(
+			List<Pair<Problem, Integer>> investConditionProbList, 
+			List<Pair<Problem, Integer>> riskProbList) {
 		Map<String, Integer> res = new HashMap<>();
-		int investConditionScore = makeScore(investConditionProbList, investCondAnswerList);
-		int riskScore = makeScore(riskProbList, riskAnswerList);
+		int investConditionScore = makeScore(investConditionProbList);
+		int riskScore = makeScore(riskProbList);
 
 		float tempScore = Math.abs((investConditionScore - 4) * 100 / 12.f - (riskScore - 5) * 100 / 15.f);
 		int riskFidelityScore = Float.valueOf((100 - tempScore) * 0.6f).intValue() + 35;
@@ -60,16 +60,16 @@ public class RuleBaseScoreCalculator {
 	}
 
 	// result = [투자원칙점수, 인지편향점수, 의사결정적합도점수]
-	public Map<String, Integer> calculateDecisionMakingScore(List<Problem> investRuleProbList,
-			List<Pair<Integer, Integer>> investRuleAnswerList, List<Problem> cognitiveBiasProbList,
-			List<Pair<Integer, Integer>> cognitiveBiasAnswerList) {
+	public Map<String, Integer> calculateDecisionMakingScore(
+			List<Pair<Problem,Integer>> investRuleProbList,
+			List<Pair<Problem,Integer>> cognitiveBiasProbList) {
 		final int INVEST_RULE_CRITERIA = 26;
 		final int COGNITIVE_BIAS_CRITERIA = 35;
 		final int ADDED_SCORE_LIST[] = { 10, 8, 4, 1 };
 
 		Map<String, Integer> res = new HashMap<>();
-		int investRuleScore = makeScore(investRuleProbList, investRuleAnswerList);
-		int cognitiveBiasScore = makeScore(cognitiveBiasProbList, cognitiveBiasAnswerList);
+		int investRuleScore = makeScore(investRuleProbList);
+		int cognitiveBiasScore = makeScore(cognitiveBiasProbList);
 		int addedScore = 0;
 
 		if (investRuleScore >= INVEST_RULE_CRITERIA && cognitiveBiasScore >= COGNITIVE_BIAS_CRITERIA)
@@ -90,38 +90,26 @@ public class RuleBaseScoreCalculator {
 		return res;
 	}
 
-	public int calculateInvestKnowledgeScore(List<Problem> investKnowledgeProbList,
-			List<Pair<Integer, Integer>> investKnowledgeAnswerList) {
-		return makeScore(investKnowledgeProbList, investKnowledgeAnswerList);
-	}
+
 	
-	private int makeScore(List<Problem> probList, List<Pair<Integer, Integer>> answerList) {
+	private int makeScore(List<Pair<Problem, Integer>> probList)
+	{
 		int res = 0;
-
-		Map<Integer, List<Integer>> probScores = new HashMap<>();
-		for (Problem prob : probList) {
-			List<ProblemChoice> probSelectList = prob.getProblemChoices();
-			List<Integer> selectScoreList = new ArrayList<>(probSelectList.size());
-
-			for (ProblemChoice choice : probSelectList) {
-				// 추후 수정 필요.
-				selectScoreList.add(Long.valueOf(choice.getChoiceNum()).intValue(),
-						// choice.getChoiceScore());
-						Long.valueOf(choice.getChoiceNum()).intValue());
+		
+		for(Pair<Problem, Integer> prob : probList)
+		{
+			List<ProblemChoice> choices = prob.getFirst().getProblemChoices();
+			for(ProblemChoice choice: choices)
+			{
+				if(choice.getChoiceNum() == prob.getSecond())
+				{
+					res += choice.getChoiceScore();
+					break;
+				}
 			}
-			probScores.put(prob.getProbID(), selectScoreList);
 		}
-
-		for (Pair<Integer, Integer> investCondProbAnswer : answerList) {
-			List<Integer> scoreList = probScores.get(investCondProbAnswer.getFirst());
-
-			res += scoreList.get(investCondProbAnswer.getSecond());
-		}
-
+		
 		return res;
-	}
-
-	
-	
+	}	
 	
 }

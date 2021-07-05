@@ -33,4 +33,7 @@ public class ProblemChoice {
 	@JoinColumn(name="UK_ID")
 	private UkMaster ukId;
 	
+	@Column(name="CHOICE_SCORE")
+	private int choiceScore;
+	
 }

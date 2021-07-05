@@ -1,4 +1,4 @@
-package com.tmax.eTest.Report.model;
+package com.tmax.eTest.Contents.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

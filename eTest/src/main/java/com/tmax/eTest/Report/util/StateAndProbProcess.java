@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Component;
 
 import com.tmax.eTest.Contents.model.Problem;
@@ -40,6 +41,25 @@ public class StateAndProbProcess {
 		}
 		
 		return diagQuestionInfo;
+	}
+	
+	public Map<Integer, UkMaster> makeUsedUkMapWithPair(List<Pair<Problem,Integer>> probInfos)
+	{
+		Map<Integer, UkMaster> res = new HashMap<>();
+		
+		for(Pair<Problem,Integer> prob : probInfos)
+		{
+			List<ProblemUKRelation> probUKRels = prob.getFirst().getProblemUKReleations();
+			
+			for(ProblemUKRelation probUKRel : probUKRels)
+			{
+				int ukId = Integer.parseInt(probUKRel.getUkId().getUkId());
+				res.put(ukId, probUKRel.getUkId());
+			}
+		}
+		
+		return res;
+		
 	}
 	
 	public Map<Integer, UkMaster> makeUsedUkMap(List<Problem> probInfos)

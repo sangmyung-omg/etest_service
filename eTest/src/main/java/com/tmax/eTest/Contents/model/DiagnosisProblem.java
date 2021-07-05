@@ -26,4 +26,8 @@ public class DiagnosisProblem {
 	@JoinColumn(name="PROB_ID", nullable=true, insertable = false, updatable = false)
 	private Problem problem;
 	
+	@ManyToOne(fetch=FetchType.LAZY)
+	@JoinColumn(name="CURRICULUM_ID", nullable=true, insertable = false, updatable = false)
+	private DiagnosisCurriculum curriculum;
+	
 }
