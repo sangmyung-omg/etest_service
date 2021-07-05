@@ -21,9 +21,9 @@ public class StateAndProbProcess {
 	
 	private final Logger logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
 	
-	public final String UK_LIST_KEY = "ukList";			// List<String>
-	public final String IS_CORRECT_LIST_KEY = "isCorrectList";// List<String>
-	public final String DIFF_LIST_KEY = "diffcultyList";	// List<String>
+	public final static String UK_LIST_KEY = "ukList";			// List<String>
+	public final static String IS_CORRECT_LIST_KEY = "isCorrectList";// List<String>
+	public final static String DIFF_LIST_KEY = "diffcultyList";	// List<String>
 
 
 	public int[] calculateDiagQuestionInfo(List<StatementDTO> miniTestResult)
@@ -43,30 +43,12 @@ public class StateAndProbProcess {
 		return diagQuestionInfo;
 	}
 	
-	public Map<Integer, UkMaster> makeUsedUkMapWithPair(List<Pair<Problem,Integer>> probInfos)
-	{
-		Map<Integer, UkMaster> res = new HashMap<>();
-		
-		for(Pair<Problem,Integer> prob : probInfos)
-		{
-			List<ProblemUKRelation> probUKRels = prob.getFirst().getProblemUKReleations();
-			
-			for(ProblemUKRelation probUKRel : probUKRels)
-			{
-				int ukId = Integer.parseInt(probUKRel.getUkId().getUkId());
-				res.put(ukId, probUKRel.getUkId());
-			}
-		}
-		
-		return res;
-		
-	}
 	
-	public Map<Integer, UkMaster> makeUsedUkMap(List<Problem> probInfos)
+	public Map<Integer, UkMaster> makeUsedUkMap(List<Problem> probList)
 	{
 		Map<Integer, UkMaster> res = new HashMap<>();
 		
-		for(Problem prob : probInfos)
+		for(Problem prob : probList)
 		{
 			List<ProblemUKRelation> probUKRels = prob.getProblemUKReleations();
 			
@@ -83,8 +65,8 @@ public class StateAndProbProcess {
 	
 	
 	public Map<String, List<Object>> makeInfoForTriton(
-			List<StatementDTO> miniTestResult,
-			List<Problem> probInfos)
+			List<StatementDTO> statementList,
+			List<Problem> probList)
 	{
 		Map<String, List<Object>> result = new HashMap<>();
 		
@@ -94,7 +76,7 @@ public class StateAndProbProcess {
 		
 		// first process : 문제별 PK 얻어오기.
 		Map<Integer, Integer> isCorrectMap = new HashMap<>();
-		for(StatementDTO dto : miniTestResult)
+		for(StatementDTO dto : statementList)
 		{
 			try
 			{
@@ -107,7 +89,7 @@ public class StateAndProbProcess {
 			}
 		}
 		
-		for(Problem prob : probInfos)
+		for(Problem prob : probList)
 		{
 			List<ProblemUKRelation> probUKRels = prob.getProblemUKReleations();
 			int diff = 1;

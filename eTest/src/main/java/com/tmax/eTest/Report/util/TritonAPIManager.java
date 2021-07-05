@@ -3,6 +3,7 @@ package com.tmax.eTest.Report.util;
 import java.text.ParseException;
 import java.time.Duration;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
@@ -99,6 +100,32 @@ public class TritonAPIManager {
 		}
 		
 		return tritonResult;
+	}
+	
+	public TritonResponseDTO getUnderstandingScoreInTriton(Map<String, List<Object>> probInfoForTriton) {
+		// first process : 문제별 PK 얻어오기.
+
+		TritonRequestDTO tritonReq = new TritonRequestDTO();
+
+		tritonReq.initDefault();
+
+		tritonReq.pushInputData("UKList", "INT32",
+				probInfoForTriton.get(StateAndProbProcess.UK_LIST_KEY));
+		tritonReq.pushInputData("IsCorrectList", "INT32",
+				probInfoForTriton.get(StateAndProbProcess.IS_CORRECT_LIST_KEY));
+		tritonReq.pushInputData("DifficultyList", "INT32",
+				probInfoForTriton.get(StateAndProbProcess.DIFF_LIST_KEY));
+
+		// Triton에 데이터 요청.
+		TritonResponseDTO tritonResponse = null;
+		try {
+			tritonResponse = getInfer(tritonReq);
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return tritonResponse;
 	}
 
 }

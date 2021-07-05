@@ -73,11 +73,12 @@ public class UKScoreCalculator {
 		return result;
 	}
 
+	
+	//[파트이름, 스코어 등급(A~F), 스코어 점수]
 	public List<List<String>> makePartScore(Map<Integer, UkMaster> ukMap, Map<Integer, Float> ukScore) {
 		List<List<String>> result = new ArrayList<>();
 		Map<String, Pair<Float, Integer>> partInfo = new HashMap<>();
 
-		// 파트 구분법 필요.
 		ukScore.forEach((ukUuid, score) -> {
 			UkMaster ukInfo = ukMap.get(ukUuid);
 			if (ukInfo != null) {

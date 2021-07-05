@@ -62,10 +62,13 @@ public class MiniTestReportService {
 		List<StatementDTO> miniTestRes = getMiniTestResultInLRS(userId);
 		List<Problem> probInfos = getProblemInfos(miniTestRes);
 		Map<String, List<Object>> probInfoForTriton = stateAndProbProcess.makeInfoForTriton(miniTestRes, probInfos);
-		TritonResponseDTO tritonResponse = getUnderstandingScoreInTriton(probInfoForTriton);
+		TritonResponseDTO tritonResponse = tritonAPIManager.getUnderstandingScoreInTriton(probInfoForTriton);
 
 		TritonDataDTO embeddingData = null;
 		TritonDataDTO masteryData = null;
+		
+		int diagQuestionInfo[] = stateAndProbProcess.calculateDiagQuestionInfo(miniTestRes);
+		result.setDiagnosisQuestionInfo(diagQuestionInfo);
 
 		if(tritonResponse != null)
 		{
@@ -76,9 +79,6 @@ public class MiniTestReportService {
 					masteryData = dto;
 				}
 			}
-	
-			int diagQuestionInfo[] = stateAndProbProcess.calculateDiagQuestionInfo(miniTestRes);
-			result.setDiagnosisQuestionInfo(diagQuestionInfo);
 	
 			if (embeddingData != null && masteryData != null) {
 				Map<Integer, UkMaster> usedUkMap =stateAndProbProcess.makeUsedUkMap(probInfos);
@@ -140,31 +140,7 @@ public class MiniTestReportService {
 		return probList;
 	}
 
-	private TritonResponseDTO getUnderstandingScoreInTriton(Map<String, List<Object>> probInfoForTriton) {
-		// first process : 문제별 PK 얻어오기.
-
-		TritonRequestDTO tritonReq = new TritonRequestDTO();
-
-		tritonReq.initDefault();
-
-		tritonReq.pushInputData("UKList", "INT32",
-				probInfoForTriton.get(stateAndProbProcess.UK_LIST_KEY));
-		tritonReq.pushInputData("IsCorrectList", "INT32",
-				probInfoForTriton.get(stateAndProbProcess.IS_CORRECT_LIST_KEY));
-		tritonReq.pushInputData("DifficultyList", "INT32",
-				probInfoForTriton.get(stateAndProbProcess.DIFF_LIST_KEY));
-
-		// Triton에 데이터 요청.
-		TritonResponseDTO tritonResponse = null;
-		try {
-			tritonResponse = tritonAPIManager.getInfer(tritonReq);
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		return tritonResponse;
-	}
+	
 	
 	private void saveUserUKInfo(String userId, Map<Integer, Float> ukScoreList) {
 

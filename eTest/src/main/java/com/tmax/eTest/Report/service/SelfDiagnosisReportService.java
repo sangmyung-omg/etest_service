@@ -18,7 +18,9 @@ import com.tmax.eTest.Report.dto.DiagnosisResultDTO;
 import com.tmax.eTest.Report.dto.PartUnderstandingDTO;
 import com.tmax.eTest.Report.dto.lrs.GetStatementInfoDTO;
 import com.tmax.eTest.Report.dto.lrs.StatementDTO;
+import com.tmax.eTest.Report.dto.triton.TritonDataDTO;
 import com.tmax.eTest.Report.dto.triton.TritonRequestDTO;
+import com.tmax.eTest.Report.dto.triton.TritonResponseDTO;
 import com.tmax.eTest.Report.util.LRSAPIManager;
 import com.tmax.eTest.Report.util.RuleBaseScoreCalculator;
 import com.tmax.eTest.Report.util.SelfDiagnosisComment;
@@ -57,14 +59,58 @@ public class SelfDiagnosisReportService {
 	{
 		DiagnosisResultDTO result = new DiagnosisResultDTO();
 		List<StatementDTO> diagnosisProbStatements = getStatementDiagnosisProb(id);
-		List<Pair<Problem, Integer>> probInfos = getProblemAndChoiceInfos(diagnosisProbStatements);
-		Map<Integer, UkMaster> usedUkMap = stateAndProbProcess.makeUsedUkMapWithPair(probInfos);
-		Map<String, Integer> scoreMap = ruleBaseScoreCalculator.probDivideAndCalculateScores(probInfos);
+		List<Problem> probList = getProblemInfos(diagnosisProbStatements);
+		List<Pair<Problem, Integer>> probAndUserChoice = getProblemAndChoiceInfos(probList, diagnosisProbStatements);
+		Map<String, Integer> scoreMap = ruleBaseScoreCalculator.probDivideAndCalculateScores(probAndUserChoice);
+		
+		
 		
 		result.initForDummy();
 		
 		result.setPartDiagnosisResult(scoreMap);
 		result.setGiScore(scoreMap.get("GI점수"));
+		
+		// Rule Based 점수들 산출
+		
+		Map<String, List<Object>> probInfoForTriton = stateAndProbProcess.makeInfoForTriton(diagnosisProbStatements, probList);
+		TritonResponseDTO tritonResponse = tritonAPIManager.getUnderstandingScoreInTriton(probInfoForTriton);
+		TritonDataDTO embeddingData = null;
+		TritonDataDTO masteryData = null;
+		
+		if(tritonResponse != null)
+		{
+			for (TritonDataDTO dto : tritonResponse.getOutputs()) {
+				if (dto.getName().equals("Embeddings")) {
+					embeddingData = dto;
+				} else if (dto.getName().equals("Mastery")) {
+					masteryData = dto;
+				}
+			}
+	
+			if (embeddingData != null && masteryData != null) {
+				Map<Integer, UkMaster> usedUkMap =stateAndProbProcess.makeUsedUkMap(probList);
+				Map<Integer, Float> ukScoreMap = ukScoreCalculator.makeUKScoreMap(masteryData);
+				
+				//[파트이름, 스코어 등급(A~F), 스코어 점수]
+				List<List<String>> partScoreList = ukScoreCalculator.makePartScore(usedUkMap, ukScoreMap);
+				
+				for(List<String> partScoreInfo : partScoreList)
+				{
+					int partScore = Integer.parseInt(partScoreInfo.get(2));
+					
+					if(partScore > 50)
+						result.pushStrongPartInfo(partScoreInfo.get(0), 
+							partScoreInfo.get(0) +" 영역에서 상대적으로 높은 이해도를 갖고 있습니다.", 
+							partScore);
+					else
+						result.pushWeakPartInfo(partScoreInfo.get(0), 
+								partScoreInfo.get(0) +"는 더 많은 이해가 필요해 보입니다. AI가 학습 컨텐츠를 추천해드립니다.", 
+								partScore);
+					
+				}
+
+			}
+		}
 		
 		return result;
 	}
@@ -78,10 +124,11 @@ public class SelfDiagnosisReportService {
 		return res;
 	}
 	
-	private List<Pair<Problem, Integer>> getProblemAndChoiceInfos(List<StatementDTO> statementList)
+	private List<Pair<Problem, Integer>> getProblemAndChoiceInfos(
+			List<Problem> probList,
+			List<StatementDTO> statementList)
 	{
 		List<Pair<Problem, Integer>> result = new ArrayList<>();
-		List<Problem> probList = getProblemInfos(statementList);
 		Map<Integer, Integer> probChoiceMap = new HashMap<>();
 		
 		for(StatementDTO statement : statementList)
