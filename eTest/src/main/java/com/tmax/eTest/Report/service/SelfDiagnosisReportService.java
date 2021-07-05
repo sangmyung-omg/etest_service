@@ -20,8 +20,11 @@ import com.tmax.eTest.Report.dto.lrs.GetStatementInfoDTO;
 import com.tmax.eTest.Report.dto.lrs.StatementDTO;
 import com.tmax.eTest.Report.dto.triton.TritonRequestDTO;
 import com.tmax.eTest.Report.util.LRSAPIManager;
+import com.tmax.eTest.Report.util.RuleBaseScoreCalculator;
+import com.tmax.eTest.Report.util.SelfDiagnosisComment;
 import com.tmax.eTest.Report.util.StateAndProbProcess;
 import com.tmax.eTest.Report.util.TritonAPIManager;
+import com.tmax.eTest.Report.util.UKScoreCalculator;
 import com.tmax.eTest.Test.model.UkMaster;
 import com.tmax.eTest.Test.repository.UserKnowledgeRepository;
 
@@ -40,6 +43,12 @@ public class SelfDiagnosisReportService {
 	
 	@Autowired
 	StateAndProbProcess stateAndProbProcess;
+	@Autowired
+	RuleBaseScoreCalculator ruleBaseScoreCalculator;
+	@Autowired
+	UKScoreCalculator ukScoreCalculator;
+	@Autowired
+	SelfDiagnosisComment commentGenerator;
 	
 	private final Logger logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
 	
@@ -50,63 +59,17 @@ public class SelfDiagnosisReportService {
 		List<StatementDTO> diagnosisProbStatements = getStatementDiagnosisProb(id);
 		List<Pair<Problem, Integer>> probInfos = getProblemAndChoiceInfos(diagnosisProbStatements);
 		Map<Integer, UkMaster> usedUkMap = stateAndProbProcess.makeUsedUkMapWithPair(probInfos);
+		Map<String, Integer> scores = ruleBaseScoreCalculator.probDivideAndCalculateScores(probInfos);
 		
 		result.initForDummy();
 		
-		probDivideAndCalculateScores(probInfos);
+		result.setPartDiagnosisResult(scores);
+		result.setGiScore(scores.get("GI점수"));
 		
 		return result;
 	}
 	
-	public Map<String,Integer> probDivideAndCalculateScores(List<Pair<Problem, Integer>> probInfos)
-	{
-		Map<String,Integer> res = new HashMap<>();
-		List<Pair<Problem, Integer>> investCondProb = new ArrayList<>(); // 투자현황
-		List<Pair<Problem, Integer>> riskProb = new ArrayList<>(); // 리스크
-		List<Pair<Problem, Integer>> investRuleProb = new ArrayList<>(); // 투자원칙
-		List<Pair<Problem, Integer>> cogBiasProb = new ArrayList<>(); // 인지편향
-		List<Pair<Problem, Integer>> investKnowledgeProb = new ArrayList<>(); // 투자지식
 
-		
-		for(Pair<Problem, Integer> probInfo : probInfos)
-		{
-			Problem prob = probInfo.getFirst();
-			
-			if(prob.getDiagnosisInfo() != null && prob.getDiagnosisInfo().getCurriculum() != null)
-			{
-				String section = prob.getDiagnosisInfo().getCurriculum().getSection();
-				
-				switch(section)
-				{
-				case "투자현황":
-					investCondProb.add(probInfo);
-					break;
-				case "리스크":
-					riskProb.add(probInfo);
-					break;
-				case "투자원칙":
-					investRuleProb.add(probInfo);
-					break;
-				case "인지편향":
-					cogBiasProb.add(probInfo);
-					break;
-				case "투자지식":
-					investKnowledgeProb.add(probInfo); 
-					break;
-				default:
-					logger.info("probDivideAndCalculateScores section invalid : " + section);
-					break;
-				}
-			}
-			else
-			{
-				logger.info("probDivideAndCalculateScores prob not have diagnosisInfo : " + prob.toString());
-			}
-		}
-		
-		
-		return res;
-	}
 	
 	public PartUnderstandingDTO getPartInfo(String id, String partName)
 	{

@@ -2,6 +2,7 @@ package com.tmax.eTest.Report.util;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Component;
 
@@ -62,5 +63,14 @@ public class SelfDiagnosisComment {
 		idx += (riskQ1 == 1 && riskQ2 != 1) ? 1 : 0;
 		
 		return riskPatienceComment[idx];
+	}
+	
+	List<String> getTotalComment(Map<String, Integer> scoreMap)
+	{
+		List<String> totalComment = new ArrayList<>();
+		
+		int riskScore = scoreMap.get("");
+		
+		return totalComment;
 	}
 }
