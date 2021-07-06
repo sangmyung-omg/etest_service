@@ -1,6 +1,7 @@
 package com.tmax.eTest.Report.util;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -8,7 +9,14 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class SelfDiagnosisComment {
-
+	
+	final public static String TOTAL_RES_KEY = "totalResult";
+	final public static String RISK_FID_KEY = "riskFidelity";
+	final public static String DECISION_MAKING_KEY = "decisionMaking";
+	final public static String INVEST_KNOWLEDGE_KEY = "investKnowledge";
+	final public static String SIMILAR_TYPE_KEY = "similarType";
+	
+	
 	String[] finalResultComment ={
 		"하하하",	"하하중",	"하하상",
 		"하중하",	"하중중",	"하중상",
@@ -21,14 +29,57 @@ public class SelfDiagnosisComment {
 		"상상하",	"상상중",	"상상상",
 	};
 	
-	String[] riskDiagnosisComment = {
-		"하하",
-		"하상",
-		"상하",
-		"하상"
-	};
+	private List<String> makeSimilarTypeInfo(int riskFidelityScore, int decisionMakingScore, int investKnowledgeScore) {
+		List<String> res = new ArrayList<>();
+		
+		int totalScore = riskFidelityScore >= 75 ? 3 : riskFidelityScore >= 55 ? 2 : 1;
+		totalScore += decisionMakingScore >= 75 ? 3 : decisionMakingScore >= 55 ? 2 : 1;
+		totalScore += investKnowledgeScore >= 70 ? 3 : investKnowledgeScore >= 50 ? 2 : 1;
+				
+		String investerRatio = totalScore == 9 || totalScore == 3 ? "3.7%"
+				: totalScore > 5 ? "33.33%" : "25.93%";
+		String avgItemNum = riskFidelityScore >= 75 ? "8종목" : riskFidelityScore >= 55 ? "5종목" : "3종목";
+		String investRatio = riskFidelityScore >= 75 ? "55%" : riskFidelityScore >= 55 ? "40%" : "10%";
+		
+		res.add(investerRatio);
+		res.add(avgItemNum);
+		res.add(investRatio);
+		
+		return res;
+	}
 	
-	String[] riskPatienceComment = {
+	// 모두 트리톤을 타지 않고 나오는 점수들. (단순 알고리즘으로 나오는 점수)
+	// 위험 적합도 = riskScore
+	// 투자 결정 적합도 = investDecisionScore
+	// 지식 이해도 = knowledgeScore
+	public List<String> getFinalResultComment(int riskFidelityScore, int decisionMakingScore, int knowledgeScore)
+	{
+		List<String> res = new ArrayList<>();
+		int idx = 0;
+		
+		idx += riskFidelityScore >= 75 ? 18 : riskFidelityScore >= 55 ? 9 : 0;
+		idx += decisionMakingScore >= 75 ? 6 : decisionMakingScore >= 55 ? 3 : 0;
+		idx += knowledgeScore >= 70 ? 2 : knowledgeScore >= 50 ? 1 : 0;
+		
+		res.add(finalResultComment[idx]);
+		
+		List<String> silmilarType = makeSimilarTypeInfo(riskFidelityScore, decisionMakingScore, knowledgeScore);
+		
+		res.add("동일한 유형의 평균 주식 비중은 "+ silmilarType.get(0)+" 입니다.");
+		res.add("동일한 유형의 평균 주식 수는 "+ silmilarType.get(1)+" 입니다.");
+		res.add("동일한 유형의 평균 선호종목 수는 "+ silmilarType.get(2)+" 입니다.");
+		
+		return res;
+	}
+	
+	String[] riskDiagnosisComment = {		// 리스트 적합도
+		"투자현황 보수적 & 리스크 보수적",
+		"투자현황 보수적 & 리스크 공격적",
+		"투자현황 공격적 & 리스크 보수적",
+		"투자현황 공격적 & 리스크 공격적"
+	};
+		
+	String[] riskPatienceComment = {			// 리스크 감내 역량
 		"안정적 투자를 지향하지만 투자 가능 기간이 긴 편은 아니기 때문에 꾸준한 모니터링이 필요함", // 보수, 보수, 답변 조건 X
 		"리스크 감내역량이 있으니, 공격적 투자 고려 가능", // 보수, 보수, 답변 조건 O
 		"공격적 투자 성향을 가지고 있지만, 투자자본 등 여건 상 보수적 투자방식을 유지하는게 안정적일 수 있음", // 보수, 공격, 답변 조건 X
@@ -39,38 +90,111 @@ public class SelfDiagnosisComment {
 		"리스크 성향, 감내역량 충족"		
 	};
 	
-	// 모두 트리톤을 타지 않고 나오는 점수들. (단순 알고리즘으로 나오는 점수)
-	// 위험 적합도 = riskScore
-	// 투자 결정 적합도 = investDecisionScore
-	// 지식 이해도 = knowledgeScore
-	String getFinalResultComment(int riskScore, int investDecisionScore, int knowledgeScore)
-	{
-		int idx = 0;
-		
-		idx += riskScore >= 75 ? 18 : riskScore >= 55 ? 9 : 0;
-		idx += investDecisionScore >= 75 ? 6 : riskScore >= 55 ? 3 : 0;
-		idx += knowledgeScore >= 70 ? 2 : knowledgeScore >= 50 ? 1 : 0;
-		
-		return finalResultComment[idx];
-	}
 	
-	String getRiskPatienceComment(int recentInvestmentScore, int riskScore, int riskQ1, int riskQ2)
+	// 리스크 적합도 진단
+	public List<String> getRiskFielityComment(int investCondScore, int riskScore, int riskQ1, int riskQ2)
 	{
+		List<String> res = new ArrayList<>();
 		int idx = 0;
 		
-		idx += recentInvestmentScore >= 10 ? 4 : 0;
+		idx += investCondScore >= 10 ? 2 : 0;
+		idx += riskScore >= 12 ? 1 : 0;
+		
+		res.add(riskDiagnosisComment[idx]);
+		
+		idx = 0;
+		idx += investCondScore >= 10 ? 4 : 0;
 		idx += riskScore >= 12 ? 2 : 0;
 		idx += (riskQ1 == 1 && riskQ2 != 1) ? 1 : 0;
 		
-		return riskPatienceComment[idx];
+		res.add(riskPatienceComment[idx]);
+		
+		return res;
 	}
 	
-	List<String> getTotalComment(Map<String, Integer> scoreMap)
+	
+	String[] investDecisionComment = {
+		"투자원칙 명확 & 편향 논리적",
+		"투자원칙 명확 & 편향 감정적",
+		"투자원칙 불명확 & 편향 논리적",
+		"투자원칙 불명확 & 편향 감정적"
+	};
+	
+	String investRuleIndefiniteComment = "투자원칙 불명확";
+	
+	String cogBiasEmotionalComment = "편향 감정적";
+	
+	public List<String> getDecisionMakingComment(int investRuleScore, int cognitiveBiasScore)
 	{
-		List<String> totalComment = new ArrayList<>();
+		List<String> res = new ArrayList<>();
 		
-		int riskScore = scoreMap.get("");
+		int idx = 0;
 		
-		return totalComment;
+		idx += investRuleScore >= 26 ? 2 : 0;
+		idx += cognitiveBiasScore >= 35 ? 1 : 0;
+		
+		res.add(investDecisionComment[idx]);
+		
+		if(investRuleScore < 26)
+			res.add(investRuleIndefiniteComment);
+		
+		if(cognitiveBiasScore < 35)
+			res.add(cogBiasEmotionalComment);
+		
+		return res;
 	}
+	
+	String[] investKnowledgeComment = {
+		"지식수준 상",
+		"지식수준 중",
+		"지식수준 하",
+	};
+	
+	String[] studyDirectionComment = {
+		"취약 UK 관련 컨텐츠",
+		"기본지식 + 취약 UK 관련 컨텐츠",
+		"기본지식 및 소양 학습"
+	};
+	
+	public List<String> getInvestKnowledgeComment(int investKnowledgeScore)
+	{
+		List<String> res = new ArrayList<>();
+		
+		int idx =  investKnowledgeScore >= 80 ? 0 : investKnowledgeScore >= 50 ? 1 : 2;
+		
+		res.add(investKnowledgeComment[idx]);
+		res.add(studyDirectionComment[idx]);
+		
+		return res;
+	}
+	
+	
+	public Map<String, List<String>> getTotalComments(Map<String, Integer> scoreMap)
+	{
+		Map<String, List<String>> res = new HashMap<>();
+		
+		//(int riskFidelityScore, int investDecisionScore, int knowledgeScore)
+
+		int riskFidelScore = scoreMap.get(RuleBaseScoreCalculator.RISK_FIDELITY_SCORE_KEY);
+		int decisionMakingScore = scoreMap.get(RuleBaseScoreCalculator.DECISION_MAKING_SCORE_KEY);
+		int riskA1 = scoreMap.get(RuleBaseScoreCalculator.RISK_ANSWER_1_KEY);
+		int riskA2 = scoreMap.get(RuleBaseScoreCalculator.RISK_ANSWER_2_KEY);
+		int riskScore = scoreMap.get(RuleBaseScoreCalculator.RISK_SCORE_KEY);
+		int investCondScore = scoreMap.get(RuleBaseScoreCalculator.INVEST_COND_SCORE_KEY);
+		int investKnowledgeScore = scoreMap.get(RuleBaseScoreCalculator.INVEST_KNOWLEDGE_KEY);
+		int investRuleScore = scoreMap.get(RuleBaseScoreCalculator.INVEST_RULE_SCORE_KEY);
+		int cogBiasScore = scoreMap.get(RuleBaseScoreCalculator.COGNITIVE_BIAS_SCORE_KEY);
+		List<String> similarTypeList = makeSimilarTypeInfo(riskFidelScore, decisionMakingScore, investKnowledgeScore);
+		
+		res.put(TOTAL_RES_KEY, getFinalResultComment(riskFidelScore, decisionMakingScore, investKnowledgeScore));
+		res.put(RISK_FID_KEY, getRiskFielityComment(investCondScore, riskScore,riskA1,riskA2));
+		res.put(DECISION_MAKING_KEY, getDecisionMakingComment(investRuleScore, cogBiasScore));
+		res.put(INVEST_KNOWLEDGE_KEY, getInvestKnowledgeComment(investKnowledgeScore));
+		res.put(SIMILAR_TYPE_KEY, similarTypeList);
+		
+		return res;
+	}
+	
+	
+	
 }

@@ -27,7 +27,7 @@ public class MiniTestResultDTO {
 	
 	List<List<String>> weakPartDetail = new ArrayList<List<String>>();
 	
-	int[] diagnosisQuestionInfo = {0,0,0};
+	List<List<String>> diagnosisQuestionInfo;
 
 
 	public boolean initForDummy() {
@@ -57,9 +57,20 @@ public class MiniTestResultDTO {
 			weakPartDetail.add(detail);
 		}
 		
-		diagnosisQuestionInfo[0] = 7;
-		diagnosisQuestionInfo[1] = 1;
-		diagnosisQuestionInfo[2] = 2;
+		if(diagnosisQuestionInfo == null)
+		{
+			diagnosisQuestionInfo = new ArrayList<>();
+			diagnosisQuestionInfo.add(new ArrayList<>());
+			diagnosisQuestionInfo.add(new ArrayList<>());
+			diagnosisQuestionInfo.add(new ArrayList<>());
+		}
+		
+		diagnosisQuestionInfo.get(0).add("1");
+		diagnosisQuestionInfo.get(0).add("2");
+		diagnosisQuestionInfo.get(1).add("3");
+		diagnosisQuestionInfo.get(1).add("4");
+		diagnosisQuestionInfo.get(2).add("5");
+		diagnosisQuestionInfo.get(2).add("6");
 		
 		return true;
 	}

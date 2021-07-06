@@ -62,8 +62,9 @@ public class SelfDiagnosisReportService {
 		List<Problem> probList = getProblemInfos(diagnosisProbStatements);
 		List<Pair<Problem, Integer>> probAndUserChoice = getProblemAndChoiceInfos(probList, diagnosisProbStatements);
 		Map<String, Integer> scoreMap = ruleBaseScoreCalculator.probDivideAndCalculateScores(probAndUserChoice);
+		Map<String, List<String>> commentMap = commentGenerator.getTotalComments(scoreMap);
 		
-		result.initForDummy();
+		//result.initForDummy();
 				
 		Map<String, Integer> partRes = new HashMap<>();
 		partRes.put(RuleBaseScoreCalculator.RISK_FIDELITY_SCORE_KEY, 
@@ -74,6 +75,16 @@ public class SelfDiagnosisReportService {
 				scoreMap.get(RuleBaseScoreCalculator.INVEST_KNOWLEDGE_KEY));
 		result.setPartDiagnosisResult(partRes);
 		result.setGiScore(scoreMap.get(RuleBaseScoreCalculator.GI_SCORE_KEY));
+		
+		
+		// Comment Setting
+		result.setTotalResult(commentMap.get(SelfDiagnosisComment.TOTAL_RES_KEY));
+		result.setDecisionMaking(commentMap.get(SelfDiagnosisComment.DECISION_MAKING_KEY));
+		result.setInvestKnowledge(commentMap.get(SelfDiagnosisComment.INVEST_KNOWLEDGE_KEY));
+		result.setRiskFidelity(commentMap.get(SelfDiagnosisComment.RISK_FID_KEY));
+		result.setSimilarTypeInfo(commentMap.get(SelfDiagnosisComment.SIMILAR_TYPE_KEY));
+		
+		
 		
 		// Rule Based 점수들 산출
 		
