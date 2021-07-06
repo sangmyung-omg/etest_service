@@ -27,6 +27,10 @@ public class DiagnosisProblem {
 
 	@Column(name="ORDER_NUM")
 	private String orderNum;
+
+	@Column(name="CURRICULUM_ID")
+	private Integer curriculumId;
+	
 	
 	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name="CURRICULUM_ID", nullable=true, insertable = false, updatable = false)
