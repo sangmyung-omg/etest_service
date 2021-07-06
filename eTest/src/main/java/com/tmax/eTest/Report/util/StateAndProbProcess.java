@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Component;
 
 import com.tmax.eTest.Contents.model.Problem;
@@ -20,10 +21,9 @@ public class StateAndProbProcess {
 	
 	private final Logger logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
 	
-	public final String UK_MAP_KEY = "ukMap";		// Map<Integer, UKMaster>
-	public final String UK_LIST_KEY = "ukList";			// List<String>
-	public final String IS_CORRECT_LIST_KEY = "isCorrectList";// List<String>
-	public final String DIFF_LIST_KEY = "diffcultyList";	// List<String>
+	public final static String UK_LIST_KEY = "ukList";			// List<String>
+	public final static String IS_CORRECT_LIST_KEY = "isCorrectList";// List<String>
+	public final static String DIFF_LIST_KEY = "diffcultyList";	// List<String>
 
 
 	public int[] calculateDiagQuestionInfo(List<StatementDTO> miniTestResult)
@@ -44,20 +44,39 @@ public class StateAndProbProcess {
 	}
 	
 	
-	public Map<String, Object> makeInfoForTriton(
-			List<StatementDTO> miniTestResult,
-			List<Problem> probInfos)
+	public Map<Integer, UkMaster> makeUsedUkMap(List<Problem> probList)
 	{
-		Map<String, Object> result = new HashMap<>();
+		Map<Integer, UkMaster> res = new HashMap<>();
+		
+		for(Problem prob : probList)
+		{
+			List<ProblemUKRelation> probUKRels = prob.getProblemUKReleations();
+			
+			for(ProblemUKRelation probUKRel : probUKRels)
+			{
+				int ukId = Integer.parseInt(probUKRel.getUkId().getUkId());
+				res.put(ukId, probUKRel.getUkId());
+			}
+		}
+		
+		return res;
+		
+	}
+	
+	
+	public Map<String, List<Object>> makeInfoForTriton(
+			List<StatementDTO> statementList,
+			List<Problem> probList)
+	{
+		Map<String, List<Object>> result = new HashMap<>();
 		
 		List<Object> ukList = new ArrayList<>();
 		List<Object> isCorrectList = new ArrayList<>();
 		List<Object> diffcultyList = new ArrayList<>();
-		Map<Integer, UkMaster> ukMap = new HashMap<>();
 		
 		// first process : 문제별 PK 얻어오기.
 		Map<Integer, Integer> isCorrectMap = new HashMap<>();
-		for(StatementDTO dto : miniTestResult)
+		for(StatementDTO dto : statementList)
 		{
 			try
 			{
@@ -66,45 +85,46 @@ public class StateAndProbProcess {
 			}
 			catch(Exception e)
 			{
-				logger.info("getUnderstandingScoreInTriton : "+e.toString()+" id : "+dto.getSourceId()+" error!");
+				logger.info("makeInfoForTriton : "+e.toString()+" id : "+dto.getSourceId()+" error!");
 			}
 		}
 		
-		for(Problem prob : probInfos)
+		for(Problem prob : probList)
 		{
-			List<ProblemUKRelation> probUKRels = prob.getProblemUKReleations();
-			int diff = 1;
-			int isCorrect = isCorrectMap.get(prob.getProbID());
-						
-			switch(prob.getDifficulty())
+			if(prob.getDifficulty() != null)
 			{
-			case "상":
-				diff = 1;
-				break;
-			case "중":
-				diff = 2;
-				break;
-			case "하":
-				diff = 3;
-				break;
-			default:
-				break;
-			}
-			
-			for(ProblemUKRelation probUKRel : probUKRels)
-			{
-				int ukId = Integer.parseInt(probUKRel.getUkId().getUkId());
-				ukList.add(ukId);
-				isCorrectList.add(isCorrect);
-				diffcultyList.add(diff);
-				ukMap.put(ukId, probUKRel.getUkId());
+				List<ProblemUKRelation> probUKRels = prob.getProblemUKReleations();
+				int diff = 1;
+				int isCorrect = isCorrectMap.get(prob.getProbID());
+							
+				switch(prob.getDifficulty())
+				{
+				case "상":
+					diff = 1;
+					break;
+				case "중":
+					diff = 2;
+					break;
+				case "하":
+					diff = 3;
+					break;
+				default:
+					break;
+				}
+				
+				for(ProblemUKRelation probUKRel : probUKRels)
+				{
+					int ukId = Integer.parseInt(probUKRel.getUkId().getUkId());
+					ukList.add(ukId);
+					isCorrectList.add(isCorrect);
+					diffcultyList.add(diff);
+				}
 			}
 		}
 				
 		result.put(UK_LIST_KEY, ukList);
 		result.put(IS_CORRECT_LIST_KEY, isCorrectList);
 		result.put(DIFF_LIST_KEY, diffcultyList);
-		result.put(UK_MAP_KEY, ukMap);
 		
 		return result;
 	}
