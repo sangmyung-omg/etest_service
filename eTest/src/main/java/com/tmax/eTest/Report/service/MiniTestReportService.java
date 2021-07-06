@@ -67,7 +67,7 @@ public class MiniTestReportService {
 		TritonDataDTO embeddingData = null;
 		TritonDataDTO masteryData = null;
 		
-		int diagQuestionInfo[] = stateAndProbProcess.calculateDiagQuestionInfo(miniTestRes);
+		List<List<String>> diagQuestionInfo = stateAndProbProcess.calculateDiagQuestionInfo(miniTestRes);
 		result.setDiagnosisQuestionInfo(diagQuestionInfo);
 
 		if(tritonResponse != null)

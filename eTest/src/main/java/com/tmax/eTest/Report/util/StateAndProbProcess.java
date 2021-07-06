@@ -26,18 +26,23 @@ public class StateAndProbProcess {
 	public final static String DIFF_LIST_KEY = "diffcultyList";	// List<String>
 
 
-	public int[] calculateDiagQuestionInfo(List<StatementDTO> miniTestResult)
+	public List<List<String>> calculateDiagQuestionInfo(List<StatementDTO> miniTestResult)
 	{
-		int diagQuestionInfo[] = {0,0,0};
+		List<List<String>> diagQuestionInfo = new ArrayList<>();
+		
+		diagQuestionInfo.add(new ArrayList<>());
+		diagQuestionInfo.add(new ArrayList<>());
+		diagQuestionInfo.add(new ArrayList<>());
 		
 		for(StatementDTO state : miniTestResult)
 		{
+			String probId = state.getSourceId();
 			if(state.getIsCorrect() == 1)
-				diagQuestionInfo[0]++;
+				diagQuestionInfo.get(0).add(probId);
 			else if(state.getUserAnswer().equalsIgnoreCase("pass"))
-				diagQuestionInfo[2]++;
+				diagQuestionInfo.get(2).add(probId);
 			else
-				diagQuestionInfo[1]++;
+				diagQuestionInfo.get(1).add(probId);
 		}
 		
 		return diagQuestionInfo;
