@@ -1,6 +1,7 @@
 package com.tmax.eTest.Test.service;
 
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -49,9 +50,15 @@ public class ProblemService {
 
 		// 성향문제의 경우 : 가져온 커리큘럼 아이디에 해당되는 모든 진단 문제를 하나의 리스트에 합침	
 		List<Integer> problemLists = new ArrayList<Integer>();
+		String choice = Arrays.asList("A","B","C").get(new Random().nextInt(3));
 		for (Integer i: selectedCurriculumId){
 		List<DiagnosisProblem> selectedProblems = diagnosisRepo.findByCurriculumId(i);
-		List<Integer> selectedProbIds = selectedProblems.stream().map(sp -> sp.getProbId()).collect(toList());
+		List<Integer> selectedProbIds = new ArrayList<Integer>();
+		if (i<7) {
+			selectedProbIds = selectedProblems.stream().map(sp -> sp.getProbId()).collect(toList());
+		} else {
+			selectedProbIds = selectedProblems.stream().filter(sp->sp.getSetType().equals(choice)).map(sp -> sp.getProbId()).collect(toList());			
+		}
 		problemLists.addAll(selectedProbIds);
 		}
 		map.put("tendencyProblems", problemLists);				// [1,2,3,4,5,6,7,8,9]의 형태
