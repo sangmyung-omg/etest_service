@@ -6,14 +6,18 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import static java.util.stream.Collectors.*;
+
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.tmax.eTest.Contents.model.DiagnosisCurriculum;
 import com.tmax.eTest.Contents.model.DiagnosisProblem;
 import com.tmax.eTest.Contents.model.TestProblem;
+import com.tmax.eTest.Contents.repository.DiagnosisCurriculumRepository;
 import com.tmax.eTest.Contents.repository.DiagnosisProblemRepository;
 import com.tmax.eTest.Contents.repository.TestProblemRepository;
 
@@ -25,73 +29,64 @@ public class ProblemService {
 	
 	@Autowired
 	DiagnosisProblemRepository diagnosisRepo;
+
+	@Autowired
+	DiagnosisCurriculumRepository diagnosisCurriculumRepo;
+	
+	@Autowired
 	TestProblemRepository minitestRepo;
 	
 	
-	public Map<String, Object> getDiagnosisProblems(String type){
+	public Map<String, Object> getDiagnosisTendencyProblems(){
 		Map<String, Object> map = new HashMap<String,Object>();
-		String queryType = "";
-		if (type.equalsIgnoreCase("tendency")) {
-			queryType = "성향";
-			List<Integer> tendencyProblems = new ArrayList<Integer>();
-			
-			// 일단 성향 문제  fix된 세트만 제공한다는 가정. (그냥 있는 문제 다 표출)
-			logger.info("Getting all diagnosis tendency problem info......");
-			tendencyProblems = diagnosisRepo.findTendencyProblems(queryType);
-			Collections.shuffle(tendencyProblems);
-			map.put("tendencyProblems", tendencyProblems);				// [1,2,3,4,5,6,7,8,9]의 형태
-			
-		} else if (type.equalsIgnoreCase("knowledge")) {
-			queryType = "지식";
-			List<List<Integer>> knowledgeProblems = new ArrayList<List<Integer>>();
-			
-			// 일단 진단 지식 문제 다 불러와서 판단
-			logger.info("Getting all diagnosis knowledge problem info......");
-			List<DiagnosisProblem> total_list = diagnosisRepo.findAll();
-			
-			// 주제별, 난이도별 문제 수집
-			Map<String, Map<String, List<Integer>>> subject_diff_map = new HashMap<String, Map<String, List<Integer>>>();
-			for (DiagnosisProblem dto : total_list) {
-				if (!subject_diff_map.containsKey(dto.getSubject())) {
-					subject_diff_map.put(dto.getSubject(), new HashMap<String, List<Integer>>());
-				}
-				
-				if (dto.getProblem().getDifficulty().equalsIgnoreCase("상")) {
-					if (subject_diff_map.get(dto.getSubject()).containsKey("high")) {
-						subject_diff_map.get(dto.getSubject()).get("high").add(dto.getProbID());
-					} else {
-						subject_diff_map.get(dto.getSubject()).put("high", Arrays.asList(dto.getProbID()));
-					}
-				} else if (dto.getProblem().getDifficulty().equalsIgnoreCase("중")) {
-					if (subject_diff_map.get(dto.getSubject()).containsKey("mid")) {
-						subject_diff_map.get(dto.getSubject()).get("mid").add(dto.getProbID());
-					} else {
-						subject_diff_map.get(dto.getSubject()).put("mid", Arrays.asList(dto.getProbID()));
-					}
-				} else if (dto.getProblem().getDifficulty().equalsIgnoreCase("하")) {
-					if (subject_diff_map.get(dto.getSubject()).containsKey("low")) {
-						subject_diff_map.get(dto.getSubject()).get("low").add(dto.getProbID());
-					} else {
-						subject_diff_map.get(dto.getSubject()).put("low", Arrays.asList(dto.getProbID()));
-					}
-				}
-			}
-			
-			// 각 주제별, 난이도별로 적어도 한 문제씩은 있다고 가정. (없으면 adaptive 할 수가 없음)
-			for (String key : subject_diff_map.keySet()) {
-				Collections.shuffle(subject_diff_map.get(key).get("low"));
-				Collections.shuffle(subject_diff_map.get(key).get("mid"));
-				Collections.shuffle(subject_diff_map.get(key).get("high"));
-				
-				knowledgeProblems.add(Arrays.asList(subject_diff_map.get(key).get("low").get(0),
-													subject_diff_map.get(key).get("mid").get(0),
-													subject_diff_map.get(key).get("high").get(0)));
-			}
-			
-			Collections.shuffle(knowledgeProblems);
-			map.put("knowledgeProblems", knowledgeProblems);		// [[1,2,3],[4,5,6],[7,8,9],...] 의 형태
+		String type = "성향";
+
+		logger.info("Getting all diagnosis tendency problem info......");
+		// 진단 커리큘럼 테이블에서 type에 해당되는 커리큘럼 아이디를 모두 가져옴
+		List<DiagnosisCurriculum> selectedCurriculum =  diagnosisCurriculumRepo.findByChapter(type);
+		List<Integer> selectedCurriculumId = selectedCurriculum.stream().map(dc->dc.getCurriculumId()).collect(toList());
+		logger.info(String.format("Retrieved all curriculum ids with type %s", type));
+
+		// 성향문제의 경우 : 가져온 커리큘럼 아이디에 해당되는 모든 진단 문제를 하나의 리스트에 합침	
+		List<Integer> problemLists = new ArrayList<Integer>();
+		for (Integer i: selectedCurriculumId){
+		List<DiagnosisProblem> selectedProblems = diagnosisRepo.findByCurriculumId(i);
+		List<Integer> selectedProbIds = selectedProblems.stream().map(sp -> sp.getProbId()).collect(toList());
+		problemLists.addAll(selectedProbIds);
 		}
-		
+		map.put("tendencyProblems", problemLists);				// [1,2,3,4,5,6,7,8,9]의 형태
+
+		return map;
+	}
+	public Map<String, Object> getDiagnosisKnowledgeProblems(){
+		Map<String, Object> map = new HashMap<String,Object>();
+		String type = "지식";
+
+		logger.info("Getting all diagnosis tendency problem info......");
+		// 진단 커리큘럼 테이블에서 type에 해당되는 커리큘럼 아이디를 모두 가져옴
+		List<DiagnosisCurriculum> selectedCurriculum =  diagnosisCurriculumRepo.findByChapter(type);
+		List<Integer> selectedCurriculumId = selectedCurriculum.stream().map(dc->dc.getCurriculumId()).collect(toList());
+		logger.info(String.format("Retrieved all curriculum ids with type %s", type));
+
+		// 지식문제의 경우 : 가져온 커리큘럼 아이디에 해당되는 진단문제 리스트를 리스트 안에 넣음
+		List<List<Integer>> problemLists = new ArrayList<List<Integer>>();
+		for (Integer i: selectedCurriculumId){
+			List<DiagnosisProblem> selectedProblems = diagnosisRepo.findByCurriculumId(i);
+			List<String> selectedSubjects = selectedProblems.stream().map(sp -> sp.getSubject()).collect(toList());
+			List<Integer> selectedProbIds = selectedProblems.stream().map(sp -> sp.getProbId()).collect(toList());
+			selectedSubjects.add("dummy"); // 마지막을 찾기 위한 더미 tag 입력
+			List<Integer> tmpList = new ArrayList<Integer>();
+			for (int j=0; j<selectedProbIds.size(); j++) {
+				String tag = selectedSubjects.get(j);
+				tmpList.add(selectedProbIds.get(j));
+				// 태그가 달라지면 한번 넣기
+				if (!tag.equals(selectedSubjects.get(j+1))){
+					problemLists.add(new ArrayList<Integer>(tmpList));
+					tmpList.clear();
+				}
+			}
+		}
+		map.put("knowledgeProblems", problemLists);	
 		
 		return map;
 	}

@@ -17,14 +17,16 @@ public class DiagnosisProblem {
 	
 	@Id
 	@Column(name="PROB_ID")
-	private Integer probID;
+	private Integer probId;
 	
 	@Column(name="SUBJECT")
 	private String subject;
-	
-	@ManyToOne(fetch=FetchType.LAZY)
-	@JoinColumn(name="PROB_ID", nullable=true, insertable = false, updatable = false)
-	private Problem problem;
+
+	@Column(name="SET_TYPE")
+	private String setType;
+
+	@Column(name="ORDER_NUM")
+	private String orderNum;
 	
 	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name="CURRICULUM_ID", nullable=true, insertable = false, updatable = false)
