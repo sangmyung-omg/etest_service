@@ -107,7 +107,7 @@ public class ProblemController {
 		return output;
 	}
 	
-	@PostMapping(value = "problems/error/report")
+	@PostMapping(value = "/problems/error/report")
 	public ResponseEntity<ErrorDTO> errorReport(@RequestBody ErrorReportBody errorReportBody) throws Exception{
 		HttpHeaders headers= new HttpHeaders();
         headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
@@ -117,7 +117,7 @@ public class ProblemController {
 			resultMessage = problemService.insertErrorReport(errorReportBody.getProblem_id(), errorReportBody.getId(), errorReportBody.getReport_type(), errorReportBody.getReport_text());
 			output = new ResponseEntity<>(new ErrorDTO(resultMessage),headers, HttpStatus.OK );
 		}catch(UnavailableTypeException e) {
-			output = new ResponseEntity<>(new ErrorDTO(e.toString()),headers, HttpStatus.NOT_FOUND );
+			output = new ResponseEntity<>(new ErrorDTO(e.toString()),headers, HttpStatus.BAD_REQUEST );
 		}catch(Exception e) {
 			resultMessage = "failed";
 			output = new ResponseEntity<>(new ErrorDTO(resultMessage),headers, HttpStatus.NOT_FOUND );
