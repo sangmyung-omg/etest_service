@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.tmax.eTest.Contents.model.DiagnosisCurriculum;
 import com.tmax.eTest.Contents.model.Problem;
 import com.tmax.eTest.Contents.model.ProblemChoice;
 
@@ -28,6 +29,9 @@ public class RuleBaseScoreCalculator {
 	final public static String DECISION_MAKING_SCORE_KEY = "의사결정적합도점수";
 	final public static String INVEST_KNOWLEDGE_KEY = "지식이해도";
 	final public static String GI_SCORE_KEY = "GI점수";
+	final public static String RISK_ANSWER_1_KEY = "RiskA1";
+	final public static String RISK_ANSWER_2_KEY = "RiskA2";
+	
 	
 	final static String[] SELF_DIAGNOSIS_TYPE = { "AFB", // 공격적 / 감정적 / 초보자
 			"AFE", // 공격적 / 감정적 / 전문가
@@ -51,25 +55,6 @@ public class RuleBaseScoreCalculator {
 		return SELF_DIAGNOSIS_TYPE[idx];
 	}
 	
-	public List<String> makeSimilarTypeInfo(int riskFidelityScore, int decisionMakingScore, int investKnowledgeScore) {
-		List<String> res = new ArrayList<>();
-		
-		int totalScore = riskFidelityScore >= 75 ? 3 : riskFidelityScore >= 55 ? 2 : 1;
-		totalScore += decisionMakingScore >= 75 ? 3 : decisionMakingScore >= 55 ? 2 : 1;
-		totalScore += investKnowledgeScore >= 70 ? 3 : investKnowledgeScore >= 50 ? 2 : 1;
-				
-		String investerRatio = totalScore == 9 || totalScore == 3 ? "3.7%"
-				: totalScore > 5 ? "33.33%" : "25.93%";
-		String avgItemNum = riskFidelityScore >= 75 ? "8종목" : riskFidelityScore >= 55 ? "5종목" : "3종목";
-		String investRatio = riskFidelityScore >= 75 ? "55%" : riskFidelityScore >= 55 ? "40%" : "10%";
-		
-		res.add(investerRatio);
-		res.add(avgItemNum);
-		res.add(investRatio);
-		
-		return res;
-	}
-	
 	public Map<String,Integer> probDivideAndCalculateScores(List<Pair<Problem, Integer>> probInfos)
 	{
 		Map<String,Integer> res = new HashMap<>();
@@ -78,6 +63,7 @@ public class RuleBaseScoreCalculator {
 		List<Pair<Problem, Integer>> investRuleProb = new ArrayList<>(); // 투자원칙
 		List<Pair<Problem, Integer>> cogBiasProb = new ArrayList<>(); // 인지편향
 		List<Pair<Problem, Integer>> investKnowledgeProb = new ArrayList<>(); // 투자지식
+		List<Pair<Problem, Integer>> riskPatienceProb = new ArrayList<>();
 
 		for(Pair<Problem, Integer> probInfo : probInfos)
 		{
@@ -85,7 +71,8 @@ public class RuleBaseScoreCalculator {
 			
 			if(prob.getDiagnosisInfo() != null && prob.getDiagnosisInfo().getCurriculum() != null)
 			{
-				String section = prob.getDiagnosisInfo().getCurriculum().getSection();
+				DiagnosisCurriculum curriculum = prob.getDiagnosisInfo().getCurriculum();
+				String section = curriculum.getSection();
 				
 				switch(section)
 				{
@@ -94,6 +81,8 @@ public class RuleBaseScoreCalculator {
 					break;
 				case "리스크":
 					riskProb.add(probInfo);
+					if(curriculum.getSubSection().equals("리스크 감내역량"))
+						riskPatienceProb.add(probInfo);
 					break;
 				case "투자원칙":
 					investRuleProb.add(probInfo);
@@ -115,6 +104,20 @@ public class RuleBaseScoreCalculator {
 			}
 		}
 		
+		if(riskPatienceProb.size() != 2) // 2문항
+		{
+			logger.info("probDivideAndCalculateScores riskPatienceProb size error : " + riskPatienceProb.size());
+			res.put(RISK_ANSWER_1_KEY, 1);
+			res.put(RISK_ANSWER_2_KEY, 1);
+		}
+		else
+		{
+			int q1Idx = riskPatienceProb.get(0).getFirst().getProbID() < riskPatienceProb.get(1).getFirst().getProbID()?0:1;
+			int q2Idx = q1Idx==0?1:0;
+			
+			res.put(RISK_ANSWER_1_KEY, riskPatienceProb.get(q1Idx).getSecond());
+			res.put(RISK_ANSWER_2_KEY, riskPatienceProb.get(q2Idx).getSecond());
+		}
 		
 		res.putAll(calculateRiskFidelityScore(investCondProb, riskProb));
 		res.putAll(calculateDecisionMakingScore(investRuleProb, cogBiasProb));
@@ -147,8 +150,8 @@ public class RuleBaseScoreCalculator {
 		float tempScore = Math.abs((investConditionScore - 4) * 100 / 12.f - (riskScore - 5) * 100 / 15.f);
 		int riskFidelityScore = Float.valueOf((100 - tempScore) * 0.6f).intValue() + 35;
 
-		res.put(RISK_SCORE_KEY, investConditionScore);
-		res.put(INVEST_COND_SCORE_KEY, riskScore);
+		res.put(RISK_SCORE_KEY, riskScore);
+		res.put(INVEST_COND_SCORE_KEY, investConditionScore);
 		res.put(RISK_FIDELITY_SCORE_KEY, riskFidelityScore);
 
 		return res;
