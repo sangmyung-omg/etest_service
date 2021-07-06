@@ -24,5 +24,6 @@ public class DiagnosisCurriculum {
 	
     @Column(name="SUB_SECTION")
 	private String subSection;
+	
 
 }

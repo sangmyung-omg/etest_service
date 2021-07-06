@@ -21,11 +21,6 @@ public class DiagnosisProblem {
 	
 	@Column(name="SUBJECT")
 	private String subject;
-	
-	
-	@Column(name="CURRICULUM_ID")
-	private Integer curriculumId;
-
 
 	@Column(name="SET_TYPE")
 	private String setType;
@@ -33,14 +28,12 @@ public class DiagnosisProblem {
 	@Column(name="ORDER_NUM")
 	private String orderNum;
 
-	// @ManyToOne
-	// @JoinColumn(name="problem")
-	// private Problem problem;
-
-	// @ManyToOne(targetEntity = DiagnosisCurriculum.class, fetch=FetchType.LAZY)
-	// @JoinColumn(name="curriculumId")
-	// private DiagnosisCurriculum curriculum;
-
+	@Column(name="CURRICULUM_ID")
+	private Integer curriculumId;
 	
-
+	
+	@ManyToOne(fetch=FetchType.LAZY)
+	@JoinColumn(name="CURRICULUM_ID", nullable=true, insertable = false, updatable = false)
+	private DiagnosisCurriculum curriculum;
+	
 }

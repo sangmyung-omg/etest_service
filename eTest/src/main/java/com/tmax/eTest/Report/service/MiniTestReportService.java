@@ -61,45 +61,45 @@ public class MiniTestReportService {
 		// Mini Test 관련 문제 풀이 정보 획득.
 		List<StatementDTO> miniTestRes = getMiniTestResultInLRS(userId);
 		List<Problem> probInfos = getProblemInfos(miniTestRes);
-		Map<String, Object> probInfoForTriton = stateAndProbProcess.makeInfoForTriton(miniTestRes, probInfos);
-		TritonResponseDTO tritonResponse = getUnderstandingScoreInTriton(probInfoForTriton);
+		Map<String, List<Object>> probInfoForTriton = stateAndProbProcess.makeInfoForTriton(miniTestRes, probInfos);
+		TritonResponseDTO tritonResponse = tritonAPIManager.getUnderstandingScoreInTriton(probInfoForTriton);
 
 		TritonDataDTO embeddingData = null;
 		TritonDataDTO masteryData = null;
-
-		for (TritonDataDTO dto : tritonResponse.getOutputs()) {
-			if (dto.getName().equals("Embeddings")) {
-				embeddingData = dto;
-			} else if (dto.getName().equals("Mastery")) {
-				masteryData = dto;
-			}
-		}
-
+		
 		int diagQuestionInfo[] = stateAndProbProcess.calculateDiagQuestionInfo(miniTestRes);
 		result.setDiagnosisQuestionInfo(diagQuestionInfo);
 
-		if (embeddingData != null && masteryData != null) {
-			@SuppressWarnings("unchecked")
-			Map<Integer, UkMaster> ukMap = (Map<Integer, UkMaster>) probInfoForTriton
-					.get(stateAndProbProcess.UK_MAP_KEY);
-
-			Map<Integer, Float> ukScoreMap = scoreCalculator.makeUKScoreMap(masteryData);
-			List<List<String>> partScoreList = scoreCalculator.makePartScore(ukMap, ukScoreMap);
-			List<List<String>> weakPartDetail = scoreCalculator.makeWeakPartDetail(ukMap, ukScoreMap, partScoreList);
-
-			result.setPartUnderstanding(partScoreList);
-			result.setWeakPartDetail(weakPartDetail);
-
-			float avg = 0;
-			for (List<String> part : partScoreList) {
-				avg += Float.parseFloat(part.get(2));
+		if(tritonResponse != null)
+		{
+			for (TritonDataDTO dto : tritonResponse.getOutputs()) {
+				if (dto.getName().equals("Embeddings")) {
+					embeddingData = dto;
+				} else if (dto.getName().equals("Mastery")) {
+					masteryData = dto;
+				}
 			}
-
-			result.setScore(Math.round(avg / partScoreList.size()));
-
-			saveUserUKInfo(userId, ukScoreMap);
+	
+			if (embeddingData != null && masteryData != null) {
+				Map<Integer, UkMaster> usedUkMap =stateAndProbProcess.makeUsedUkMap(probInfos);
+	
+				Map<Integer, Float> ukScoreMap = scoreCalculator.makeUKScoreMap(masteryData);
+				List<List<String>> partScoreList = scoreCalculator.makePartScore(usedUkMap, ukScoreMap);
+				List<List<String>> weakPartDetail = scoreCalculator.makeWeakPartDetail(usedUkMap, ukScoreMap, partScoreList);
+	
+				result.setPartUnderstanding(partScoreList);
+				result.setWeakPartDetail(weakPartDetail);
+	
+				float avg = 0;
+				for (List<String> part : partScoreList) {
+					avg += Float.parseFloat(part.get(2));
+				}
+	
+				result.setScore(Math.round(avg / partScoreList.size()));
+	
+				saveUserUKInfo(userId, ukScoreMap);
+			}
 		}
-
 		return result;
 	}
 
@@ -132,7 +132,7 @@ public class MiniTestReportService {
 				probList = problemRepo.findAllById(probIdList);
 			} catch (Exception e) {
 				logger.info(
-						"getUnderstandingScoreInTriton : " + e.toString() + " id : " + dto.getSourceId() + " error!");
+					"getProblemInfos : " + e.toString() + " id : " + dto.getSourceId() + " error!");
 			}
 		}
 
@@ -140,32 +140,7 @@ public class MiniTestReportService {
 		return probList;
 	}
 
-	@SuppressWarnings("unchecked")
-	private TritonResponseDTO getUnderstandingScoreInTriton(Map<String, Object> probInfoForTriton) {
-		// first process : 문제별 PK 얻어오기.
-
-		TritonRequestDTO tritonReq = new TritonRequestDTO();
-
-		tritonReq.initDefault();
-
-		tritonReq.pushInputData("UKList", "INT32",
-				(List<Object>) probInfoForTriton.get(stateAndProbProcess.UK_LIST_KEY));
-		tritonReq.pushInputData("IsCorrectList", "INT32",
-				(List<Object>) probInfoForTriton.get(stateAndProbProcess.IS_CORRECT_LIST_KEY));
-		tritonReq.pushInputData("DifficultyList", "INT32",
-				(List<Object>) probInfoForTriton.get(stateAndProbProcess.DIFF_LIST_KEY));
-
-		// Triton에 데이터 요청.
-		TritonResponseDTO tritonResponse = null;
-		try {
-			tritonResponse = tritonAPIManager.getInfer(tritonReq);
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		return tritonResponse;
-	}
+	
 	
 	private void saveUserUKInfo(String userId, Map<Integer, Float> ukScoreList) {
 
