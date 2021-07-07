@@ -2,6 +2,8 @@
 
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -110,11 +112,20 @@ public class SelfDiagnosisReportService {
 				//[파트이름, 스코어 등급(A~F), 스코어 점수]
 				List<List<String>> partScoreList = ukScoreCalculator.makePartScore(usedUkMap, ukScoreMap);
 				
-				for(List<String> partScoreInfo : partScoreList)
+				Collections.sort(partScoreList, new Comparator<List<String>>() {
+					@Override
+					public int compare(List<String> o1, List<String> o2) {
+						// TODO Auto-generated method stub
+						return o1.get(2).compareTo(o2.get(2));
+					}
+				});
+				
+				for(int i = 0; i < partScoreList.size(); i++)
 				{
+					List<String> partScoreInfo = partScoreList.get(i);
 					int partScore = Integer.parseInt(partScoreInfo.get(2));
 					
-					if(partScore > 50)
+					if(i >= partScoreList.size() / 2)
 						result.pushStrongPartInfo(partScoreInfo.get(0), 
 							partScoreInfo.get(0) +" 영역에서 상대적으로 높은 이해도를 갖고 있습니다.", 
 							partScore);
