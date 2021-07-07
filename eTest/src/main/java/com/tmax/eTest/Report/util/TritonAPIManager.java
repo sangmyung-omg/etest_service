@@ -40,7 +40,7 @@ public class TritonAPIManager {
 
 	private final Logger logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
 
-	private String TRITON_ADDR = "http://192.168.153.212:8003/v2/models/kt-rule/versions/1/infer";
+	private String TRITON_ADDR = "http://192.168.159.62:18500/v2/models/kt-rule/versions/1/infer";
 	
 	/**
 	 * Added by Jonghyun seong. to get params from bean

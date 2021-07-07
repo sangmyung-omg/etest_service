@@ -92,8 +92,7 @@ paths:
       tags:
       - Problem
       summary: 해설 받아오기
-      description: 유저가 제출한 정답에 대한 채점결과를 true/false로 반환합니다. *내부적으로 유저가 풀었는지 안풀었는지 확인하고
-        받아와야 할듯?
+      description: 유저가 제출한 정답에 대한 채점결과를 true/false로 반환합니다.
       parameters:
       - name: id
         in: path
@@ -120,37 +119,37 @@ paths:
     post:
       tags:
         - Problem
-        summary: DB에 오류 보고 저장하기
-        description: 문제 번호와 유저 아이디, 신고 유형, 오류에 대한 설명을 DB에 저장합니다.
-        parameters:
-        - name: problem_id
-          in: query
-          description: 문제 아이디
-          required: true
-          schema:
-            type: string
-            format: string
-        - name: id
-          in: query
-          description: 유저 아이디
-          required: true
-          schema:
-            type: string
-            format: string
-        - name: report_type
-          in: query
-          description: 신고 유형 (QUESTION_ERROR/PASSAGE_ERROR)
-          required: true
-          schema:
-            type: string
-            format: string
-        - name: report_text
-          in: query
-          description: 신고 내용
-          required: true
-          schema:
-            type: string
-            format: string
+      summary : DB에 오류 보고 저장하기
+      description : 문제 번호와 유저 아이디, 신고 유형, 오류에 대한 설명을 DB에 저장합니다.
+      parameters:
+      - name: problem_id
+        in: query
+        description: 문제 아이디
+        required: true
+        schema:
+          type: string
+          format: string
+      - name: id
+        in: query
+        description: 유저 아이디
+        required: true
+        schema:
+          type: string
+          format: string
+      - name: report_type
+        in: query
+        description: 신고 유형 (QUESTION_ERROR/PASSAGE_ERROR)
+        required: true
+        schema:
+          type: string
+          format: string
+      - name: report_text
+        in: query
+        description: 신고 내용
+        required: true
+        schema:
+          type: string
+          format: string
       responses:
         200:
           description: Successfully saved
@@ -160,7 +159,7 @@ paths:
                 type: object
                 example:
                   message: success
-              
+
   /diagnosis/tendency:
     get:
       tags: [Test]
