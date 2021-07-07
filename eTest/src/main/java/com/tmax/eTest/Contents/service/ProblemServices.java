@@ -117,7 +117,7 @@ public class ProblemServices {
 			throw new NoDataException(setNum);
 		}else {
 			for(DiagnosisProblem d : diagnosisProblems) {
-				output.add(d.getProbID());
+				output.add(d.getProbId());
 			}
 		}
 		return output;

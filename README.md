@@ -37,3 +37,9 @@
 
 - src/main/resources/application.properties 파일의 'spring.datasource.initialization-mode' 를 never -> always 로 변경 및 저장
 - Run (or 이미 Run 상태이면 자동으로 리부트 됨)
+
+# config 파일 관련 주의사항
+
+- spring project에서는 먼저 config 폴더 내의 application.properties를 읽게 됩니다.
+- dev 환경에서 사용할 목적으로 config 폴더 내에 application.properties를 로컬 서버 환경에 맞게 작성하였습니다.
+- deploy시에는 application.properties.deploy 파일을 활용해주시면 됩니다.

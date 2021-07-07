@@ -6,7 +6,10 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -75,9 +78,10 @@ public class Problem {
 	@OneToMany(mappedBy="probID")
 	private List<ProblemChoice> problemChoices = new ArrayList<ProblemChoice>();
 	
-	@OneToMany(mappedBy="problem")
-	private List<DiagnosisProblem> diagnosisInfo = new ArrayList<DiagnosisProblem>();
-	
+	@ManyToOne(fetch=FetchType.LAZY)
+	@JoinColumn(name="PROB_ID", nullable=true, insertable = false, updatable = false)
+	private DiagnosisProblem diagnosisInfo;
+
 	@OneToMany(mappedBy="problem")
 	private List<TestProblem> testInfo = new ArrayList<TestProblem>();
 	

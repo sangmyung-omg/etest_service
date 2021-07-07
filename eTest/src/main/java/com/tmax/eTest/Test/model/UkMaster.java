@@ -27,6 +27,7 @@ public class UkMaster {
 	private String ukDescription;
 	private String trainUnseen;
 	private String curriculumId;
+	private String part;
 	
 	@OneToMany(mappedBy="ukId")
 	private List<ProblemChoice> problemChoices = new ArrayList<ProblemChoice>();

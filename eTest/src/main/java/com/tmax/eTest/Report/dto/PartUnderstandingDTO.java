@@ -24,6 +24,11 @@ public class PartUnderstandingDTO {
 	
 	Map<String, Integer> ukUnderstanding = new HashMap<String, Integer>();
 
+	public void pushUKUnderstanding(String ukName, int score)
+	{
+		ukUnderstanding.put(ukName, score);
+	}
+	
 	public boolean initForDummy() {
 		ukUnderstanding.put("Dummy UK 1", 60);
 		ukUnderstanding.put("Dummy UK 2", 70);
