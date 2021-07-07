@@ -74,6 +74,8 @@ public class RuleBaseScoreCalculator {
 				DiagnosisCurriculum curriculum = prob.getDiagnosisInfo().getCurriculum();
 				String section = curriculum.getSection();
 				
+				logger.info("probDivideAndCalculateScores : "+prob.getProbID()+" "+ section);
+				
 				switch(section)
 				{
 				case "투자현황":
@@ -207,12 +209,12 @@ public class RuleBaseScoreCalculator {
 				JsonObject jo = solution.get(i).getAsJsonObject();
 				
 				if(jo.get("type") != null && jo.get("data") != null &&
-					jo.get("type").getAsString() == "MULTIPLE_CHOICE_CORRECT_ANSWER")
+					jo.get("type").getAsString().equals("MULTIPLE_CHOICE_CORRECT_ANSWER"))
 				{
 					int answer = jo.get("data").getAsInt();
 					int idx = choice == answer ? 0 : 3;
-					idx += prob.getDifficulty() == "상" ? 0 
-						: prob.getDifficulty() == "중" ? 1 
+					idx += prob.getDifficulty().equals("상") ? 0 
+						: prob.getDifficulty().equals("중") ? 1 
 						: 2;					// 하
 					
 					res += scoreMap[idx];
@@ -235,7 +237,7 @@ public class RuleBaseScoreCalculator {
 			List<ProblemChoice> choices = prob.getFirst().getProblemChoices();
 			for(ProblemChoice choice: choices)
 			{
-				if(choice.getChoiceNum() == prob.getSecond())
+				if(choice.getChoiceNum() == prob.getSecond() && choice.getChoiceScore() != null)
 				{
 					res += choice.getChoiceScore();
 					break;
