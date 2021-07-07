@@ -235,7 +235,7 @@ public class RuleBaseScoreCalculator {
 			List<ProblemChoice> choices = prob.getFirst().getProblemChoices();
 			for(ProblemChoice choice: choices)
 			{
-				if(choice.getChoiceNum() == prob.getSecond())
+				if(choice.getChoiceNum() == prob.getSecond() && choice.getChoiceScore() != null)
 				{
 					res += choice.getChoiceScore();
 					break;
