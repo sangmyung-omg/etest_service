@@ -41,15 +41,9 @@ public class AnswerController {
 		String bug = inputString.substring(0,inputString.indexOf(","));
 		String jd = bug.replaceAll("\\[", "");
 		String temp = jd.substring(jd.length()-2).replaceAll("\\]", "");
-		
-//		JSONParser parser = new JSONParser();
-//		JSONObject obj = (JSONObject)parser.parse(inputString);
-//		
-//		String temp = obj.get("answer").toString().replaceAll("\\[", "");
-//		temp = temp.replaceAll("\\]",""); //data가 다시 JSON 형태로 돌려지면 이거 그대로 복구 
+		temp = temp.replace(" ", "");
 		
 		final String LRSServerURI = "http://192.168.153.132:8080";
-		//header setting try 
 		
 		Charset utf8 = Charset.forName("UTF-8");
 		MediaType mediaType = new MediaType("application", "json", utf8);
