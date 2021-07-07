@@ -1,18 +1,18 @@
-openapi: '3.0.2'
+openapi: "3.0.2"
 info:
-  title: eTest Problem & Analysis Report API
-  version: '0.1'
-  description: 문제 풀이 및 진단 리포트 페이지 관련 API
+    title: eTest Problem & Analysis Report API
+    version: "0.1"
+    description: 문제 풀이 및 진단 리포트 페이지 관련 API
 servers:
   - url: http://192.168.153.212:8888/
     description: example server address
 tags:
-- name: Problem
-  description: 문제 풀이 페이지 관련
-- name: Test
-  description: 출제 문제 선정
-- name: Analysis Report
-  description: 진단 리포트 관련
+    - name: Problem
+      description: 문제 풀이 페이지 관련
+    - name: Test
+      description: 출제 문제 선정
+    - name: Analysis Report
+      description: 진단 리포트 관련
 
 paths:
   /problems/{id}:
@@ -114,6 +114,51 @@ paths:
                   - ..
                   solution: 해설 텍스트
                   material: 참고자료(교재 정보)
+  /problems/error/report:
+    post:
+      tags:
+        - Problem
+        summary: DB에 오류 보고 저장하기
+        description: 문제 번호와 유저 아이디, 신고 유형, 오류에 대한 설명을 DB에 저장합니다.
+        parameters:
+        - name: problem_id
+          in: query
+          description: 문제 아이디
+          required: true
+          schema:
+            type: string
+            format: string
+        - name: id
+          in: query
+          description: 유저 아이디
+          required: true
+          schema:
+            type: string
+            format: string
+        - name: report_type
+          in: query
+          description: 신고 유형 (QUESTION_ERROR/PASSAGE_ERROR)
+          required: true
+          schema:
+            type: string
+            format: string
+        - name: report_text
+          in: query
+          description: 신고 내용
+          required: true
+          schema:
+            type: string
+            format: string
+      responses:
+        200:
+          description: Successfully saved
+          content:
+            json:
+              schema:
+                type: object
+                example:
+                  message: success
+              
   /diagnosis/tendency:
     get:
       tags: [Test]

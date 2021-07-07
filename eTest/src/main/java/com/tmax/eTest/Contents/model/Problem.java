@@ -80,4 +80,7 @@ public class Problem {
 	
 	@OneToMany(mappedBy="problem")
 	private List<TestProblem> testInfo = new ArrayList<TestProblem>();
+	
+	@OneToMany(mappedBy="problem")
+	private List<ErrorReport> errors = new ArrayList<ErrorReport>();
 }

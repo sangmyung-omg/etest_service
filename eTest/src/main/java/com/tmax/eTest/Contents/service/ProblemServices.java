@@ -1,6 +1,7 @@
 package com.tmax.eTest.Contents.service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,11 +14,14 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.tmax.eTest.Contents.dto.problem.ProblemDTO;
 import com.tmax.eTest.Contents.exception.problem.NoDataException;
+import com.tmax.eTest.Contents.exception.problem.UnavailableTypeException;
 import com.tmax.eTest.Contents.model.ProblemChoice;
 import com.tmax.eTest.Contents.model.TestProblem;
 import com.tmax.eTest.Contents.model.DiagnosisProblem;
+import com.tmax.eTest.Contents.model.ErrorReport;
 import com.tmax.eTest.Contents.model.Problem;
 import com.tmax.eTest.Contents.repository.DiagnosisProblemRepository;
+import com.tmax.eTest.Contents.repository.ErrorReportRepository;
 import com.tmax.eTest.Contents.repository.ProblemChoiceRepository;
 import com.tmax.eTest.Contents.repository.ProblemRepository;
 import com.tmax.eTest.Contents.repository.ProblemUKRelRepository;
@@ -48,6 +52,9 @@ public class ProblemServices {
 	
 	@Autowired
 	UkRepository uKMasterRepo;
+	
+	@Autowired
+	ErrorReportRepository errorRepo; 
 	
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 	
@@ -114,6 +121,27 @@ public class ProblemServices {
 			}
 		}
 		return output;
+	}
+	public String insertErrorReport(long problemID, String id, String reportType, String reportText) throws Exception{
+		final String[] AVAILABLE_ERROR_TYPE= {"QUESTION_ERROR", "PASSAGE_ERROR"};
+		ErrorReport errorReport = new ErrorReport();
+		errorReport.setProbID(problemID);
+		errorReport.setUserUUID(id);
+		
+		//ReportType은 "QUESTION_ERROR"와 "PASSAGE_ERROR" 둘 중 하나만 들어와야됨
+		if(Arrays.stream(AVAILABLE_ERROR_TYPE).anyMatch(reportType::equals)) {
+			errorReport.setReportType(reportType);
+		}else {
+			throw new UnavailableTypeException(AVAILABLE_ERROR_TYPE, reportType);
+		}
+		errorReport.setReportText(reportText);
+		
+		try {
+			errorRepo.save(errorReport);
+		}catch(Exception e) {
+			throw e;
+		}
+		return "success";
 	}
 }
 
