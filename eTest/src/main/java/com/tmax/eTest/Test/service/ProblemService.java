@@ -69,7 +69,7 @@ public class ProblemService {
 		Map<String, Object> map = new HashMap<String, Object>();
 		String type = "지식";
 
-		logger.info("Getting all diagnosis tendency problem info......");
+		logger.info("Getting all diagnosis knowledge problem info......");
 		// 진단 커리큘럼 테이블에서 type에 해당되는 커리큘럼 아이디를 모두 가져옴
 		List<DiagnosisCurriculum> selectedCurriculum = diagnosisCurriculumRepo.findByChapter(type);
 		List<Integer> selectedCurriculumId = selectedCurriculum.stream().map(dc -> dc.getCurriculumId())
@@ -89,6 +89,7 @@ public class ProblemService {
 				tmpList.add(selectedProbIds.get(j));
 				// 태그가 달라지면 한번 넣기
 				if (!tag.equals(selectedSubjects.get(j + 1))) {
+					Collections.reverse(tmpList);
 					problemLists.add(new ArrayList<Integer>(tmpList));
 					tmpList.clear();
 				}
