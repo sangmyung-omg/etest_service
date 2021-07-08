@@ -4,9 +4,12 @@ import java.util.ArrayList;
 import java.util.Random;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+
 import static java.util.stream.Collectors.*;
 
 import org.slf4j.Logger;
@@ -16,9 +19,11 @@ import org.springframework.stereotype.Service;
 
 import com.tmax.eTest.Contents.model.DiagnosisCurriculum;
 import com.tmax.eTest.Contents.model.DiagnosisProblem;
+import com.tmax.eTest.Contents.model.Problem;
 import com.tmax.eTest.Contents.model.TestProblem;
 import com.tmax.eTest.Contents.repository.DiagnosisCurriculumRepository;
 import com.tmax.eTest.Contents.repository.DiagnosisProblemRepository;
+import com.tmax.eTest.Contents.repository.ProblemRepository;
 import com.tmax.eTest.Contents.repository.TestProblemRepository;
 
 @Service
@@ -34,14 +39,18 @@ public class ProblemService {
 
 	@Autowired
 	TestProblemRepository minitestRepo;
-
+	
+	@Autowired
+	ProblemRepository problemRepo;
+	
 	public Map<String, Object> getDiagnosisTendencyProblems() {
 		Map<String, Object> map = new HashMap<String, Object>();
 		String type = "성향";
 
-		logger.info("Getting all diagnosis tendency problem info......");
+		logger.info("Getting diagnosis curriculums info for " + type + "......");
 		// 진단 커리큘럼 테이블에서 type에 해당되는 커리큘럼 아이디를 모두 가져옴
-		List<DiagnosisCurriculum> selectedCurriculum = diagnosisCurriculumRepo.findByChapter(type);
+		List<DiagnosisCurriculum> selectedCurriculum = diagnosisCurriculumRepo.findByChapterOrderByCurriculumIdAsc(type);
+		
 		List<Integer> selectedCurriculumId = selectedCurriculum.stream().map(dc -> dc.getCurriculumId())
 				.collect(toList());
 		logger.info(String.format("Retrieved all curriculum ids with type %s", type));
@@ -50,8 +59,10 @@ public class ProblemService {
 		List<Integer> problemLists = new ArrayList<Integer>();
 		String choice = Arrays.asList("A", "B", "C").get(new Random().nextInt(3));
 		for (Integer i : selectedCurriculumId) {
-			List<DiagnosisProblem> selectedProblems = diagnosisRepo.findByCurriculumId(i);
+//			logger.info("Getting diagnosis problems for the selected curriculumId : " + i);
+			List<DiagnosisProblem> selectedProblems = diagnosisRepo.findByCurriculumIdOrderByOrderNumAsc(i);
 			List<Integer> selectedProbIds = new ArrayList<Integer>();
+			// curriculum id 7, 8은 선택된 set_type (A, B, C) 에 해당하는 문제만 선택
 			if (i < 7) {
 				selectedProbIds = selectedProblems.stream().map(sp -> sp.getProbId()).collect(toList());
 			} else {
@@ -68,34 +79,42 @@ public class ProblemService {
 	public Map<String, Object> getDiagnosisKnowledgeProblems() {
 		Map<String, Object> map = new HashMap<String, Object>();
 		String type = "지식";
-
-		logger.info("Getting all diagnosis knowledge problem info......");
-		// 진단 커리큘럼 테이블에서 type에 해당되는 커리큘럼 아이디를 모두 가져옴
-		List<DiagnosisCurriculum> selectedCurriculum = diagnosisCurriculumRepo.findByChapter(type);
-		List<Integer> selectedCurriculumId = selectedCurriculum.stream().map(dc -> dc.getCurriculumId())
-				.collect(toList());
-		logger.info(String.format("Retrieved all curriculum ids with type %s", type));
-
-		// 지식문제의 경우 : 가져온 커리큘럼 아이디에 해당되는 진단문제 리스트를 리스트 안에 넣음
-		List<List<Integer>> problemLists = new ArrayList<List<Integer>>();
-		for (Integer i : selectedCurriculumId) {
-			List<DiagnosisProblem> selectedProblems = diagnosisRepo.findByCurriculumId(i);
-			List<String> selectedSubjects = selectedProblems.stream().map(sp -> sp.getSubject()).collect(toList());
-			List<Integer> selectedProbIds = selectedProblems.stream().map(sp -> sp.getProbId()).collect(toList());
-			selectedSubjects.add("dummy"); // 마지막을 찾기 위한 더미 tag 입력
-			List<Integer> tmpList = new ArrayList<Integer>();
-			for (int j = 0; j < selectedProbIds.size(); j++) {
-				String tag = selectedSubjects.get(j);
-				tmpList.add(selectedProbIds.get(j));
-				// 태그가 달라지면 한번 넣기
-				if (!tag.equals(selectedSubjects.get(j + 1))) {
-					Collections.reverse(tmpList);
-					problemLists.add(new ArrayList<Integer>(tmpList));
-					tmpList.clear();
-				}
+		
+		logger.info("Getting knowledge diagnosis problems info......");
+		List<Problem> selectedProblems2 = problemRepo.findByCategoryOrderByDiagnosisInfoCurriculumIdAscDiagnosisInfoOrderNumAscDifficultyAsc(type);
+		
+		// 지식문제의 경우 : 특정 진단 주제들에 해당되는 진단문제 리스트들을 리스트 안에 넣음
+		List<List<Integer>> problemList = new ArrayList<List<Integer>>();
+		List<String> subjectList = new ArrayList<String>();					// 주제마다 List 하나
+		List<String> difficultyList = new ArrayList<String>();				// 난이도 순서 고려
+		List<Integer> probIdList = new ArrayList<Integer>();				// 문제 세트 ID List 생성
+		for (Problem p : selectedProblems2) {
+			if (!subjectList.contains(p.getDiagnosisInfo().getSubject())) {
+				subjectList.add(p.getDiagnosisInfo().getSubject());
+				
+				// considering difficulty
+				List<Integer> tempList = new ArrayList<Integer>();
+				if (difficultyList.contains("상")) tempList.add(probIdList.get(difficultyList.indexOf("상")));
+				if (difficultyList.contains("중")) tempList.add(probIdList.get(difficultyList.indexOf("중")));
+				if (difficultyList.contains("하")) tempList.add(probIdList.get(difficultyList.indexOf("하")));
+				problemList.add(tempList);
+				
+				probIdList.clear();
+				difficultyList.clear();
 			}
+			
+			difficultyList.add(p.getDifficulty());
+			probIdList.add(p.getProbID());
+
+//			logger.info(Integer.toString(p.getProbID()) + ", " + p.getCategory() + ", " + p.getDifficulty() + ", " + p.getDiagnosisInfo().getSubject() + ", " + p.getDiagnosisInfo().getCurriculumId() + ", " + Integer.toString(p.getDiagnosisInfo().getOrderNum()));
 		}
-		map.put("knowledgeProblems", problemLists);
+		problemList.remove(0);
+		/*
+		 * 여러 조건으로 한 번에 query 가능.
+		 * findByCurriculumIdIn(List<String> selectedCurriculumId);
+		 */
+		
+		map.put("knowledgeProblems", problemList);
 
 		return map;
 	}

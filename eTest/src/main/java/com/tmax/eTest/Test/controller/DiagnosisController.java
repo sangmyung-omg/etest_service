@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +20,8 @@ import com.tmax.eTest.Test.service.ProblemService;
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 public class DiagnosisController {
+	
+	private final Logger logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
 	
 	@Autowired
 	ProblemService problemService;
@@ -46,6 +50,8 @@ public class DiagnosisController {
 
 		} catch (Exception E){
 			Map<String, Object> ret = new HashMap<String, Object>();
+			logger.info(E.getMessage());
+			E.printStackTrace();
 			ret.put("resultMessage", "Internal Server Error.");
 			return new ResponseEntity<>(ret, HttpStatus.INTERNAL_SERVER_ERROR);
 		}

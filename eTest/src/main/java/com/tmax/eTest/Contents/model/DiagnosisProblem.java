@@ -26,7 +26,7 @@ public class DiagnosisProblem {
 	private String setType;
 
 	@Column(name="ORDER_NUM")
-	private String orderNum;
+	private Integer orderNum;
 
 	@Column(name="CURRICULUM_ID")
 	private Integer curriculumId;
