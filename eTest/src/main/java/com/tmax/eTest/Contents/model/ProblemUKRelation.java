@@ -2,7 +2,6 @@ package com.tmax.eTest.Contents.model;
 
 import java.io.Serializable;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
@@ -13,10 +12,12 @@ import javax.persistence.Table;
 import com.tmax.eTest.Test.model.UkMaster;
 
 import lombok.Data;
+import lombok.ToString;
 
 @Data
 @Entity
 @IdClass(ProbUKCompositeKey.class)
+@ToString(exclude = "probID")
 @Table(name="PROBLEM_UK_REL")
 public class ProblemUKRelation{
 	@Id

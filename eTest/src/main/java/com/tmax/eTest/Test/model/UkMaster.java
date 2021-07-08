@@ -26,7 +26,6 @@ public class UkMaster {
 	private String ukName;
 	private String ukDescription;
 	private String trainUnseen;
-	private String curriculumId;
 	private String part;
 	
 	@OneToMany(mappedBy="ukId")

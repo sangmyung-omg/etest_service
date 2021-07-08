@@ -13,6 +13,5 @@ public interface DiagnosisProblemRepository extends JpaRepository<DiagnosisProbl
 	@Query(value="select d from DiagnosisProblem d where d.subject = :subject")
 	public ArrayList<DiagnosisProblem>findDiagnosisProblems(@Param("subject") String setNum);
 	
-	List<DiagnosisProblem> findByCurriculumId(Integer CurriculumId);
-
+	List<DiagnosisProblem> findByCurriculumIdOrderByOrderNumAsc(Integer CurriculumId);
 }
