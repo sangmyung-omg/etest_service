@@ -25,6 +25,7 @@ import com.tmax.eTest.Report.dto.triton.TritonRequestDTO;
 import com.tmax.eTest.Report.dto.triton.TritonResponseDTO;
 import com.tmax.eTest.Report.util.LRSAPIManager;
 import com.tmax.eTest.Report.util.RuleBaseScoreCalculator;
+import com.tmax.eTest.Report.util.SNDCalculator;
 import com.tmax.eTest.Report.util.SelfDiagnosisComment;
 import com.tmax.eTest.Report.util.StateAndProbProcess;
 import com.tmax.eTest.Report.util.TritonAPIManager;
@@ -53,6 +54,8 @@ public class SelfDiagnosisReportService {
 	UKScoreCalculator ukScoreCalculator;
 	@Autowired
 	SelfDiagnosisComment commentGenerator;
+	@Autowired
+	SNDCalculator sndCalculator;
 	
 	private final Logger logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
 	
@@ -77,6 +80,8 @@ public class SelfDiagnosisReportService {
 				scoreMap.get(RuleBaseScoreCalculator.INVEST_KNOWLEDGE_KEY));
 		result.setPartDiagnosisResult(partRes);
 		result.setGiScore(scoreMap.get(RuleBaseScoreCalculator.GI_SCORE_KEY));
+		result.setGiPercentage(sndCalculator.calculateForSelfDiag(
+				scoreMap.get(RuleBaseScoreCalculator.GI_SCORE_KEY)));
 		
 		
 		// Comment Setting
@@ -89,7 +94,6 @@ public class SelfDiagnosisReportService {
 		
 		
 		// Rule Based 점수들 산출
-		
 		Map<String, List<Object>> probInfoForTriton = stateAndProbProcess.makeInfoForTriton(diagnosisProbStatements, probList);
 		TritonResponseDTO tritonResponse = tritonAPIManager.getUnderstandingScoreInTriton(probInfoForTriton);
 		TritonDataDTO embeddingData = null;

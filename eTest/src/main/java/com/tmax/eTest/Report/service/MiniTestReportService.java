@@ -23,6 +23,7 @@ import com.tmax.eTest.Report.dto.triton.TritonDataDTO;
 import com.tmax.eTest.Report.dto.triton.TritonRequestDTO;
 import com.tmax.eTest.Report.dto.triton.TritonResponseDTO;
 import com.tmax.eTest.Report.util.LRSAPIManager;
+import com.tmax.eTest.Report.util.SNDCalculator;
 import com.tmax.eTest.Report.util.StateAndProbProcess;
 import com.tmax.eTest.Report.util.TritonAPIManager;
 import com.tmax.eTest.Report.util.UKScoreCalculator;
@@ -51,6 +52,8 @@ public class MiniTestReportService {
 	UserKnowledgeRepository userKnowledgeRepo;
 	@Autowired
 	UserEmbeddingRepository userEmbeddingRepo;
+	
+	@Autowired SNDCalculator sndCalculator;
 
 	private final Logger logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
 
@@ -94,8 +97,11 @@ public class MiniTestReportService {
 				for (List<String> part : partScoreList) {
 					avg += Float.parseFloat(part.get(2));
 				}
+				
+				int ukAvgScore = Math.round(avg / partScoreList.size());
 	
-				result.setScore(Math.round(avg / partScoreList.size()));
+				result.setScore(ukAvgScore);
+				result.setPercentage(sndCalculator.calculateForMiniTest(ukAvgScore));
 	
 				saveUserUKInfo(userId, ukScoreMap);
 			}
