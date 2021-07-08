@@ -31,6 +31,8 @@ public class RuleBaseScoreCalculator {
 	final public static String GI_SCORE_KEY = "GI점수";
 	final public static String RISK_ANSWER_1_KEY = "RiskA1";
 	final public static String RISK_ANSWER_2_KEY = "RiskA2";
+	final public static String STOCK_RATIO_ANS = "주식비중답변";
+	final public static String STOCK_NUM_ANS = "주식종목수답변";
 	
 	
 	final static String[] SELF_DIAGNOSIS_TYPE = { "AFB", // 공격적 / 감정적 / 초보자
@@ -80,6 +82,10 @@ public class RuleBaseScoreCalculator {
 				{
 				case "투자현황":
 					investCondProb.add(probInfo);
+					if(probInfo.getFirst().getDiagnosisInfo().getCurriculumId() == 2) // 주식 투자 비중
+						res.put(STOCK_RATIO_ANS, probInfo.getSecond());
+					else if(probInfo.getFirst().getDiagnosisInfo().getCurriculumId() == 3) // 보유 종목 수
+						res.put(STOCK_NUM_ANS, probInfo.getSecond());
 					break;
 				case "리스크":
 					riskProb.add(probInfo);
