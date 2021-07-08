@@ -82,8 +82,9 @@ public class Problem {
 	@JoinColumn(name="PROB_ID", nullable=true, insertable = false, updatable = false)
 	private DiagnosisProblem diagnosisInfo;
 
-	@OneToMany(mappedBy="problem")
-	private List<TestProblem> testInfo = new ArrayList<TestProblem>();
+	@ManyToOne(fetch=FetchType.LAZY)
+	@JoinColumn(name="PROB_ID", nullable=true, insertable = false, updatable = false)
+	private TestProblem testInfo = new TestProblem();
 	
 	@OneToMany(mappedBy="problem")
 	private List<ErrorReport> errors = new ArrayList<ErrorReport>();

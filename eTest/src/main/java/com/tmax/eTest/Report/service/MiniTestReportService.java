@@ -27,9 +27,11 @@ import com.tmax.eTest.Report.util.SNDCalculator;
 import com.tmax.eTest.Report.util.StateAndProbProcess;
 import com.tmax.eTest.Report.util.TritonAPIManager;
 import com.tmax.eTest.Report.util.UKScoreCalculator;
+import com.tmax.eTest.Test.model.MinitestReport;
 import com.tmax.eTest.Test.model.UkMaster;
 import com.tmax.eTest.Test.model.UserEmbedding;
 import com.tmax.eTest.Test.model.UserKnowledge;
+import com.tmax.eTest.Test.repository.MinitestReportRepo;
 import com.tmax.eTest.Test.repository.UserEmbeddingRepository;
 import com.tmax.eTest.Test.repository.UserKnowledgeRepository;
 
@@ -52,6 +54,8 @@ public class MiniTestReportService {
 	UserKnowledgeRepository userKnowledgeRepo;
 	@Autowired
 	UserEmbeddingRepository userEmbeddingRepo;
+	@Autowired
+	MinitestReportRepo minitestReportRepo;
 	
 	@Autowired SNDCalculator sndCalculator;
 
@@ -85,11 +89,14 @@ public class MiniTestReportService {
 	
 			if (embeddingData != null && masteryData != null) {
 				Map<Integer, UkMaster> usedUkMap =stateAndProbProcess.makeUsedUkMap(probInfos);
-	
 				Map<Integer, Float> ukScoreMap = scoreCalculator.makeUKScoreMap(masteryData);
 				List<List<String>> partScoreList = scoreCalculator.makePartScore(usedUkMap, ukScoreMap);
 				List<List<String>> weakPartDetail = scoreCalculator.makeWeakPartDetail(usedUkMap, ukScoreMap, partScoreList);
-	
+				int setNum = 0;
+				
+				if(probInfos.size() > 0)
+					setNum = probInfos.get(0).getTestInfo().getSetNum();
+				
 				result.setPartUnderstanding(partScoreList);
 				result.setWeakPartDetail(weakPartDetail);
 	
@@ -104,9 +111,32 @@ public class MiniTestReportService {
 				result.setPercentage(sndCalculator.calculateForMiniTest(ukAvgScore));
 	
 				saveUserUKInfo(userId, ukScoreMap);
+				saveMinitestReport(userId, ukAvgScore, diagQuestionInfo, setNum);
+				
 			}
 		}
+		
+
 		return result;
+	}
+	
+	private void saveMinitestReport(
+			String id, 
+			float ukAvgScore, 
+			List<List<String>> diagQuestionInfo,
+			int setNum)
+	{
+		MinitestReport miniReport = new MinitestReport();
+		
+		miniReport.setUserUuid(id);
+		miniReport.setAvgUkMastery((float) ukAvgScore);
+		miniReport.setCorrectNum(diagQuestionInfo.get(0).size());
+		miniReport.setWrongNum(diagQuestionInfo.get(1).size());
+		miniReport.setDunnoNum(diagQuestionInfo.get(2).size());
+		miniReport.setSetNum(setNum);
+		miniReport.setMinitestDate(Timestamp.valueOf(LocalDateTime.now()));
+		
+		minitestReportRepo.save(miniReport);
 	}
 
 
