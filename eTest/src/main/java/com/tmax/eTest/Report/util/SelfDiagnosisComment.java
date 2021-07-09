@@ -15,6 +15,51 @@ public class SelfDiagnosisComment {
 	final public static String DECISION_MAKING_KEY = "decisionMaking";
 	final public static String INVEST_KNOWLEDGE_KEY = "investKnowledge";
 	final public static String SIMILAR_TYPE_KEY = "similarType";
+	final public static String SELF_DIAG_TYPE_KEY = "selfDiagType";
+	
+	
+
+	final static String[] SELF_DIAGNOSIS_TYPE = { "AFB", // 공격적 / 감정적 / 초보자
+			"AFE", // 공격적 / 감정적 / 전문가
+			"ALB", // 공격적 / 논리적 / 초보자
+			"ALE", // 공격적 / 논리적 / 전문가
+			"SFB", // 보수적 / 감정적 / 초보자
+			"SFE", // 보수적 / 감정적 / 전문가
+			"SLB", // 보수적 / 논리적 / 초보자
+			"SLE" // 보수적 / 논리적 / 전문가
+	};
+	
+	private String makeSelfDiagType(int riskFidelityScore, int decisionMakingScore, int investKnowledgeScore) {
+		int idx = 0;
+
+		idx += riskFidelityScore < 65 ? 4 : 0;
+		idx += decisionMakingScore >= 65 ? 2 : 0;
+		idx += investKnowledgeScore >= 60 ? 1 : 0;
+
+		return SELF_DIAGNOSIS_TYPE[idx];
+	}
+	
+	private List<String> makeSimilarTypeInfo(int riskFidelityScore, int decisionMakingScore, int investKnowledgeScore) {
+		List<String> res = new ArrayList<>();
+		
+		int totalScore = riskFidelityScore >= 75 ? 3 : riskFidelityScore >= 55 ? 2 : 1;
+		totalScore += decisionMakingScore >= 75 ? 3 : decisionMakingScore >= 55 ? 2 : 1;
+		totalScore += investKnowledgeScore >= 70 ? 3 : investKnowledgeScore >= 50 ? 2 : 1;
+				
+		String investerRatio = totalScore == 9 || totalScore == 3 ? "3.7%"
+				: totalScore > 5 ? "33.33%" : "25.93%";
+		String avgItemNum = riskFidelityScore >= 75 ? "8종목" : riskFidelityScore >= 55 ? "5종목" : "3종목";
+		String investRatio = riskFidelityScore >= 75 ? "55%" : riskFidelityScore >= 55 ? "40%" : "10%";
+		String similarTypeStr = makeSelfDiagType(riskFidelityScore, decisionMakingScore, investKnowledgeScore);
+		
+		res.add(investerRatio);
+		res.add(avgItemNum);
+		res.add(investRatio);
+		res.add(similarTypeStr);
+		
+		return res;
+	}
+	
 	
 	
 	String[] finalResultComment ={
@@ -29,30 +74,11 @@ public class SelfDiagnosisComment {
 		"상상하",	"상상중",	"상상상",
 	};
 	
-	private List<String> makeSimilarTypeInfo(int riskFidelityScore, int decisionMakingScore, int investKnowledgeScore) {
-		List<String> res = new ArrayList<>();
-		
-		int totalScore = riskFidelityScore >= 75 ? 3 : riskFidelityScore >= 55 ? 2 : 1;
-		totalScore += decisionMakingScore >= 75 ? 3 : decisionMakingScore >= 55 ? 2 : 1;
-		totalScore += investKnowledgeScore >= 70 ? 3 : investKnowledgeScore >= 50 ? 2 : 1;
-				
-		String investerRatio = totalScore == 9 || totalScore == 3 ? "3.7%"
-				: totalScore > 5 ? "33.33%" : "25.93%";
-		String avgItemNum = riskFidelityScore >= 75 ? "8종목" : riskFidelityScore >= 55 ? "5종목" : "3종목";
-		String investRatio = riskFidelityScore >= 75 ? "55%" : riskFidelityScore >= 55 ? "40%" : "10%";
-		
-		res.add(investerRatio);
-		res.add(avgItemNum);
-		res.add(investRatio);
-		
-		return res;
-	}
-	
 	// 모두 트리톤을 타지 않고 나오는 점수들. (단순 알고리즘으로 나오는 점수)
 	// 위험 적합도 = riskScore
 	// 투자 결정 적합도 = investDecisionScore
 	// 지식 이해도 = knowledgeScore
-	public List<String> getFinalResultComment(int riskFidelityScore, int decisionMakingScore, int knowledgeScore)
+	private List<String> getFinalResultComment(int riskFidelityScore, int decisionMakingScore, int knowledgeScore)
 	{
 		List<String> res = new ArrayList<>();
 		int idx = 0;
@@ -92,7 +118,7 @@ public class SelfDiagnosisComment {
 	
 	
 	// 리스크 적합도 진단
-	public List<String> getRiskFielityComment(int investCondScore, int riskScore, int riskQ1, int riskQ2)
+	private List<String> getRiskFielityComment(int investCondScore, int riskScore, int riskQ1, int riskQ2)
 	{
 		List<String> res = new ArrayList<>();
 		int idx = 0;
@@ -124,7 +150,7 @@ public class SelfDiagnosisComment {
 	
 	String cogBiasEmotionalComment = "편향 감정적";
 	
-	public List<String> getDecisionMakingComment(int investRuleScore, int cognitiveBiasScore)
+	private List<String> getDecisionMakingComment(int investRuleScore, int cognitiveBiasScore)
 	{
 		List<String> res = new ArrayList<>();
 		
@@ -156,7 +182,7 @@ public class SelfDiagnosisComment {
 		"기본지식 및 소양 학습"
 	};
 	
-	public List<String> getInvestKnowledgeComment(int investKnowledgeScore)
+	private List<String> getInvestKnowledgeComment(int investKnowledgeScore)
 	{
 		List<String> res = new ArrayList<>();
 		
@@ -167,6 +193,7 @@ public class SelfDiagnosisComment {
 		
 		return res;
 	}
+	
 	
 	
 	public Map<String, List<String>> getTotalComments(Map<String, Integer> scoreMap)
@@ -190,6 +217,7 @@ public class SelfDiagnosisComment {
 		res.put(RISK_FID_KEY, getRiskFielityComment(investCondScore, riskScore,riskA1,riskA2));
 		res.put(DECISION_MAKING_KEY, getDecisionMakingComment(investRuleScore, cogBiasScore));
 		res.put(INVEST_KNOWLEDGE_KEY, getInvestKnowledgeComment(investKnowledgeScore));
+	
 		res.put(SIMILAR_TYPE_KEY, similarTypeList);
 		
 		return res;
