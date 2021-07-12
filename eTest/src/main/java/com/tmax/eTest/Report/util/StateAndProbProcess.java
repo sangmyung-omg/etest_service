@@ -121,12 +121,9 @@ public class StateAndProbProcess {
 				{
 					int ukId = Integer.parseInt(probUKRel.getUkId().getUkId());
 					
-					if(ukId <= 477)
-					{
-						ukList.add(ukId);
-						isCorrectList.add(isCorrect);
-						diffcultyList.add(diff);
-					}
+					ukList.add(ukId);
+					isCorrectList.add(isCorrect);
+					diffcultyList.add(diff);
 				}
 			}
 		}
