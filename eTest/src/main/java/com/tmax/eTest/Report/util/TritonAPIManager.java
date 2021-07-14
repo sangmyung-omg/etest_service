@@ -35,7 +35,6 @@ import reactor.netty.http.client.HttpClient;
  * @author sangheonLee
  */
 @Component
-@PropertySource("classpath:triton.properties")
 public class TritonAPIManager {
 
 	private final Logger logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
@@ -47,10 +46,10 @@ public class TritonAPIManager {
 	 * @since 2021-06-21
 	 */
 	@Autowired
-	public TritonAPIManager(@Value("${waplmath.recommend.masterytriton.host}") String IP, 
-							 @Value("${waplmath.recommend.masterytriton.port}")	String PORT,
-							 @Value("${waplmath.recommend.masterytriton.modelname}") String MODEL_NAME, 
-							 @Value("${waplmath.recommend.masterytriton.modelver}") String MODEL_VERSION){
+	public TritonAPIManager(@Value("${etest.recommend.masterytriton.host}") String IP, 
+							 @Value("${etest.recommend.masterytriton.port}")	String PORT,
+							 @Value("${etest.recommend.masterytriton.modelname}") String MODEL_NAME, 
+							 @Value("${etest.recommend.masterytriton.modelver}") String MODEL_VERSION){
 		
 		logger.info("constructor"  + IP+PORT);
 		this.TRITON_ADDR = String.format("http://%s:%s/v2/models/%s/versions/%s/infer", IP, PORT, MODEL_NAME, MODEL_VERSION);
