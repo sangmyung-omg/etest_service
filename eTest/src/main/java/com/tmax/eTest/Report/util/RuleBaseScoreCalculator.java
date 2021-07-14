@@ -34,29 +34,10 @@ public class RuleBaseScoreCalculator {
 	final public static String STOCK_RATIO_ANS = "주식비중답변";
 	final public static String STOCK_NUM_ANS = "주식종목수답변";
 	
-	
-	final static String[] SELF_DIAGNOSIS_TYPE = { "AFB", // 공격적 / 감정적 / 초보자
-			"AFE", // 공격적 / 감정적 / 전문가
-			"ALB", // 공격적 / 논리적 / 초보자
-			"ALE", // 공격적 / 논리적 / 전문가
-			"SFB", // 보수적 / 감정적 / 초보자
-			"SFE", // 보수적 / 감정적 / 전문가
-			"SLB", // 보수적 / 논리적 / 초보자
-			"SLE" // 보수적 / 논리적 / 전문가
-	};
+
 	
 	private final Logger logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
 
-	public String makeSelfDiagType(int riskFidelityScore, int decisionMakingScore, int investKnowledgeScore) {
-		int idx = 0;
-
-		idx += riskFidelityScore < 65 ? 4 : 0;
-		idx += decisionMakingScore >= 65 ? 2 : 0;
-		idx += investKnowledgeScore >= 60 ? 1 : 0;
-
-		return SELF_DIAGNOSIS_TYPE[idx];
-	}
-	
 	public Map<String,Integer> probDivideAndCalculateScores(List<Pair<Problem, Integer>> probInfos)
 	{
 		Map<String,Integer> res = new HashMap<>();
@@ -75,8 +56,6 @@ public class RuleBaseScoreCalculator {
 			{
 				DiagnosisCurriculum curriculum = prob.getDiagnosisInfo().getCurriculum();
 				String section = curriculum.getSection();
-				
-				logger.info("probDivideAndCalculateScores : "+prob.getProbID()+" "+ section);
 				
 				switch(section)
 				{

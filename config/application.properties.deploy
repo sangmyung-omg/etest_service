@@ -2,3 +2,11 @@ server.port=%HTTP_PORT%
 spring.datasource.url=jdbc:tibero:thin:@%DB_IP%:%DB_PORT%:tibero
 spring.datasource.username=%DB_USER%
 spring.datasource.password=%DB_PASSWD%
+
+etest.recommend.lrs.host=%LRS_IP%
+etest.recommend.lrs.port=%LRS_PORT%
+
+etest.recommend.masterytriton.host=%TRITON_IP%
+etest.recommend.masterytriton.port=%TRITON_PORT%
+etest.recommend.masterytriton.modelname=%TRITON_MODEL_NAME%
+etest.recommend.masterytriton.modelver=%TRITON_MODEL_VER%
