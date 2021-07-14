@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -24,6 +26,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 
 @CrossOrigin(origins="*")
+@PropertySource("classpath:application.properties")
 @RestController
 public class AnswerController {
 	
@@ -32,6 +35,12 @@ public class AnswerController {
 	
 	@Autowired
 	ProblemServices problemService;
+
+	@Value("${etest.recommend.lrs.host}")
+	private String LRS_HOST;
+	
+	@Value("${etest.recommend.lrs.port}")
+	private String LRS_PORT;
 	
 	@PostMapping(value="problems/{id}/answer-check", produces = "application/json; charset=utf-8")
 	public int checkAnswer(@PathVariable("id") Integer id, @RequestParam String answer, @RequestBody String lrsbody) throws Exception {
@@ -43,7 +52,8 @@ public class AnswerController {
 		String temp = jd.substring(jd.length()-2).replaceAll("\\]", "");
 		temp = temp.replace(" ", "");
 		
-		final String LRSServerURI = "http://192.168.153.132:8080";
+//		final String LRSServerURI = "http://192.168.153.132:8080";		
+		final String LRSServerURI = "http://" + LRS_HOST + ":" + LRS_PORT;
 		
 		Charset utf8 = Charset.forName("UTF-8");
 		MediaType mediaType = new MediaType("application", "json", utf8);
