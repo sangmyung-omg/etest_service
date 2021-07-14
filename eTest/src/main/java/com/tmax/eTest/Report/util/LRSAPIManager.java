@@ -46,6 +46,7 @@ import com.tmax.eTest.Report.dto.lrs.StatementDTO;
  * @author sangheonLee
  */
 @Component
+@PropertySource("classpath:application.properties")
 public class LRSAPIManager {
 
 	private final Logger logger = LoggerFactory.getLogger("LRSAPIManager");

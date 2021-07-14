@@ -35,6 +35,7 @@ import reactor.netty.http.client.HttpClient;
  * @author sangheonLee
  */
 @Component
+@PropertySource("classpath:application.properties")
 public class TritonAPIManager {
 
 	private final Logger logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
