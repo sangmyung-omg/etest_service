@@ -120,6 +120,7 @@ public class StateAndProbProcess {
 				for(ProblemUKRelation probUKRel : probUKRels)
 				{
 					int ukId = Integer.parseInt(probUKRel.getUkId().getUkId());
+					
 					ukList.add(ukId);
 					isCorrectList.add(isCorrect);
 					diffcultyList.add(diff);

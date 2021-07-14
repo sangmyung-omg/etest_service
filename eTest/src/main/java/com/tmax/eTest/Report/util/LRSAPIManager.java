@@ -46,7 +46,7 @@ import com.tmax.eTest.Report.dto.lrs.StatementDTO;
  * @author sangheonLee
  */
 @Component
-@PropertySource("classpath:lrs.properties")
+@PropertySource("classpath:application.properties")
 public class LRSAPIManager {
 
 	private final Logger logger = LoggerFactory.getLogger("LRSAPIManager");
@@ -89,8 +89,8 @@ public class LRSAPIManager {
 
 	@Autowired
 	public LRSAPIManager(
-			@Value("${waplmath.recommend.lrs.host}") String IP, 
-			@Value("${waplmath.recommend.lrs.port}") String PORT) {
+			@Value("${etest.recommend.lrs.host}") String IP, 
+			@Value("${etest.recommend.lrs.port}") String PORT) {
 		logger.info("constructor" + IP + PORT);
 		
 		if(IP != null && PORT != null)

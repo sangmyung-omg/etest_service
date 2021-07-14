@@ -14,9 +14,7 @@ RUN mkdir -p ${SCRIPT_HOME}
 #Setting
 COPY config/start.sh ${SCRIPT_HOME}/start.sh
 COPY config/env.sh ${SCRIPT_HOME}/env.sh
-COPY config/application.properties /home/tmax/application.properties
-COPY config/triton.properties /home/tmax/triton.properties
-COPY config/lrs.properties /home/tmax/lrs.properties
+COPY config/application.properties.deploy /home/tmax/application.properties
 
 RUN chmod -R 755 /home/tmax/script
 
