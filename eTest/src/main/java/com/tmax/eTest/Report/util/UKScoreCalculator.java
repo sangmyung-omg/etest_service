@@ -32,6 +32,41 @@ public class UKScoreCalculator {
 			return "F";
 	}
 
+	public Map<String, List<List<String>>> makePartUkDetail(
+			Map<Integer, UkMaster> ukMap, 
+			Map<Integer, Float> ukScore, 
+			List<List<String>> partScore) 
+	{
+		Map<String, List<List<String>>> result = new HashMap<>();
+
+		// 파트 구불법 필요.
+		ukScore.forEach((ukId, score) -> {
+			UkMaster recentUK = ukMap.get(ukId);
+			if (recentUK != null) {
+				// example
+				List<String> partUK = new ArrayList<>();
+
+				partUK.add(recentUK.getUkName());
+				//partUK.add(ukScore.get(ukId).toString());
+				partUK.add(calculateUKScoreString(ukScore.get(ukId)));
+				partUK.add("C");
+
+				if(result.get(recentUK.getPart()) == null)
+				{
+					List<List<String>> partInfo = new ArrayList<>();
+					partInfo.add(partUK);
+					result.put(recentUK.getPart(), partInfo);
+				}
+				else
+				{
+					result.get(recentUK.getPart()).add(partUK);
+				}
+			}
+		
+		});
+		
+		return result;
+	}
 
 	// partScore example ["partname", "C", "50"]
 	public List<List<String>> makeWeakPartDetail(

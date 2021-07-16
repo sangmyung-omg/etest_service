@@ -27,6 +27,8 @@ public class MiniTestResultDTO {
 	
 	List<List<String>> weakPartDetail = new ArrayList<List<String>>();
 	
+	Map<String, List<List<String>>> partUkDetail = new HashMap<>();
+	
 	List<List<String>> diagnosisQuestionInfo;
 
 

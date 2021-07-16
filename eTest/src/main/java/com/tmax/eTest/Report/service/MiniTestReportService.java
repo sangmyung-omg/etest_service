@@ -4,6 +4,7 @@ import java.sql.Timestamp;
 import java.text.ParseException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -99,14 +100,16 @@ public class MiniTestReportService {
 				});
 				
 				List<List<String>> partScoreList = scoreCalculator.makePartScore(usedUkMap, ukScoreMap);
-				List<List<String>> weakPartDetail = scoreCalculator.makeWeakPartDetail(usedUkMap, ukScoreMap, partScoreList);
+				Map<String, List<List<String>>> partUkDetail = scoreCalculator.makePartUkDetail(usedUkMap, ukScoreMap, partScoreList);
+//				List<List<String>> weakPartDetail = scoreCalculator.makeWeakPartDetail(usedUkMap, ukScoreMap, partScoreList);
 				int setNum = 0;
 				
 				if(probInfos.size() > 0)
 					setNum = probInfos.get(0).getTestInfo().getSetNum();
 				
 				result.setPartUnderstanding(partScoreList);
-				result.setWeakPartDetail(weakPartDetail);
+				result.setPartUkDetail(partUkDetail);
+//				result.setWeakPartDetail(weakPartDetail);
 	
 				float avg = 0;
 				for (List<String> part : partScoreList) {
