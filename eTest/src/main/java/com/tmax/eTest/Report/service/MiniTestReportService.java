@@ -90,6 +90,14 @@ public class MiniTestReportService {
 			if (embeddingData != null && masteryData != null) {
 				Map<Integer, UkMaster> usedUkMap =stateAndProbProcess.makeUsedUkMap(probInfos);
 				Map<Integer, Float> ukScoreMap = scoreCalculator.makeUKScoreMap(masteryData);
+				float ukModiRatio = 1.5f, ukModiDif = 0.1f;
+				
+				ukScoreMap.forEach((ukUuid, score) -> {
+					float modScore = score*ukModiRatio - ukModiDif;
+					modScore = (modScore > 1)? 1.f : (modScore <= 0.05) ? 0.05f : modScore;
+					ukScoreMap.put(ukUuid, modScore);
+				});
+				
 				List<List<String>> partScoreList = scoreCalculator.makePartScore(usedUkMap, ukScoreMap);
 				List<List<String>> weakPartDetail = scoreCalculator.makeWeakPartDetail(usedUkMap, ukScoreMap, partScoreList);
 				int setNum = 0;
