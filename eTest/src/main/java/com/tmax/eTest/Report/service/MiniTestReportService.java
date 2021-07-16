@@ -101,7 +101,7 @@ public class MiniTestReportService {
 				
 				List<List<String>> partScoreList = scoreCalculator.makePartScore(usedUkMap, ukScoreMap);
 				Map<String, List<List<String>>> partUkDetail = scoreCalculator.makePartUkDetail(usedUkMap, ukScoreMap, partScoreList);
-//				List<List<String>> weakPartDetail = scoreCalculator.makeWeakPartDetail(usedUkMap, ukScoreMap, partScoreList);
+				List<List<String>> weakPartDetail = scoreCalculator.makeWeakPartDetail(usedUkMap, ukScoreMap, partScoreList);
 				int setNum = 0;
 				
 				if(probInfos.size() > 0)
@@ -109,7 +109,7 @@ public class MiniTestReportService {
 				
 				result.setPartUnderstanding(partScoreList);
 				result.setPartUkDetail(partUkDetail);
-//				result.setWeakPartDetail(weakPartDetail);
+				result.setWeakPartDetail(weakPartDetail);
 	
 				float avg = 0;
 				for (List<String> part : partScoreList) {
