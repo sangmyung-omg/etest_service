@@ -14,8 +14,8 @@ public class SNDCalculator {
 	
 	final double SELF_DIAG_MIN = 0;
 	final double SELF_DIAG_MAX = 100;
-	final double MINI_TEST_MIN = 15;
-	final double MINI_TEST_MAX = 85;
+	final double MINI_TEST_MIN = 0;
+	final double MINI_TEST_MAX = 100;
 	
 	
 
