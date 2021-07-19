@@ -25,7 +25,7 @@ public class MiniTestResultDTO {
 	
 	List<List<String>> partUnderstanding =new ArrayList<List<String>>();
 	
-	List<List<String>> weakPartDetail = new ArrayList<List<String>>();
+	//List<List<String>> weakPartDetail = new ArrayList<List<String>>();
 	
 	Map<String, List<List<String>>> partUkDetail = new HashMap<>();
 	
@@ -48,16 +48,16 @@ public class MiniTestResultDTO {
 			partUnderstanding.add(detail);
 		}
 
-		for(int i = 0; i < 3; i++)
-		{
-			List<String> detail = new ArrayList<>();
-			
-			detail.add("Part 5 - Detail "+i);
-			detail.add("F");
-			detail.add("C");
-			
-			weakPartDetail.add(detail);
-		}
+//		for(int i = 0; i < 3; i++)
+//		{
+//			List<String> detail = new ArrayList<>();
+//			
+//			detail.add("Part 5 - Detail "+i);
+//			detail.add("F");
+//			detail.add("C");
+//			
+//			weakPartDetail.add(detail);
+//		}
 		
 		if(diagnosisQuestionInfo == null)
 		{
