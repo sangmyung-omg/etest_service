@@ -1,26 +1,13 @@
 package com.tmax.eTest.Test.service;
 
-import java.sql.Timestamp;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import com.tmax.eTest.Test.model.DiagnosisReport;
-import com.tmax.eTest.Test.model.MinitestReport;
-import com.tmax.eTest.Test.model.UserMaster;
+import com.tmax.eTest.Common.model.report.DiagnosisReport;
+import com.tmax.eTest.Common.model.report.MinitestReport;
+import com.tmax.eTest.Common.model.user.UserMaster;
 import com.tmax.eTest.Test.repository.DiagnosisReportRepo;
 import com.tmax.eTest.Test.repository.MinitestReportRepo;
 import com.tmax.eTest.Test.repository.UserRepository;

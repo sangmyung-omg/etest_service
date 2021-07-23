@@ -13,9 +13,9 @@ import org.springframework.stereotype.Component;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.tmax.eTest.Contents.model.DiagnosisCurriculum;
-import com.tmax.eTest.Contents.model.Problem;
-import com.tmax.eTest.Contents.model.ProblemChoice;
+import com.tmax.eTest.Common.model.problem.DiagnosisCurriculum;
+import com.tmax.eTest.Common.model.problem.Problem;
+import com.tmax.eTest.Common.model.problem.ProblemChoice;
 
 @Component
 // Rule Base 점수, Triton 점수 관련 Method 집합 Class
