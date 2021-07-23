@@ -15,7 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 
-import com.tmax.eTest.Contents.model.Problem;
+import com.tmax.eTest.Common.model.problem.Problem;
 import com.tmax.eTest.Contents.repository.ProblemRepository;
 import com.tmax.eTest.Report.dto.DiagnosisResultDTO;
 import com.tmax.eTest.Report.dto.PartUnderstandingDTO;
@@ -30,8 +30,8 @@ import com.tmax.eTest.Report.util.SelfDiagnosisComment;
 import com.tmax.eTest.Report.util.StateAndProbProcess;
 import com.tmax.eTest.Report.util.TritonAPIManager;
 import com.tmax.eTest.Report.util.UKScoreCalculator;
-import com.tmax.eTest.Test.model.DiagnosisReport;
-import com.tmax.eTest.Test.model.UkMaster;
+import com.tmax.eTest.Common.model.report.DiagnosisReport;
+import com.tmax.eTest.Common.model.uk.UkMaster;
 import com.tmax.eTest.Test.repository.DiagnosisReportRepo;
 import com.tmax.eTest.Test.repository.UserKnowledgeRepository;
 
@@ -236,7 +236,7 @@ public class SelfDiagnosisReportService {
 		report.setInvestItemNum(investItemNum);
 		report.setStockRatio(stockRatio);
 		report.setDiagnosisDate(Timestamp.valueOf(LocalDateTime.now()));
-		
+		logger.info(report.toString());
 		diagnosisReportRepo.save(report);
 	}
 	

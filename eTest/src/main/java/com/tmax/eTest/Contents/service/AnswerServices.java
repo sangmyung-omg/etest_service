@@ -5,8 +5,9 @@ import java.util.Map;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.tmax.eTest.Common.model.problem.Problem;
 import com.tmax.eTest.Contents.exception.problem.NoDataException;
-import com.tmax.eTest.Contents.model.Problem;
 import com.tmax.eTest.Contents.repository.ProblemChoiceRepository;
 import com.tmax.eTest.Contents.repository.ProblemRepository;
 

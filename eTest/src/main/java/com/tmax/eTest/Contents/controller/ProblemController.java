@@ -14,15 +14,15 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.tmax.eTest.Common.model.problem.DiagnosisProblemBody;
+import com.tmax.eTest.Common.model.error_report.ErrorReportBody;
+import com.tmax.eTest.Common.model.problem.TestProblemBody;
 import com.tmax.eTest.Contents.dto.problem.DiagnosisProblemDTO;
 import com.tmax.eTest.Contents.dto.problem.ErrorDTO;
 import com.tmax.eTest.Contents.dto.problem.ProblemDTO;
 import com.tmax.eTest.Contents.dto.problem.TestProblemDTO;
 import com.tmax.eTest.Contents.exception.problem.NoDataException;
 import com.tmax.eTest.Contents.exception.problem.UnavailableTypeException;
-import com.tmax.eTest.Contents.model.DiagnosisProblemBody;
-import com.tmax.eTest.Contents.model.ErrorReportBody;
-import com.tmax.eTest.Contents.model.TestProblemBody;
 import com.tmax.eTest.Contents.service.ProblemServices;
 
 import org.slf4j.Logger;

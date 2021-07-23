@@ -4,11 +4,9 @@ import java.util.ArrayList;
 import java.util.Random;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import static java.util.stream.Collectors.*;
 
@@ -17,10 +15,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.tmax.eTest.Contents.model.DiagnosisCurriculum;
-import com.tmax.eTest.Contents.model.DiagnosisProblem;
-import com.tmax.eTest.Contents.model.Problem;
-import com.tmax.eTest.Contents.model.TestProblem;
+import com.tmax.eTest.Common.model.problem.DiagnosisCurriculum;
+import com.tmax.eTest.Common.model.problem.DiagnosisProblem;
+import com.tmax.eTest.Common.model.problem.Problem;
+import com.tmax.eTest.Common.model.problem.TestProblem;
 import com.tmax.eTest.Contents.repository.DiagnosisCurriculumRepository;
 import com.tmax.eTest.Contents.repository.DiagnosisProblemRepository;
 import com.tmax.eTest.Contents.repository.ProblemRepository;

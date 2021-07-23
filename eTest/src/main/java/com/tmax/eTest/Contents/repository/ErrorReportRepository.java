@@ -1,8 +1,8 @@
 package com.tmax.eTest.Contents.repository;
 
-import org.springframework.data.jpa.repository.JpaRepository;
+import com.tmax.eTest.Common.model.error_report.ErrorReport;
 
-import com.tmax.eTest.Contents.model.ErrorReport;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ErrorReportRepository extends JpaRepository<ErrorReport, Long>{
 
