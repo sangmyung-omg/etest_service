@@ -1,5 +1,6 @@
 package com.tmax.eTest.Auth.service;
 
+import com.tmax.eTest.Auth.dto.PrincipalDetails;
 import com.tmax.eTest.Test.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -31,17 +32,17 @@ public class OAuth2DetailsService extends DefaultOAuth2UserService {
         String email = (String) userInfo.get("email");
         String name = (String) userInfo.get("name");
 
-        UserMaster userEntity = userRepository.findByUsername(username);
+        UserMaster userEntity = userRepository.findByEmail(email);
 
         if(userEntity == null) { // 페이스북 최초 로그인
-            UserMaster user = UserMaster.builder()
+            UserMaster userDTO = UserMaster.builder()
                     .username(username)
                     .password(password)
                     .email(email)
                     .name(name)
                     .build();
 
-            return new PrincipalDetails(userRepository.save(user), oauth2User.getAttributes());
+            return new PrincipalDetails(userRepository.save(userDTO), oauth2User.getAttributes());
         }else { // 페이스북으로 이미 회원가입이 되어 있다는 뜻
             return new PrincipalDetails(userEntity, oauth2User.getAttributes());
         }
