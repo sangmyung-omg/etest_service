@@ -1,37 +1,32 @@
 package com.tmax.eTest.Auth.dto;
 
 import com.tmax.eTest.Test.model.UserMaster;
+import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 
-public class PrincipalDetails implements UserDetails, OAuth2User {
+@Data
+public class PrincipalDetails implements UserDetails, OAuth2User{
 
-    private UserMaster userDTO;
+    private static final long serialVersionUID = 1L;
+
+    private UserMaster user;
     private Map<String, Object> attributes;
-    public PrincipalDetails(UserMaster userEntity) {
-        this.userDTO = userEntity;
+
+    public PrincipalDetails(UserMaster user) {
+        this.user = user;
     }
+
     public PrincipalDetails(UserMaster user, Map<String, Object> attributes) {
-        this.userDTO = userDTO;
+        this.user = user;
     }
 
-
-
-    @Override
-    public String getName() {
-        return (String) attributes.get("name");
-    }
-
-
-    @Override
-    public Map<String, Object> getAttributes() {
-        return attributes;
-    }
-
+    // 권한 : 한개가 아닐 수 있음. (3개 이상의 권한)
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return null;
@@ -39,12 +34,12 @@ public class PrincipalDetails implements UserDetails, OAuth2User {
 
     @Override
     public String getPassword() {
-        return userDTO.getPassword();
+        return user.getPassword();
     }
 
     @Override
     public String getUsername() {
-        return userDTO.getUsername();
+        return null;
     }
 
     @Override
@@ -66,4 +61,17 @@ public class PrincipalDetails implements UserDetails, OAuth2User {
     public boolean isEnabled() {
         return true;
     }
+
+    @Override
+    public Map<String, Object> getAttributes() {
+        return attributes;  // {id:343434343, name:최주호, email:ssarmango@nate.com}
+    }
+
+    @Override
+    public String getName() {
+        // TODO Auto-generated method stub
+        return (String) attributes.get("name");
+    }
+
 }
+

@@ -8,5 +8,6 @@ import com.tmax.eTest.Test.model.UserMaster;
 
 public interface UserRepository extends CrudRepository<UserMaster, String> {
 
-    UserMaster findByEmail(String username);
+
+    UserMaster findByEmail(String email);
 }

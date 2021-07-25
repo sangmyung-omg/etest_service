@@ -7,9 +7,13 @@ import javax.persistence.*;
 
 import com.tmax.eTest.Contents.model.ErrorReport;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
+@AllArgsConstructor
+@NoArgsConstructor
 @Data
 @Entity
 @Table(name="USER_MASTER")
@@ -27,8 +31,9 @@ public class UserMaster {
 	@Column(nullable = false)
 	private String password;
 
-	@Column(nullable = false)
+	@Column(length = 100,  unique = true)
 	private String email;
+
 	@OneToMany(mappedBy="user")
 	private List<ErrorReport> errors = new ArrayList<ErrorReport>();
 }
