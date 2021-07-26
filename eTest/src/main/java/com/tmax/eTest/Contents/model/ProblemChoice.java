@@ -26,7 +26,7 @@ public class ProblemChoice {
 	@Column(name="CHOICE_NUM")
 	private long choiceNum;
 	
-	@Column(name="TEXT", length=256)
+	@Column(name="TEXT", length=512)
 	private String text;
 	
 	@ManyToOne(fetch=FetchType.LAZY)
