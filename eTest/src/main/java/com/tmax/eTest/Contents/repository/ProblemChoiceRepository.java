@@ -2,13 +2,13 @@ package com.tmax.eTest.Contents.repository;
 
 import java.util.List;
 
+import com.tmax.eTest.Common.model.problem.Problem;
+import com.tmax.eTest.Common.model.problem.ProblemChoice;
+import com.tmax.eTest.Common.model.problem.ProblemChoiceCompositeKey;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-
-import com.tmax.eTest.Contents.model.ProblemChoiceCompositeKey;
-import com.tmax.eTest.Contents.model.ProblemChoice;
-import com.tmax.eTest.Contents.model.Problem;
 
 public interface ProblemChoiceRepository extends JpaRepository<ProblemChoice, ProblemChoiceCompositeKey>{
 

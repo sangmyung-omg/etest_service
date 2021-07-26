@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.tmax.eTest.Report.dto.triton.TritonDataDTO;
-import com.tmax.eTest.Test.model.UkMaster;
+import com.tmax.eTest.Common.model.uk.UkMaster;
 
 @Component
 public class UKScoreCalculator {
