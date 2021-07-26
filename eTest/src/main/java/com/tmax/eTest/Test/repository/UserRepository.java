@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.CrudRepository;
 
-import com.tmax.eTest.Test.model.UserMaster;
+import com.tmax.eTest.Common.model.user.UserMaster;
 
 public interface UserRepository extends JpaRepository<UserMaster, Long> {
     UserMaster findByEmail(String email);

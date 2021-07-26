@@ -1,0 +1,37 @@
+variables:
+  SPRING_PROFILES_ACTIVE: gitlab-ci
+  DOCKER_DRIVER: overlay2
+  SCRIPTS_DIR: ./config
+  CONTAINER_NAME: etest-backend
+
+stages:
+  - build
+  - deploy
+  
+build-etest:
+  image: openjdk:8u111-jdk-alpine
+  stage: build
+  only:
+    - master
+  script:
+    - cd eTest
+    - ./gradlew build -x test
+  artifacts:
+    paths:
+      - eTest/build/libs/*.jar
+  tags:
+    - local-daehan
+
+deploy-etest:
+  image : docker:latest
+  services:
+    - docker:dind
+  stage: deploy
+  only:
+    - master
+  script:
+    - docker rm --force $CONTAINER_NAME 2>/dev/null || true
+    - docker build -t etest-backend:latest .
+    - docker run -d --rm --name $CONTAINER_NAME -p 8080:8080 etest-backend:latest 
+  tags:
+    - local-daehan
