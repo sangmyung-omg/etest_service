@@ -121,35 +121,19 @@ paths:
         - Problem
       summary : DB에 오류 보고 저장하기
       description : 문제 번호와 유저 아이디, 신고 유형, 오류에 대한 설명을 DB에 저장합니다.
-      parameters:
-      - name: problem_id
-        in: query
-        description: 문제 아이디
+      requestBody:
         required: true
-        schema:
-          type: string
-          format: string
-      - name: id
-        in: query
-        description: 유저 아이디
-        required: true
-        schema:
-          type: string
-          format: string
-      - name: report_type
-        in: query
-        description: 신고 유형 (QUESTION_ERROR/PASSAGE_ERROR)
-        required: true
-        schema:
-          type: string
-          format: string
-      - name: report_text
-        in: query
-        description: 신고 내용
-        required: true
-        schema:
-          type: string
-          format: string
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                problem_id: "문제 아이디"
+                id: "유저 아이디"
+                report_type: "신고 유형(QUESTION_ERROR/PASSAGE_ERROR)"
+                report_text: "신고 내용"
+
+  
       responses:
         200:
           description: Successfully saved
