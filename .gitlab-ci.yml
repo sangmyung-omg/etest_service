@@ -31,7 +31,7 @@ deploy-etest:
     - master
   script:
     - docker rm --force $CONTAINER_NAME 2>/dev/null || true
-    - docker build -t etest-backend:1.0.0 .
+    - docker build -t etest-backend:latest .
     - docker run -d --rm --name $CONTAINER_NAME -p 8080:8080 etest-backend:latest 
   tags:
     - local-daehan
