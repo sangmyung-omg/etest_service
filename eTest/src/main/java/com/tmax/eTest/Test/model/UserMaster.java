@@ -26,8 +26,6 @@ public class UserMaster {
 
 	private String userType;
 
-	private String username;
-
 	@Column(nullable = false)
 	private String password;
 

@@ -30,14 +30,21 @@ public class OAuth2DetailsService extends DefaultOAuth2UserService {
         String password = new BCryptPasswordEncoder().encode(UUID.randomUUID().toString());
         String email = (String) userInfo.get("email");
         String name = (String) userInfo.get("name");
+        String userUuid = UUID.randomUUID().toString();
+        String userType = "user";
+
+        System.out.println("=======================");
+
 
         UserMaster userEntity = userRepository.findByEmail(email);
-
         if(userEntity == null) { // 페이스북 최초 로그인
+            System.out.println(name);
             UserMaster user = UserMaster.builder()
+                    .userUuid(userUuid)
                     .password(password)
                     .email(email)
                     .name(name)
+                    .userType(userType)
                     .build();
 
             return new PrincipalDetails(userRepository.save(user), oauth2User.getAttributes());
