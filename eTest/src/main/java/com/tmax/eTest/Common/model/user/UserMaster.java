@@ -24,6 +24,8 @@ public class UserMaster {
 
 	private String name;
 
+	private String username;
+
 	private String userType;
 
 	@Column(nullable = false)
