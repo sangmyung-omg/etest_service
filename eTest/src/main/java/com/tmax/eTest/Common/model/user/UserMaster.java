@@ -36,4 +36,9 @@ public class UserMaster {
 
 	@OneToMany(mappedBy="user")
 	private List<ErrorReport> errors = new ArrayList<ErrorReport>();
+
+	private String providerId;
+
+	@Enumerated(EnumType.STRING)
+	private AuthProvider provider;
 }
