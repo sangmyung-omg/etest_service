@@ -35,6 +35,3 @@ out/
 
 ### VS Code ###
 .vscode/
-
-### log file ###
-log/test.log
