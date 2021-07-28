@@ -4,7 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.*;
+import javax.validation.constraints.Email;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.tmax.eTest.Auth.model.AuthProvider;
 import com.tmax.eTest.Common.model.error_report.ErrorReport;
 
 import lombok.AllArgsConstructor;
@@ -19,19 +22,25 @@ import lombok.NoArgsConstructor;
 @Table(name="USER_MASTER")
 @Builder
 public class UserMaster {
+
+	private String UserUuid;
+	private String UserType;
+
 	@Id
-	private String userUuid;
-
-	private String name;
-
-	private String username;
-
-	private String userType;
+	@Column(name = "user_id")
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	private Long id;
 
 	@Column(nullable = false)
+	private String name;
+
+	@JsonIgnore
 	private String password;
 
-	@Column(length = 100,  unique = true)
+	private String role;
+
+	@Email
+	@Column(nullable = false)
 	private String email;
 
 	@OneToMany(mappedBy="user")
@@ -41,4 +50,7 @@ public class UserMaster {
 
 	@Enumerated(EnumType.STRING)
 	private AuthProvider provider;
+
+	@Column(nullable = false)
+	private Boolean emailVerified = false;
 }
