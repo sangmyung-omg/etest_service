@@ -1,0 +1,66 @@
+etest:
+    recommend:
+        lrs:
+            host: 192.168.153.132
+            port: 8080
+        masterytriton:
+            host: 192.168.153.209
+            modelname: kt-rule
+            modelver: 1
+            port: 18000
+restTemplate:
+    factory:
+        connectTimeout: 3000
+        readTimeout: 5000
+    httpClient:
+        maxConnPerRoute: 5
+        maxConnTotal: 100
+server:
+    port: 8080
+spring:
+    datasource:
+#        data: classpath:data.sql
+        driver-class-name: com.tmax.tibero.jdbc.TbDriver
+        initialization-mode: always
+        password: etest
+#        schema: classpath:schema.sql
+        sql-script-encoding: UTF-8
+        url: jdbc:tibero:thin:@192.168.153.194:8629:tibero
+        username: etest
+    jpa:
+        database-platform: org.hibernate.dialect.Oracle10gDialect
+        generate-ddl: true
+        properties:
+            hibernate:
+                jdbc:
+                    batch_size: 32
+        show-sql: true
+    security:
+        oauth2:
+            client:
+                registration:
+                    facebook:
+                        client-id: 276951674204554
+                        client-secret: 11c56056f75c390f4bd945a512e13d7e
+                        scope: email
+                        redirectUri: "{baseUrl}/oauth2/callback/{registrationId}" # Note that facebook now mandates the use of https redirect URIs, so make sure your app supports https in production
+
+        user:
+            name: test
+            password: 1234
+springdoc:
+    api-docs:
+        path: /api-docs
+app:
+    auth:
+        tokenSecret: 926D96C90030DD58429D2751AC1BDBBC
+        tokenExpirationMsec: 864000000
+    oauth2:
+        # After successfully authenticating with the OAuth2 Provider,
+        # we'll be generating an auth token for the user and sending the token to the
+        # redirectUri mentioned by the frontend client in the /oauth2/authorize request.
+        # We're not using cookies because they won't work well in mobile clients.
+        authorizedRedirectUris:
+            - http://localhost:3000/oauth2/redirect
+            - myandroidapp://oauth2/redirect
+            - myiosapp://oauth2/redirect
