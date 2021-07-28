@@ -46,6 +46,11 @@ dependencies {
 
 }
 
+// for preventing *-plain.jar generation
+jar {
+    enabled = false
+}
+
 test {
 	useJUnitPlatform()
 }
