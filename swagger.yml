@@ -101,16 +101,25 @@ paths:
             json:
               schema:
                 type: object
-                example:
-                  video_src: ""
-                  title: ""
-                  create_date: ""
-                  creator_id: ""
-                  img_src: ""
-                  subject: ""
-                  total_time: ""
-                  hit: ""
-                  bookmark: ""
+                properties:
+                  video_src:
+                    type: string
+                  title: 
+                    type: string
+                  create_date:
+                    type: string
+                  creator_id: 
+                    type: string
+                  img_src: 
+                    type: string
+                  subject: 
+                    type: string
+                  total_time: 
+                    type: number
+                  hit: 
+                    type: integer
+                  bookmark: 
+                    type: boolean
   /users/{id}/bookmark/videos:
     get:
       tags:
@@ -238,14 +247,21 @@ paths:
             json:
               schema:
                 type: object
-                example:
-                  book_src: ""
-                  title: ""
-                  create_date: ""
-                  creator_id: ""
-                  img_src: ""
-                  description: ""
-                  bookmark: ""
+                properties:
+                  book_src:
+                    type: string
+                  title: 
+                    type: string
+                  create_date: 
+                    type: string
+                  creator_id: 
+                    type: string
+                  img_src: 
+                    type: string
+                  description: 
+                    type: string
+                  bookmark: 
+                    type: boolean
   /users/{id}/bookmark/books:
     get:
       tags:
@@ -374,15 +390,23 @@ paths:
             json:
               schema:
                 type: object
-                example:
-                  title: ""
-                  create_date: ""
-                  creator_id: ""
-                  img_src: ""
-                  description: ""
-                  summary: ""
-                  source: ""
-                  bookmark: ""
+                properties:
+                  title: 
+                    type: string
+                  create_date: 
+                    type: string
+                  creator_id: 
+                    type: string
+                  img_src: 
+                    type: string
+                  description: 
+                    type: string
+                  summary: 
+                    type: string
+                  source: 
+                    type: string
+                  bookmark: 
+                    type: boolean
   /users/{id}/bookmark/wikis:
     get:
       tags:
@@ -511,15 +535,23 @@ paths:
             json:
               schema:
                 type: object
-                example:
-                  article_url: ""
-                  title: ""
-                  create_date: ""
-                  creator_id: ""
-                  description: ""
-                  img_src: ""
-                  source: ""
-                  bookmark: ""
+                properties:
+                  article_url: 
+                    type: string
+                  title: 
+                    type: string
+                  create_date: 
+                    type: string
+                  creator_id: 
+                    type: string
+                  description: 
+                    type: string
+                  img_src: 
+                    type: string
+                  source: 
+                    type: string
+                  bookmark: 
+                    type: boolean
   /users/{id}/bookmark/articles:
     get:
       tags:
