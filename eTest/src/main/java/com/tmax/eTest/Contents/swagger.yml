@@ -1,0 +1,667 @@
+openapi: "3.0.2"
+info:
+    title: Contents API
+    version: "0.1"
+    description: 영상/교재/위키피디아/아티클 API
+servers:
+  - url: http://192.168.153.173:8080/
+    description: example server address
+tags:
+- name: Video
+  description: 영상 컨텐츠
+- name: Book
+  description: 교재 컨텐츠
+- name: Wikipedia
+  description: 위키피디아 컨텐츠
+- name: Article
+  description: 아티클 컨텐츠
+- name: File
+  description: 이미지, 교재 파일 관리
+
+paths:
+  /videos:
+    get:
+      tags:
+      - Video
+      summary: 영상 리스트 가져오기
+      description: 영상 리스트 전체를 가져옵니다.
+      parameters:
+      - name: subject
+        in: query
+        description: 영상 주제(default 전체)
+        required: true
+        schema:
+          type: string
+          format: string
+      - name: sort_type
+        in: query
+        description: 정렬 타입(DATE, HIT)
+        required: true
+        schema:
+          type: string
+          format: string
+      responses:
+        200:
+          description: OK
+          content:
+            json:
+              schema:
+                type: object
+                example:
+                  size: 4
+                  videos: [1,2,3,4]
+  /videos/{id}/hit:
+    post:
+      tags:
+      - Video
+      summary: 영상 조회수 업데이트
+      description: 해당 영상의 조회수를 1 증가 시킵니다.
+      parameters:
+      - name: id
+        in: path
+        description: 영상아이디
+        required: true
+        schema:
+          type: string
+          format: string
+      responses:
+        200:
+          description: OK
+          content:
+            json:
+              schema:
+                type: object
+                example:
+                  isSuccess: true
+  /users/{user_id}/videos/{video_id}:
+    get:
+      tags:
+        - Video
+      summary : 유저의 비디오 조회
+      description : 유저와 비디오 종합 데이터 조회
+      parameters:
+      - name: user_id
+        in: path
+        description: 사용자 아이디
+        required: true
+        schema:
+          type: string
+          format: string
+      - name: video_id
+        in: path
+        description: 영상 아이디
+        required: true
+        schema:
+          type: string
+          format: string
+      responses:
+        200:
+          description: OK
+          content:
+            json:
+              schema:
+                type: object
+                properties:
+                  video_src:
+                    type: string
+                  title: 
+                    type: string
+                  create_date:
+                    type: string
+                  creator_id: 
+                    type: string
+                  img_src: 
+                    type: string
+                  subject: 
+                    type: string
+                  total_time: 
+                    type: number
+                  hit: 
+                    type: integer
+                  bookmark: 
+                    type: boolean
+  /users/{id}/bookmark/videos:
+    get:
+      tags:
+        - Video
+      summary : 유저의 북마크 영상 조회
+      description : 유저가 북마크 저장한 영상 리스트 조회
+      parameters:
+      - name: id
+        in: path
+        description: 사용자 아이디
+        required: true
+        schema:
+          type: string
+          format: string
+      responses:
+        200:
+          description: OK
+          content:
+            json:
+              schema:
+                type: object
+                example:
+                  size: 4
+                  videos: [1,2,3,4]
+  /users/{user_id}/bookmark/videos/{video_id}:
+    put:
+      tags:
+        - Video
+      summary : 유저의 영상 북마크 추가
+      description : 유저가 영상에 북마크 추가
+      parameters:
+      - name: user_id
+        in: path
+        description: 사용자 아이디
+        required: true
+        schema:
+          type: string
+          format: string
+      - name: video_id
+        in: path
+        description: 영상 아이디
+        required: true
+        schema:
+          type: string
+          format: string
+      responses:
+        200:
+          description: OK
+          content:
+            json:
+              schema:
+                type: object
+                example:
+                  isSuccess: true
+    delete:
+      tags:
+        - Video
+      summary : 유저의 영상 북마크 삭제
+      description : 유저가 영상에 북마크 삭제
+      parameters:
+      - name: user_id
+        in: path
+        description: 사용자 아이디
+        required: true
+        schema:
+          type: string
+          format: string
+      - name: video_id
+        in: path
+        description: 영상 아이디
+        required: true
+        schema:
+          type: string
+          format: string
+      responses:
+        200:
+          description: OK
+          content:
+            json:
+              schema:
+                type: object
+                example:
+                  isSuccess: true
+  /books:
+    get:
+      tags:
+      - Book
+      summary: 교재 리스트 가져오기
+      description: 교재 리스트 전체를 가져옵니다.
+      responses:
+        200:
+          description: OK
+          content:
+            json:
+              schema:
+                type: object
+                example:
+                  size: 4
+                  books: [1,2,3,4]
+  /users/{user_id}/books/{book_id}:
+    get:
+      tags:
+        - Book
+      summary : 유저의 교재 조회
+      description : 유저와 교재 종합 데이터 조회
+      parameters:
+      - name: user_id
+        in: path
+        description: 사용자 아이디
+        required: true
+        schema:
+          type: string
+          format: string
+      - name: book_id
+        in: path
+        description: 교재 아이디
+        required: true
+        schema:
+          type: string
+          format: string
+      responses:
+        200:
+          description: OK
+          content:
+            json:
+              schema:
+                type: object
+                properties:
+                  book_src:
+                    type: string
+                  title: 
+                    type: string
+                  create_date: 
+                    type: string
+                  creator_id: 
+                    type: string
+                  img_src: 
+                    type: string
+                  description: 
+                    type: string
+                  bookmark: 
+                    type: boolean
+  /users/{id}/bookmark/books:
+    get:
+      tags:
+        - Book
+      summary : 유저의 북마크 교재 조회
+      description : 유저가 북마크 저장한 교재 리스트 조회
+      parameters:
+      - name: id
+        in: path
+        description: 사용자 아이디
+        required: true
+        schema:
+          type: string
+          format: string
+      responses:
+        200:
+          description: OK
+          content:
+            json:
+              schema:
+                type: object
+                example:
+                  size: 4
+                  books: [1,2,3,4]
+  /users/{user_id}/bookmark/books/{book_id}:
+    put:
+      tags:
+        - Book
+      summary : 유저의 교재 북마크 추가
+      description : 유저가 교재에 북마크 추가
+      parameters:
+      - name: user_id
+        in: path
+        description: 사용자 아이디
+        required: true
+        schema:
+          type: string
+          format: string
+      - name: book_id
+        in: path
+        description: 교재 아이디
+        required: true
+        schema:
+          type: string
+          format: string
+      responses:
+        200:
+          description: OK
+          content:
+            json:
+              schema:
+                type: object
+                example:
+                  isSuccess: true
+    delete:
+      tags:
+        - Book
+      summary : 유저의 교재 북마크 삭제
+      description : 유저가 교재에 북마크 삭제
+      parameters:
+      - name: user_id
+        in: path
+        description: 사용자 아이디
+        required: true
+        schema:
+          type: string
+          format: string
+      - name: book_id
+        in: path
+        description: 교재 아이디
+        required: true
+        schema:
+          type: string
+          format: string
+      responses:
+        200:
+          description: OK
+          content:
+            json:
+              schema:
+                type: object
+                example:
+                  isSuccess: true
+  /wikis:
+    get:
+      tags:
+      - Wikipedia
+      summary: 위키피디아 리스트 가져오기
+      description: 위키피디아 리스트 전체를 제목으로 소팅해서 가져옵니다.
+      responses:
+        200:
+          description: OK
+          content:
+            json:
+              schema:
+                type: object
+                example:
+                  total_size: 7
+                  size: [3,2,2]
+                  wikis: [[1,2,3], [4,5], [6,7]]
+  /users/{user_id}/wikis/{wiki_id}:
+    get:
+      tags:
+        - Wikipedia
+      summary : 유저의 위키피디아 조회
+      description : 유저와 위키피디아 종합 데이터 조회
+      parameters:
+      - name: user_id
+        in: path
+        description: 사용자 아이디
+        required: true
+        schema:
+          type: string
+          format: string
+      - name: wiki_id
+        in: path
+        description: 위키피디아 아이디
+        required: true
+        schema:
+          type: string
+          format: string
+      responses:
+        200:
+          description: OK
+          content:
+            json:
+              schema:
+                type: object
+                properties:
+                  title: 
+                    type: string
+                  create_date: 
+                    type: string
+                  creator_id: 
+                    type: string
+                  img_src: 
+                    type: string
+                  description: 
+                    type: string
+                  summary: 
+                    type: string
+                  source: 
+                    type: string
+                  bookmark: 
+                    type: boolean
+  /users/{id}/bookmark/wikis:
+    get:
+      tags:
+        - Wikipedia
+      summary : 유저의 북마크 위키피디아 조회
+      description : 유저가 북마크 저장한 위키피디아 리스트 조회
+      parameters:
+      - name: id
+        in: path
+        description: 사용자 아이디
+        required: true
+        schema:
+          type: string
+          format: string
+      responses:
+        200:
+          description: OK
+          content:
+            json:
+              schema:
+                type: object
+                example:
+                  total_size: 7
+                  size: [3,2,2]
+                  wikis: [[1,2,3],[4,5],[6,7]]
+  /users/{user_id}/bookmark/wikis/{wiki_id}:
+    put:
+      tags:
+        - Wikipedia
+      summary : 유저의 위키피디아 북마크 추가
+      description : 유저가 위키피디아에 북마크 추가
+      parameters:
+      - name: user_id
+        in: path
+        description: 사용자 아이디
+        required: true
+        schema:
+          type: string
+          format: string
+      - name: wikipedia_id
+        in: path
+        description: 위키피디아 아이디
+        required: true
+        schema:
+          type: string
+          format: string
+      responses:
+        200:
+          description: OK
+          content:
+            json:
+              schema:
+                type: object
+                example:
+                  isSuccess: true
+    delete:
+      tags:
+        - Wikipedia
+      summary : 유저의 위키피디아 북마크 삭제
+      description : 유저가 위키피디아에 북마크 삭제
+      parameters:
+      - name: user_id
+        in: path
+        description: 사용자 아이디
+        required: true
+        schema:
+          type: string
+          format: string
+      - name: wikipedia_id
+        in: path
+        description: 위키피디아 아이디
+        required: true
+        schema:
+          type: string
+          format: string
+      responses:
+        200:
+          description: OK
+          content:
+            json:
+              schema:
+                type: object
+                example:
+                  isSuccess: true
+  /articles:
+    get:
+      tags:
+      - Article
+      summary: 아티클 리스트 가져오기
+      description: 아티클 리스트 전체를 가져옵니다.
+      responses:
+        200:
+          description: OK
+          content:
+            json:
+              schema:
+                type: object
+                example:
+                  size: 4
+                  articles: [1,2,3,4]
+  /users/{user_id}/articles/{article_id}:
+    get:
+      tags:
+        - Article
+      summary : 유저의 아티클 조회
+      description : 유저와 아티클 종합 데이터 조회
+      parameters:
+      - name: user_id
+        in: path
+        description: 사용자 아이디
+        required: true
+        schema:
+          type: string
+          format: string
+      - name: article_id
+        in: path
+        description: 아티클 아이디
+        required: true
+        schema:
+          type: string
+          format: string
+      responses:
+        200:
+          description: OK
+          content:
+            json:
+              schema:
+                type: object
+                properties:
+                  article_url: 
+                    type: string
+                  title: 
+                    type: string
+                  create_date: 
+                    type: string
+                  creator_id: 
+                    type: string
+                  description: 
+                    type: string
+                  img_src: 
+                    type: string
+                  source: 
+                    type: string
+                  bookmark: 
+                    type: boolean
+  /users/{id}/bookmark/articles:
+    get:
+      tags:
+        - Article
+      summary : 유저의 북마크 아티클 조회
+      description : 유저가 북마크 저장한 아티클 리스트 조회
+      parameters:
+      - name: id
+        in: path
+        description: 사용자 아이디
+        required: true
+        schema:
+          type: string
+          format: string
+      responses:
+        200:
+          description: OK
+          content:
+            json:
+              schema:
+                type: object
+                example:
+                  size: 4
+                  artiles: [1,2,3,4]
+  /users/{user_id}/bookmark/articles/{article_id}:
+    put:
+      tags:
+        - Article
+      summary : 유저의 아티클 북마크 추가
+      description : 유저가 아티클에 북마크 추가
+      parameters:
+      - name: user_id
+        in: path
+        description: 사용자 아이디
+        required: true
+        schema:
+          type: string
+          format: string
+      - name: article_id
+        in: path
+        description: 아티클 아이디
+        required: true
+        schema:
+          type: string
+          format: string
+      responses:
+        200:
+          description: OK
+          content:
+            json:
+              schema:
+                type: object
+                example:
+                  isSuccess: true
+    delete:
+      tags:
+        - Article
+      summary : 유저의 아티클 북마크 삭제
+      description : 유저가 아티클에 북마크 삭제
+      parameters:
+      - name: user_id
+        in: path
+        description: 사용자 아이디
+        required: true
+        schema:
+          type: string
+          format: string
+      - name: article_id
+        in: path
+        description: 아티클 아이디
+        required: true
+        schema:
+          type: string
+          format: string
+      responses:
+        200:
+          description: OK
+          content:
+            json:
+              schema:
+                type: object
+                example:
+                  isSuccess: true
+  /file/{filename}:
+    get:
+      tags:
+        - File
+      summary : 파일 조회
+      description : 이미지, 교재 등의 파일 조회
+      parameters:
+      - name: filename
+        in: path
+        description: 파일명
+        required: true
+        schema:
+          type: string
+          format: string
+      responses:
+        200:
+          description: OK
+          content:
+            image/jpeg:
+              schema:
+                type: string
+                format: binary
+            image/png:
+              schema:
+                type: string
+                format: binary
+            application/epub+zip:
+              schema:
+                type: string
+                format: binary
