@@ -8,6 +8,7 @@ import javax.validation.constraints.Email;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.tmax.eTest.Auth.model.AuthProvider;
+import com.tmax.eTest.Auth.model.Role;
 import com.tmax.eTest.Common.model.error_report.ErrorReport;
 
 import lombok.AllArgsConstructor;
@@ -22,22 +23,17 @@ import lombok.NoArgsConstructor;
 @Table(name="USER_MASTER")
 @Builder
 public class UserMaster {
-
-	private String UserUuid;
-	private String UserType;
-
 	@Id
-	@Column(name = "user_id")
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	private Long id;
+	private String userUuid;
+	private String userType;
 
 	@Column(nullable = false)
 	private String name;
 
 	@JsonIgnore
 	private String password;
-
-	private String role;
+	@Enumerated(EnumType.STRING)
+	private Role role;
 
 	@Email
 	@Column(nullable = false)

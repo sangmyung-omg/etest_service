@@ -22,7 +22,7 @@ public class UserController {
 
     @GetMapping("/user")
     public UserMaster getCurrentUser(@AuthenticationPrincipal PrincipalDetails principalDetails) {
-        System.out.println(principalDetails.getId());
+        System.out.println(principalDetails.getUserUuid());
         return userRepository.findByEmail(principalDetails.getEmail())
                 .orElseThrow(() -> new ResourceNotFoundExceptionDto("User", "id", principalDetails.getEmail()));
     }

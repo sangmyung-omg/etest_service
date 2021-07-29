@@ -39,6 +39,8 @@ public class JwtCommonAuthorizationFilter extends BasicAuthenticationFilter {
         // If header does not contain BEARER or is null delegate to Spring impl and exit
         if (header == null || !header.startsWith("Bearer")) {
             chain.doFilter(request, response);
+            System.out.println("헤더가 비어있다.");
+
             return;
         }
         // If header is present, try grab user principal from database and perform authorization
@@ -55,10 +57,11 @@ public class JwtCommonAuthorizationFilter extends BasicAuthenticationFilter {
         System.out.println("token : " +token);
         if (token != null) {
             Claims claims = jwtTokenProvider.getClaims(token);
-            Long id = Long.parseLong(claims.getSubject()); // getSubject 값은 users의 id값
+            String userUuid = claims.getSubject(); // getSubject 값은 users의 id값
+            System.out.println("claims의 userUuid : " + userUuid);
 
-            if (id != null) {
-                Optional<UserMaster> oUser = userRepository.findById(id);
+            if (userUuid != null) {
+                Optional<UserMaster> oUser = userRepository.findByUserUuid(userUuid);
                 UserMaster user = oUser.get();
                 PrincipalDetails principal = PrincipalDetails.create(user);
 
@@ -67,7 +70,7 @@ public class JwtCommonAuthorizationFilter extends BasicAuthenticationFilter {
 
                 UsernamePasswordAuthenticationToken authentication =
                         new UsernamePasswordAuthenticationToken(principal, null, principal.getAuthorities());
-//                SecurityContextHolder.getContext().setAuthentication(authentication); // 세션에 넣기
+                SecurityContextHolder.getContext().setAuthentication(authentication); // 세션에 넣기
                 return authentication;
             }
         }

@@ -26,6 +26,7 @@ public class AuthService {
         String encPassword = encoder.encode(rawPassword);
         user.setPassword(encPassword);
         user.setUserType("user");
+        user.setUserUuid(UUID.randomUUID().toString());
         UserMaster userDTO = userRepository.save(user);
         return userDTO;
     }

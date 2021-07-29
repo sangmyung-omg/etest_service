@@ -13,17 +13,17 @@ public class PrincipalDetails implements OAuth2User, UserDetails {
 
     private static final long serialVersionUID = 1L;
 
-    private Long id;
     private String email;
     private String password;
+    private String userUuid;
     private Collection<? extends GrantedAuthority> authorities;
     private Map<String, Object> attributes;
 
-    public PrincipalDetails(Long id, String email, String password, Collection<? extends GrantedAuthority> authorities) {
-        this.id = id;
+    public PrincipalDetails( String email, String password, String userUuid, Collection<? extends GrantedAuthority> authorities) {
         this.email = email;
         this.password = password;
         this.authorities = authorities;
+        this.userUuid = userUuid;
     }
 
     public static PrincipalDetails create(UserMaster user) {
@@ -31,9 +31,9 @@ public class PrincipalDetails implements OAuth2User, UserDetails {
                 singletonList(new SimpleGrantedAuthority("ROLE_"+user.getRole()));
 
         return new PrincipalDetails(
-                user.getId(),
                 user.getEmail(),
                 user.getPassword(),
+                user.getUserUuid(),
                 authorities
         );
     }
@@ -44,9 +44,6 @@ public class PrincipalDetails implements OAuth2User, UserDetails {
         return userPrincipal;
     }
 
-    public Long getId() {
-        return id;
-    }
 
     public String getEmail() {
         return email;
@@ -98,6 +95,8 @@ public class PrincipalDetails implements OAuth2User, UserDetails {
 
     @Override
     public String getName() {
-        return String.valueOf(id);
+        return userUuid;
     }
+
+    public String getUserUuid() { return userUuid;}
 }

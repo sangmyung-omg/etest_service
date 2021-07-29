@@ -62,7 +62,7 @@ public class AuthController {
         UserMaster result = userRepository.save(user);
 
         URI location = ServletUriComponentsBuilder.fromCurrentContextPath().path("/user/me")
-                .buildAndExpand(result.getId()).toUri();
+                .buildAndExpand(result.getUserUuid()).toUri();
 
         return ResponseEntity.created(location).body(new ApiResponseDto(true, "User registered successfully@"));
     }

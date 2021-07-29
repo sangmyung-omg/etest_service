@@ -22,19 +22,21 @@ public class JwtTokenProvider {
         localDateTime = localDateTime.plusSeconds(sec);
         ZoneId defaultZoneId = ZoneId.systemDefault();
         Date expireDate = Date.from(localDateTime.atZone(defaultZoneId).toInstant());
-
+        System.out.println("JwtTokenProvider의 principal : " + principal.getUserUuid());
         String token = Jwts.builder()
-//                .setSubject(Long.(principal.getUserUuid()))
+                .setSubject((principal.getUserUuid()))
                 .setIssuedAt(new Date())
                 .setExpiration(expireDate)
                 .signWith(SignatureAlgorithm.HS256, tokenSecret).compact();
         return token;
     }
+
     public Claims getClaims(String token) {
         Claims claims = Jwts.parser()
                 .setSigningKey(tokenSecret)
                 .parseClaimsJws(token)
                 .getBody();
+
         return claims;
     }
 }
