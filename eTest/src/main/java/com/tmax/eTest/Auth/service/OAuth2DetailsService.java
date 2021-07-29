@@ -5,6 +5,7 @@ import com.tmax.eTest.Auth.exception.OAuth2AuthenticationProcessingException;
 import com.tmax.eTest.Auth.model.AuthProvider;
 import com.tmax.eTest.Auth.model.OAuth2UserInfo;
 import com.tmax.eTest.Auth.model.OAuth2UserInfoFactory;
+import com.tmax.eTest.Auth.model.Role;
 import com.tmax.eTest.Common.model.user.UserMaster;
 import com.tmax.eTest.Auth.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,7 @@ public class OAuth2DetailsService extends DefaultOAuth2UserService {
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest oAuth2UserRequest) throws OAuth2AuthenticationException {
+        System.out.println("OAuth2DetailsService의 loadUser 실행");
         OAuth2User oAuth2User = super.loadUser(oAuth2UserRequest);
 
         try {
@@ -43,11 +45,11 @@ public class OAuth2DetailsService extends DefaultOAuth2UserService {
     }
 
     private OAuth2User processOAuth2User(OAuth2UserRequest oAuth2UserRequest, OAuth2User oAuth2User) {
+        System.out.println("OAuth2DetailsService의 processOAuth2User 실행");
         OAuth2UserInfo oAuth2UserInfo = OAuth2UserInfoFactory.getOAuth2UserInfo(oAuth2UserRequest.getClientRegistration().getRegistrationId(), oAuth2User.getAttributes());
         if(StringUtils.isEmpty(oAuth2UserInfo.getEmail())) {
             throw new OAuth2AuthenticationProcessingException("Email not found from OAuth2 provider");
         }
-
         Optional<UserMaster> userOptional = userRepository.findByEmail(oAuth2UserInfo.getEmail());
         UserMaster user;
         if(userOptional.isPresent()) {
@@ -65,17 +67,15 @@ public class OAuth2DetailsService extends DefaultOAuth2UserService {
         return PrincipalDetails.create(user, oAuth2User.getAttributes());
     }
     private UserMaster registerNewUser(OAuth2UserRequest oAuth2UserRequest, OAuth2UserInfo oAuth2UserInfo) {
-        System.out.println(oAuth2UserInfo);
+        System.out.println("OAuth2DetailsService의 registerNewUser 실행");
         UserMaster user = new UserMaster();
         UUID uuid = UUID.randomUUID();
         user.setProvider(AuthProvider.valueOf(oAuth2UserRequest.getClientRegistration().getRegistrationId()));
         user.setProviderId(oAuth2UserInfo.getId());
         user.setName(oAuth2UserInfo.getName());
         user.setEmail(oAuth2UserInfo.getEmail());
-        user.setRole("ROLE_USER"); // 추가
+        user.setRole(Role.USER); // 추가
         user.setUserUuid(uuid.toString()); // 추가
-
-        System.out.println("===========================저장됨==============================");
         return userRepository.save(user);
     }
 
