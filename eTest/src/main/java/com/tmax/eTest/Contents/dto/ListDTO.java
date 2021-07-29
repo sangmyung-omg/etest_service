@@ -11,27 +11,13 @@ public class ListDTO {
   @AllArgsConstructor
   public static class Video {
     private int size;
-    private List<Long> videos;
+    private List<VideoDTO> videos;
   }
 
   @Data
   @AllArgsConstructor
-  public static class Book {
+  public static class Curriculum {
     private int size;
-    private List<Long> books;
-  }
-
-  @Data
-  @AllArgsConstructor
-  public static class Wiki {
-    private int size;
-    private List<Long> wikis;
-  }
-
-  @Data
-  @AllArgsConstructor
-  public static class Article {
-    private int size;
-    private List<Long> articles;
+    private List<VideoCurriculumDTO> curriculums;
   }
 }

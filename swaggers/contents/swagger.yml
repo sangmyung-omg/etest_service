@@ -19,7 +19,7 @@ tags:
   description: 이미지, 교재 파일 관리
 
 paths:       
-  /videos/subjects:
+  /videos/curriculums:
     get:
       tags:
         - Video
@@ -35,10 +35,15 @@ paths:
                 properties:
                   size: 
                     type: integer
-                  subjects:
+                  curriculums:
                     type: array
                     items:
-                      type: string
+                      type: object
+                      properties:
+                        curriculumId:
+                          type: integer
+                        subject:
+                          type: string
   /users/{user_id}/videos:
     get:
       tags:
@@ -53,6 +58,22 @@ paths:
         schema:
           type: string
           format: string
+      - name: curriculumId
+        in: query
+        description: 영상 주제
+        required: false
+        schema:
+          type: string
+          format: string
+          default: null
+      - name: sortType
+        in: query
+        description: DATE(날짜순)/HIT(조회순)
+        required: false
+        schema:
+          type: string
+          format: string
+          default: DATE
       responses:
         200:
           description: OK
@@ -68,6 +89,8 @@ paths:
                     items:
                       type: object
                       properties:
+                        videoId:
+                          type: integer
                         videoSrc:
                           type: string
                         title: 
@@ -104,6 +127,22 @@ paths:
         schema:
           type: string
           format: string
+      - name: curriculumId
+        in: query
+        description: 영상 주제
+        required: false
+        schema:
+          type: string
+          format: string
+          default: null
+      - name: sortType
+        in: query
+        description: DATE(날짜순)/HIT(조회순)
+        required: false
+        schema:
+          type: string
+          format: string
+          default: DATE
       responses:
         200:
           description: OK
@@ -119,6 +158,8 @@ paths:
                     items:
                       type: object
                       properties:
+                        videoId:
+                          type: integer
                         videoSrc:
                           type: string
                         title: 
@@ -252,6 +293,8 @@ paths:
                     items:
                       type: object
                       properties:
+                        bookId:
+                          type: integer
                         bookSrc:
                           type: string
                         title: 
@@ -295,6 +338,8 @@ paths:
                     items:
                       type: object
                       properties:
+                        bookId:
+                          type: integer
                         bookSrc:
                           type: string
                         title: 
@@ -405,6 +450,8 @@ paths:
                       items:                        
                         type: object
                         properties:
+                          wikiId:
+                            type: integer
                           title: 
                             type: string
                           createDate: 
@@ -462,6 +509,8 @@ paths:
                       items:                        
                         type: object
                         properties:
+                          wikiId:
+                            type: integer
                           title: 
                             type: string
                           createDate: 
@@ -570,6 +619,8 @@ paths:
                     items:
                       type: object
                       properties:
+                        articleId:
+                          type: integer
                         articleUrl: 
                           type: string
                         title: 
@@ -619,6 +670,8 @@ paths:
                     items:
                       type: object
                       properties:
+                        articleId:
+                          type: integer
                         articleUrl: 
                           type: string
                         title: 
