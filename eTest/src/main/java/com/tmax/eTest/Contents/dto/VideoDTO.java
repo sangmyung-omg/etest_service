@@ -1,5 +1,7 @@
 package com.tmax.eTest.Contents.dto;
 
+import java.util.List;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -16,5 +18,6 @@ public class VideoDTO {
   private Float totalTime;
   private Integer hit;
   private boolean bookmark;
+  private List<String> uks;
 
 }
