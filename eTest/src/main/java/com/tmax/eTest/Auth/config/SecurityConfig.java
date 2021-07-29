@@ -1,5 +1,6 @@
 package com.tmax.eTest.Auth.config;
 
+import com.tmax.eTest.Auth.jwt.JwtBasicAuthenticationFilter;
 import com.tmax.eTest.Auth.jwt.JwtCommonAuthorizationFilter;
 import com.tmax.eTest.Auth.jwt.JwtTokenProvider;
 import com.tmax.eTest.Auth.repository.UserRepository;
@@ -72,12 +73,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         http.formLogin().disable();
         http.httpBasic().disable();
-//        http.addFilter(new JwtBasicAuthenticationFilter());
+        http.addFilter(new JwtBasicAuthenticationFilter());
         http.addFilter(new JwtCommonAuthorizationFilter(authenticationManager(), tokenProvider, userRepository));
 
         http.authorizeRequests()
-                .antMatchers("/user/**")
-                .authenticated()
+                .antMatchers("/user/**").access("hasRole('ROLE_USER')")
                 .antMatchers("/admin/**").access("hasRole('ROLE_ADMIN')")
                 .anyRequest().permitAll()
                 .and()
