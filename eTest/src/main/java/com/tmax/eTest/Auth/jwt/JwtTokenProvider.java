@@ -22,7 +22,6 @@ public class JwtTokenProvider {
         localDateTime = localDateTime.plusSeconds(sec);
         ZoneId defaultZoneId = ZoneId.systemDefault();
         Date expireDate = Date.from(localDateTime.atZone(defaultZoneId).toInstant());
-        System.out.println("JwtTokenProvider의 principal : " + principal.getUserUuid());
         String token = Jwts.builder()
                 .setSubject((principal.getUserUuid()))
                 .setIssuedAt(new Date())

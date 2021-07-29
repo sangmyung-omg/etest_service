@@ -39,8 +39,6 @@ public class JwtCommonAuthorizationFilter extends BasicAuthenticationFilter {
         // If header does not contain BEARER or is null delegate to Spring impl and exit
         if (header == null || !header.startsWith("Bearer")) {
             chain.doFilter(request, response);
-            System.out.println("헤더가 비어있다.");
-
             return;
         }
         // If header is present, try grab user principal from database and perform authorization

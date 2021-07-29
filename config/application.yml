@@ -21,7 +21,7 @@ spring:
     datasource:
 #        data: classpath:data.sql
         driver-class-name: com.tmax.tibero.jdbc.TbDriver
-        initialization-mode: always
+        initialization-mode: never
         password: etest
 #        schema: classpath:schema.sql
         sql-script-encoding: UTF-8
@@ -29,7 +29,7 @@ spring:
         username: etest
     jpa:
         database-platform: org.hibernate.dialect.Oracle10gDialect
-        generate-ddl: true
+        generate-ddl: false
         properties:
             hibernate:
                 jdbc:
@@ -42,8 +42,15 @@ spring:
                     facebook:
                         client-id: 276951674204554
                         client-secret: 11c56056f75c390f4bd945a512e13d7e
-                        scope: email
-                        redirectUri: "{baseUrl}/oauth2/callback/{registrationId}" # Note that facebook now mandates the use of https redirect URIs, so make sure your app supports https in production
+                        scope:
+                        - email
+                        - profile
+                    google:
+                        client-id: 405137734465-10a8s6r09kqn8b2tuehinvqqav5roa55.apps.googleusercontent.com
+                        client-secret: mnpMTw3zxqVCVo-5BQAqgV4u
+                        scope:
+                        - email
+                        - profile
 
         user:
             name: test
