@@ -102,19 +102,19 @@ paths:
               schema:
                 type: object
                 properties:
-                  video_src:
+                  videoSrc:
                     type: string
                   title: 
                     type: string
-                  create_date:
+                  createDate:
                     type: string
-                  creator_id: 
+                  creatorId: 
                     type: string
-                  img_src: 
+                  imgSrc: 
                     type: string
                   subject: 
                     type: string
-                  total_time: 
+                  totalTime: 
                     type: number
                   hit: 
                     type: integer
@@ -248,15 +248,15 @@ paths:
               schema:
                 type: object
                 properties:
-                  book_src:
+                  bookSrc:
                     type: string
                   title: 
                     type: string
-                  create_date: 
+                  createDate: 
                     type: string
-                  creator_id: 
+                  creatorId: 
                     type: string
-                  img_src: 
+                  imgSrc: 
                     type: string
                   description: 
                     type: string
@@ -359,7 +359,7 @@ paths:
               schema:
                 type: object
                 example:
-                  total_size: 7
+                  totalSize: 7
                   size: [3,2,2]
                   wikis: [[1,2,3], [4,5], [6,7]]
   /users/{user_id}/wikis/{wiki_id}:
@@ -393,11 +393,11 @@ paths:
                 properties:
                   title: 
                     type: string
-                  create_date: 
+                  createDate: 
                     type: string
-                  creator_id: 
+                  creatorId: 
                     type: string
-                  img_src: 
+                  imgSrc: 
                     type: string
                   description: 
                     type: string
@@ -429,7 +429,7 @@ paths:
               schema:
                 type: object
                 example:
-                  total_size: 7
+                  totalSize: 7
                   size: [3,2,2]
                   wikis: [[1,2,3],[4,5],[6,7]]
   /users/{user_id}/bookmark/wikis/{wiki_id}:
@@ -536,17 +536,17 @@ paths:
               schema:
                 type: object
                 properties:
-                  article_url: 
+                  articleUrl: 
                     type: string
                   title: 
                     type: string
-                  create_date: 
+                  createDate: 
                     type: string
-                  creator_id: 
+                  creatorId: 
                     type: string
                   description: 
                     type: string
-                  img_src: 
+                  imgSrc: 
                     type: string
                   source: 
                     type: string
