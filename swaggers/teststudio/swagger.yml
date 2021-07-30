@@ -5,13 +5,14 @@ info:
   title: test studio API
   contact:
     email: jinhyung_lee@tmax.co.kr
-
 paths:
   /uk:
     get:
+      tags:
+      - teststudio
       summary: get UK list
       description: |
-        you can get all UK
+        모든 UK를 가져옵니다.
       produces:
       - application/json
       responses:
@@ -25,9 +26,11 @@ paths:
           description: bad input parameter
   /curriculum:
     get:
+      tags:
+      - teststudio
       summary: get curriculum list
       description: |
-        you can get all UK
+        모든 커리큘럼을 가져옵니다.
       produces:
       - application/json
       responses:
@@ -41,17 +44,13 @@ paths:
           description: bad input parameter
   /part:
     get:
+      tags:
+      - teststudio
       summary: get part list
       description: |
-        you can read part
+        모든 파트를 가져옵니다.
       produces:
       - application/json
-      parameters:
-      - in: query
-        name: keyword
-        description: "search in part name (default: all)"
-        required: false
-        type: string
       responses:
         200:
           description: success
@@ -62,9 +61,11 @@ paths:
         400:
           description: bad input parameter
     post:
+      tags:
+      - teststudio
       summary: create part
       description: |
-        you can create part
+        새로운 파트를 저장합니다.
       produces:
       - application/json
       parameters:
@@ -90,9 +91,11 @@ paths:
           description: bad input parameter
   /part/{id}:
     put:
+      tags:
+      - teststudio
       summary: update part
       description: |
-        you can update part
+        파트를 수정합니다.
       produces:
       - application/json
       parameters:
@@ -122,9 +125,11 @@ paths:
         400:
           description: bad input parameter
     delete:
+      tags:
+      - teststudio
       summary: delete part
       description: |
-        you can delete part
+        파트를 삭제합니다.
       produces:
       - application/json
       parameters:
@@ -140,23 +145,11 @@ paths:
           description: bad input parameter
   /problems/self:
     get:
-      summary: to be determined
-      description: |
-        By passing in the appropriate options, you can search for
-        self test problems in the system
-      produces:
-      - application/json
-      responses:
-        200:
-          description: success
-        400:
-          description: bad input parameter
-  /problems/self/id:
-    get:
+      tags:
+      - teststudio
       summary: get self test problem id
       description: |
-        By passing in the appropriate options, you can search for
-        self test problem ids in the system
+        필터 조건에 맞는 자가진단 문제들을 가져옵니다.
       produces:
       - application/json
       parameters:
@@ -191,10 +184,11 @@ paths:
           description: bad input parameter
   /problems/mini:
     get:
+      tags:
+      - teststudio
       summary: searches mini test problems
       description: |
-        By passing in the appropriate options, you can search for
-        mini test problems in the system
+        필터 조건에 맞는 미니진단 문제들을 정렬하여 가져옵니다.
       produces:
       - application/json
       parameters:
@@ -205,7 +199,7 @@ paths:
         type: integer
       - in: query
         name: keyword
-        description: "search in question, choice, solution, and UK name (default: all)"
+        description: "search in question, choice, solution, and subject (default: all)"
         required: false
         type: string
       - in: query
@@ -313,6 +307,9 @@ definitions:
       setType:
         type: string
         example: "A"
+      subject:
+        type: string
+        example: "잘못된 기준점에 의한 의사결정 판단"
       status:
         type: string
         example: "출제 보류"
@@ -348,8 +345,11 @@ definitions:
       order:
         type: integer
         example: 3
+      difficulty:
+        type: string
+        example: 중
 # Added by API Auto Mocking Plugin
 host: virtserver.swaggerhub.com
-basePath: /jinhyung_lee/ProblemStudio/1.0.0
+basePath: /jinhyung_lee/test-studio/1.0.0
 schemes:
  - https
