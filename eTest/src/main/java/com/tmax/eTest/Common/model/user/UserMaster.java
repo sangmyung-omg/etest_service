@@ -27,7 +27,6 @@ public class UserMaster {
 	private String userUuid;
 	private String userType;
 
-	@Column(nullable = false)
 	private String name;
 
 	@JsonIgnore

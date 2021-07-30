@@ -22,7 +22,6 @@ public class PrincipalDetailsService implements UserDetailsService{
     @Override
     @Transactional
     public UserDetails loadUserByUsername(String email)
-            
             throws UsernameNotFoundException {
         System.out.println("PrincipalDetailsService의 loadUserByUsername탐");
         Optional<UserMaster> oUser = userRepository.findByEmail(email);
