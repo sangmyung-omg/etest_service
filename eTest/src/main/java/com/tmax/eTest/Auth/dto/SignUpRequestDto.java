@@ -1,18 +1,22 @@
 package com.tmax.eTest.Auth.dto;
 
+import com.tmax.eTest.Auth.model.Role;
 import lombok.Data;
 
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import java.time.LocalDate;
+import java.util.UUID;
+
 @Data
 public class SignUpRequestDto {
-    @NotBlank
     private String name;
-
-    @NotBlank
-    @Email
+    private String gender;
     private String email;
-
-    @NotBlank
+    private LocalDate birthday;
+    @Enumerated(EnumType.STRING)
+    private Role role;
     private String password;
 }

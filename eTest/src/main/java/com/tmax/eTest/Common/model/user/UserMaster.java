@@ -31,6 +31,7 @@ public class UserMaster {
 
 	@JsonIgnore
 	private String password;
+
 	@Enumerated(EnumType.STRING)
 	private Role role;
 
@@ -41,11 +42,9 @@ public class UserMaster {
 	@OneToMany(mappedBy="user")
 	private List<ErrorReport> errors = new ArrayList<ErrorReport>();
 
-	private String providerId;
+	private String gender;
 
 	@Enumerated(EnumType.STRING)
 	private AuthProvider provider;
 
-	@Column(nullable = false)
-	private Boolean emailVerified = false;
 }

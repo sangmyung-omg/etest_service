@@ -26,7 +26,6 @@ public class OAuth2DetailsService extends DefaultOAuth2UserService {
     @Autowired
     @Qualifier("AU-UserRepository")
     private UserRepository userRepository;
-
     @Transactional
     @Override
     public OAuth2User loadUser(OAuth2UserRequest oAuth2UserRequest) throws OAuth2AuthenticationException {
@@ -44,31 +43,22 @@ public class OAuth2DetailsService extends DefaultOAuth2UserService {
     }
     private OAuth2User processOAuth2User(OAuth2UserRequest oAuth2UserRequest, OAuth2User oAuth2User) {
         System.out.println("OAuth2DetailsService의 processOAuth2User 실행");
-
-        OAuth2UserInfo oAuth2UserInfo = OAuth2UserInfoFactory.getOAuth2UserInfo(oAuth2UserRequest.getClientRegistration().getRegistrationId(), oAuth2User.getAttributes());
+        OAuth2UserInfo oAuth2UserInfo = OAuth2UserInfoFactory.getOAuth2UserInfo(oAuth2UserRequest.getClientRegistration().getRegistrationId(),
+                oAuth2User.getAttributes());
         if(StringUtils.isEmpty(oAuth2UserInfo.getEmail())) {
             throw new OAuth2AuthenticationProcessingException("Email not found from OAuth2 provider");
         }
         Optional<UserMaster> userOptional = userRepository.findByEmail(oAuth2UserInfo.getEmail());
-        System.out.println("oAuth2UserInfo : " + oAuth2UserInfo);
         UserMaster user;
 
         if(userOptional.isPresent()) {
-
             user = userOptional.get();
-            System.out.println("user : "+ user);
-            System.out.println("user.getProvider() : " +user.getProvider());
-            System.out.println(oAuth2UserRequest.getClientRegistration().getRegistrationId());
-            System.out.println(AuthProvider.valueOf(oAuth2UserRequest.getClientRegistration().getRegistrationId()));
-
             if(!user.getProvider().equals(AuthProvider.valueOf(oAuth2UserRequest.getClientRegistration().getRegistrationId()))) {
 
                 throw new OAuth2AuthenticationProcessingException("Looks like you're signed up with " +
                         user.getProvider() + " account. Please use your " + user.getProvider() +
                         " account to login.");
-
             }
-
             user = updateExistingUser(user, oAuth2UserInfo);
         } else {
             user = registerNewUser(oAuth2UserRequest, oAuth2UserInfo);
@@ -81,7 +71,6 @@ public class OAuth2DetailsService extends DefaultOAuth2UserService {
         UserMaster user = new UserMaster();
         System.out.println("OAuth2DetailsService의" + oAuth2UserInfo);
         user.setProvider(AuthProvider.valueOf(oAuth2UserRequest.getClientRegistration().getRegistrationId()));
-        user.setProviderId(oAuth2UserInfo.getId());
         user.setName(oAuth2UserInfo.getName());
         user.setEmail(oAuth2UserInfo.getEmail());
         user.setRole(Role.USER);
