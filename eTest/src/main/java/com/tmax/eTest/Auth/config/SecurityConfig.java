@@ -75,51 +75,64 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         http.formLogin().disable();
         http.httpBasic().disable();
-        http.addFilter(new JwtBasicAuthenticationFilter());
+//        http.addFilter(new JwtBasicAuthenticationFilter());
         http.addFilter(new JwtCommonAuthorizationFilter(authenticationManager(), tokenProvider, userRepository));
 
         http.authorizeRequests()
 
                 .antMatchers("/user/**").access("hasRole('ROLE_USER')")
                 .antMatchers("/admin/**").access("hasRole('ROLE_ADMIN')")
-                .anyRequest().permitAll()
-                .and()
-                .oauth2Login()
-                .userInfoEndpoint()
-                .userService(oAuth2DetailsService)
-                .and()
-                .successHandler(new AuthenticationSuccessHandler() {
-
-                    @Override
-                    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
-                                                        Authentication authentication) throws IOException, ServletException {
-                        String token = tokenProvider.create(authentication);
-                        response.addHeader("Authorization", "Bearer " +  token);
-                        String targetUrl = "/auth/success";
-                        RequestDispatcher dis = request.getRequestDispatcher(targetUrl);
-                        dis.forward(request, response);
-                    }
-                })
-                .failureHandler(new AuthenticationFailureHandler() {
-                    @Override
-                    public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,
-                                                        AuthenticationException exception) throws IOException, ServletException {
-                        response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
-                    }
-                });
+                .anyRequest().permitAll();
     }
+//                .and()
+//                .oauth2Login()
+//                .userInfoEndpoint()
+//                .userService(oAuth2DetailsService)
+//                .and()
+//                .successHandler(new AuthenticationSuccessHandler() {
+//
+//                    @Override
+//                    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
+//                                                        Authentication authentication) throws IOException, ServletException {
+//                        String token = tokenProvider.create(authentication);
+//                        response.addHeader("Authorization", "Bearer " +  token);
+//                        String targetUrl = "/auth/success";
+//                        RequestDispatcher dis = request.getRequestDispatcher(targetUrl);
+//                        dis.forward(request, response);
+//                    }
+//                })
+//                .failureHandler(new AuthenticationFailureHandler() {
+//                    @Override
+//                    public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,
+//                                                        AuthenticationException exception) throws IOException, ServletException {
+//                        response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
+//                    }
+//                });
+//    }
+//
+//
+//    @Override
+//    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+//        auth.userDetailsService(principalDetailsService).passwordEncoder(encodePWD());
+//    }
+//
+//    @Bean
+//    @Override
+//    public AuthenticationManager authenticationManagerBean() throws Exception {
+//        return super.authenticationManagerBean();
+//    }
 
 
-    @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(principalDetailsService).passwordEncoder(encodePWD());
-    }
 
-    @Bean
-    @Override
-    public AuthenticationManager authenticationManagerBean() throws Exception {
-        return super.authenticationManagerBean();
-    }
+
+// 위는 이번에 추가
+//        **************************************************************************
+// 아래는 원래 주석
+
+
+
+
+
 //
 //    @Bean
 //    public ClientRegistrationRepository clientRegistrationRepository(OAuth2ClientProperties clientProperties,
