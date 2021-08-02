@@ -1,7 +1,10 @@
 package com.tmax.eTest.Auth.jwt;
 
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
 import com.tmax.eTest.Auth.dto.PrincipalDetails;
+import com.tmax.eTest.Auth.model.JwtProperties;
 import com.tmax.eTest.Auth.repository.UserRepository;
 import com.tmax.eTest.Common.model.user.UserMaster;
 import io.jsonwebtoken.Claims;
@@ -24,9 +27,8 @@ public class JwtCommonAuthorizationFilter extends BasicAuthenticationFilter {
     private JwtTokenProvider jwtTokenProvider;
 
 
-    public JwtCommonAuthorizationFilter(AuthenticationManager authenticationManager, JwtTokenProvider jwtTokenProvider, UserRepository userRepository) {
+    public JwtCommonAuthorizationFilter(AuthenticationManager authenticationManager, UserRepository userRepository) {
         super(authenticationManager);
-        this.jwtTokenProvider = jwtTokenProvider;
         this.userRepository = userRepository;
     }
 
@@ -51,15 +53,14 @@ public class JwtCommonAuthorizationFilter extends BasicAuthenticationFilter {
     private Authentication getUsernamePasswordAuthentication(HttpServletRequest request) {
         System.out.println("JwtCommonAuthorizationFilter의 getUsernamePasswordAuthentication탐");
         String token = request.getHeader("Authorization")
-                .replace("Bearer","");
-        System.out.println("token : " +token);
+                .replace("Bearer ",""); //Bear 다음에 한칸 뛰어야한다.. 개고생하지말자
+        System.out.println("token :" +token);
         if (token != null) {
-            Claims claims = jwtTokenProvider.getClaims(token);
-            String userUuid = claims.getSubject(); // getSubject 값은 users의 id값
-            System.out.println("claims의 userUuid : " + userUuid);
-
-            if (userUuid != null) {
-                Optional<UserMaster> oUser = userRepository.findByUserUuid(userUuid);
+            String claims = request.getHeader(JwtProperties.HEADER_STRING).replace(JwtProperties.TOKEN_PREFIX, "");
+            String email = JWT.require(Algorithm.HMAC512(JwtProperties.SECRET)).build().verify(token)
+                    .getClaim("email").asString();
+            if (email != null) {
+                Optional<UserMaster> oUser = userRepository.findByEmail(email);
                 UserMaster user = oUser.get();
                 PrincipalDetails principal = PrincipalDetails.create(user);
 
