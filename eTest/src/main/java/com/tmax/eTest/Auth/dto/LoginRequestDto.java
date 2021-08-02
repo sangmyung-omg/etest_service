@@ -1,5 +1,4 @@
 package com.tmax.eTest.Auth.dto;
-
 import lombok.Data;
 
 @Data

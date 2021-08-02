@@ -1,5 +1,6 @@
 package com.tmax.eTest.Auth.dto;
 
+import com.tmax.eTest.Auth.model.AuthProvider;
 import com.tmax.eTest.Auth.model.Role;
 import lombok.Data;
 
@@ -13,10 +14,13 @@ import java.util.UUID;
 @Data
 public class SignUpRequestDto {
     private String name;
-    private String gender;
+    @Enumerated(EnumType.STRING)
+    private Gender gender;
     private String email;
     private LocalDate birthday;
     @Enumerated(EnumType.STRING)
     private Role role;
     private String password;
+    @Enumerated(EnumType.STRING)
+    private AuthProvider provider;
 }
