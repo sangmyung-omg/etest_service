@@ -31,11 +31,12 @@ public class JwtTokenProvider {
     }
 
     public Claims getClaims(String token) {
+
         Claims claims = Jwts.parser()
                 .setSigningKey(tokenSecret)
                 .parseClaimsJws(token)
                 .getBody();
-
+        System.out.println(claims);
         return claims;
     }
 }
