@@ -7,6 +7,7 @@ import javax.persistence.*;
 import javax.validation.constraints.Email;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.tmax.eTest.Auth.dto.Gender;
 import com.tmax.eTest.Auth.model.AuthProvider;
 import com.tmax.eTest.Auth.model.Role;
 import com.tmax.eTest.Common.model.error_report.ErrorReport;
@@ -42,7 +43,8 @@ public class UserMaster {
 	@OneToMany(mappedBy="user")
 	private List<ErrorReport> errors = new ArrayList<ErrorReport>();
 
-	private String gender;
+	@Enumerated(EnumType.STRING)
+	private Gender gender;
 
 	@Enumerated(EnumType.STRING)
 	private AuthProvider provider;
