@@ -1,26 +1,33 @@
 package com.tmax.eTest.Auth.dto;
 
-import com.tmax.eTest.Auth.model.AuthProvider;
-import com.tmax.eTest.Auth.model.Role;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
 import java.time.LocalDate;
-import java.util.UUID;
 
 @Data
 public class SignUpRequestDto {
     private String name;
+
     @Enumerated(EnumType.STRING)
     private Gender gender;
+
     private String email;
+
     private LocalDate birthday;
+
     @Enumerated(EnumType.STRING)
     private Role role;
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private String password;
+
     @Enumerated(EnumType.STRING)
     private AuthProvider provider;
+
+    private Boolean event_sms_agreement;
+
+    private Boolean account_active;
+
 }

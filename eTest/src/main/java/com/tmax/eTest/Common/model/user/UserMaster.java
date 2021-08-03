@@ -2,6 +2,7 @@ package com.tmax.eTest.Common.model.user;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.*;
@@ -30,7 +31,7 @@ public class UserMaster {
 	@Column(name = "USER_UUID")
 	private String userUuid;
 
-	@Column(name = "user_type")
+	@Column(name = "USER_TYPE")
 	private String userType;
 
 	private String name;
