@@ -4,10 +4,8 @@ package com.tmax.eTest.Auth.jwt;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.tmax.eTest.Auth.dto.PrincipalDetails;
-import com.tmax.eTest.Auth.model.JwtProperties;
 import com.tmax.eTest.Auth.repository.UserRepository;
 import com.tmax.eTest.Common.model.user.UserMaster;
-import io.jsonwebtoken.Claims;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -24,7 +22,6 @@ import java.util.Optional;
 public class JwtCommonAuthorizationFilter extends BasicAuthenticationFilter {
 
     private UserRepository userRepository;
-    private JwtTokenProvider jwtTokenProvider;
 
 
     public JwtCommonAuthorizationFilter(AuthenticationManager authenticationManager, UserRepository userRepository) {

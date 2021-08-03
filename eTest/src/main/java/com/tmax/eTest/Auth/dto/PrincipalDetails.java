@@ -1,7 +1,6 @@
 package com.tmax.eTest.Auth.dto;
 
 import com.tmax.eTest.Common.model.user.UserMaster;
-import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

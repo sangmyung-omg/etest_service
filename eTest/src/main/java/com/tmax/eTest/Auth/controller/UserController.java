@@ -1,7 +1,7 @@
 package com.tmax.eTest.Auth.controller;
 
 import com.tmax.eTest.Auth.dto.PrincipalDetails;
-import com.tmax.eTest.Auth.dto.ResourceNotFoundExceptionDto;
+import com.tmax.eTest.Auth.exception.ResourceNotFoundExceptionDto;
 import com.tmax.eTest.Auth.repository.UserRepository;
 import com.tmax.eTest.Common.model.user.UserMaster;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +23,6 @@ public class UserController {
     @GetMapping("/user")
     public UserMaster getCurrentUser(@AuthenticationPrincipal PrincipalDetails principalDetails) {
         return userRepository.findByEmail(principalDetails.getEmail())
-                .orElseThrow(() -> new ResourceNotFoundExceptionDto("User", "id", principalDetails.getEmail()));
+                .orElseThrow(() -> new ResourceNotFoundExceptionDto("User", "email", principalDetails.getEmail()));
     }
 }
