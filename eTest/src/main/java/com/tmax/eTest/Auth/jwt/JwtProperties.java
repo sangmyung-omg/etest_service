@@ -1,4 +1,4 @@
-package com.tmax.eTest.Auth.model;
+package com.tmax.eTest.Auth.jwt;
 
 public interface JwtProperties {
     String SECRET = "이민준"; // 우리 서버만 알고 있는 비밀값

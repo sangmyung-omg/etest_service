@@ -1,6 +1,5 @@
-package com.tmax.eTest.Auth.model;
+package com.tmax.eTest.Auth.dto;
 public enum AuthProvider {
-    local,
     facebook,
     google,
     naver,

@@ -1,4 +1,4 @@
-package com.tmax.eTest.Auth.dto;
+package com.tmax.eTest.Auth.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
