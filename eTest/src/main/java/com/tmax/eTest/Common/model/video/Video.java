@@ -1,8 +1,8 @@
 package com.tmax.eTest.Common.model.video;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -29,19 +29,18 @@ public class Video {
   private Float totalTime;
   private Long curriculumId;
 
-  @ManyToOne
+  @ManyToOne(fetch = FetchType.EAGER)
   @JoinColumn(name = "curriculumId", insertable = false, updatable = false)
   private VideoCurriculum videoCurriculum;
 
-  @OneToOne
+  @OneToOne(fetch = FetchType.EAGER)
   @JoinColumn(name = "videoId")
   private VideoHit videoHit;
 
-  @OneToMany(fetch = FetchType.LAZY)
-  @JoinColumn(name = "videoId")
-  private List<VideoUkRel> videoUks = new ArrayList<VideoUkRel>();
+  @OneToMany(fetch = FetchType.LAZY, mappedBy = "ukMaster", cascade = CascadeType.ALL, orphanRemoval = true)
+  // @JoinColumn(name = "videoId")
+  private Set<VideoUkRel> videoUks = new LinkedHashSet<VideoUkRel>();
 
   @OneToMany(fetch = FetchType.LAZY, mappedBy = "video", cascade = CascadeType.ALL, orphanRemoval = true)
-  private List<VideoBookmark> videoBookmarks = new ArrayList<VideoBookmark>();
-
+  private Set<VideoBookmark> videoBookmarks = new LinkedHashSet<VideoBookmark>();
 }

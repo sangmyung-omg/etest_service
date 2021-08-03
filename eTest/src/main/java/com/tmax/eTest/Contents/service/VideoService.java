@@ -55,8 +55,13 @@ public class VideoService {
     }
   }
 
+  private String getSortType(String sort) {
+    return SortType.valueOf(sort).getType();
+  }
+
   public ListDTO.Curriculum getVideoCurriculumList() {
     List<VideoCurriculum> curriculums = videoCurriculumRepository.findAll();
+
     return new ListDTO.Curriculum(curriculums.size(),
         curriculums.stream()
             .map(curriculum -> new VideoCurriculumDTO(curriculum.getCurriculumId(), curriculum.getSubject()))
@@ -64,10 +69,27 @@ public class VideoService {
   }
 
   public ListDTO.Video getVideoList(String userId, Long curriculumId, String sort) {
+    // List<Video> videos = videoRepository.getUserVideoListAndSort(userId,
+    // Sort.by(getSortType(sort)));
+    // for (Video video : videos)
+    // log.info(video.getVideoId() + " " + video.getVideoBookmarks().getUserUuid());
+    // return new ListDTO.Video(videos.size(),
+    // videos.stream()
+    // .map(video -> new VideoDTO(video.getVideoId(), video.getVideoSrc(),
+    // video.getTitle(),
+    // video.getCreateDate().toString(), video.getCreatorId(), video.getImgSrc(),
+    // video.getVideoCurriculum().getSubject(), video.getTotalTime(),
+    // video.getVideoHit().getHit(),
+    // !CommonUtils.stringNullCheck(video.getVideoBookmarks().getUserUuid()),
+    // video.getVideoUks().stream()
+    // .map(videoUks ->
+    // videoUks.getUkMaster().getUkName()).collect(Collectors.toList())))
+    // .collect(Collectors.toList()));
+
     List<VideoJoin> videoJoins = curriculumId == 0
-        ? videoRepository.getUserVideoListAndSort(userId, Sort.by(SortType.valueOf(sort).getType()))
-        : videoRepository.getUserVideoListByCurriculumIdAndSort(userId, curriculumId,
-            Sort.by(SortType.valueOf(sort).getType()));
+        ? videoRepository.getUserVideoListAndSort(userId, Sort.by(getSortType(sort)))
+        : videoRepository.getUserVideoListByCurriculumIdAndSort(userId, curriculumId, Sort.by(getSortType(sort)));
+
     return new ListDTO.Video(videoJoins.size(), videoJoins.stream().map(videoJoin -> {
       Video video = videoJoin.getVideo();
       return new VideoDTO(video.getVideoId(), video.getVideoSrc(), video.getTitle(), video.getCreateDate().toString(),
@@ -79,9 +101,10 @@ public class VideoService {
 
   public ListDTO.Video getBookmarkVideoList(String userId, Long curriculumId, String sort) {
     List<Video> videos = curriculumId == 0
-        ? videoRepository.findAllByVideoBookmarksUserUuid(userId, Sort.by(SortType.valueOf(sort).getType()))
+        ? videoRepository.findAllByVideoBookmarksUserUuid(userId, Sort.by(getSortType(sort)))
         : videoRepository.findAllByVideoBookmarksUserUuidAndCurriculumId(userId, curriculumId,
-            Sort.by(SortType.valueOf(sort).getType()));
+            Sort.by(getSortType(sort)));
+
     return new ListDTO.Video(videos.size(),
         videos.stream()
             .map(video -> new VideoDTO(
@@ -113,6 +136,7 @@ public class VideoService {
     // videoBookmarkRepository.save(videoBookmark)).equals(videoBookmark)
 
     // videoBookmarkRepository.save(videoBookmark);
+
     return new SuccessDTO(true);
   }
 
@@ -122,6 +146,7 @@ public class VideoService {
     videoBookmarkRepository.delete(videoBookmarkRepository.findById(videoBookmarkId).orElseThrow(
         () -> new ContentsException(ErrorCode.DB_ERROR, "VideoBookmark doesn't exist in VideoBookmark Table")));
     // videoBookmarkRepository.deleteById(videoBookmarkId);
+
     return new SuccessDTO(true);
   }
 
@@ -130,6 +155,7 @@ public class VideoService {
     videoHitRepository.findById(videoId)
         .orElseThrow(() -> new ContentsException(ErrorCode.DB_ERROR, "VideoId doesn't exist in VideoHit Table"));
     videoHitRepository.updateHit(videoId);
+
     return new SuccessDTO(true);
   }
 

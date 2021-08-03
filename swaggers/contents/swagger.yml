@@ -135,7 +135,7 @@ paths:
           type: integer
           format: integer
           default: 0
-      - name: sortType
+      - name: sort
         in: query
         description: date(날짜순)/hit(조회순)
         required: false

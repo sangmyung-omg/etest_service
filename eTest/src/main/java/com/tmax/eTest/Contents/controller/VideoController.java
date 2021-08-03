@@ -24,6 +24,7 @@ public class VideoController {
 
   @GetMapping("/videos/curriculums")
   public ResponseEntity<Object> getVideoCurriculumList() {
+    log.info("---getVideoCurriculumList---");
     return new ResponseEntity<>(videoService.getVideoCurriculumList(), HttpStatus.OK);
   }
 
@@ -31,6 +32,7 @@ public class VideoController {
   public ResponseEntity<Object> getVideoList(@PathVariable("user_id") String userId,
       @RequestParam(value = "curriculumId", required = false, defaultValue = "0") Long curriculumId,
       @RequestParam(value = "sort", required = false, defaultValue = "date") String sort) {
+    log.info("---getVideoList---");
     return new ResponseEntity<>(videoService.getVideoList(userId, curriculumId, sort), HttpStatus.OK);
   }
 
@@ -38,23 +40,27 @@ public class VideoController {
   public ResponseEntity<Object> getBookmarkVideoList(@PathVariable("user_id") String userId,
       @RequestParam(value = "curriculumId", required = false, defaultValue = "0") Long curriculumId,
       @RequestParam(value = "sort", required = false, defaultValue = "date") String sort) {
+    log.info("---getBookmarkVideoList---");
     return new ResponseEntity<>(videoService.getBookmarkVideoList(userId, curriculumId, sort), HttpStatus.OK);
   }
 
   @PutMapping("/users/{user_id}/videos/{video_id}/bookmark")
   public ResponseEntity<Object> insertBookmarkVideo(@PathVariable("user_id") String userId,
       @PathVariable("video_id") Long videoId) {
+    log.info("---insertBookmarkVideo---");
     return new ResponseEntity<>(videoService.insertBookmarkVideo(userId, videoId), HttpStatus.OK);
   }
 
   @DeleteMapping("/users/{user_id}/videos/{video_id}/bookmark")
   public ResponseEntity<Object> deleteBookmarkVideo(@PathVariable("user_id") String userId,
       @PathVariable("video_id") Long videoId) {
+    log.info("---deleteBookmarkVideo---");
     return new ResponseEntity<>(videoService.deleteBookmarkVideo(userId, videoId), HttpStatus.OK);
   }
 
   @PostMapping("/videos/{id}/hit")
   public ResponseEntity<Object> updateVideoHit(@PathVariable("id") Long videoId) {
+    log.info("---updateVideoHit---");
     return new ResponseEntity<>(videoService.updateVideoHit(videoId), HttpStatus.OK);
   }
 
