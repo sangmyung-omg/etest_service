@@ -1,5 +1,7 @@
 package com.tmax.eTest.Auth.service;
 
+import com.tmax.eTest.Auth.dto.SignUpRequestDto;
+import com.tmax.eTest.Auth.dto.Role;
 import com.tmax.eTest.Auth.repository.UserRepository;
 import com.tmax.eTest.Common.model.user.UserMaster;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,16 +20,26 @@ public class AuthService {
     private UserRepository userRepository;
 
     @Autowired
-    private BCryptPasswordEncoder encoder;
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Transactional
-    public UserMaster join(UserMaster user) {
-        String rawPassword = user.getPassword();
-        String encPassword = encoder.encode(rawPassword);
-        user.setPassword(encPassword);
-        user.setUserType("user");
-        user.setUserUuid(UUID.randomUUID().toString());
-        UserMaster userDTO = userRepository.save(user);
-        return userDTO;
+    public UserMaster join(SignUpRequestDto signUpRequestDto) {
+        UserMaster userMaster = UserMaster.builder()
+                .password(bCryptPasswordEncoder.encode(UUID.randomUUID().toString()))
+                .email(signUpRequestDto.getEmail())
+                .provider(signUpRequestDto.getProvider())
+                .role(Role.USER)
+                .userUuid(UUID.randomUUID().toString())
+                .gender(signUpRequestDto.getGender())
+                .name(signUpRequestDto.getName())
+                .birthday(signUpRequestDto.getBirthday())
+                .event_sms_agreement(signUpRequestDto.getEvent_sms_agreement())
+                .account_active(signUpRequestDto.getAccount_active())
+                .older_than_14(true)
+                .service_agreement(true)
+                .collect_info(true)
+                .build();
+        userRepository.save(userMaster);
+        return userMaster;
     }
 }

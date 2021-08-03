@@ -3,10 +3,11 @@ package com.tmax.eTest.Auth.controller;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.tmax.eTest.Auth.dto.CMRespDto;
+import com.tmax.eTest.Auth.dto.Role;
 import com.tmax.eTest.Auth.dto.SignUpRequestDto;
-import com.tmax.eTest.Auth.model.JwtProperties;
-import com.tmax.eTest.Auth.model.Role;
+import com.tmax.eTest.Auth.jwt.JwtProperties;
 import com.tmax.eTest.Auth.repository.UserRepository;
+import com.tmax.eTest.Auth.service.AuthService;
 import com.tmax.eTest.Common.model.user.UserMaster;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -26,6 +27,7 @@ public class ApiController {
 
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final AuthService authService;
 
     @PostMapping("/login")
     public CMRespDto<?> jwtCreate(@RequestBody Map<String, Object> data) {
@@ -50,15 +52,7 @@ public class ApiController {
     @PostMapping("/signup")
     @Transactional
     public CMRespDto<?> signup(@RequestBody SignUpRequestDto signUpRequestDto){
-        UserMaster userMaster = UserMaster.builder()
-            .password(bCryptPasswordEncoder.encode(UUID.randomUUID().toString()))
-            .email(signUpRequestDto.getEmail())
-            .provider(signUpRequestDto.getProvider())
-            .role(Role.USER)
-            .userUuid(UUID.randomUUID().toString())
-            .gender(signUpRequestDto.getGender())
-            .name(signUpRequestDto.getName())
-            .build();
+        UserMaster userMaster = authService.join(signUpRequestDto);
         userRepository.save(userMaster);
         String jwtToken = JWT.create()
                 .withSubject(userMaster.getEmail())
