@@ -4,6 +4,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
@@ -34,13 +35,13 @@ public class Video {
 
   @OneToOne
   @JoinColumn(name = "videoId")
-  private VideoHit hit;
+  private VideoHit videoHit;
 
   @OneToMany(fetch = FetchType.LAZY)
   @JoinColumn(name = "videoId")
   private List<VideoUkRel> videoUks = new ArrayList<VideoUkRel>();
 
-  @OneToMany(fetch = FetchType.LAZY, mappedBy = "video")
+  @OneToMany(fetch = FetchType.LAZY, mappedBy = "video", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<VideoBookmark> videoBookmarks = new ArrayList<VideoBookmark>();
 
 }

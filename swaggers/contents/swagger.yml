@@ -63,17 +63,17 @@ paths:
         description: 영상 주제
         required: false
         schema:
-          type: string
-          format: string
-          default: null
-      - name: sortType
+          type: integer
+          format: integer
+          default: 0
+      - name: sort
         in: query
-        description: DATE(날짜순)/HIT(조회순)
+        description: date(날짜순)/hit(조회순)
         required: false
         schema:
           type: string
           format: string
-          default: DATE
+          default: date
       responses:
         200:
           description: OK
@@ -113,7 +113,7 @@ paths:
                           type: array
                           items:
                             type: string
-  /users/{user_id}/bookmark/videos/:
+  /users/{user_id}/videos/bookmark:
     get:
       tags:
         - Video
@@ -132,17 +132,17 @@ paths:
         description: 영상 주제
         required: false
         schema:
-          type: string
-          format: string
-          default: null
+          type: integer
+          format: integer
+          default: 0
       - name: sortType
         in: query
-        description: DATE(날짜순)/HIT(조회순)
+        description: date(날짜순)/hit(조회순)
         required: false
         schema:
           type: string
           format: string
-          default: DATE
+          default: date
       responses:
         200:
           description: OK
@@ -182,7 +182,7 @@ paths:
                           type: array
                           items:
                             type: string
-  /users/{user_id}/bookmark/videos/{video_id}:
+  /users/{user_id}/videos/{video_id}/bookmark:
     put:
       tags:
         - Video
@@ -309,7 +309,7 @@ paths:
                           type: string
                         bookmark: 
                           type: boolean
-  /users/{user_id}/bookmark/books:
+  /users/{user_id}/books/bookmark:
     get:
       tags:
         - Book
@@ -354,7 +354,7 @@ paths:
                           type: string
                         bookmark: 
                           type: boolean
-  /users/{user_id}/bookmark/books/{book_id}:
+  /users/{user_id}/books/{book_id}/bookmark:
     put:
       tags:
         - Book
@@ -472,7 +472,7 @@ paths:
                             type: array
                             items:
                               type: string
-  /users/{user_id}/bookmark/wikis:
+  /users/{user_id}/wikis/bookmark:
     get:
       tags:
         - Wikipedia
@@ -531,7 +531,7 @@ paths:
                             type: array
                             items:
                               type: string
-  /users/{user_id}/bookmark/wikis/{wiki_id}:
+  /users/{user_id}/wikis/{wiki_id}/bookmark:
     put:
       tags:
         - Wikipedia
@@ -641,7 +641,7 @@ paths:
                           type: array
                           items:
                             type: string
-  /users/{user_id}/bookmark/articles:
+  /users/{user_id}/articles/bookmark:
     get:
       tags:
         - Article
@@ -692,7 +692,7 @@ paths:
                           type: array
                           items:
                             type: string
-  /users/{user_id}/bookmark/articles/{article_id}:
+  /users/{user_id}/articles/{article_id}/bookmark:
     put:
       tags:
         - Article
