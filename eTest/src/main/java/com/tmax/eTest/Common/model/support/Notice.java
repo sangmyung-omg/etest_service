@@ -10,7 +10,6 @@ import java.time.LocalDate;
 @Data
 @Table(name = "CS_NOTICE")
 @NoArgsConstructor
-
 public class Notice {
     @Id
     @Column(name = "NOTICE_ID")

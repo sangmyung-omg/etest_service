@@ -2,9 +2,8 @@ package com.tmax.eTest.Support.controller;
 
 import com.tmax.eTest.Auth.dto.CMRespDto;
 import com.tmax.eTest.Common.model.support.FAQ;
-import com.tmax.eTest.Support.Dto.FAQDto;
+import com.tmax.eTest.Support.Dto.CreateFAQDto;
 import com.tmax.eTest.Support.repository.FAQRepository;
-import com.tmax.eTest.Support.repository.NoticeRepository;
 import com.tmax.eTest.Support.service.FAQService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -26,8 +25,8 @@ public class FAQController {
     private FAQService faqService;
 
     @PostMapping("/faq/create")
-    public CMRespDto<?> createFAQ(@RequestBody FAQDto faqDto) {
-            Long faqId = faqService.createFAQ(faqDto);
+    public CMRespDto<?> createFAQ(@RequestBody CreateFAQDto createFaqDto) {
+            Long faqId = faqService.createFAQ(createFaqDto);
         return new CMRespDto<>(200,"FAQ 생성 성공",faqId);
     }
 
