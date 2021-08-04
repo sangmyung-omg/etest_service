@@ -23,7 +23,7 @@ public class AuthService {
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Transactional
-    public UserMaster join(SignUpRequestDto signUpRequestDto) {
+    public UserMaster singUp(SignUpRequestDto signUpRequestDto) {
         UserMaster userMaster = UserMaster.builder()
                 .password(bCryptPasswordEncoder.encode(UUID.randomUUID().toString()))
                 .email(signUpRequestDto.getEmail())
@@ -31,7 +31,7 @@ public class AuthService {
                 .role(Role.USER)
                 .userUuid(UUID.randomUUID().toString())
                 .gender(signUpRequestDto.getGender())
-                .name(signUpRequestDto.getName())
+                .providerId(signUpRequestDto.getProviderId())
                 .birthday(signUpRequestDto.getBirthday())
                 .event_sms_agreement(signUpRequestDto.getEvent_sms_agreement())
                 .account_active(signUpRequestDto.getAccount_active())
@@ -42,4 +42,11 @@ public class AuthService {
         userRepository.save(userMaster);
         return userMaster;
     }
+
+    public UserMaster duplicateCheck() {
+
+    }
+
+
+
 }
