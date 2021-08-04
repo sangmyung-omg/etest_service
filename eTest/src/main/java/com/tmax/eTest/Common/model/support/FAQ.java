@@ -9,6 +9,7 @@ import javax.persistence.*;
 @Data
 @NoArgsConstructor
 
+@Table(name = "CS_FAQ")
 public class FAQ {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
