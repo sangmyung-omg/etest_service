@@ -1,5 +1,6 @@
 package com.tmax.eTest.Auth.repository;
 
+import com.tmax.eTest.Auth.dto.AuthProvider;
 import com.tmax.eTest.Common.model.user.UserMaster;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -17,6 +18,6 @@ public interface UserRepository extends JpaRepository<UserMaster, Long> {
     Optional<UserMaster> findByUserUuid(String userUuid);
     @Query("select u from com.tmax.eTest.Common.model.user.UserMaster u where u.providerId = :providerId and u.provider = :provider")
     Optional<UserMaster> findByProviderIdAndProvider(@Param("providerId") String providerId,
-                                                     @Param("provider") String provider);
+                                                     @Param("provider") AuthProvider provider);
 }
 

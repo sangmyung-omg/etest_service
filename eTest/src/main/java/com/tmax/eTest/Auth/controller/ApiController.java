@@ -2,6 +2,7 @@ package com.tmax.eTest.Auth.controller;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.tmax.eTest.Auth.dto.AuthProvider;
 import com.tmax.eTest.Auth.dto.CMRespDto;
 import com.tmax.eTest.Auth.dto.Role;
 import com.tmax.eTest.Auth.dto.SignUpRequestDto;
@@ -33,7 +34,7 @@ public class ApiController {
     public CMRespDto<?> jwtCreate(@RequestBody Map<String, Object> data) {
         System.out.println("로그인 시도");
         Optional<UserMaster> userEntity =
-                userRepository.findByProviderIdAndProvider((String) data.get("providerId"),(String) data.get("provider"));
+                userRepository.findByProviderIdAndProvider((String) data.get("providerId"),AuthProvider.valueOf((String) data.get("provider")));
         if (userEntity.isPresent()) {
             System.out.println("기존에 로그인 했던 유저입니다");
             String jwtToken = JWT.create()
