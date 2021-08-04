@@ -24,6 +24,14 @@ public class DiagnosisCurriculum {
 	
     @Column(name="SUB_SECTION")
 	private String subSection;
-	
+    
+    @Column(name="SET_TYPE")
+	private String setType;
+    
+    @Column(name="SUBJECT")
+	private String subject;
+    
+    @Column(name="STATUS")
+	private String status;
 
 }

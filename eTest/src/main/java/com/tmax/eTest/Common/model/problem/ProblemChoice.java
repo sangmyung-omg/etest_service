@@ -17,6 +17,7 @@ import lombok.Data;
 @Entity
 @Table(name="PROBLEM_CHOICE")
 public class ProblemChoice {
+	
 	@Id
 	@ManyToOne
 	@JoinColumn(name="PROB_ID")
@@ -25,9 +26,6 @@ public class ProblemChoice {
 	@Id
 	@Column(name="CHOICE_NUM")
 	private long choiceNum;
-	
-	@Column(name="TEXT", length=512)
-	private String text;
 	
 	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name="UK_ID")
