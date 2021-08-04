@@ -34,7 +34,8 @@ public class UserMaster {
 	@Column(name = "USER_TYPE")
 	private String userType;
 
-	private String name;
+	@Column(name = "PROVIDER_ID")
+	private String providerId;
 
 	@Enumerated(EnumType.STRING)
 	private Gender gender;
