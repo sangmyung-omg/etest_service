@@ -32,9 +32,8 @@ public class ApiController {
     @PostMapping("/login")
     public CMRespDto<?> jwtCreate(@RequestBody Map<String, Object> data) {
         System.out.println("로그인 시도");
-        System.out.println(data);
         Optional<UserMaster> userEntity =
-                userRepository.findByEmail((String) data.get("email"));
+                userRepository.findByProviderIdAndProvider((String) data.get("providerId"),(String) data.get("provider"));
         if (userEntity.isPresent()) {
             System.out.println("기존에 로그인 했던 유저입니다");
             String jwtToken = JWT.create()
@@ -47,13 +46,12 @@ public class ApiController {
         }
 
         System.out.println("처음 로그인 하는 유저입니다");
-        return new CMRespDto<>(200, "회원 가입이 안된 유저",null);
+        return new CMRespDto<>(201, "회원 가입이 안된 유저",null);
     }
     @PostMapping("/signup")
     @Transactional
     public CMRespDto<?> signup(@RequestBody SignUpRequestDto signUpRequestDto){
-        UserMaster userMaster = authService.join(signUpRequestDto);
-        userRepository.save(userMaster);
+        UserMaster userMaster = authService.singUp(signUpRequestDto);
         String jwtToken = JWT.create()
                 .withSubject(userMaster.getEmail())
                 .withExpiresAt(new Date(System.currentTimeMillis()+ JwtProperties.EXPIRATION_TIME))
