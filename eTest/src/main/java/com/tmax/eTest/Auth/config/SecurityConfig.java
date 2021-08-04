@@ -1,45 +1,55 @@
-// package com.tmax.eTest.Auth.config;
+package com.tmax.eTest.Auth.config;
 
-// import com.tmax.eTest.Auth.service.OAuth2DetailsService;
-// import lombok.RequiredArgsConstructor;
-// import org.springframework.beans.factory.annotation.Autowired;
-// import org.springframework.context.annotation.Bean;
-// import org.springframework.context.annotation.Configuration;
-// import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-// import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-// import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-// import org.springframework.security.config.http.SessionCreationPolicy;
-// import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import com.tmax.eTest.Auth.jwt.JwtCommonAuthorizationFilter;
+import com.tmax.eTest.Auth.repository.UserRepository;
+import com.tmax.eTest.Auth.service.PrincipalDetailsService;
 
-// @RequiredArgsConstructor
-// @EnableWebSecurity //해당 파일로 security를 활성화 시킨다
-// @Configuration //IOC
+import org.springframework.beans.factory.annotation.Autowired;
 
-// public class SecurityConfig extends WebSecurityConfigurerAdapter {
-//     private final OAuth2DetailsService oAuth2DetailsService;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-//     @Autowired
-//     private CorsConfig corsConfig;
+@Configuration
+@EnableWebSecurity
+@EnableGlobalMethodSecurity(
+        securedEnabled = true,
+        jsr250Enabled = true,
+        prePostEnabled = true)
 
-//     @Bean
-//     public BCryptPasswordEncoder encode() {
-//         return new BCryptPasswordEncoder();
-//     }
+public class SecurityConfig extends WebSecurityConfigurerAdapter{
 
-//     @Override
-//     protected void configure(HttpSecurity http) throws Exception {
-//         http
-//                 .addFilter(corsConfig.corsFilter())
-//                 .csrf().disable()
-//                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-//         http.authorizeRequests()
-//                 .antMatchers("/", "/user/**", "/image/**", "/subscribe/**", "/comment/**","/api/**").authenticated()
-//                 .anyRequest().permitAll()
-//                 .and()
-//                 .formLogin().disable()
-//                 .httpBasic().disable()
-//                 .oauth2Login()//form 로그인도하고, oauth2도 한다.
-//                 .userInfoEndpoint()//최종응답으로 회원정보를 바로 받는다.
-//                 .userService(oAuth2DetailsService);
-//     }
-// }
+    @Autowired
+    private PrincipalDetailsService principalDetailsService;
+
+    @Autowired
+    @Qualifier("AU-UserRepository")
+    private UserRepository userRepository;
+
+    @Bean
+    public BCryptPasswordEncoder encodePWD() {
+        return new BCryptPasswordEncoder();
+    }
+
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        http.csrf().disable(); //csrf 토큰
+        http.cors();
+        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+        http.formLogin().disable();
+        http.httpBasic().disable();
+        http.addFilter(new JwtCommonAuthorizationFilter(authenticationManager(),userRepository));
+
+        http.authorizeRequests()
+
+                .antMatchers("/user/**").access("hasRole('ROLE_USER')")
+                .antMatchers("/admin/**").access("hasRole('ROLE_ADMIN')")
+                .anyRequest().permitAll();
+    }
+}
