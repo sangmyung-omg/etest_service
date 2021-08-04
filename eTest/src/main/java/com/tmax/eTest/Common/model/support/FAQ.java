@@ -1,11 +1,14 @@
 package com.tmax.eTest.Common.model.support;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
 @Entity
 @Data
+@NoArgsConstructor
+
 public class FAQ {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
