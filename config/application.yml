@@ -25,7 +25,7 @@ spring:
         password: etest
         schema: classpath:schema.sql
         sql-script-encoding: UTF-8
-        url: jdbc:tibero:thin:@192.168.153.194:8629:tibero
+        url: jdbc:tibero:thin:@192.168.153.143:8629:tibero
         username: etest
     jpa:
         database-platform: org.hibernate.dialect.Oracle10gDialect
