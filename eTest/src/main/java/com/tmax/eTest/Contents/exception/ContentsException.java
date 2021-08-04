@@ -29,7 +29,7 @@ public class ContentsException extends ResponseStatusException {
     super(error.getStatus());
 
     this.errorCode = error.getErrorCode();
-    this.message = error.getMessage() + "|" + appendMessage;
+    this.message = error.getMessage() + " | " + appendMessage;
   }
 
 }
