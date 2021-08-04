@@ -58,7 +58,7 @@ public class StateAndProbProcess {
 			
 			for(ProblemUKRelation probUKRel : probUKRels)
 			{
-				int ukId = Integer.parseInt(probUKRel.getUkId().getUkId());
+				int ukId = probUKRel.getUkId().getUkId();
 				res.put(ukId, probUKRel.getUkId());
 			}
 		}
@@ -118,7 +118,7 @@ public class StateAndProbProcess {
 				
 				for(ProblemUKRelation probUKRel : probUKRels)
 				{
-					int ukId = Integer.parseInt(probUKRel.getUkId().getUkId());
+					int ukId = probUKRel.getUkId().getUkId();
 					
 					ukList.add(ukId);
 					isCorrectList.add(isCorrect);
