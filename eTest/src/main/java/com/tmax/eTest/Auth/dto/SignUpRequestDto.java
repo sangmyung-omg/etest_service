@@ -9,7 +9,8 @@ import java.time.LocalDate;
 
 @Data
 public class SignUpRequestDto {
-    private String name;
+
+    private String providerId;
 
     @Enumerated(EnumType.STRING)
     private Gender gender;
