@@ -18,7 +18,7 @@ import java.util.List;
 public class FAQController {
 
     @Autowired
-    @Qualifier("SU-FQARepository")
+    @Qualifier("SU-FAQRepository")
     private FAQRepository faqRepository;
 
     @Autowired
