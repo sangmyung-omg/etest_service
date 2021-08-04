@@ -105,7 +105,7 @@ public class MiniTestReportService {
 				int setNum = 0;
 				
 				if(probInfos.size() > 0)
-					setNum = probInfos.get(0).getTestInfo().getSetNum();
+					setNum = 1;//probInfos.get(0).getTestInfo().getSetNum(); jinhyung edit
 				
 				result.setPartUnderstanding(partScoreList);
 				result.setPartUkDetail(partUkDetail);

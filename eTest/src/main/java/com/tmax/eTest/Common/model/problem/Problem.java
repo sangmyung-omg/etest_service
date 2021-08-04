@@ -8,9 +8,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import com.tmax.eTest.Common.model.error_report.ErrorReport;
@@ -42,9 +41,6 @@ public class Problem {
 	@Column(name="CATEGORY", length=20)
 	private String category;
 	
-	@Column(name="PART", length=100)
-	private String part;
-	
 	@Column(name="IMG_SRC", length=256)
 	private String imgSrc;
 	
@@ -75,19 +71,23 @@ public class Problem {
 	@Column(name="INTENTION", length=100)
 	private String intention;
 	
+	@Column(name="QUESTION_INITIAL", length=4000)
+	private String questionInitial;
+	
+	@Column(name="SOLUTION_INITIAL", length=4000)
+	private String solutionInitial;
+	
 	@OneToMany(mappedBy="probID")
 	private List<ProblemUKRelation> problemUKReleations = new ArrayList<ProblemUKRelation>();
 	
 	@OneToMany(mappedBy="probID")
 	private List<ProblemChoice> problemChoices = new ArrayList<ProblemChoice>();
-	
-	@ManyToOne(fetch=FetchType.LAZY)
-	@JoinColumn(name="PROB_ID", nullable=true, insertable = false, updatable = false)
+
+	@OneToOne(mappedBy = "problem", fetch = FetchType.LAZY)
 	private DiagnosisProblem diagnosisInfo;
 
-	@ManyToOne(fetch=FetchType.LAZY)
-	@JoinColumn(name="PROB_ID", nullable=true, insertable = false, updatable = false)
-	private TestProblem testInfo = new TestProblem();
+	@OneToOne(mappedBy = "problem", fetch = FetchType.LAZY)
+	private TestProblem testInfo;
 	
 	@OneToMany(mappedBy="problem")
 	private List<ErrorReport> errors = new ArrayList<ErrorReport>();

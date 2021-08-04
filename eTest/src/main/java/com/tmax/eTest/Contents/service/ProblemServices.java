@@ -82,7 +82,7 @@ public class ProblemServices {
 			
 			List<ProblemChoice> choiceList = probChoiceRepo.findAllByProbID(problem);
 			for(ProblemChoice choice:choiceList) {
-				choices.put(choice.getChoiceNum(), choice.getText());
+				choices.put(choice.getChoiceNum(), "null"); //jinhyung edit 210804
 			}
 			output = new ProblemDTO(type, question, passage, preface, difficulty, choices);
 			
@@ -93,21 +93,21 @@ public class ProblemServices {
 		return output;
 	}
 
-	public List<Integer> getTestProblem(int setNum, int index) throws Exception{
-		List<Integer> output = new ArrayList<Integer>(); 
-
-		index = Math.max(0, index);
-		List<TestProblem> testProblems = testProblemRepo.findSetProblems(setNum, index);
-	
-		if(testProblems.size()==0) {
-			throw new NoDataException(setNum);
-		}else {
-			for(TestProblem t : testProblems) {
-				output.add(t.getProbID());
-			}
-		}
-		return output;
-	}
+//	public List<Integer> getTestProblem(int setNum, int index) throws Exception{
+//		List<Integer> output = new ArrayList<Integer>(); 
+//
+//		index = Math.max(0, index);
+//		List<TestProblem> testProblems = testProblemRepo.findSetProblems(setNum, index);
+//	
+//		if(testProblems.size()==0) {
+//			throw new NoDataException(setNum);
+//		}else {
+//			for(TestProblem t : testProblems) {
+//				output.add(t.getProbID());
+//			}
+//		}
+//		return output;
+//	}
 
 	public List<Integer> getDiagnosisProblem(String setNum) throws Exception{
 		List<Integer> output = new ArrayList<Integer>(); 

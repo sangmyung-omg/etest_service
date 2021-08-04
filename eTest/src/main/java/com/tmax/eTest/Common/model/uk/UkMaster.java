@@ -17,8 +17,7 @@ import lombok.Data;
 @Table(name="UK_MASTER")
 public class UkMaster {
 	@Id
-	private String ukId;
-	
+	private Integer ukId;
 	private String ukName;
 	private String ukDescription;
 	private String trainUnseen;

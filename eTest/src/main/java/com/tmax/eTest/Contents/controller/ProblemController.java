@@ -60,29 +60,29 @@ public class ProblemController {
 		return output;
 	}
 	
-	@GetMapping(value="/problems/test")
-	public ResponseEntity<TestProblemDTO> testProblem(@RequestBody TestProblemBody requestBody) throws Exception{
-		HttpHeaders headers= new HttpHeaders();
-        headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
-        ResponseEntity<TestProblemDTO> output;
-        Integer newIndex = requestBody.getIndex().orElseGet(()->0);
-        
-		try {
-			TestProblemDTO body = new TestProblemDTO(problemService.getTestProblem(requestBody.getSubject(), newIndex));
-			
-			output = new ResponseEntity<>(body, headers, HttpStatus.OK);
-		}catch(NoDataException e) {
-			TestProblemDTO body = new TestProblemDTO();
-			body.setMessage("Failed: "+e.getMessage());
-			output = new ResponseEntity<>(body, headers, HttpStatus.BAD_REQUEST);
-		}catch(Exception e) {
-			TestProblemDTO body = new TestProblemDTO();
-			body.setMessage("Failed: "+e.getMessage());
-			output = new ResponseEntity<>(body, headers, HttpStatus.NOT_FOUND);
-		}
-		
-		return output;
-	}
+//	@GetMapping(value="/problems/test")
+//	public ResponseEntity<TestProblemDTO> testProblem(@RequestBody TestProblemBody requestBody) throws Exception{
+//		HttpHeaders headers= new HttpHeaders();
+//        headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
+//        ResponseEntity<TestProblemDTO> output;
+//        Integer newIndex = requestBody.getIndex().orElseGet(()->0);
+//        
+//		try {
+//			TestProblemDTO body = new TestProblemDTO(problemService.getTestProblem(requestBody.getSubject(), newIndex));
+//			
+//			output = new ResponseEntity<>(body, headers, HttpStatus.OK);
+//		}catch(NoDataException e) {
+//			TestProblemDTO body = new TestProblemDTO();
+//			body.setMessage("Failed: "+e.getMessage());
+//			output = new ResponseEntity<>(body, headers, HttpStatus.BAD_REQUEST);
+//		}catch(Exception e) {
+//			TestProblemDTO body = new TestProblemDTO();
+//			body.setMessage("Failed: "+e.getMessage());
+//			output = new ResponseEntity<>(body, headers, HttpStatus.NOT_FOUND);
+//		}
+//		
+//		return output;
+//	}
 	
 	@GetMapping(value= "/problems/diagnosis")
 	public ResponseEntity<DiagnosisProblemDTO> diagnosisProblem(@RequestBody DiagnosisProblemBody requestBody) throws Exception{
