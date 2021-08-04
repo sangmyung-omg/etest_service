@@ -18,7 +18,6 @@ COPY config/application.properties.deploy /home/tmax/application.properties
 
 RUN chmod -R 755 /home/tmax/script
 
-ADD /eTest/build/libs/*.jar /home/tmax/app.jar
+ADD /eTest/build/libs/eTest-0.0.1-SNAPSHOT.jar /home/tmax/app.jar
 
-#ENTRYPOINT ["/bin/sh", "--"]
 ENTRYPOINT ["./script/start.sh"]

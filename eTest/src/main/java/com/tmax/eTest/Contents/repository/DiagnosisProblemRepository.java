@@ -14,7 +14,7 @@ import org.springframework.stereotype.Repository;
 @Repository("CO-DiagnosisProblemRepository")
 
 public interface DiagnosisProblemRepository extends JpaRepository<DiagnosisProblem, Integer>{
-	@Query(value="select d from DiagnosisProblem d where d.subject = :subject")
+	@Query(value="select d from DiagnosisProblem d join d.curriculum c where c.subject = :subject")
 	public ArrayList<DiagnosisProblem>findDiagnosisProblems(@Param("subject") String setNum);
 	
 	List<DiagnosisProblem> findByCurriculumIdOrderByOrderNumAsc(Integer CurriculumId);

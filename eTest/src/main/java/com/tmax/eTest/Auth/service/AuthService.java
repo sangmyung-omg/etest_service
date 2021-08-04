@@ -43,10 +43,5 @@ public class AuthService {
         return userMaster;
     }
 
-    public UserMaster duplicateCheck() {
-
-    }
-
-
 
 }

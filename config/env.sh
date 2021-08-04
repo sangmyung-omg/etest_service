@@ -16,10 +16,10 @@ sed -i "s/%DB_USER%/${DB_USER}/g" /home/tmax/application.properties
 if [ -z $DB_PASSWD ]; then export DB_PASSWD="etest"; fi
 sed -i "s/%DB_PASSWD%/${DB_PASSWD}/g" /home/tmax/application.properties
 
-if [ -z $TRITON_IP ]; then export TRITON_IP="192.168.153.212"; fi
+if [ -z $TRITON_IP ]; then export TRITON_IP="192.168.153.209"; fi
 sed -i "s/%TRITON_IP%/${TRITON_IP}/g" /home/tmax/application.properties
 
-if [ -z $TRITON_PORT ]; then export TRITON_PORT="8003"; fi
+if [ -z $TRITON_PORT ]; then export TRITON_PORT="18000"; fi
 sed -i "s/%TRITON_PORT%/${TRITON_PORT}/g" /home/tmax/application.properties
 
 if [ -z $TRITON_MODEL_NAME ]; then export TRITON_MODEL_NAME="kt-rule"; fi
