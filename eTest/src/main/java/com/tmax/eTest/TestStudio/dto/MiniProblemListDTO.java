@@ -7,7 +7,7 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class TestProblemListDTO {
+public class MiniProblemListDTO {
 	private Integer id;
 	private String part;
 	private String difficulty;
