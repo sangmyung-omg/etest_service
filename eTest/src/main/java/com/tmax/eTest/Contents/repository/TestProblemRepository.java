@@ -15,9 +15,9 @@ import org.springframework.stereotype.Repository;
 @Repository("CO-TestProblemRepository")
 
 public interface TestProblemRepository extends  JpaRepository<TestProblem, Integer>{
-	@Query(value="select t from TestProblem t where t.setNum = :setNum and t.sequence > :seq order by t.sequence asc")
-	public ArrayList<TestProblem>findSetProblems(@Param("setNum") int setNum, @Param("seq") int seq);
-	
-	@Query("SELECT MAX(tp.setNum) FROM TestProblem tp")
-	Integer findMaximumSetNum();
+//	@Query(value="select t from TestProblem t where t.setNum = :setNum and t.sequence > :seq order by t.sequence asc")
+//	public ArrayList<TestProblem>findSetProblems(@Param("setNum") int setNum, @Param("seq") int seq);
+//	
+//	@Query("SELECT MAX(tp.setNum) FROM TestProblem tp")
+//	Integer findMaximumSetNum();
 }

@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class DiagnosisProblemListDTO {
+public class SelfProblemListDTO {
 	private Integer id;
 	private Integer order;
 	private String difficulty;
