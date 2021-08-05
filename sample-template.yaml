@@ -45,16 +45,7 @@ objects:
               persistentVolumeClaim:
                 claimName: sample-${name}-pvc
           containers:
-            - env:
-                - name: SAMPLE_DB_IP
-                  value: '111.111.111.111'
-                - name: SAMPLE_DB_PORT
-                  value: '8629'
-                - name: SAMPLE_SERVER_IP
-                  value: '222.222.222.222'
-                - name: SAMPLE_SERVER_PORT
-                  value: '8080'
-              image: $REGISTRY_HOST/$IMAGE_NAME:$CI_COMMIT_TAG
+            - image: $REGISTRY_HOST/$IMAGE_NAME:$CI_COMMIT_TAG
               name: '${name}-dep'
               ports:
                 - containerPort: 8080

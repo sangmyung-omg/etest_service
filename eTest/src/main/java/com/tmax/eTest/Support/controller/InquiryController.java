@@ -1,5 +1,6 @@
 package com.tmax.eTest.Support.controller;
 
+import com.tmax.eTest.Auth.dto.PrincipalDetails;
 import com.tmax.eTest.Auth.repository.UserRepository;
 import com.tmax.eTest.Common.model.support.Inquiry;
 import com.tmax.eTest.Common.model.support.Inquiry_file;
@@ -10,13 +11,16 @@ import com.tmax.eTest.Support.repository.InquiryRepository;
 import com.tmax.eTest.Support.service.InquiryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import java.util.*;
 
 @RestController
+@RequestMapping("/user")
 public class InquiryController {
 
     @Autowired
@@ -36,7 +40,7 @@ public class InquiryController {
 
     @PostMapping("/Inquiry/create")
     @Transactional
-    public void Inquiry(@RequestBody CreateInquiryDto createInquiryDto) {
+    public void Inquiry(@AuthenticationPrincipal PrincipalDetails principalDetails,@RequestBody CreateInquiryDto createInquiryDto) {
         System.out.println("create inquiry 진입");
         Optional<UserMaster> userMaster_temp = userRepository.findByEmail("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
         UserMaster userMaster_temp_1 = userMaster_temp.get();

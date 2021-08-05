@@ -55,7 +55,7 @@ unitTests:
     - ./gradlew test
   artifacts:
     paths:
-      - build/libs/*.jar
+      - eTest/build/libs/*.jar
     expire_in: 1 week
   tags:
     - docker # docker gitlab-runner 에서 실행
@@ -68,7 +68,7 @@ docker-build:
   script:
     # 도커 이미지 빌드 후 레지스트리에 푸시
     - docker build -t ${REGISTRY_HOST}/${IMAGE_NAME}:${CI_COMMIT_TAG} .
-    - docker login -u admin -p admin ${REGISTRY_HOST}
+    - docker login -u hyperstudy -p hyperstudy123!@# ${REGISTRY_HOST}
     - docker push ${REGISTRY_HOST}/${IMAGE_NAME}:${CI_COMMIT_TAG}
 
     # 템플릿 yaml 파일에 이미지 이름과 이미지 버전 업데이트 후 하이퍼클라우드에 적용
