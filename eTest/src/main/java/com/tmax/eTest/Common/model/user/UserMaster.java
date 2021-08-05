@@ -10,11 +10,13 @@ import javax.validation.constraints.Email;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.tmax.eTest.Auth.dto.Gender;
 import com.tmax.eTest.Auth.dto.AuthProvider;
 import com.tmax.eTest.Auth.dto.Role;
 import com.tmax.eTest.Common.model.error_report.ErrorReport;
 
+import com.tmax.eTest.Common.model.support.Inquiry;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -69,5 +71,9 @@ public class UserMaster {
 	private Boolean service_agreement  ;
 	// 개인정보 수집이용에 동의합니다(필수)
 	private Boolean collect_info  ;
+
+	@OneToMany(mappedBy = "userMaster", fetch = FetchType.LAZY)
+	@JsonIgnoreProperties({"userMaster"})
+	private List<Inquiry> inquiry;
 
 }
