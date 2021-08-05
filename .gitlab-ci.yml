@@ -27,6 +27,7 @@ gradle-build:
   # Spring 빌드 스크립트
   script:
     - export GRADLE_USER_HOME=pwd/eTest/.gradle
+    - cd eTest
     - chmod +x gradlew
     - cd eTest
     - ./gradlew assemble
