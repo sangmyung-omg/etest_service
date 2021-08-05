@@ -28,6 +28,7 @@ gradle-build:
   script:
     - export GRADLE_USER_HOME=pwd/eTest/.gradle
     - chmod +x gradlew
+    - cd eTest
     - ./gradlew assemble
   
   # 빌드 후 생성 파일 첨부 경로
