@@ -49,6 +49,7 @@ unitTests:
   # Spring 테스트 스크립트
   script:
     - export GRADLE_USER_HOME=pwd/.gradle
+    - cd eTest
     - chmod +x gradlew
     - ./gradlew assemble
     - ./gradlew test
