@@ -3,12 +3,17 @@ package com.tmax.eTest.Test.service;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 import static java.util.stream.Collectors.*;
+
+import java.text.ParseException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,6 +28,9 @@ import com.tmax.eTest.Contents.repository.DiagnosisCurriculumRepository;
 import com.tmax.eTest.Contents.repository.DiagnosisProblemRepository;
 import com.tmax.eTest.Contents.repository.ProblemRepository;
 import com.tmax.eTest.Contents.repository.TestProblemRepository;
+import com.tmax.eTest.Report.dto.lrs.GetStatementInfoDTO;
+import com.tmax.eTest.Report.dto.lrs.StatementDTO;
+import com.tmax.eTest.Report.util.LRSAPIManager;
 
 @Service
 public class ProblemService {
@@ -40,6 +48,9 @@ public class ProblemService {
 	
 	@Autowired
 	ProblemRepository problemRepo;
+
+	@Autowired
+	LRSAPIManager lrsAPIManager;
 	
 	public Map<String, Object> getDiagnosisTendencyProblems() {
 		Map<String, Object> map = new HashMap<String, Object>();
@@ -117,39 +128,119 @@ public class ProblemService {
 		return map;
 	}
 
-//	public Map<String, Object> getMinitestProblems(Integer set_num) {
-//		Map<String, Object> map = new HashMap<String, Object>();
-//		if (set_num == null || set_num == 0) {
-//			// 미니테스트 세트의 개수가 자주 변한다면 (지속적으로 추가된다면)
-//			Integer max_setNum = minitestRepo.findMaximumSetNum();
-//			if (max_setNum == 0 || max_setNum == null) {
-//				map.put("error", "No minitest problems in DB");
-//				return map;
-//			}
-//			List<Integer> setNumList = new ArrayList<Integer>();
-//			for (int i = 0; i < max_setNum; i++) {
-//				setNumList.add(i + 1);
-//			}
-//			Collections.shuffle(setNumList);
-//			set_num = setNumList.get(0);
-//		}
-//
-//		List<Integer> minitestProblems = new ArrayList<Integer>();
-//		for (TestProblem problem : minitestRepo.findSetProblems(set_num, 0)) {
-//			minitestProblems.add(problem.getProbID());
-//		}
-//
-//		if (minitestProblems == null || minitestProblems.size() == 0) {
-//			String err_msg = "No minitest problems for set_num : " + Integer.toString(set_num);
-//
-//			if (map.containsKey("error"))
-//				map.replace("error", map.get("error") + "\n" + err_msg);
-//			else
-//				map.put("error", err_msg);
-//		}
-//
-//		map.put("minitestProblems", minitestProblems);
-//
-//		return map;
-//	}
+	public Map<String, Object> getMinitestProblems(String userId) throws Exception {
+		Map<String, Object> map = new HashMap<String, Object>();
+		List<Integer> minitestProblems = new ArrayList<Integer>();
+
+		/*
+		*	LRS에서 문제 풀이 이력 참고해 중복 방지.
+		*/
+		List<StatementDTO> statementQuery = new ArrayList<StatementDTO>();
+		GetStatementInfoDTO statementInput = new GetStatementInfoDTO();
+		statementInput.pushUserId(userId);
+		statementInput.pushSourceType("mini_test_question");
+		statementInput.pushActionType("submit");
+
+		logger.info("Getting LRS log data......");
+		try {
+			statementQuery = lrsAPIManager.getStatementList(statementInput);
+			logger.info("length of the statement query result : " + Integer.toString(statementQuery.size()));
+		} catch (ParseException e) {
+			logger.info(e.getMessage());
+			map.put("error", e.getMessage());
+			return map;
+		}
+
+		if (statementQuery.size() == 0) {
+			logger.info("Result of LRS statement query for ID " + userId +" is empty");
+			map.put("error", "Result of LRS statement query for ID " + userId +" is empty");
+			return map;
+		}
+
+		// 푼 문제 리스트
+		List<Integer> solvedProbList = new ArrayList<Integer>();
+
+		for (StatementDTO query : statementQuery) {
+			solvedProbList.add(Integer.parseInt(query.getSourceId()));
+		}
+
+		/*
+		*	중복 배제하여 미니진단 문제 조회 - 전체 조회 후 개수에 맞게 분배
+		*/
+		logger.info("Getting minitest problem infos......");
+		List<TestProblem> minitestQueryResult = minitestRepo.findAllByProbIDNotIn(solvedProbList);
+		logger.info(Integer.toString(minitestQueryResult.get(0).getProbID()));
+		logger.info(Integer.toString(minitestQueryResult.size()));
+
+		Map<Integer, List<Integer>> partProbIdMap = new HashMap<Integer, List<Integer>>();		// 각 파트 별로 문제 ID 수집
+		Map<Integer, List<Integer>> partNumOrderMap = new HashMap<Integer, List<Integer>>();	// 각 파트의 [순서, 출제 문제 개수] 정보 저장.
+		for (TestProblem problem : minitestQueryResult) {
+			// logger.info(Integer.toString(problem.getProbID()) + ", " + problem.getProblem().getCategory() + ", " + problem.getProblem().getDifficulty() + ", " + problem.getStatus());
+			if (problem.getPart() == null) {
+				map.put("error", "No part mapping info for probId : " + Integer.toString(problem.getProbID()) + ", DB data issue.\nPlease check if data is filled in 'PART' table");
+				return map;
+			}
+			// 파트 별 문제 수집
+			if (!partProbIdMap.containsKey(problem.getPart().getPartID())) {
+				partProbIdMap.put(problem.getPart().getPartID(), Arrays.asList(problem.getProbID()));
+			} else {
+				partProbIdMap.get(problem.getPart().getPartID()).add(problem.getProbID());
+			}
+
+			// 파트 별 [파트 순서, 출제 문제 개수] 수집
+			if (!partNumOrderMap.containsKey(problem.getPart().getPartID())){
+				partNumOrderMap.put(problem.getPart().getPartID(), Arrays.asList(problem.getPart().getOrderNum(), problem.getPart().getProblemCount()));
+			}
+		}
+
+		// 파트 순서로 정렬
+		List<Map.Entry<Integer, List<Integer>>> orderList = new ArrayList<Map.Entry<Integer, List<Integer>>>(partNumOrderMap.entrySet());
+		Collections.sort(orderList, new Comparator<HashMap.Entry<Integer, List<Integer>>>(){
+			@Override
+			public int compare(HashMap.Entry<Integer, List<Integer>> o1, HashMap.Entry<Integer, List<Integer>> o2) {
+				return o1.getValue().get(0).compareTo(o2.getValue().get(0));
+			}
+		});
+
+		// 순서대로 각 파트 별 문제 리스트에서 설정된 개수 만큼 랜덤으로 선택하여 수집
+		for (Map.Entry<Integer, List<Integer>> part : orderList) {
+			List<Integer> probIdList = partProbIdMap.get(part.getKey());
+			Collections.sort(probIdList);
+			for (int i=0 ; i<part.getValue().get(1) ; i++) {
+				minitestProblems.add(probIdList.get(i));
+			}
+		}
+		// if (set_num == null || set_num == 0) {
+		// 	// 미니테스트 세트의 개수가 자주 변한다면 (지속적으로 추가된다면)
+		// 	Integer max_setNum = minitestRepo.findMaximumSetNum();
+		// 	if (max_setNum == 0 || max_setNum == null) {
+		// 		map.put("error", "No minitest problems in DB");
+		// 		return map;
+		// 	}
+		// 	List<Integer> setNumList = new ArrayList<Integer>();
+		// 	for (int i = 0; i < max_setNum; i++) {
+		// 		setNumList.add(i + 1);
+		// 	}
+		// 	Collections.shuffle(setNumList);
+		// 	set_num = setNumList.get(0);
+		// }
+
+		// List<Integer> minitestProblems = new ArrayList<Integer>();
+		// for (TestProblem problem : minitestRepo.findSetProblems(set_num, 0)) {
+		// 	minitestProblems.add(problem.getProbID());
+		// }
+
+		// if (minitestProblems == null || minitestProblems.size() == 0) {
+		// 	String err_msg = "No minitest problems for set_num : " + Integer.toString(set_num);
+
+		// 	if (map.containsKey("error"))
+		// 		map.replace("error", map.get("error") + "\n" + err_msg);
+		// 	else
+		// 		map.put("error", err_msg);
+		// }
+
+		map.put("minitestProblems", minitestProblems);
+
+		return map;
+	}
 }

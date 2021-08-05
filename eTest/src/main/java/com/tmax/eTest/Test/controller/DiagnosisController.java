@@ -55,27 +55,20 @@ public class DiagnosisController {
 		}
 	}
 	
-//	@GetMapping(value = "/minitest", produces = "application/json; charset=utf-8")
-//	public ResponseEntity<Object> getMinitestProblems(@RequestParam(required=false) Integer set_num) throws Exception {
-//		Map<String, Object> map = new HashMap<String, Object>();
-//		
-//		// dummy return
-////		List<Integer> list = new ArrayList<>();
-////		for (int i=0; i<7; i++) {
-////			list.add(i+1);
-////		}
-////		map.put("minitestProblems", list);
-//		
-//		// search minitest with setnum
-//		Map<String, Object> re = problemService.getMinitestProblems(set_num);
-//		if (re.containsKey("error")) {
-//			map.put("resultMessage", re.get("error"));
-//			return new ResponseEntity<>(map, HttpStatus.INTERNAL_SERVER_ERROR);
-//		} else {
-//			map.put("minitestProblems", re.get("minitestProblems"));
-//		}
-//		
-//		map.put("resultMessage", "Successfully returned");
-//		return new ResponseEntity<>(map, HttpStatus.OK);
-//	}
+	@GetMapping(value = "/minitest", produces = "application/json; charset=utf-8")
+	public ResponseEntity<Object> getMinitestProblems(@RequestParam String userId) throws Exception {
+		Map<String, Object> map = new HashMap<String, Object>();
+		
+		// search minitest with setnum
+		Map<String, Object> re = problemService.getMinitestProblems(userId);
+		if (re.containsKey("error")) {
+			map.put("resultMessage", re.get("error"));
+			return new ResponseEntity<>(map, HttpStatus.INTERNAL_SERVER_ERROR);
+		} else {
+			map.put("minitestProblems", re.get("minitestProblems"));
+		}
+		
+		map.put("resultMessage", "Successfully returned");
+		return new ResponseEntity<>(map, HttpStatus.OK);
+	}
 }
