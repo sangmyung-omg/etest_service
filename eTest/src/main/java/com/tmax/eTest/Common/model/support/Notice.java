@@ -13,7 +13,8 @@ import java.time.LocalDate;
 public class Notice {
     @Id
     @Column(name = "NOTICE_ID")
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @SequenceGenerator(name = "NOTICE_SEQ_GENERATOR", sequenceName = "NOTICE_SEQUENCE", allocationSize = 1, initialValue = 20000)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "NOTICE_SEQ_GENERATOR")
     private Long id;
 
     @Column(name = "NOTICE_TITLE")
