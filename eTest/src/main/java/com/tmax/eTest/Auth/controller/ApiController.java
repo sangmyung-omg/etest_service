@@ -2,10 +2,7 @@ package com.tmax.eTest.Auth.controller;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
-import com.tmax.eTest.Auth.dto.AuthProvider;
-import com.tmax.eTest.Auth.dto.CMRespDto;
-import com.tmax.eTest.Auth.dto.Role;
-import com.tmax.eTest.Auth.dto.SignUpRequestDto;
+import com.tmax.eTest.Auth.dto.*;
 import com.tmax.eTest.Auth.jwt.JwtProperties;
 import com.tmax.eTest.Auth.repository.UserRepository;
 import com.tmax.eTest.Auth.service.AuthService;
@@ -13,6 +10,7 @@ import com.tmax.eTest.Common.model.user.UserMaster;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -61,6 +59,14 @@ public class ApiController {
                 .sign(Algorithm.HMAC512(JwtProperties.SECRET));
         return new CMRespDto<> (200 , "회원가입 완료",jwtToken);
     }
+
+    @PostMapping("/duplicateCheck")
+    public CMRespDto<?> duplicateCheck(@RequestBody DuplicateCheckDto duplicateCheckDto){
+        String email = duplicateCheckDto.getEmail();
+        Boolean res = userRepository.existsByEmail(email);
+        return new CMRespDto<>(200,"회원가입 중복 여부 체크",res);
+    }
+
 }
 
 

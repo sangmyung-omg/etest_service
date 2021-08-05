@@ -1,5 +1,6 @@
 package com.tmax.eTest.Auth.service;
 
+import com.tmax.eTest.Auth.dto.CMRespDto;
 import com.tmax.eTest.Auth.dto.SignUpRequestDto;
 import com.tmax.eTest.Auth.dto.Role;
 import com.tmax.eTest.Auth.repository.UserRepository;
@@ -40,8 +41,12 @@ public class AuthService {
                 .collect_info(true)
                 .build();
         userRepository.save(userMaster);
+        System.out.println("save완료");
         return userMaster;
     }
 
-
+    @Transactional(readOnly = true)
+    public boolean duplicateCheck(String email) {
+        return userRepository.existsByEmail(email);
+    }
 }
