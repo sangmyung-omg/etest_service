@@ -1,10 +1,5 @@
 package com.tmax.eTest.Support.controller;
 
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.fasterxml.jackson.annotation.JsonTypeName;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.tmax.eTest.Auth.dto.CMRespDto;
 import com.tmax.eTest.Auth.repository.UserRepository;
 import com.tmax.eTest.Common.model.support.Inquiry;
 import com.tmax.eTest.Common.model.support.Inquiry_file;
@@ -13,22 +8,12 @@ import com.tmax.eTest.Support.Dto.CreateInquiryDto;
 import com.tmax.eTest.Support.repository.InquiryFileRepository;
 import com.tmax.eTest.Support.repository.InquiryRepository;
 import com.tmax.eTest.Support.service.InquiryService;
-import io.swagger.models.auth.In;
-import jdk.internal.org.objectweb.asm.TypeReference;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-
-import javax.persistence.Table;
 import java.util.*;
 
 @RestController
