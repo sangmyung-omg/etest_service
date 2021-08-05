@@ -34,7 +34,7 @@ gradle-build:
   # 빌드 후 생성 파일 첨부 경로
   artifacts:
     paths:
-      - build/libs/*.jar
+      - eTest/build/libs/*.jar
     expire_in: 1 week
   tags:
     - docker # docker gitlab-runner 에서 실행
