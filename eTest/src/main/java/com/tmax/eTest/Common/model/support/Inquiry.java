@@ -1,9 +1,11 @@
 package com.tmax.eTest.Common.model.support;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.tmax.eTest.Common.model.user.UserMaster;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
+import java.util.List;
 import javax.persistence.*;
 import java.time.LocalDate;
 
@@ -14,9 +16,19 @@ import java.time.LocalDate;
 public class Inquiry {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @SequenceGenerator(name = "INQUIRY_SEQ_GENERATOR", sequenceName = "INQUIRY_SEQUENCE", allocationSize = 1, initialValue = 20000)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "INQUIRY_SEQ_GENERATOR")
     @Column(name = "INQUIRY_ID")
     private Long id;
+
+    @JsonIgnoreProperties({"inquiry"})
+    @JoinColumn(name = "USER_UUID")
+    @ManyToOne
+    private UserMaster userMaster;
+
+    @OneToMany(mappedBy = "inquiry", fetch = FetchType.LAZY)
+    private List<Inquiry_file> inquiry_file;
+
 
     @Column(name="INQUIRY_STATUS")
     private String status;
@@ -33,8 +45,8 @@ public class Inquiry {
     @Column(name = "INQUIRY_CONTENT")
     private String content;
 
-    @Column(name = "INQUIRY_URL")
-    private String URL;
+//    @Column(name = "INQUIRY_URL")
+//    private String URL;
 
     @Column(name = "INQUIRY_ANSWER")
     private String answer;
