@@ -44,7 +44,7 @@ unitTests:
   stage: test
   image: java:8-jdk
   only:
-    - tags
+    - inactive
 
   # Spring 테스트 스크립트
   script:
