@@ -32,7 +32,6 @@ public class Inquiry_file {
     @ManyToOne
     @JoinColumn(name = "INQUIRY_ID")
     @JsonIgnoreProperties({"inquiry_file"})
-
     private Inquiry inquiry;
 
     public Inquiry_file(@JsonProperty("url") String url,
