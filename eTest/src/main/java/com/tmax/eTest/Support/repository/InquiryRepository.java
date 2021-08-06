@@ -20,4 +20,7 @@ public interface InquiryRepository extends JpaRepository<Inquiry,Long> {
       @Query(value = "SELECT * FROM cs_inquiry WHERE USER_UUID = :USER_UUID", nativeQuery = true)
       List<Inquiry> findAllByUserUuid(@Param("USER_UUID") String userUuid);
 
+      @Query(value = "SELECT INQUIRY_ID FROM CS_INQUIRY WHERE USER_UUID = :USER_UUID", nativeQuery = true)
+      List<Long> findAllIdByUserUuid(@Param("USER_UUID") String userUuid);
+
 }
