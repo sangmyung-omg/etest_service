@@ -2,6 +2,7 @@ package com.tmax.eTest.Common.model.support;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.tmax.eTest.Common.model.user.UserMaster;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,6 +13,8 @@ import java.time.LocalDate;
 @Entity
 @Data
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Table(name = "CS_INQUIRY")
 public class Inquiry {
 
@@ -26,6 +29,8 @@ public class Inquiry {
     @ManyToOne
     private UserMaster userMaster;
 
+
+    @JsonIgnoreProperties({"inquiry"})
     @OneToMany(mappedBy = "inquiry", fetch = FetchType.LAZY)
     private List<Inquiry_file> inquiry_file;
 

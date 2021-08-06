@@ -1,0 +1,146 @@
+openapi: 3.0.2
+info:
+  title: KOFIA etest ae1-1 API
+  version: '0.1'
+servers:
+  - url: 'http://192.168.153.194:8080/'
+    description: example server address
+tags:
+  - name: 고객센터
+    description: Everything about your Pets
+    externalDocs:
+      description: Find out more
+      url: 'http://swagger.io'
+  - name: 로그인
+    description: Everything about your Pets
+    externalDocs:
+      description: Find out more
+      url: 'http://swagger.io'
+  - name: 회원가입
+    description: Everything about your Pets
+    externalDocs:
+      description: Find out more
+      url: 'http://swagger.io'
+  - name: 자가진단
+    description: Access to Petstore orders
+  - name: 이용약관
+    description: Operations about user
+    externalDocs:
+      description: Find out more about our store
+      url: 'http://swagger.io'
+  - name: 계정
+    description: Operations about user
+    externalDocs:
+      description: Find out more about our store
+      url: 'http://swagger.io'
+paths:
+  /support/inquiry:
+    get:
+      tags:
+        - 고객센터
+      description: 해당 유저의 1대1 질문을 전부 반환한다
+      parameters:
+        - name: Cookie
+          in: header
+          description: user token
+          required: true
+          schema:
+            type: string
+            format: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            json:
+              schema:
+                type: object
+                example:
+                  code: '200'
+                  message: 1대1 반환 성공
+                  data:
+                    id: '3'
+                    title: 질문 제목
+                    type: account
+        '400':
+          description: Invalid status value
+  /login:
+    post:
+      tags:
+        - 로그인
+      description: Oauth로 로그인 시도
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                id:
+                  description: 고유번호
+                  type: string
+                provider:
+                  description: Oauth 플랫폼
+                  type: string
+              required:
+                - status
+      responses:
+        '200':
+          description: 회원가입이 이미 된 유저
+          content:
+            json:
+              schema:
+                type: object
+                example:
+                  code: 200
+                  message: success
+                  data: jwt토큰
+        '201':
+          description: 회원가입이 안 된 유저
+          content:
+            json:
+              schema:
+                type: object
+                example:
+                  code: 201
+                  message: success
+                  data: null
+  /signup:
+    post:
+      tags:
+        - 회원가입
+      description: 회원가입
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                id:
+                  description: 고유 번호
+                  type: string
+                email:
+                  description: 이메일
+                  type: string
+                provider:
+                  description: Oauth 플랫폼
+                  type: string
+                gender:
+                  description: 성별
+                  type: string
+                birthday:
+                  description: 생일 (yyyy-mm-dd)
+                  type: string
+                event_sms_agreement:
+                  description: 이벤트 및 공지 알림 수신에 동의합니다
+                  type: string
+                account_active:
+                  description: 장기 미접속 시계정 활성 상태를 유지합니다
+                  type: string
+      responses:
+        '200':
+          description: 회원 가입 성공
+          content:
+            json:
+              schema:
+                type: object
+                example:
+                  code: 200
+                  message: 회원가입 완료
+                  data: jwt토큰

@@ -1,5 +1,6 @@
 package com.tmax.eTest.Common.model.support;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.models.auth.In;
 import lombok.*;
@@ -9,6 +10,9 @@ import javax.persistence.*;
 @Entity
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
+
+
 @Builder
 @Table(name = "CS_INQUIRY_FILE")
 public class Inquiry_file {
@@ -27,6 +31,8 @@ public class Inquiry_file {
 
     @ManyToOne
     @JoinColumn(name = "INQUIRY_ID")
+    @JsonIgnoreProperties({"inquiry_file"})
+
     private Inquiry inquiry;
 
     public Inquiry_file(@JsonProperty("url") String url,

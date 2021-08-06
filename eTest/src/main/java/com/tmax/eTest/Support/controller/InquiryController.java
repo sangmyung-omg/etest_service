@@ -1,5 +1,6 @@
 package com.tmax.eTest.Support.controller;
 
+import com.tmax.eTest.Auth.dto.CMRespDto;
 import com.tmax.eTest.Auth.dto.PrincipalDetails;
 import com.tmax.eTest.Auth.repository.UserRepository;
 import com.tmax.eTest.Common.model.support.Inquiry;
@@ -23,8 +24,8 @@ import java.util.*;
 @RequestMapping("/user")
 public class InquiryController {
 
-    @Autowired
-    InquiryService inquiryService;
+//    @Autowired
+//    InquiryService inquiryService;
 
     @Autowired
     @Qualifier("SU-InquiryRepository")
@@ -38,15 +39,15 @@ public class InquiryController {
     @Qualifier("SU-InquiryFileRepository")
     InquiryFileRepository inquiryFileRepository;
 
-    @PostMapping("/Inquiry/create")
+    @PostMapping("/inquiry/create")
     @Transactional
-    public void Inquiry(@AuthenticationPrincipal PrincipalDetails principalDetails,@RequestBody CreateInquiryDto createInquiryDto) {
+    public CMRespDto<?> Inquiry(@AuthenticationPrincipal PrincipalDetails principalDetails, @RequestBody CreateInquiryDto createInquiryDto) {
         System.out.println("create inquiry 진입");
-        Optional<UserMaster> userMaster_temp = userRepository.findByEmail("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-        UserMaster userMaster_temp_1 = userMaster_temp.get();
+        Optional<UserMaster> userMaster_temp = userRepository.findByEmail(principalDetails.getEmail());
+        UserMaster userMasterEntity= userMaster_temp.get();
         Inquiry inquiry =
                 Inquiry.builder()
-                .userMaster(userMaster_temp_1)
+                .userMaster(userMasterEntity)
                 .content(createInquiryDto.getContent())
                 .status(createInquiryDto.getStatus())
                 .date(createInquiryDto.getDate())
@@ -63,5 +64,20 @@ public class InquiryController {
                     .build();
             inquiryFileRepository.save(inquiry_file);
         }
+        return new CMRespDto<>(200,"생성 성공",inquiry.getId());
     }
+
+    @Transactional(readOnly = true)
+    @PostMapping("/inquiry/list")
+    public CMRespDto<?> getInquiryList(@AuthenticationPrincipal PrincipalDetails principalDetails) {
+//        List<Inquiry> inquiryList = inquiryRepository.findAllByListUserUuid(principalDetails.getUserUuid());
+        Optional<Inquiry> inquiryId = inquiryRepository.findById(6L);
+        return new CMRespDto<>(200,"1대1 질문 리스트 받아오기 성공",inquiryId.get());
+
+    }
+
+
+
+
+
 }
