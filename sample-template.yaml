@@ -16,14 +16,14 @@ objects:
   - kind: PersistentVolumeClaim
     apiVersion: v1
     metadata:
-      name: sample-${name}-pvc
+      name: ${name}-pvc
       namespace: hyperstudy
     spec:
       accessModes:
         - ReadWriteMany
       resources:
         requests:
-          storage: 1Gi
+          storage: 10Gi
       storageClassName: hdd-ceph-fs
   - apiVersion: apps/v1
     kind: Deployment
@@ -43,7 +43,7 @@ objects:
           volumes:
             - name: pvc
               persistentVolumeClaim:
-                claimName: sample-${name}-pvc
+                claimName: ${name}-pvc
           containers:
             - image: $REGISTRY_HOST/$IMAGE_NAME:$CI_COMMIT_TAG
               name: '${name}-dep'
@@ -59,7 +59,7 @@ objects:
                   memory: 1Gi
               volumeMounts:
                 - name: pvc
-                  mountPath: /logs
+                  mountPath: /workspace/etest/upload/
           imagePullSecrets:
             - name: hpcd-registry-hs-registry
   - apiVersion: v1
