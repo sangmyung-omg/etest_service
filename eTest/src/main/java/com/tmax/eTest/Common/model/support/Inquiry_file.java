@@ -2,9 +2,9 @@ package com.tmax.eTest.Common.model.support;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.models.auth.In;
 import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
+import java.util.List;
 
 import javax.persistence.*;
 
@@ -18,7 +18,7 @@ import javax.persistence.*;
 @Table(name = "CS_INQUIRY_FILE")
 public class Inquiry_file {
 
-    @Column(name = "INQUIRY_FILE")
+    @Transient
     private MultipartFile file;
 
 
