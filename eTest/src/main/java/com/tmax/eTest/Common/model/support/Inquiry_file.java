@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.models.auth.In;
 import lombok.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.*;
 
@@ -16,6 +17,11 @@ import javax.persistence.*;
 @Builder
 @Table(name = "CS_INQUIRY_FILE")
 public class Inquiry_file {
+
+    @Column(name = "INQUIRY_FILE")
+    private MultipartFile file;
+
+
     @Id
     @SequenceGenerator(name = "INQUIRY_FILE_SEQ_GENERATOR", sequenceName = "INQUIRY_FILE_SEQUENCE", allocationSize = 1, initialValue = 20000)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "INQUIRY_FILE_SEQ_GENERATOR")

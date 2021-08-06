@@ -11,12 +11,17 @@ import com.tmax.eTest.Support.repository.InquiryFileRepository;
 import com.tmax.eTest.Support.repository.InquiryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 
 @RestController
@@ -25,6 +30,8 @@ public class InquiryController {
 
 //    @Autowired
 //    InquiryService inquiryService;
+    @Value("${file.path}")
+    private String uploadFolder;
 
     @Autowired
     @Qualifier("SU-InquiryRepository")
@@ -42,8 +49,11 @@ public class InquiryController {
     @Transactional
     public CMRespDto<?> Inquiry(@AuthenticationPrincipal PrincipalDetails principalDetails, @RequestBody CreateInquiryDto createInquiryDto) {
         System.out.println("create inquiry 진입");
+//        Path imageFilePath = Paths.get(uploadFolder + fileName);
+
         Optional<UserMaster> userMaster_temp = userRepository.findByEmail(principalDetails.getEmail());
         UserMaster userMasterEntity= userMaster_temp.get();
+
         Inquiry inquiry =
                 Inquiry.builder()
                 .userMaster(userMasterEntity)
@@ -56,11 +66,20 @@ public class InquiryController {
                         .build();
         inquiryRepository.save(inquiry);
         for(int i=0; i<createInquiryDto.getInquiry_file().size(); i++){
+            String fileName = UUID.randomUUID().toString() + "_" + createInquiryDto.getInquiry_file().get(i).getFile().getOriginalFilename();
+            Path imageFilePath = Paths.get(uploadFolder + fileName);
             Inquiry_file inquiry_file = Inquiry_file.builder()
+                    .file(createInquiryDto.getInquiry_file().get(i).getFile())
                     .url(createInquiryDto.getInquiry_file().get(i).getUrl())
                     .type(createInquiryDto.getInquiry_file().get(i).getType())
                     .inquiry(inquiry)
                     .build();
+            try {
+
+                Files.write(imageFilePath, createInquiryDto.getInquiry_file().get(i).getFile().getBytes());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             inquiryFileRepository.save(inquiry_file);
         }
         return new CMRespDto<>(200,"1대1 질문 생성 성공",inquiry.getId());
