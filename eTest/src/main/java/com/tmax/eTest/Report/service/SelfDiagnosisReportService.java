@@ -23,6 +23,7 @@ import com.tmax.eTest.Report.dto.lrs.GetStatementInfoDTO;
 import com.tmax.eTest.Report.dto.lrs.StatementDTO;
 import com.tmax.eTest.Report.dto.triton.TritonDataDTO;
 import com.tmax.eTest.Report.dto.triton.TritonResponseDTO;
+import com.tmax.eTest.Report.exception.ReportBadRequestException;
 import com.tmax.eTest.Report.util.LRSAPIManager;
 import com.tmax.eTest.Report.util.RuleBaseScoreCalculator;
 import com.tmax.eTest.Report.util.SNDCalculator;
@@ -64,7 +65,7 @@ public class SelfDiagnosisReportService {
 	private final Logger logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
 	
 	
-	public DiagnosisResultDTO calculateDiagnosisResult(String id)
+	public DiagnosisResultDTO calculateDiagnosisResult(String id) throws Exception
 	{
 		DiagnosisResultDTO result = new DiagnosisResultDTO();
 		List<StatementDTO> diagnosisProbStatements = getStatementDiagnosisProb(id);
@@ -157,7 +158,7 @@ public class SelfDiagnosisReportService {
 	
 
 	
-	public PartUnderstandingDTO getPartInfo(String id, String partName)
+	public PartUnderstandingDTO getPartInfo(String id, String partName) throws Exception
 	{
 		PartUnderstandingDTO res = new PartUnderstandingDTO();
 		
@@ -205,6 +206,8 @@ public class SelfDiagnosisReportService {
 
 			}
 		}
+		else
+			throw new ReportBadRequestException("Triton Result is Null. Check Input or Triton Server.");
 		
 		return res;
 	}
