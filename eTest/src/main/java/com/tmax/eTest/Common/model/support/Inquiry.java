@@ -50,8 +50,6 @@ public class Inquiry {
     @Column(name = "INQUIRY_CONTENT")
     private String content;
 
-//    @Column(name = "INQUIRY_URL")
-//    private String URL;
 
     @Column(name = "INQUIRY_ANSWER")
     private String answer;
