@@ -18,7 +18,6 @@ import com.tmax.eTest.Contents.exception.ErrorCode;
 import com.tmax.eTest.Contents.repository.support.VideoCurriculumRepositorySupport;
 import com.tmax.eTest.Contents.repository.support.VideoHitRepositorySupport;
 import com.tmax.eTest.Contents.repository.support.VideoRepositorySupport;
-import com.tmax.eTest.Contents.util.CommonUtils;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -44,39 +43,18 @@ public class VideoService {
 
   public ListDTO.Curriculum getVideoCurriculumList() {
     List<VideoCurriculum> curriculums = videoCurriculumRepositorySupport.findAll();
-
-    return new ListDTO.Curriculum(curriculums.size(),
-        curriculums.stream()
-            .map(curriculum -> new VideoCurriculumDTO(curriculum.getCurriculumId(), curriculum.getSubject()))
-            .collect(Collectors.toList()));
+    return convertVideoCurriculumToDTO(curriculums);
   }
 
-  public ListDTO.Video getVideoList(String userId, Long curriculumId, SortType sort) {
-    List<Video> videos = curriculumId == 0 ? videoRePositorySupport.findVideosByUser(userId, sort)
-        : videoRePositorySupport.findVideosByUserAndCurriculum(userId, curriculumId, sort);
-        
-    return new ListDTO.Video(videos.size(),
-        videos.stream()
-            .map(video -> new VideoDTO(video.getVideoId(), video.getVideoSrc(), video.getTitle(),
-                video.getCreateDate().toString(), video.getCreatorId(), video.getImgSrc(),
-                video.getVideoCurriculum().getSubject(), video.getTotalTime(), video.getVideoHit().getHit(),
-                !CommonUtils.objectNullcheck(video.getVideoBookmarks()), video.getVideoUks().stream()
-                    .map(videoUks -> videoUks.getUkMaster().getUkName()).collect(Collectors.toList())))
-            .collect(Collectors.toList()));
+  public ListDTO.Video getVideoList(String userId, Long curriculumId, SortType sort, String keyword) {
+    List<Video> videos = videoRePositorySupport.findVideosByUserAndCurriculum(userId, curriculumId, sort, keyword);
+    return convertVideoToDTO(videos);
   }
 
-  public ListDTO.Video getBookmarkVideoList(String userId, Long curriculumId, SortType sort) {
-    List<Video> videos = curriculumId == 0 ? videoRePositorySupport.findBookmarkVideosByUser(userId, sort)
-        : videoRePositorySupport.findBookmarkVideosByUserAndCurriculum(userId, curriculumId, sort);
-
-    return new ListDTO.Video(videos.size(),
-        videos.stream()
-            .map(video -> new VideoDTO(
-                video.getVideoId(), video.getVideoSrc(), video.getTitle(), video.getCreateDate().toString(),
-                video.getCreatorId(), video.getImgSrc(), video.getVideoCurriculum().getSubject(), video.getTotalTime(),
-                video.getVideoHit().getHit(), true, video.getVideoUks().stream()
-                    .map(videoUks -> videoUks.getUkMaster().getUkName()).collect(Collectors.toList())))
-            .collect(Collectors.toList()));
+  public ListDTO.Video getBookmarkVideoList(String userId, Long curriculumId, SortType sort, String keyword) {
+    List<Video> videos = videoRePositorySupport.findBookmarkVideosByUserAndCurriculum(userId, curriculumId, sort,
+        keyword);
+    return convertVideoToDTO(videos);
   }
 
   @Transactional
@@ -122,4 +100,23 @@ public class VideoService {
     return new SuccessDTO(true);
   }
 
+  public ListDTO.Video convertVideoToDTO(List<Video> videos) {
+    return new ListDTO.Video(videos.size(),
+        videos.stream()
+            .map(video -> new VideoDTO(video.getVideoId(), video.getVideoSrc(), video.getTitle(),
+                video.getCreateDate().toString(), video.getCreatorId(), video.getImgSrc(),
+                video.getVideoCurriculum().getSubject(), video.getTotalTime(), video.getVideoHit().getHit(), true,
+                video.getVideoUks().stream().map(videoUks -> videoUks.getUkMaster().getUkName())
+                    .collect(Collectors.toList()),
+                video.getVideoHashtags().stream().map(videoHashtags -> videoHashtags.getHashtag().getName())
+                    .collect(Collectors.toList())))
+            .collect(Collectors.toList()));
+  }
+
+  public ListDTO.Curriculum convertVideoCurriculumToDTO(List<VideoCurriculum> curriculums) {
+    return new ListDTO.Curriculum(curriculums.size(),
+        curriculums.stream()
+            .map(curriculum -> new VideoCurriculumDTO(curriculum.getCurriculumId(), curriculum.getSubject()))
+            .collect(Collectors.toList()));
+  }
 }

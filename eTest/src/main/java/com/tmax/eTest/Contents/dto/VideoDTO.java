@@ -20,5 +20,6 @@ public class VideoDTO {
   private Integer hit;
   private boolean bookmark;
   private List<String> uks;
+  private List<String> hashtags;
 
 }

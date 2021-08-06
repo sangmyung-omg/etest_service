@@ -65,15 +65,21 @@ paths:
         schema:
           type: integer
           format: integer
-          default: 0
       - name: sort
         in: query
-        description: date(날짜순)/hit(조회순)
+        description: DATE(날짜순)/HIT(조회순)
         required: false
         schema:
           type: string
           format: string
-          default: date
+          default: DATE
+      - name: keyword
+        in: query
+        description: 검색 키워드
+        required: false
+        schema:
+          type: string
+          format: string
       responses:
         200:
           description: OK
@@ -113,6 +119,10 @@ paths:
                           type: array
                           items:
                             type: string
+                        hashtags:
+                          type: array
+                          items:
+                            type: string
   /users/{user_id}/videos/bookmark:
     get:
       tags:
@@ -134,15 +144,21 @@ paths:
         schema:
           type: integer
           format: integer
-          default: 0
       - name: sort
         in: query
-        description: date(날짜순)/hit(조회순)
+        description: DATE(날짜순)/HIT(조회순)
         required: false
         schema:
           type: string
           format: string
-          default: date
+          default: DATE
+      - name: keyword
+        in: query
+        description: 검색 키워드
+        required: false
+        schema:
+          type: string
+          format: string
       responses:
         200:
           description: OK
@@ -179,6 +195,10 @@ paths:
                         bookmark: 
                           type: boolean
                         uks:
+                          type: array
+                          items:
+                            type: string
+                        hashtags:
                           type: array
                           items:
                             type: string
@@ -278,6 +298,13 @@ paths:
         schema:
           type: string
           format: string
+      - name: keyword
+        in: query
+        description: 검색 키워드
+        required: false
+        schema:
+          type: string
+          format: string
       responses:
         200:
           description: OK
@@ -320,6 +347,13 @@ paths:
         in: path
         description: 사용자 아이디
         required: true
+        schema:
+          type: string
+          format: string
+      - name: keyword
+        in: query
+        description: 검색 키워드
+        required: false
         schema:
           type: string
           format: string
@@ -427,6 +461,13 @@ paths:
         schema:
           type: string
           format: string
+      - name: keyword
+        in: query
+        description: 검색 키워드
+        required: false
+        schema:
+          type: string
+          format: string
       responses:
         200:
           description: OK
@@ -483,6 +524,13 @@ paths:
         in: path
         description: 사용자 아이디
         required: true
+        schema:
+          type: string
+          format: string
+      - name: keyword
+        in: query
+        description: 검색 키워드
+        required: false
         schema:
           type: string
           format: string
@@ -604,6 +652,13 @@ paths:
         schema:
           type: string
           format: string
+      - name: keyword
+        in: query
+        description: 검색 키워드
+        required: false
+        schema:
+          type: string
+          format: string
       responses:
         200:
           description: OK
@@ -652,6 +707,13 @@ paths:
         in: path
         description: 사용자 아이디
         required: true
+        schema:
+          type: string
+          format: string
+      - name: keyword
+        in: query
+        description: 검색 키워드
+        required: false
         schema:
           type: string
           format: string

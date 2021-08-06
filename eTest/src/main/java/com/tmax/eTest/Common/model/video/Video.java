@@ -48,4 +48,7 @@ public class Video {
 
   @OneToMany(fetch = FetchType.LAZY, mappedBy = "video", cascade = CascadeType.ALL, orphanRemoval = true)
   private Set<VideoBookmark> videoBookmarks = new LinkedHashSet<VideoBookmark>();
+
+  @OneToMany(fetch = FetchType.LAZY, mappedBy = "video", cascade = CascadeType.ALL, orphanRemoval = true)
+  private Set<VideoHashtag> videoHashtags = new LinkedHashSet<VideoHashtag>();
 }

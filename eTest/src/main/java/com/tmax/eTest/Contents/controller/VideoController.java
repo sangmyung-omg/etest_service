@@ -31,18 +31,20 @@ public class VideoController {
 
   @GetMapping("/users/{user_id}/videos")
   public ResponseEntity<Object> getVideoList(@PathVariable("user_id") String userId,
-      @RequestParam(value = "curriculumId", required = false, defaultValue = "0") Long curriculumId,
-      @RequestParam(value = "sort", required = false, defaultValue = "date") SortType sort) {
+      @RequestParam(value = "curriculumId", required = false) Long curriculumId,
+      @RequestParam(value = "sort", required = false, defaultValue = "DATE") SortType sort,
+      @RequestParam(value = "keyword", required = false) String keyword){
     log.info("---getVideoList---");
-    return new ResponseEntity<>(videoService.getVideoList(userId, curriculumId, sort), HttpStatus.OK);
+    return new ResponseEntity<>(videoService.getVideoList(userId, curriculumId, sort, keyword), HttpStatus.OK);
   }
 
   @GetMapping("/users/{user_id}/videos/bookmark")
   public ResponseEntity<Object> getBookmarkVideoList(@PathVariable("user_id") String userId,
-      @RequestParam(value = "curriculumId", required = false, defaultValue = "0") Long curriculumId,
-      @RequestParam(value = "sort", required = false, defaultValue = "date") SortType sort) {
+      @RequestParam(value = "curriculumId", required = false) Long curriculumId,
+      @RequestParam(value = "sort", required = false, defaultValue = "DATE") SortType sort,
+      @RequestParam(value = "keyword", required = false) String keyword) {
     log.info("---getBookmarkVideoList---");
-    return new ResponseEntity<>(videoService.getBookmarkVideoList(userId, curriculumId, sort), HttpStatus.OK);
+    return new ResponseEntity<>(videoService.getBookmarkVideoList(userId, curriculumId, sort, keyword), HttpStatus.OK);
   }
 
   @PutMapping("/users/{user_id}/videos/{video_id}/bookmark")
