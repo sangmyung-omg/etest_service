@@ -1,9 +1,11 @@
 package com.tmax.eTest.Support.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.tmax.eTest.Common.model.support.Inquiry_file;
 import com.tmax.eTest.Common.model.user.UserMaster;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -20,11 +22,12 @@ public class CreateInquiryDto {
 
     private String type;
 
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate date;
 
     private String content;
 
     private String answer;
 
-    private List<Inquiry_file> inquiry_file;
+    private List<MultipartFile> fileList;
 }
