@@ -61,7 +61,7 @@ objects:
                 - name: pvc
                   mountPath: /logs
           imagePullSecrets:
-            - name: hpcd-registry-wapl-math
+            - name: hpcd-registry-hs-registry
   - apiVersion: v1
     kind: Service
     metadata:
