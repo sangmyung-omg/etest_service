@@ -61,12 +61,15 @@ public class ApiController {
     }
 
     @PostMapping("/duplicateCheck")
-    public CMRespDto<?> duplicateCheck(@RequestBody DuplicateCheckDto duplicateCheckDto){
+    public CMRespDto<?> duplicateCheck(@RequestBody DuplicateCheckDto duplicateCheckDto) {
         String email = duplicateCheckDto.getEmail();
         Boolean res = userRepository.existsByEmail(email);
-        return new CMRespDto<>(200,"회원가입 중복 여부 체크",res);
+        if (res == true) {
+            return new CMRespDto<>(201, "중복 회원 존재", true);
+        } else{
+            return new CMRespDto<>(200, "회원가입 가능", false);
+        }
     }
-
 }
 
 

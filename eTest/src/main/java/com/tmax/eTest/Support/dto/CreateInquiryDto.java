@@ -1,14 +1,10 @@
-package com.tmax.eTest.Support.Dto;
+package com.tmax.eTest.Support.dto;
 
 import com.tmax.eTest.Common.model.support.Inquiry_file;
 import com.tmax.eTest.Common.model.user.UserMaster;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import java.time.LocalDate;
 import java.util.List;
 

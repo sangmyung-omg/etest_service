@@ -2,9 +2,8 @@ package com.tmax.eTest.Support.service;
 
 import com.tmax.eTest.Common.model.support.Inquiry;
 import com.tmax.eTest.Common.model.support.Inquiry_file;
-import com.tmax.eTest.Support.Dto.CreateInquiryDto;
+import com.tmax.eTest.Support.dto.CreateInquiryDto;
 import com.tmax.eTest.Support.repository.InquiryRepository;
-import io.swagger.models.auth.In;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;

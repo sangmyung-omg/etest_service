@@ -6,10 +6,9 @@ import com.tmax.eTest.Auth.repository.UserRepository;
 import com.tmax.eTest.Common.model.support.Inquiry;
 import com.tmax.eTest.Common.model.support.Inquiry_file;
 import com.tmax.eTest.Common.model.user.UserMaster;
-import com.tmax.eTest.Support.Dto.CreateInquiryDto;
+import com.tmax.eTest.Support.dto.CreateInquiryDto;
 import com.tmax.eTest.Support.repository.InquiryFileRepository;
 import com.tmax.eTest.Support.repository.InquiryRepository;
-import com.tmax.eTest.Support.service.InquiryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -64,15 +63,15 @@ public class InquiryController {
                     .build();
             inquiryFileRepository.save(inquiry_file);
         }
-        return new CMRespDto<>(200,"생성 성공",inquiry.getId());
+        return new CMRespDto<>(200,"1대1 질문 생성 성공",inquiry.getId());
     }
 
     @Transactional(readOnly = true)
     @PostMapping("/inquiry/list")
     public CMRespDto<?> getInquiryList(@AuthenticationPrincipal PrincipalDetails principalDetails) {
-//        List<Inquiry> inquiryList = inquiryRepository.findAllByListUserUuid(principalDetails.getUserUuid());
-        Optional<Inquiry> inquiryId = inquiryRepository.findById(6L);
-        return new CMRespDto<>(200,"1대1 질문 리스트 받아오기 성공",inquiryId.get());
+        List<Inquiry> inquiryList = inquiryRepository.findAllByUserUuid(principalDetails.getUserUuid());
+//        Optional<Inquiry> inquiryId = inquiryRepository.findById(6L);
+        return new CMRespDto<>(200,"1대1 질문 리스트 받아오기 성공",inquiryList);
 
     }
 

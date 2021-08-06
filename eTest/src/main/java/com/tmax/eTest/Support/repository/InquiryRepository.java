@@ -16,8 +16,8 @@ public interface InquiryRepository extends JpaRepository<Inquiry,Long> {
 //    List<Inquiry> findAllByListUserUuid(@Param("userUuid") String userUuid);
 //      Optional<Inquiry> findById(Long id);
 //      @Query("select i from Inquiry i inner join i.UserMaster u where u.userUuid = :userUuid")
-      @Query("select i from Inquiry i where i.userUuid = :userUuid")
-
-      List<Inquiry> findAllByUserUuid(@Param("userUuid") String userUuid);
+//      @Query("select i from Inquiry i where i.userUuid = :userUuid")
+      @Query(value = "SELECT * FROM cs_inquiry WHERE USER_UUID = :USER_UUID", nativeQuery = true)
+      List<Inquiry> findAllByUserUuid(@Param("USER_UUID") String userUuid);
 
 }

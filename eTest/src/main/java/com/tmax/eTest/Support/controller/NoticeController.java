@@ -2,7 +2,7 @@ package com.tmax.eTest.Support.controller;
 
 import com.tmax.eTest.Auth.dto.CMRespDto;
 import com.tmax.eTest.Common.model.support.Notice;
-import com.tmax.eTest.Support.Dto.CreateNoticeDto;
+import com.tmax.eTest.Support.dto.CreateNoticeDto;
 import com.tmax.eTest.Support.repository.NoticeRepository;
 import com.tmax.eTest.Support.service.NoticeService;
 import lombok.AllArgsConstructor;
@@ -24,12 +24,12 @@ public class NoticeController {
     @GetMapping("/notice")
     public CMRespDto<?> findAllNotice() {
         List<Notice> noticeList =  noticeRepository.findAll();
-        return new CMRespDto<>(200,"가져오기 성공",noticeList);
+        return new CMRespDto<>(200,"공지사항 가져오기 성공",noticeList);
     }
 
     @PostMapping("/notice/create")
     public CMRespDto<?> createNotice(@RequestBody CreateNoticeDto createNoticeDto) {
         Long noticeId = noticeService.createNotice(createNoticeDto.getTitle(),createNoticeDto.getDate(),createNoticeDto.getContent());
-        return new CMRespDto<>(200,"만들기 성공",noticeId);
+        return new CMRespDto<>(200,"공지사항 만들기 성공",noticeId);
     }
 }
