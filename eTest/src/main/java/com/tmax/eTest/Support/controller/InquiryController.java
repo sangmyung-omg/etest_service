@@ -28,9 +28,6 @@ import java.util.*;
 @RequestMapping("/user")
 public class InquiryController {
 
-
-
-
     @Autowired
     @Qualifier("SU-InquiryRepository")
     InquiryRepository inquiryRepository;
@@ -67,7 +64,7 @@ public class InquiryController {
             inquiryRepository.deleteById(deleteInquiryDto.getInquiryId());
             return new CMRespDto<>(200,"제거 성공",userInquiryList);
         }
-        return new CMRespDto<>(200,"해당 질문은 유저가 만든 질문이 아닙니다","fail");
+        return new CMRespDto<>(400,"해당 질문은 유저가 만든 질문이 아닙니다","fail");
     }
 }
 
