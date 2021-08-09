@@ -36,12 +36,14 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class TestControllerETest {
 	
+
 	private final TestProblemApiComponentTs problemApiComponent;
 	private final DiagProblemServiceTs diagProblemServiceETest;
 	private final TestProblemQRepositoryETest tempTestRepository; 
 	private final ProbChoiceServiceTs probChoiceServiceETest;
 	private final ProbUKRelServiceTs probUKRelServiceETest;
 	private final ProbChoiceQRepositoryTs probChoiceQRepositoryETest;
+
 	/**
 	 * 등록
 	 * new ResponseEntity<>(probGetResponse, HttpStatus.ACCEPTED);
