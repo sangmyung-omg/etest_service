@@ -1,6 +1,8 @@
 package com.tmax.eTest.Report.service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,6 +12,7 @@ import org.springframework.stereotype.Service;
 import com.tmax.eTest.Common.model.user.UserKnowledge;
 import com.tmax.eTest.Common.model.video.VideoBookmark;
 import com.tmax.eTest.Common.model.video.VideoBookmarkId;
+import com.tmax.eTest.Common.model.video.VideoUkRel;
 import com.tmax.eTest.Common.repository.user.UserKnowledgeRepo;
 import com.tmax.eTest.Common.repository.video.VideoBookmarkRepository;
 import com.tmax.eTest.Report.dto.lrs.GetStatementInfoDTO;
@@ -66,8 +69,26 @@ public class MiniTestVideoService {
 		statementDto.pushActionType("play_video");
 		statementDto.pushSourceType("video");
 		
+		Map<Long, Boolean> viewedVideo = new HashMap<>();
+		
 		List<StatementDTO> lrsRes= lrsManager.getStatementList(statementDto);
-		List<UserKnowledge> ukRes = userKnowledgeRepo.findListByUserUuid(userId);
+		List<UserKnowledge> ukRes = userKnowledgeRepo.findLowMasteryListByUserUuid(userId);
+		
+		for(StatementDTO state: lrsRes)
+		{
+			try
+			{
+				long videoId = Long.getLong(state.getSourceId());
+				viewedVideo.put(videoId, true);
+			}
+			catch(Exception e)
+			{
+				logger.info("in getRecommend " + e.toString());
+			}
+		}
+		
+//		for(UserKnowledge uk : ukRes)
+//			logger.info(uk.getUkDao().getUkName()+" "+uk.getUkMastery());
 		
 	}
 }
