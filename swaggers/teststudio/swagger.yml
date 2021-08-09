@@ -66,24 +66,15 @@ paths:
       summary: create part
       description: |
         새로운 파트를 저장합니다.
-      produces:
+      consumes:
       - application/json
       parameters:
-      - in: query
-        name: name
-        description: part name
+      - in: body
+        name: body
+        description: part
         required: true
-        type: string
-      - in: query
-        name: order
-        description: part order number
-        required: true
-        type: integer
-      - in: query
-        name: count
-        description: the number of problems on the test
-        required: true
-        type: integer
+        schema:
+          $ref: '#/definitions/PartPost'
       responses:
         200:
           description: success
@@ -104,21 +95,12 @@ paths:
         description: part id
         required: true
         type: integer
-      - in: query
-        name: name
-        description: part name
+      - in: body
+        name: body
+        description: part
         required: true
-        type: string
-      - in: query
-        name: order
-        description: part order number
-        required: true
-        type: integer
-      - in: query
-        name: count
-        description: the number of problems on the test
-        required: true
-        type: integer
+        schema:
+          $ref: '#/definitions/PartPost'
       responses:
         200:
           description: success
@@ -221,6 +203,22 @@ paths:
         400:
           description: bad input parameter
 definitions:
+  PartPost:
+    type: object
+    required:
+    - name
+    - order
+    - count
+    properties:
+      name:
+        type: string
+        example: 파트2
+      order:
+        type: integer
+        example: 2
+      count:
+        type: integer
+        example: 4
   MiniProblemList:
     type: object
     required:
