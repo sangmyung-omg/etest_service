@@ -38,9 +38,9 @@ public class MiniTestReportController {
 		return output;
 	}
 	
-	@CrossOrigin
-	@PutMapping(value="/report/miniTestResult/reccommandVideo/{userId}/{videoId}/{isBookmarkOn}", produces = "application/json; charset=utf-8")
-	public boolean recommendVideoBookmark(
+	@CrossOrigin("*")
+	@PutMapping(value="/report/miniTestResult/recommendVideoBookmark/{userId}/{videoId}/{isBookmarkOn}", produces = "application/json; charset=utf-8")
+	public boolean setVideoBookmark(
 			@PathVariable("userId") String userId,
 			@PathVariable("videoId") Long videoId,
 			@PathVariable("isBookmarkOn") Boolean isBookmarkOn) throws Exception{
@@ -49,5 +49,13 @@ public class MiniTestReportController {
 		return miniTestVideoService.setVideoBookmark(userId, videoId, isBookmarkOn);
 	}
 
+	@CrossOrigin("*")
+	@GetMapping(value="/report/miniTestResult/recommendVideo/{userId}", produces = "application/json; charset=utf-8")
+	public void recommendVideo(
+			@PathVariable("userId") String userId) throws Exception{
+		
+		miniTestVideoService.getRecommendVideo(userId);
+		
+	}
 	
 }
