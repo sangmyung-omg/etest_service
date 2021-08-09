@@ -45,7 +45,7 @@ public class Problem {
 	private String imgSrc;
 	
 	@Column(name="TIME_RECOMMENDATION")
-	private String timeReco;
+	private Long timeReco;
 	
 	@Column(name="CREATOR_ID", length=32)
 	private String creatorId;

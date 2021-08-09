@@ -24,6 +24,9 @@ public class TestProblem {
 	@JoinColumn(name="PART_ID", nullable=true, insertable = false, updatable = false)
 	private Part part;
 	
+	@Column(name="PART_ID")
+	private Integer partID;
+	
 	private String subject;
 	
 	private String status;
