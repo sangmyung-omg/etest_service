@@ -73,8 +73,22 @@ paths:
         name: body
         description: part
         required: true
+<<<<<<< HEAD
         schema:
           $ref: '#/definitions/PartPost'
+=======
+        type: string
+      - in: query
+        name: order
+        description: part order number
+        required: true
+        type: integer
+      - in: query
+        name: count
+        description: the number of problems on the test
+        required: true
+        type: integer
+>>>>>>> d1ca6bb... [feat] part crud
       responses:
         200:
           description: success
@@ -99,8 +113,22 @@ paths:
         name: body
         description: part
         required: true
+<<<<<<< HEAD
         schema:
           $ref: '#/definitions/PartPost'
+=======
+        type: string
+      - in: query
+        name: order
+        description: part order number
+        required: true
+        type: integer
+      - in: query
+        name: count
+        description: the number of problems on the test
+        required: true
+        type: integer
+>>>>>>> d1ca6bb... [feat] part crud
       responses:
         200:
           description: success
