@@ -76,13 +76,13 @@ paths:
         type: string
       - in: query
         name: order
-        description: "part order number (default: last number + 1)"
-        required: false
+        description: part order number
+        required: true
         type: integer
       - in: query
         name: count
         description: the number of problems on the test
-        default: 0
+        required: true
         type: integer
       responses:
         200:
@@ -111,7 +111,7 @@ paths:
         type: string
       - in: query
         name: order
-        description: part order numbe
+        description: part order number
         required: true
         type: integer
       - in: query
@@ -149,30 +149,15 @@ paths:
       - teststudio
       summary: get self test problem id
       description: |
-        필터 조건에 맞는 자가진단 문제들을 가져옵니다.
+        커리큘럼에 속한 자가진단 문제들을 가져옵니다.
       produces:
       - application/json
       parameters:
       - in: query
-        name: chapter
-        description: chapter
-        required: false
-        type: string
-      - in: query
-        name: section
-        description: section
-        required: false
-        type: string
-      - in: query
-        name: subSection
-        description: subsection
-        required: false
-        type: string
-      - in: query
-        name: setType
-        description: set type
-        required: false
-        type: string
+        name: curriculumId
+        description: curriculum id
+        required: true
+        type: integer
       responses:
         200:
           description: success
@@ -204,7 +189,7 @@ paths:
         type: string
       - in: query
         name: order
-        description: "order by part, difficulty, status or edit date (default: part name > difficulty > status > edit date)"
+        description: "order by part, difficulty, status or editDate (default: part name > difficulty > status > edit date)"
         required: false
         type: string
       - in: query
