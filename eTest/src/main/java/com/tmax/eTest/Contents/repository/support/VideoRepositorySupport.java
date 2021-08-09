@@ -52,7 +52,7 @@ public class VideoRepositorySupport extends QuerydslRepositorySupport {
 
   public List<Video> findBookmarkVideosByUserAndCurriculum(String userId, Long curriculumId, SortType sort,
       String keyword) {
-    return query.selectFrom(video).distinct().join(video.videoBookmarks, videoBookmark)
+    return query.selectFrom(video).join(video.videoBookmarks, videoBookmark)
         .where(userEq(userId), curriculumEq(curriculumId)).where(checkKeyword(keyword))
         .orderBy(getVideoSortedColumn(sort)).fetch();
   }

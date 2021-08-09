@@ -18,6 +18,7 @@ import com.tmax.eTest.Contents.exception.ErrorCode;
 import com.tmax.eTest.Contents.repository.support.VideoCurriculumRepositorySupport;
 import com.tmax.eTest.Contents.repository.support.VideoHitRepositorySupport;
 import com.tmax.eTest.Contents.repository.support.VideoRepositorySupport;
+import com.tmax.eTest.Contents.util.CommonUtils;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -105,7 +106,7 @@ public class VideoService {
         videos.stream()
             .map(video -> new VideoDTO(video.getVideoId(), video.getVideoSrc(), video.getTitle(),
                 video.getCreateDate().toString(), video.getCreatorId(), video.getImgSrc(),
-                video.getVideoCurriculum().getSubject(), video.getTotalTime(), video.getVideoHit().getHit(), true,
+                video.getVideoCurriculum().getSubject(), video.getTotalTime(), video.getVideoHit().getHit(), !CommonUtils.objectNullcheck(video.getVideoBookmarks()),
                 video.getVideoUks().stream().map(videoUks -> videoUks.getUkMaster().getUkName())
                     .collect(Collectors.toList()),
                 video.getVideoHashtags().stream().map(videoHashtags -> videoHashtags.getHashtag().getName())

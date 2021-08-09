@@ -20,4 +20,11 @@ public class ListDTO {
     private int size;
     private List<VideoCurriculumDTO> curriculums;
   }
+
+  @Data
+  @AllArgsConstructor
+  public static class Book {
+    private int size;
+    private List<BookDTO> books;
+  }
 }

@@ -3,17 +3,26 @@ package com.tmax.eTest.Common.model.user;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import javax.validation.constraints.Email;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+<<<<<<< HEAD
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.tmax.eTest.Auth.dto.Gender;
+=======
+>>>>>>> [feat] book api and modify video bookmark
 import com.tmax.eTest.Auth.dto.AuthProvider;
+import com.tmax.eTest.Auth.dto.Gender;
 import com.tmax.eTest.Auth.dto.Role;
 import com.tmax.eTest.Common.model.error_report.ErrorReport;
 

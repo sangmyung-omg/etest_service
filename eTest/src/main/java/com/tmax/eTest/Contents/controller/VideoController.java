@@ -33,7 +33,7 @@ public class VideoController {
   public ResponseEntity<Object> getVideoList(@PathVariable("user_id") String userId,
       @RequestParam(value = "curriculumId", required = false) Long curriculumId,
       @RequestParam(value = "sort", required = false, defaultValue = "DATE") SortType sort,
-      @RequestParam(value = "keyword", required = false) String keyword){
+      @RequestParam(value = "keyword", required = false) String keyword) {
     log.info("---getVideoList---");
     return new ResponseEntity<>(videoService.getVideoList(userId, curriculumId, sort, keyword), HttpStatus.OK);
   }
