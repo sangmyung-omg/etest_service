@@ -12,8 +12,10 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.tmax.eTest.Common.model.article.ArticleUkRel;
 import com.tmax.eTest.Common.model.problem.ProblemChoice;
 import com.tmax.eTest.Common.model.video.VideoUkRel;
+import com.tmax.eTest.Common.model.wiki.WikiUkRel;
 
 import lombok.Data;
 
@@ -36,4 +38,10 @@ public class UkMaster {
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "ukMaster", cascade = CascadeType.ALL, orphanRemoval = true)
 	private Set<VideoUkRel> videoUks = new LinkedHashSet<VideoUkRel>();
+
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "ukMaster", cascade = CascadeType.ALL, orphanRemoval = true)
+	private Set<WikiUkRel> wikiUks = new LinkedHashSet<WikiUkRel>();
+
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "ukMaster", cascade = CascadeType.ALL, orphanRemoval = true)
+	private Set<ArticleUkRel> articleUks = new LinkedHashSet<ArticleUkRel>();
 }

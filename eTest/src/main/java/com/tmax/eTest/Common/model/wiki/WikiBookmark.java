@@ -1,4 +1,4 @@
-package com.tmax.eTest.Common.model.video;
+package com.tmax.eTest.Common.model.wiki;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -24,33 +24,32 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@IdClass(VideoBookmarkId.class)
-public class VideoBookmark implements Persistable<VideoBookmarkId> {
+@IdClass(WikiBookmarkId.class)
+public class WikiBookmark implements Persistable<WikiBookmarkId> {
   @Id
   private String userUuid;
   @Id
-  private Long videoId;
+  private Long wikiId;
 
-  public VideoBookmark(String userUuid, Long videoId) {
+  public WikiBookmark(String userUuid, Long wikiId) {
     this.userUuid = userUuid;
-    this.videoId = videoId;
+    this.wikiId = wikiId;
   }
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "videoId", insertable = false, updatable = false, nullable = true)
-  private Video video;
+  @JoinColumn(name = "wikiId", insertable = false, updatable = false, nullable = true)
+  private Wiki wiki;
 
   @Transient
   private boolean isNew = true;
 
   @Transient
-  private VideoBookmarkId videoBookmarkId;
+  private WikiBookmarkId wikiBookmarkId;
 
   @Override
-  public VideoBookmarkId getId() {
-    return CommonUtils.objectNullcheck(videoBookmarkId)
-        ? videoBookmarkId = new VideoBookmarkId(this.userUuid, this.videoId)
-        : videoBookmarkId;
+  public WikiBookmarkId getId() {
+    return CommonUtils.objectNullcheck(wikiBookmarkId) ? wikiBookmarkId = new WikiBookmarkId(this.userUuid, this.wikiId)
+        : wikiBookmarkId;
   }
 
   @Override
@@ -63,4 +62,5 @@ public class VideoBookmark implements Persistable<VideoBookmarkId> {
   public void markNotNew() {
     this.isNew = false;
   }
+
 }

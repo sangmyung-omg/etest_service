@@ -27,4 +27,18 @@ public class ListDTO {
     private int size;
     private List<BookDTO> books;
   }
+
+  @Data
+  @AllArgsConstructor
+  public static class Wiki {
+    private int size;
+    private List<WikiDTO> wikis;
+  }
+
+  @Data
+  @AllArgsConstructor
+  public static class Article {
+    private int size;
+    private List<ArticleDTO> articles;
+  }
 }

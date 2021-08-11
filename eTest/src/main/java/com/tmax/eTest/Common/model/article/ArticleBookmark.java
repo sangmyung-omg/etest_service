@@ -1,4 +1,4 @@
-package com.tmax.eTest.Common.model.video;
+package com.tmax.eTest.Common.model.article;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -24,33 +24,33 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@IdClass(VideoBookmarkId.class)
-public class VideoBookmark implements Persistable<VideoBookmarkId> {
+@IdClass(ArticleBookmarkId.class)
+public class ArticleBookmark implements Persistable<ArticleBookmarkId> {
   @Id
   private String userUuid;
   @Id
-  private Long videoId;
+  private Long articleId;
 
-  public VideoBookmark(String userUuid, Long videoId) {
+  public ArticleBookmark(String userUuid, Long articleId) {
     this.userUuid = userUuid;
-    this.videoId = videoId;
+    this.articleId = articleId;
   }
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "videoId", insertable = false, updatable = false, nullable = true)
-  private Video video;
+  @JoinColumn(name = "articleId", insertable = false, updatable = false, nullable = true)
+  private Article article;
 
   @Transient
   private boolean isNew = true;
 
   @Transient
-  private VideoBookmarkId videoBookmarkId;
+  private ArticleBookmarkId articleBookmarkId;
 
   @Override
-  public VideoBookmarkId getId() {
-    return CommonUtils.objectNullcheck(videoBookmarkId)
-        ? videoBookmarkId = new VideoBookmarkId(this.userUuid, this.videoId)
-        : videoBookmarkId;
+  public ArticleBookmarkId getId() {
+    return CommonUtils.objectNullcheck(articleBookmarkId)
+        ? articleBookmarkId = new ArticleBookmarkId(this.userUuid, this.articleId)
+        : articleBookmarkId;
   }
 
   @Override

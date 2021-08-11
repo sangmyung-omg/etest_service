@@ -30,35 +30,22 @@ public class BookService {
 
   public ListDTO.Book getBookList(String userId, String keyword) {
     List<Book> books = bookRepositorySupport.findBooksByUser(userId, keyword);
-    return convertVideoToDTO(books);
+    return convertBookToDTO(books);
   }
 
   public ListDTO.Book getBookmarkBookList(String userId, String keyword) {
     List<Book> books = bookRepositorySupport.findBookmarkBooksByUser(userId, keyword);
-    return convertVideoToDTO(books);
+    return convertBookToDTO(books);
   }
 
   @Transactional
   public SuccessDTO insertBookmarkBook(String userId, Long bookId) {
-    // VideoBookmarkId videoBookmarkId = new VideoBookmarkId(userId, videoId);
-    // videoBookmarkRepository.findById(videoBookmarkId).orElseThrow()
     BookBookmarkId bookBookmarkId = new BookBookmarkId(userId, bookId);
     BookBookmark bookBookmark = new BookBookmark(userId, bookId);
-    // videoBookmarkRepository.findById(videoBookmarkId).ifPresentOrElse(
-    // (value) -> new ContentsException(ErrorCode.DB_ERROR, "Video Bookmark doesn't
-    // exist!!"),
-    // () -> videoBookmarkRepository.saveAndFlush(videoBookmark));
-    // videoBookmarkRepository.findById(videoBookmarkId).orElseGet(() ->
-    // videoBookmarkRepository.save(videoBookmark));
     if (bookBookmarkRepository.existsById(bookBookmarkId))
       throw new ContentsException(ErrorCode.DB_ERROR, "BookBookmark already exists in BookBookmark Table");
     else
       bookBookmarkRepository.save(bookBookmark);
-
-    // videoBookmarkRepository.findById(videoBookmarkId).orElseGet(() ->
-    // videoBookmarkRepository.save(videoBookmark)).equals(videoBookmark)
-
-    // videoBookmarkRepository.save(videoBookmark);
 
     return new SuccessDTO(true);
   }
@@ -72,7 +59,7 @@ public class BookService {
     return new SuccessDTO(true);
   }
 
-  public ListDTO.Book convertVideoToDTO(List<Book> books) {
+  public ListDTO.Book convertBookToDTO(List<Book> books) {
     return new ListDTO.Book(books.size(),
         books.stream()
             .map(book -> new BookDTO(book.getBookId(), book.getBookSrc(), book.getTitle(),
@@ -80,5 +67,4 @@ public class BookService {
                 !CommonUtils.objectNullcheck(book.getBookBookmarks())))
             .collect(Collectors.toList()));
   }
-
 }
