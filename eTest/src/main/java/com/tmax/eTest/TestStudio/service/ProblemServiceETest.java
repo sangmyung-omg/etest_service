@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.tmax.eTest.Common.model.problem.Problem;
 import com.tmax.eTest.TestStudio.dto.problems.base.BaseProblemDTO;
+import com.tmax.eTest.TestStudio.repository.ProblemQRepositoryETest;
 import com.tmax.eTest.TestStudio.repository.ProblemRepositoryETest;
 import com.tmax.eTest.TestStudio.util.PathUtilEtest;
 
@@ -19,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 public class ProblemServiceETest {
 	
 	private final ProblemRepositoryETest problemRepository;
+	private final ProblemQRepositoryETest problemQRepositoryETest;
 	private final PathUtilEtest pathUtilEtest = new PathUtilEtest();
 	
 	/**
@@ -28,6 +30,11 @@ public class ProblemServiceETest {
 	public Problem findOne(Long probId) {
 		return problemRepository.findById( probId.intValue() ).get();
 	}
+	
+	public Problem findOneSet(Long probId) {
+		return problemRepository.findPANDPCByProbID( probId.intValue() );
+	}
+	
 	
 	/**
 	 * 문제 생성
@@ -111,5 +118,9 @@ public class ProblemServiceETest {
 		problemRepository.deleteById( problemId.intValue() ); 
 		return "ok";
 	}
-
+	
+	////
+	public Integer NPID() {
+		return problemQRepositoryETest.searchLatestProblem().getProbID() + 1 ;
+	}
 }

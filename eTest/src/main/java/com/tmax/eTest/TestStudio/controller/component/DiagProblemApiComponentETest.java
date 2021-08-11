@@ -1,7 +1,6 @@
 package com.tmax.eTest.TestStudio.controller.component;
 
 import java.io.File;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,14 +8,22 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
 
 import com.tmax.eTest.Common.model.problem.Problem;
+import com.tmax.eTest.Common.model.problem.ProblemChoice;
+import com.tmax.eTest.Common.model.uk.ProblemUKRelation;
+import com.tmax.eTest.Common.model.uk.UkMaster;
 import com.tmax.eTest.TestStudio.dto.problems.base.BaseDiagCurriculumDTO;
-import com.tmax.eTest.TestStudio.dto.problems.base.BaseDiagCurriculumandProblemDTO;
+import com.tmax.eTest.TestStudio.dto.problems.base.BaseDiagProblemSetDTO;
+import com.tmax.eTest.TestStudio.dto.problems.base.BaseProbChoiceDTO;
+import com.tmax.eTest.TestStudio.dto.problems.base.BaseProbUKRelDTO;
 import com.tmax.eTest.TestStudio.dto.problems.base.BaseProblemDTO;
 import com.tmax.eTest.TestStudio.dto.problems.in.PutDiagProblemDTOIn;
 import com.tmax.eTest.TestStudio.dto.problems.out.GetDiagProblemDTOOut;
 import com.tmax.eTest.TestStudio.service.DiagCurriculumServiceETest;
 import com.tmax.eTest.TestStudio.service.DiagProblemServiceETest;
+import com.tmax.eTest.TestStudio.service.ProbChoiceServiceETest;
+import com.tmax.eTest.TestStudio.service.ProbUKRelServiceETest;
 import com.tmax.eTest.TestStudio.service.ProblemServiceETest;
+import com.tmax.eTest.TestStudio.service.UKServiceETest;
 import com.tmax.eTest.TestStudio.util.PathUtilEtest;
 
 import lombok.RequiredArgsConstructor;
@@ -27,10 +34,13 @@ import lombok.RequiredArgsConstructor;
 public class DiagProblemApiComponentETest {
 	
 	private final ProblemServiceETest problemServiceETest;
-	private final DiagProblemServiceETest diagProblemServiceETest;
+	private final ProbChoiceServiceETest probChoiceServiceETest;
+	private final ProbUKRelServiceETest probUKRelServiceETest;
+	private final UKServiceETest ukServiceETest;
+//	private final DiagProblemServiceETest diagProblemServiceETest;
 	private final DiagCurriculumServiceETest diagCurriculumServiceETest;
 	
-	private final TestProblemApiComponentETest testProblemApiComponent;
+//	private final TestProblemApiComponentETest testProblemApiComponent;
 	private final ImageFileServerApiComponentETest imageFileServerApiComponentETest;
 	private final PathUtilEtest pathUtilEtest = new PathUtilEtest();
 	
@@ -42,8 +52,8 @@ public class DiagProblemApiComponentETest {
 		
 		//
 		
-		GetDiagProblemDTOOut output = new GetDiagProblemDTOOut( new ArrayList<BaseDiagCurriculumandProblemDTO>() );
-		BaseDiagCurriculumandProblemDTO outputBase = new BaseDiagCurriculumandProblemDTO();
+		GetDiagProblemDTOOut output = new GetDiagProblemDTOOut( new ArrayList<BaseDiagProblemSetDTO>() );
+		BaseDiagProblemSetDTO outputBase = new BaseDiagProblemSetDTO();
 		// set : probId []
 		String[] strProbIdList = probIdStr.replace(" ","").split(",");
 		
@@ -54,25 +64,20 @@ public class DiagProblemApiComponentETest {
 				}
 				Long probId = Long.parseLong(strProbId);
 				
-				//id로 Problem 정보 검색
-				Problem findProblem = problemServiceETest.findOne(probId);
+				Problem findProblem = problemServiceETest.findOneSet(probId);
 				
-				//id로 이미지 정보 검색 
 				List<String> ImgJsonToStrList = imageFileServerApiComponentETest.getImgJsonToStrListByProbIDServiceComponent(probId);
 				String imgJsonObjectNormToString = ImgJsonToStrList.get(0);
-//				String imgJsonObjectDarkToString = ImgJsonToStrList.get(1);
-				//
-				
+//				String imgJsonObjectDarkToString = ImgJsonToStrList.get(1);			
 				 
-				//엔터티 -> DTO 변환
 				BaseProblemDTO collect = new BaseProblemDTO(
 						findProblem.getProbID().toString(), findProblem.getAnswerType(),
 						findProblem.getQuestion(), findProblem.getSolution(),
 						findProblem.getDifficulty(), findProblem.getCategory(),
 						findProblem.getImgSrc(), findProblem.getTimeReco(),
-						findProblem.getCreatorId(), new Timestamp(findProblem.getCreateDate().getTime()),
-						findProblem.getValiatorID(), new Timestamp(findProblem.getValiateDate().getTime()),
-						findProblem.getEditorID(), new Timestamp(findProblem.getEditDate().getTime()),
+						findProblem.getCreatorId(), findProblem.getCreateDate(),
+						findProblem.getValiatorID(), findProblem.getValiateDate(),
+						findProblem.getEditorID(), findProblem.getEditDate(),
 						findProblem.getSource(), findProblem.getIntention(),
 						findProblem.getQuestionInitial(),findProblem.getSolutionInitial(),
 						imgJsonObjectNormToString,null,
@@ -81,7 +86,42 @@ public class DiagProblemApiComponentETest {
 				
 				outputBase.setProblem(collect); 
 				
+//				System.out.println( findProblem.getProblemChoices().get(0).getChoiceNum() );
+//				List<ProblemChoice> problemChoiceList = probChoiceServiceETest.findAllByProbId(probId);
+				List<ProblemChoice> problemChoices = findProblem.getProblemChoices();
+				if(problemChoices != null) {
+					outputBase.setProbChoices(new ArrayList<BaseProbChoiceDTO>());
+					for( ProblemChoice PC : problemChoices) {
+						outputBase.getProbChoices().add(new BaseProbChoiceDTO(
+//										PC.getProbIDOnly().toString(), //probId
+										null,
+										String.valueOf( PC.getChoiceNum() ),
+										PC.getUkIDOnly().toString(),
+										PC.getChoiceScore().toString()
+									)
+								);
+					}
+				}
+				
+//
+				List<ProblemUKRelation> problemUKRelations = probUKRelServiceETest.findAllWUKByProbId(probId);
+		
+				if(problemUKRelations != null) {
+					outputBase.setProbUKRels(new ArrayList<BaseProbUKRelDTO>());
+					for( ProblemUKRelation UKR : problemUKRelations) {
+						outputBase.getProbUKRels().add(new BaseProbUKRelDTO(
+//										probId.toString(),
+										null,
+										UKR.getUkId().getUkId().toString()
+									)
+								);
+					}
+				}	
+				
 //				String status = diagCurriculumServiceETest.findOne( diagProblemServiceETest.findOne(probId).getCurriculumId().longValue() ).getStatus();
+				if(findProblem.getDiagnosisInfo() ==null) {
+					throw new Exception("DiagnosisInfo() ==null");
+				}
 				String status = findProblem.getDiagnosisInfo().getCurriculum().getStatus();
 				BaseDiagCurriculumDTO baseDiagCurriculumDTO = new BaseDiagCurriculumDTO();
 				baseDiagCurriculumDTO.setStatus(status);
@@ -107,7 +147,7 @@ public class DiagProblemApiComponentETest {
 			// 문제 n개 업데이트
 			Long idx = -1L;
 			if(request.getDiagProblems() != null)
-			for(BaseDiagCurriculumandProblemDTO requestInfo__ : request.getDiagProblems()) {
+			for(BaseDiagProblemSetDTO requestInfo__ : request.getDiagProblems()) {
 				idx++;
 				Long LongProbId = Long.parseLong(requestInfo__.getProblem().getProbID());
 //				if( "출제".equals(requestInfo__.getDiagCurriculum().getStatus()) || "보류".equals(requestInfo__.getDiagCurriculum().getStatus())) {
@@ -115,7 +155,45 @@ public class DiagProblemApiComponentETest {
 //				}
 				//problem table
 				problemServiceETest.problemUpdate( request.getUserID() ,requestInfo__.getProblem());
-				
+				//
+//				probChoiceServiceETest.probChoiceUpdate(request.getUserID(), requestInfo__.getProbChoices(), LongProbId);
+				if(requestInfo__.getProbChoices()!=null) {
+					if(!requestInfo__.getProbChoices().isEmpty()) {
+						probChoiceServiceETest.probChoiceDeleteAllByProbId(LongProbId);
+						for(BaseProbChoiceDTO PC : requestInfo__.getProbChoices()) {
+							ProblemChoice problemChoice = new ProblemChoice();
+//							Problem problemTemp = new Problem();
+//							problemTemp.setProbID(problem.getProbID());
+							problemChoice.setProbID(problemServiceETest.findOne(LongProbId));
+//							problemChoice.setProbID(problemTemp);
+							problemChoice.setChoiceNum( Long.parseLong( PC.getChoiceNum() ) );
+							UkMaster ukMasterTemp = new UkMaster();
+							ukMasterTemp.setUkId(Integer.parseInt( PC.getUkID() ) );
+//							problemChoice.setUkId(ukServiceETest.findOneByUKId( Long.parseLong(PC.getUkID()) ));
+							problemChoice.setUkId(ukMasterTemp);
+							if(PC.getChoiceScore()!=null) {
+								problemChoice.setChoiceScore( Integer.parseInt( PC.getChoiceScore() ) );
+							}
+							probChoiceServiceETest.probChoiceCreate(problemChoice);
+						}
+					}
+				}
+				//
+				if(requestInfo__.getProbUKRels()!=null) {
+					if(!requestInfo__.getProbUKRels().isEmpty()) {
+						probUKRelServiceETest.probUKRelDeleteAllByProbId(LongProbId);
+						for(BaseProbUKRelDTO PUR : requestInfo__.getProbUKRels()) {
+							ProblemUKRelation problemUKRelation = new ProblemUKRelation();
+							problemUKRelation.setProbID( problemServiceETest.findOne(LongProbId) );
+							UkMaster ukMasterTemp = new UkMaster();
+							ukMasterTemp.setUkId(Integer.parseInt( PUR.getUkID() ) );
+//							problemUKRelation.setUkId( ukServiceETest.findOneByUKId( Long.parseLong(PUR.getUkID()) ) );
+							problemUKRelation.setUkId(ukMasterTemp);							
+
+							probUKRelServiceETest.probUKRelCreate(problemUKRelation);
+						}
+					}
+				}
 				//
 				diagCurriculumServiceETest.problemUpdate( request.getUserID() ,requestInfo__.getDiagCurriculum());
 				
