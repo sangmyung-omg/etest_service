@@ -15,10 +15,15 @@ import javax.persistence.Table;
 import com.tmax.eTest.Common.model.error_report.ErrorReport;
 
 import com.tmax.eTest.Common.model.uk.ProblemUKRelation;
+import com.tmax.eTest.Common.model.uk.UkMaster;
 
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+//@Data
+@Getter
+@Setter
 @Entity
 @Table(name="PROBLEM")
 public class Problem {

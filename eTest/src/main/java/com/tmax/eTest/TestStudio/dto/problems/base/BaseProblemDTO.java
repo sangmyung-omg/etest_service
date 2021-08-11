@@ -23,11 +23,11 @@ public class BaseProblemDTO {
 	private String imgSrc;
 	private Long timeRecommendation;
 	private String creatorID;
-	private Timestamp createDate;
+	private Date createDate;
 	private String validatorID;
-	private Timestamp validateDate;
+	private Date validateDate;
 	private String editorID;
-	private Timestamp editDate;
+	private Date editDate;
 	private String source;
 	private String intention;
 	private String questionInitial;

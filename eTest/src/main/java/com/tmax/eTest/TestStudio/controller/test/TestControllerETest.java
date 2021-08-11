@@ -17,10 +17,17 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.tmax.eTest.Common.model.problem.DiagnosisProblem;
+import com.tmax.eTest.Common.model.problem.ProblemChoice;
+import com.tmax.eTest.Common.model.uk.ProblemUKRelation;
 import com.tmax.eTest.TestStudio.controller.component.TestProblemApiComponentETest;
+import com.tmax.eTest.TestStudio.dto.problems.base.BaseTestProblemSetDTO;
 import com.tmax.eTest.TestStudio.dto.problems.in.GetProblemDTOIn;
+import com.tmax.eTest.TestStudio.dto.problems.in.PostTestProblemDTOIn;
 import com.tmax.eTest.TestStudio.dto.problems.out.GetTestProblemDTOOut;
+import com.tmax.eTest.TestStudio.repository.ProbChoiceQRepositoryETest;
 import com.tmax.eTest.TestStudio.service.DiagProblemServiceETest;
+import com.tmax.eTest.TestStudio.service.ProbChoiceServiceETest;
+import com.tmax.eTest.TestStudio.service.ProbUKRelServiceETest;
 
 import lombok.RequiredArgsConstructor;
 
@@ -31,7 +38,10 @@ public class TestControllerETest {
 	
 	private final TestProblemApiComponentETest problemApiComponent;
 	private final DiagProblemServiceETest diagProblemServiceETest;
-	
+	private final TestProblemQRepositoryETest tempTestRepository; 
+	private final ProbChoiceServiceETest probChoiceServiceETest;
+	private final ProbUKRelServiceETest probUKRelServiceETest;
+	private final ProbChoiceQRepositoryETest probChoiceQRepositoryETest;
 	/**
 	 * 등록
 	 * new ResponseEntity<>(probGetResponse, HttpStatus.ACCEPTED);
@@ -59,9 +69,117 @@ public class TestControllerETest {
 		}
 	}
 	
+	/**
+	 * 
+	 * qdsl
+	 */
+	@GetMapping("/qdsl1")
+	public ResponseEntity<String> qdslTest(
+//			@RequestBody CreateDiagProblemRequest request
+			) {
+		
+		try {
+			
+			String output = tempTestRepository.searchLatestProblem().getProbID().toString();
+			
+			return new ResponseEntity<>(output, HttpStatus.OK);
+			
+		}catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	@GetMapping("/qdsl2")
+	public ResponseEntity<String> qdslTest2(
+//			@RequestBody CreateDiagProblemRequest request
+			) {
+		
+		try {
+			
+			String output = tempTestRepository.searchLatestProblem().getProbID().toString();
+			
+			return new ResponseEntity<>(output, HttpStatus.OK);
+			
+		}catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
 	
+	//problemchoice
+	@GetMapping("/pbCD")
+	public ResponseEntity<String> probChoiceDelTest(
+//			@RequestBody CreateDiagProblemRequest request
+			) {
+		
+		try {
+			Long output = probChoiceQRepositoryETest.probChoiceDeleteByProbId(2000);
+			
+			return new ResponseEntity<>(output.toString(), HttpStatus.OK);
+			
+		}catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	//
+	@GetMapping("/pbCG")
+	public ResponseEntity<String> probChoiceGetTest(
+//			@RequestBody CreateDiagProblemRequest request
+			) {
+		
+		try {
+			List<ProblemChoice> result = probChoiceServiceETest.findAllByProbId(1001L);
+			List<String> output = new ArrayList<String>();
+			for(ProblemChoice pc : result ) {
+				output.add( String.valueOf( pc.getChoiceNum() ) );
+				System.out.println(pc.getChoiceNum());
+			}
+			
+			return new ResponseEntity<>(output.toString(), HttpStatus.OK);
+			
+		}catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	@PutMapping("/pbCU")
+	public ResponseEntity<String> probChoicePutTest(
+			@RequestBody PostTestProblemDTOIn request
+			) {
+		
+		try {
+			probChoiceServiceETest.probChoiceUpdate("testuser", request.getTestProblems().get(0).getProbChoices(),2019L);
+			List<String> output = new ArrayList<String>();
+			
+			
+			return new ResponseEntity<>(output.toString(), HttpStatus.OK);
+			
+		}catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	@GetMapping("/pbUKRG")
+	public ResponseEntity<String> probUKRGetTest(
+//			@RequestBody CreateDiagProblemRequest request
+			) {
+		
+		try {
+			
+			List<ProblemUKRelation> result = probUKRelServiceETest.findAllByProbId(1001L);
+			List<String> output = new ArrayList<String>();
+			for(ProblemUKRelation pc : result ) {
+				output.add( String.valueOf( pc.getUkId() ) );
+				System.out.println(pc.getUkId());
+			}
+			
+			return new ResponseEntity<>(output.toString(), HttpStatus.OK);
+			
+		}catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
 	
-
-	
-
 }
