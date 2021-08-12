@@ -51,6 +51,77 @@ paths:
           description: success
         400:
           description: bad input parameter
+# 
+  /TestProblems:
+    get:
+      tags:
+      - teststudio
+      summary: get testProblems
+      description:  
+        미니진단 문제를 가져옵니다.
+      parameters:
+      - in: body
+        required: true
+        schema:
+              $ref: '#/definitions/GetProblemDTOIn'
+      responses:
+        200:
+          description: success
+          schema:
+            $ref: '#/definitions/GetTestProblemDTOOut'
+        400:
+          description: bad input parameter
+
+    post:
+      tags:
+      - teststudio
+      summary: create testProblems
+      description:  
+        미니진단 문제를 생성합니다.
+      parameters:
+      - in: body
+        required: true
+        schema:
+              $ref: '#/definitions/PostOrPutTestProblemDTOIn'
+      responses:
+        200:
+          description: success
+        400:
+          description: bad input parameter    
+
+    put:
+      tags:
+      - teststudio
+      summary: update testProblems
+      description:  
+        미니진단 문제를 수정합니다.
+      parameters:
+      - in: body
+        required: true
+        schema:
+              $ref: '#/definitions/PostOrPutTestProblemDTOIn'
+      responses:
+        200:
+          description: success
+        400:
+          description: bad input parameter
+
+    delete:
+      tags:
+      - teststudio
+      summary: delete testProblems
+      description:  
+        미니진단 문제를 *db에서 완전히* 삭제합니다.
+      parameters:
+      - in: body
+        required: true
+        schema:
+              $ref: '#/definitions/GetProblemDTOIn'
+      responses:
+        200:
+          description: success
+        400:
+          description: bad input parameter
 
           #  -----------------------------------------------------def  #a1
 
@@ -94,8 +165,8 @@ definitions:
                 type: string
               category:
                 type: string
-              imgSrc:
-                type: string
+              # imgSrc:
+              #   type: string
               timeRecommendation:
                 type: string
               creatorID:
@@ -240,8 +311,177 @@ definitions:
                 status:
                   type: string
 
+  GetTestProblemDTOOut:
+    type: object
+    properties:
+     testProblems:
+      type: array
+      items:
+        type: object
+        properties: 
+          problem:
+            type: object
+            properties: 
+              probID:
+                type: string
+                example: "1"
+              answerType:
+                type: string
+              question:
+                type: string
+              solution:
+                type: string
+              difficulty:
+                type: string
+              category:
+                type: string
+              # imgSrc:
+              #   type: string
+              timeRecommendation:
+                type: string
+              creatorID:
+                type: string
+              createDate:
+                type: string
+              validatorID:
+                type: string
+              validateDate:
+                type: string
+              editorID:
+                type: string
+              editDate:
+                type: string
+              source:
+                type: string
+              intention:
+                type: string
+              questionInitial:
+                type: string
+              solutionInitial:
+                type: string
+              imgsOut:
+                type: string
 
-                  
+          probChoices:
+            type: array
+            items:
+              type: object
+              properties: 
+                choiceNum:
+                  type: string
+                ukID:
+                  type: string
+                choiceScore:
+                  type: string
+
+          probUKRels:
+            type: array
+            items:
+              type: object
+              properties:
+                ukID:
+                  type: string
+
+          testProblem:
+            type: object
+            properties: 
+              partID:
+                type: string
+              subject:
+                type: string
+              status:
+                type: string
+
+
+  PostOrPutTestProblemDTOIn:
+    type: object
+    required:
+    - userID
+    - diagProblems
+    properties:
+      userID:
+        type: string
+        example: 'userIDSample'
+      testProblems:
+        type: array
+        items:
+          type: object
+          properties:
+            problem:
+              type: object
+              properties: 
+                probID:
+                  type: string
+                  example: "string : no need to fill in for Post API !"
+                answerType:
+                  type: string
+                question:
+                  type: string
+                solution:
+                  type: string
+                difficulty:
+                  type: string
+                category:
+                  type: string
+                # imgSrc:
+                #   type: string
+                timeRecommendation:
+                  type: string
+                # creatorID:
+                #   type: string
+                # createDate:
+                #   type: string
+                # validatorID:
+                #   type: string
+                # validateDate:
+                #   type: string
+                # editorID:
+                #   type: string
+                # editDate:
+                #   type: string
+                source:
+                  type: string
+                intention:
+                  type: string
+                questionInitial:
+                  type: string
+                solutionInitial:
+                  type: string
+                imgListIn:
+                  type: array
+                  items:
+                    type: string
+
+            probChoices:
+              type: array
+              items:
+                type: object
+                properties: 
+                  choiceNum:
+                    type: string
+                  ukID:
+                    type: string
+                  choiceScore:
+                    type: string
+
+            probUKRels:
+              type: array
+              items:
+                type: object
+                properties:
+                  ukID:
+                    type: string
+
+            testProblem:
+              type: object
+              properties: 
+                partID:
+                  type: string
+                subject:
+                  type: string
+                status:
+                  type: string
+
   CurriculumList:
     type: object
     required:
