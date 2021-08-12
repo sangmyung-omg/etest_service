@@ -21,7 +21,7 @@ public class BaseProblemDTO {
 	private String difficulty;
 	private String category;
 	private String imgSrc;
-	private Long timeRecommendation;
+	private String timeRecommendation;
 	private String creatorID;
 	private Date createDate;
 	private String validatorID;

@@ -85,7 +85,7 @@ public class ProblemServiceETest {
 		}
 		
 		if(requestInfo.getTimeRecommendation()!=null)
-			problem.setTimeReco(requestInfo.getTimeRecommendation());
+			problem.setTimeReco( Long.parseLong(requestInfo.getTimeRecommendation()) );
 		
 		if(requestInfo.getSource()!=null)
 			problem.setSource(requestInfo.getSource());
