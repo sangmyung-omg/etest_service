@@ -6,7 +6,9 @@ import static com.tmax.eTest.Common.model.video.QVideoHashtag.videoHashtag;
 import static com.tmax.eTest.Common.model.video.QVideoUkRel.videoUkRel;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
+import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -14,6 +16,7 @@ import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.tmax.eTest.Common.model.video.Video;
 import com.tmax.eTest.Contents.dto.SortType;
+import com.tmax.eTest.Contents.dto.VideoJoin;
 import com.tmax.eTest.Contents.exception.ContentsException;
 import com.tmax.eTest.Contents.exception.ErrorCode;
 import com.tmax.eTest.Contents.util.CommonUtils;
@@ -45,16 +48,18 @@ public class VideoRepositorySupport extends QuerydslRepositorySupport {
     }
   }
 
-  public List<Video> findVideosByUserAndCurriculum(String userId, Long curriculumId, SortType sort, String keyword) {
-    return query.selectFrom(video).leftJoin(video.videoBookmarks, videoBookmark).on(userEq(userId))
-        .where(curriculumEq(curriculumId)).where(checkKeyword(keyword)).orderBy(getVideoSortedColumn(sort)).fetch();
+  public List<VideoJoin> findVideosByUserAndCurriculum(String userId, Long curriculumId, SortType sort,
+      String keyword) {
+    return tupleToJoin(query.select(video, videoBookmark.userUuid).from(video)
+        .leftJoin(video.videoBookmarks, videoBookmark).on(userEq(userId)).where(curriculumEq(curriculumId))
+        .where(checkKeyword(keyword)).orderBy(getVideoSortedColumn(sort)).fetch());
   }
 
-  public List<Video> findBookmarkVideosByUserAndCurriculum(String userId, Long curriculumId, SortType sort,
+  public List<VideoJoin> findBookmarkVideosByUserAndCurriculum(String userId, Long curriculumId, SortType sort,
       String keyword) {
-    return query.selectFrom(video).join(video.videoBookmarks, videoBookmark)
+    return tupleToJoin(query.select(video, videoBookmark.userUuid).from(video).join(video.videoBookmarks, videoBookmark)
         .where(userEq(userId), curriculumEq(curriculumId)).where(checkKeyword(keyword))
-        .orderBy(getVideoSortedColumn(sort)).fetch();
+        .orderBy(getVideoSortedColumn(sort)).fetch());
   }
 
   private BooleanExpression userEq(String userId) {
@@ -73,6 +78,11 @@ public class VideoRepositorySupport extends QuerydslRepositorySupport {
                     videoUkRel.ukMaster.ukName.contains(keyword))))
             .or(video.videoHashtags.any().in(JPAExpressions.selectFrom(videoHashtag).where(videoHashtag.video.eq(video),
                 videoHashtag.hashtag.name.contains(keyword))));
+  }
+
+  private List<VideoJoin> tupleToJoin(List<Tuple> tuples) {
+    return tuples.stream().map(tuple -> new VideoJoin(tuple.get(video), tuple.get(videoBookmark.userUuid)))
+        .collect(Collectors.toList());
   }
 
 }

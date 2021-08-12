@@ -8,6 +8,7 @@ import com.tmax.eTest.Common.model.book.BookBookmark;
 import com.tmax.eTest.Common.model.book.BookBookmarkId;
 import com.tmax.eTest.Common.repository.book.BookBookmarkRepository;
 import com.tmax.eTest.Contents.dto.BookDTO;
+import com.tmax.eTest.Contents.dto.BookJoin;
 import com.tmax.eTest.Contents.dto.ListDTO;
 import com.tmax.eTest.Contents.dto.SuccessDTO;
 import com.tmax.eTest.Contents.exception.ContentsException;
@@ -29,13 +30,13 @@ public class BookService {
   private BookRepositorySupport bookRepositorySupport;
 
   public ListDTO.Book getBookList(String userId, String keyword) {
-    List<Book> books = bookRepositorySupport.findBooksByUser(userId, keyword);
-    return convertBookToDTO(books);
+    List<BookJoin> books = bookRepositorySupport.findBooksByUser(userId, keyword);
+    return convertBookJoinToDTO(books);
   }
 
   public ListDTO.Book getBookmarkBookList(String userId, String keyword) {
-    List<Book> books = bookRepositorySupport.findBookmarkBooksByUser(userId, keyword);
-    return convertBookToDTO(books);
+    List<BookJoin> books = bookRepositorySupport.findBookmarkBooksByUser(userId, keyword);
+    return convertBookJoinToDTO(books);
   }
 
   @Transactional
@@ -59,12 +60,23 @@ public class BookService {
     return new SuccessDTO(true);
   }
 
-  public ListDTO.Book convertBookToDTO(List<Book> books) {
-    return new ListDTO.Book(books.size(),
-        books.stream()
-            .map(book -> new BookDTO(book.getBookId(), book.getBookSrc(), book.getTitle(),
-                book.getCreateDate().toString(), book.getCreatorId(), book.getImgSrc(), book.getDescription(),
-                !CommonUtils.objectNullcheck(book.getBookBookmarks())))
-            .collect(Collectors.toList()));
+  // public ListDTO.Book convertBookToDTO(List<Book> books) {
+  // return new ListDTO.Book(books.size(),
+  // books.stream()
+  // .map(book -> new BookDTO(book.getBookId(), book.getBookSrc(),
+  // book.getTitle(),
+  // book.getCreateDate().toString(), book.getCreatorId(), book.getImgSrc(),
+  // book.getDescription(),
+  // !CommonUtils.objectNullcheck(book.getBookBookmarks())))
+  // .collect(Collectors.toList()));
+  // }
+
+  public ListDTO.Book convertBookJoinToDTO(List<BookJoin> bookJoins) {
+    return new ListDTO.Book(bookJoins.size(), bookJoins.stream().map(bookJoin -> {
+      Book book = bookJoin.getBook();
+      return new BookDTO(book.getBookId(), book.getBookSrc(), book.getTitle(), book.getCreateDate().toString(),
+          book.getCreatorId(), book.getImgSrc(), book.getDescription(),
+          !CommonUtils.stringNullCheck(bookJoin.getUserUuid()));
+    }).collect(Collectors.toList()));
   }
 }

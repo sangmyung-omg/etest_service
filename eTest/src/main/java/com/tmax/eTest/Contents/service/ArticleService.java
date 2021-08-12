@@ -10,6 +10,7 @@ import com.tmax.eTest.Common.model.article.ArticleBookmark;
 import com.tmax.eTest.Common.model.article.ArticleBookmarkId;
 import com.tmax.eTest.Common.repository.article.ArticleBookmarkRepository;
 import com.tmax.eTest.Contents.dto.ArticleDTO;
+import com.tmax.eTest.Contents.dto.ArticleJoin;
 import com.tmax.eTest.Contents.dto.ListDTO;
 import com.tmax.eTest.Contents.dto.SuccessDTO;
 import com.tmax.eTest.Contents.exception.ContentsException;
@@ -30,13 +31,13 @@ public class ArticleService {
   private ArticleRepositorySupport articleRepositorySupport;
 
   public ListDTO.Article getArticleList(String userId, String keyword) {
-    List<Article> articles = articleRepositorySupport.findArticlesByUser(userId, keyword);
-    return convertArticleToDTO(articles);
+    List<ArticleJoin> articles = articleRepositorySupport.findArticlesByUser(userId, keyword);
+    return convertArticleJoinToDTO(articles);
   }
 
   public ListDTO.Article getBookmarkArticleList(String userId, String keyword) {
-    List<Article> articles = articleRepositorySupport.findBookmarkArticlesByUser(userId, keyword);
-    return convertArticleToDTO(articles);
+    List<ArticleJoin> articles = articleRepositorySupport.findBookmarkArticlesByUser(userId, keyword);
+    return convertArticleJoinToDTO(articles);
   }
 
   @Transactional
@@ -60,12 +61,27 @@ public class ArticleService {
     return new SuccessDTO(true);
   }
 
-  public ListDTO.Article convertArticleToDTO(List<Article> articles) {
-    return new ListDTO.Article(articles.size(), articles.stream()
-        .map(article -> new ArticleDTO(article.getArticleId(), article.getArticleUrl(), article.getTitle(),
-            article.getCreateDate().toString(), article.getCreatorId(), article.getDescription(), article.getImgSrc(),
-            article.getSource(), !CommonUtils.objectNullcheck(article.getArticleBookmarks()), article.getArticleUks()
-                .stream().map(articleUks -> articleUks.getUkMaster().getUkName()).collect(Collectors.toList())))
-        .collect(Collectors.toList()));
+  // public ListDTO.Article convertArticleToDTO(List<Article> articles) {
+  // return new ListDTO.Article(articles.size(), articles.stream()
+  // .map(article -> new ArticleDTO(article.getArticleId(),
+  // article.getArticleUrl(), article.getTitle(),
+  // article.getCreateDate().toString(), article.getCreatorId(),
+  // article.getDescription(), article.getImgSrc(),
+  // article.getSource(),
+  // !CommonUtils.objectNullcheck(article.getArticleBookmarks()),
+  // article.getArticleUks()
+  // .stream().map(articleUks ->
+  // articleUks.getUkMaster().getUkName()).collect(Collectors.toList())))
+  // .collect(Collectors.toList()));
+  // }
+
+  public ListDTO.Article convertArticleJoinToDTO(List<ArticleJoin> articleJoins) {
+    return new ListDTO.Article(articleJoins.size(), articleJoins.stream().map(articleJoin -> {
+      Article article = articleJoin.getArticle();
+      return new ArticleDTO(article.getArticleId(), article.getArticleUrl(), article.getTitle(),
+          article.getCreateDate().toString(), article.getCreatorId(), article.getDescription(), article.getImgSrc(),
+          article.getSource(), !CommonUtils.stringNullCheck(articleJoin.getUserUuid()), article.getArticleUks().stream()
+              .map(articleUks -> articleUks.getUkMaster().getUkName()).collect(Collectors.toList()));
+    }).collect(Collectors.toList()));
   }
 }

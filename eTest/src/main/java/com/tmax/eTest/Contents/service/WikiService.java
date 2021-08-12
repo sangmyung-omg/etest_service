@@ -10,6 +10,7 @@ import com.tmax.eTest.Common.repository.wiki.WikiBookmarkRepository;
 import com.tmax.eTest.Contents.dto.ListDTO;
 import com.tmax.eTest.Contents.dto.SuccessDTO;
 import com.tmax.eTest.Contents.dto.WikiDTO;
+import com.tmax.eTest.Contents.dto.WikiJoin;
 import com.tmax.eTest.Contents.exception.ContentsException;
 import com.tmax.eTest.Contents.exception.ErrorCode;
 import com.tmax.eTest.Contents.repository.support.WikiRepositorySupport;
@@ -28,13 +29,13 @@ public class WikiService {
   private WikiRepositorySupport wikiRepositorySupport;
 
   public ListDTO.Wiki getWikiList(String userId, String keyword) {
-    List<Wiki> wikis = wikiRepositorySupport.findWikisByUser(userId, keyword);
-    return convertWikiToDTO(wikis);
+    List<WikiJoin> wikis = wikiRepositorySupport.findWikisByUser(userId, keyword);
+    return convertWikiJoinToDTO(wikis);
   }
 
   public ListDTO.Wiki getBookmarkWikiList(String userId, String keyword) {
-    List<Wiki> wikis = wikiRepositorySupport.findBookmarkWikisByUser(userId, keyword);
-    return convertWikiToDTO(wikis);
+    List<WikiJoin> wikis = wikiRepositorySupport.findBookmarkWikisByUser(userId, keyword);
+    return convertWikiJoinToDTO(wikis);
   }
 
   @Transactional
@@ -58,13 +59,27 @@ public class WikiService {
     return new SuccessDTO(true);
   }
 
-  public ListDTO.Wiki convertWikiToDTO(List<Wiki> wikis) {
-    return new ListDTO.Wiki(wikis.size(),
-        wikis.stream()
-            .map(wiki -> new WikiDTO(wiki.getWikiId(), wiki.getTitle(), wiki.getCreateDate().toString(),
-                wiki.getCreatorId(), wiki.getDescription(), wiki.getSummary(), wiki.getSource(),
-                !CommonUtils.objectNullcheck(wiki.getWikiBookmarks()), wiki.getWikiUks().stream()
-                    .map(wikiUks -> wikiUks.getUkMaster().getUkName()).collect(Collectors.toList())))
-            .collect(Collectors.toList()));
+  // public ListDTO.Wiki convertWikiToDTO(List<Wiki> wikis) {
+  // return new ListDTO.Wiki(wikis.size(),
+  // wikis.stream()
+  // .map(wiki -> new WikiDTO(wiki.getWikiId(), wiki.getTitle(),
+  // wiki.getCreateDate().toString(),
+  // wiki.getCreatorId(), wiki.getDescription(), wiki.getSummary(),
+  // wiki.getSource(),
+  // !CommonUtils.objectNullcheck(wiki.getWikiBookmarks()),
+  // wiki.getWikiUks().stream()
+  // .map(wikiUks ->
+  // wikiUks.getUkMaster().getUkName()).collect(Collectors.toList())))
+  // .collect(Collectors.toList()));
+  // }
+
+  public ListDTO.Wiki convertWikiJoinToDTO(List<WikiJoin> wikiJoins) {
+    return new ListDTO.Wiki(wikiJoins.size(), wikiJoins.stream().map(wikiJoin -> {
+      Wiki wiki = wikiJoin.getWiki();
+      return new WikiDTO(wiki.getWikiId(), wiki.getTitle(), wiki.getCreateDate().toString(), wiki.getCreatorId(),
+          wiki.getDescription(), wiki.getSummary(), wiki.getSource(),
+          !CommonUtils.stringNullCheck(wikiJoin.getUserUuid()),
+          wiki.getWikiUks().stream().map(wikiUks -> wikiUks.getUkMaster().getUkName()).collect(Collectors.toList()));
+    }).collect(Collectors.toList()));
   }
 }

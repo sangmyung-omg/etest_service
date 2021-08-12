@@ -13,6 +13,7 @@ import com.tmax.eTest.Contents.dto.SortType;
 import com.tmax.eTest.Contents.dto.SuccessDTO;
 import com.tmax.eTest.Contents.dto.VideoCurriculumDTO;
 import com.tmax.eTest.Contents.dto.VideoDTO;
+import com.tmax.eTest.Contents.dto.VideoJoin;
 import com.tmax.eTest.Contents.exception.ContentsException;
 import com.tmax.eTest.Contents.exception.ErrorCode;
 import com.tmax.eTest.Contents.repository.support.VideoCurriculumRepositorySupport;
@@ -29,6 +30,12 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Service
 public class VideoService {
+
+  private enum VideoType {
+    YOUTUBE, SELF
+  }
+
+  private final String YOUTUBE_TYPE = "youtu.be";
 
   @Autowired
   private VideoCurriculumRepositorySupport videoCurriculumRepositorySupport;
@@ -48,14 +55,14 @@ public class VideoService {
   }
 
   public ListDTO.Video getVideoList(String userId, Long curriculumId, SortType sort, String keyword) {
-    List<Video> videos = videoRePositorySupport.findVideosByUserAndCurriculum(userId, curriculumId, sort, keyword);
-    return convertVideoToDTO(videos);
+    List<VideoJoin> videos = videoRePositorySupport.findVideosByUserAndCurriculum(userId, curriculumId, sort, keyword);
+    return convertVideoJoinToDTO(videos);
   }
 
   public ListDTO.Video getBookmarkVideoList(String userId, Long curriculumId, SortType sort, String keyword) {
-    List<Video> videos = videoRePositorySupport.findBookmarkVideosByUserAndCurriculum(userId, curriculumId, sort,
+    List<VideoJoin> videos = videoRePositorySupport.findBookmarkVideosByUserAndCurriculum(userId, curriculumId, sort,
         keyword);
-    return convertVideoToDTO(videos);
+    return convertVideoJoinToDTO(videos);
   }
 
   @Transactional
@@ -101,17 +108,39 @@ public class VideoService {
     return new SuccessDTO(true);
   }
 
-  public ListDTO.Video convertVideoToDTO(List<Video> videos) {
-    return new ListDTO.Video(videos.size(),
-        videos.stream()
-            .map(video -> new VideoDTO(video.getVideoId(), video.getVideoSrc(), video.getTitle(),
-                video.getCreateDate().toString(), video.getCreatorId(), video.getImgSrc(),
-                video.getVideoCurriculum().getSubject(), video.getTotalTime(), video.getVideoHit().getHit(), !CommonUtils.objectNullcheck(video.getVideoBookmarks()),
-                video.getVideoUks().stream().map(videoUks -> videoUks.getUkMaster().getUkName())
-                    .collect(Collectors.toList()),
-                video.getVideoHashtags().stream().map(videoHashtags -> videoHashtags.getHashtag().getName())
-                    .collect(Collectors.toList())))
-            .collect(Collectors.toList()));
+  // public ListDTO.Video convertVideoToDTO(List<Video> videos) {
+  // return new ListDTO.Video(videos.size(), videos.stream().map(video -> new
+  // VideoDTO(video.getVideoId(),
+  // video.getVideoSrc(), video.getTitle(), video.getCreateDate().toString(),
+  // video.getCreatorId(),
+  // video.getImgSrc(), video.getVideoCurriculum().getSubject(),
+  // video.getTotalTime(), video.getVideoHit().getHit(),
+  // !CommonUtils.objectNullcheck(video.getVideoBookmarks()),
+  // !CommonUtils.stringNullCheck(video.getVideoSrc()) &&
+  // video.getVideoSrc().contains(YOUTUBE_TYPE)
+  // ? VideoType.YOUTUBE.toString()
+  // : VideoType.SELF.toString(),
+  // video.getVideoUks().stream().map(videoUks ->
+  // videoUks.getUkMaster().getUkName()).collect(Collectors.toList()),
+  // video.getVideoHashtags().stream().map(videoHashtags ->
+  // videoHashtags.getHashtag().getName())
+  // .collect(Collectors.toList())))
+  // .collect(Collectors.toList()));
+  // }
+
+  public ListDTO.Video convertVideoJoinToDTO(List<VideoJoin> videoJoins) {
+    return new ListDTO.Video(videoJoins.size(), videoJoins.stream().map(videoJoin -> {
+      Video video = videoJoin.getVideo();
+      return new VideoDTO(video.getVideoId(), video.getVideoSrc(), video.getTitle(), video.getCreateDate().toString(),
+          video.getCreatorId(), video.getImgSrc(), video.getVideoCurriculum().getSubject(), video.getTotalTime(),
+          video.getVideoHit().getHit(), !CommonUtils.stringNullCheck(videoJoin.getUserUuid()),
+          !CommonUtils.stringNullCheck(video.getVideoSrc()) && video.getVideoSrc().contains(YOUTUBE_TYPE)
+              ? VideoType.YOUTUBE.toString()
+              : VideoType.SELF.toString(),
+          video.getVideoUks().stream().map(videoUks -> videoUks.getUkMaster().getUkName()).collect(Collectors.toList()),
+          video.getVideoHashtags().stream().map(videoHashtags -> videoHashtags.getHashtag().getName())
+              .collect(Collectors.toList()));
+    }).collect(Collectors.toList()));
   }
 
   public ListDTO.Curriculum convertVideoCurriculumToDTO(List<VideoCurriculum> curriculums) {

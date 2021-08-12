@@ -5,11 +5,14 @@ import static com.tmax.eTest.Common.model.article.QArticleBookmark.articleBookma
 import static com.tmax.eTest.Common.model.article.QArticleUkRel.articleUkRel;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
+import com.querydsl.core.Tuple;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.tmax.eTest.Common.model.article.Article;
+import com.tmax.eTest.Contents.dto.ArticleJoin;
 import com.tmax.eTest.Contents.util.CommonUtils;
 
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
@@ -24,14 +27,16 @@ public class ArticleRepositorySupport extends QuerydslRepositorySupport {
     this.query = query;
   }
 
-  public List<Article> findArticlesByUser(String userId, String keyword) {
-    return query.selectFrom(article).leftJoin(article.articleBookmarks, articleBookmark).on(userEq(userId))
-        .where(checkKeyword(keyword)).orderBy().fetch();
+  public List<ArticleJoin> findArticlesByUser(String userId, String keyword) {
+    return tupleToJoin(query.select(article, articleBookmark.userUuid).from(article)
+        .leftJoin(article.articleBookmarks, articleBookmark).on(userEq(userId)).where(checkKeyword(keyword)).orderBy()
+        .fetch());
   }
 
-  public List<Article> findBookmarkArticlesByUser(String userId, String keyword) {
-    return query.selectFrom(article).join(article.articleBookmarks, articleBookmark).where(userEq(userId))
-        .where(checkKeyword(keyword)).orderBy().fetch();
+  public List<ArticleJoin> findBookmarkArticlesByUser(String userId, String keyword) {
+    return tupleToJoin(
+        query.select(article, articleBookmark.userUuid).from(article).join(article.articleBookmarks, articleBookmark)
+            .where(userEq(userId)).where(checkKeyword(keyword)).orderBy().fetch());
   }
 
   private BooleanExpression userEq(String userId) {
@@ -44,4 +49,8 @@ public class ArticleRepositorySupport extends QuerydslRepositorySupport {
             .where(articleUkRel.article.eq(article), articleUkRel.ukMaster.ukName.contains(keyword))));
   }
 
+  private List<ArticleJoin> tupleToJoin(List<Tuple> tuples) {
+    return tuples.stream().map(tuple -> new ArticleJoin(tuple.get(article), tuple.get(articleBookmark.userUuid)))
+        .collect(Collectors.toList());
+  }
 }

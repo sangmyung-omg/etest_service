@@ -115,6 +115,9 @@ paths:
                           type: integer
                         bookmark: 
                           type: boolean
+                        videoType:
+                          type: string
+                          description: YOUTBUE(유튜브 영상)/SELF(자체 제작)
                         uks:
                           type: array
                           items:
@@ -194,6 +197,9 @@ paths:
                           type: integer
                         bookmark: 
                           type: boolean
+                        videoType:
+                          type: string
+                          description: YOUTBUE(유튜브 영상)/SELF(자체 제작)
                         uks:
                           type: array
                           items:

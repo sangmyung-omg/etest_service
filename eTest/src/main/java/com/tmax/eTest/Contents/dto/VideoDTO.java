@@ -19,6 +19,7 @@ public class VideoDTO {
   private Float totalTime;
   private Integer hit;
   private boolean bookmark;
+  private String videoType;
   private List<String> uks;
   private List<String> hashtags;
 
