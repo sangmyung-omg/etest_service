@@ -88,7 +88,8 @@ public class TestProblemApiComponentETest {
 				problem.setDifficulty(requestInfo.getDifficulty());
 				problem.setCategory(requestInfo.getCategory());
 				problem.setImgSrc(requestInfo.getImgSrc());
-				problem.setTimeReco(Long.parseLong( requestInfo.getTimeRecommendation() ) );
+				if(requestInfo.getTimeRecommendation()!=null)
+					problem.setTimeReco(Long.parseLong( requestInfo.getTimeRecommendation() ) );
 //				problem.setCreatorId(requestInfo.getCreatorID());
 //				problem.setCreateDate(requestInfo.getCreateDate());
 //				problem.setValiatorID(requestInfo.getValidatorID());
@@ -249,7 +250,8 @@ public class TestProblemApiComponentETest {
 							findProblem.getProbID().toString(), findProblem.getAnswerType(),
 							findProblem.getQuestion(), findProblem.getSolution(),
 							findProblem.getDifficulty(), findProblem.getCategory(),
-							findProblem.getImgSrc(), findProblem.getTimeReco().toString(),
+							findProblem.getImgSrc(),
+							findProblem.getTimeReco()==null? null: findProblem.getTimeReco().toString(),
 							findProblem.getCreatorId(), findProblem.getCreateDate(),
 							findProblem.getValiatorID(), findProblem.getValiateDate(),
 							findProblem.getEditorID(), findProblem.getEditDate(),
@@ -298,7 +300,10 @@ public class TestProblemApiComponentETest {
 					}
 					TestProblem testProblem = findProblem.getTestInfo();
 					BaseTestProblemDTO baseTestProblemDTO 
-						= new BaseTestProblemDTO( testProblem.getProbID().toString(), testProblem.getPart().getPartID().toString()
+						= new BaseTestProblemDTO( 
+//								testProblem.getProbID().toString(),
+								null,
+								testProblem.getPart().getPartID().toString()
 								, testProblem.getSubject(), testProblem.getStatus() );
 					outputBase.setTestProblem(baseTestProblemDTO);
 					
