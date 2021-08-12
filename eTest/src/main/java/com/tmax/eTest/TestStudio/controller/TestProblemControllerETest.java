@@ -153,7 +153,7 @@ public class TestProblemControllerETest {
 	public ResponseEntity<String> delete(@RequestBody DeleteProblemDTOIn request) {
 		
 		try {
-			String res = testProblemApiComponent.deleteProbComponent(request.getUserID(), Long.parseLong( request.getProbID() ) );
+			String res = testProblemApiComponent.deleteProbComponent(request.getUserID(), request.getProbID() );
 
 				return new ResponseEntity<>( res, HttpStatus.OK );
 

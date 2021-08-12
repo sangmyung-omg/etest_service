@@ -416,22 +416,22 @@ public class TestProblemApiComponentETest {
 	 *  삭제
 	 *  
 	 */
-	public String deleteProbComponent(String userId,Long probId) {
+	public String deleteProbComponent(String userId,List<Long> probIdList) {
 		
 		try {
 			
-			if(userId==null || probId==null ) return null;
+			if(userId==null || probIdList==null || probIdList.isEmpty() ) return null;
 //			 실제 데이터 삭제 
-			
-			problemServiceETest.problemDeleteById(probId);
-			probChoiceServiceETest.probChoiceDeleteAllByProbId(probId);
-			probUKRelServiceETest.probUKRelDeleteAllByProbId(probId);	
-			testProblemServiceETest.testProblemDeleteById(probId);	
-			
-			imageFileServerApiComponentETest.deleteImgSrcFileOfProbIDServiceComponent(probId);
-			imageFileServerApiComponentETest.deleteImgSrcFolerOfProbIDServiceComponent(probId);
+			for(Long probId : probIdList) {
+				problemServiceETest.problemDeleteById(probId);
+				probChoiceServiceETest.probChoiceDeleteAllByProbId(probId);
+				probUKRelServiceETest.probUKRelDeleteAllByProbId(probId);	
+				testProblemServiceETest.testProblemDeleteById(probId);	
+				
+				imageFileServerApiComponentETest.deleteImgSrcFileOfProbIDServiceComponent(probId);
+				imageFileServerApiComponentETest.deleteImgSrcFolerOfProbIDServiceComponent(probId);
+			}
 			imageFileServerApiComponentETest.deleteImgTempFolerOfUserIDServiceComponent(userId);
-	
 			return "success";
 			
 		}catch(Exception e) {
