@@ -210,19 +210,29 @@ public class TestProblemApiComponentETest {
 	 * prob 문제 조회 
 	 * probId List 받아 문제 조회, GetTestProblemDTOOut 반환
 	 */	
-	public GetTestProblemDTOOut testProblemsGetComponent(String probIdStr) throws Exception {
+	public GetTestProblemDTOOut testProblemsGetComponent(
+//			String probIdStr
+			List<Long> probIdList
+			) throws Exception {
 		
 			GetTestProblemDTOOut output = new GetTestProblemDTOOut( new ArrayList<BaseTestProblemSetDTO>() );
 			BaseTestProblemSetDTO outputBase = new BaseTestProblemSetDTO();
 			// set : probId []
-			String[] strProbIdList = probIdStr.replace(" ","").split(",");
+//			String[] strProbIdList = probIdStr.replace(" ","").split(",");
 			
-				for(String strProbId : strProbIdList) {
-					if(strProbId==null||strProbId=="") {
+//				for(String strProbId : strProbIdList) {
+//					if(strProbId==null||strProbId=="") {
+//						output.getTestProblems().add(null);
+//						continue;
+//					}
+//					Long probId = Long.parseLong(strProbId);	
+			
+				for(Long probId : probIdList) {
+					if(probId==null) {
 						output.getTestProblems().add(null);
 						continue;
 					}
-					Long probId = Long.parseLong(strProbId);
+
 					
 					Problem findProblem = problemServiceETest.findOneSet(probId);
 					
