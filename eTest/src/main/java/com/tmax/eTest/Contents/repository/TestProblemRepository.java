@@ -20,4 +20,6 @@ public interface TestProblemRepository extends  JpaRepository<TestProblem, Integ
 	// Integer findMaximumSetNum();
 
     List<TestProblem> findAllByProbIDNotIn(List<Integer> solvedProbId);
+
+	List<TestProblem> findAllByPartPartIDNotInAndProbIDNotIn(List<Integer> partId, List<Integer> probId);
 }

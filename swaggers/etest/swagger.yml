@@ -144,43 +144,23 @@ paths:
                 example:
                   message: success
 
-  /diagnosis/tendency:
+  /diagnosis:
     get:
       tags: [Test]
       operationId: DiagnosisTendencyProblemsGet
-      summary: 자가진단 성향문제 set (18 문항 예상) 요청
+      summary: 자가진단 set (성향 18 문항 & 지식 12 문항 = 총 30문항) 요청
+      description: 
+        유저 ID를 활용해 자가진단 성향/지식 문제 각각 반환 & 과거 중단한 이력 있으면 풀었던 문제 및 선택한 답, 그리고 찍기 알람 횟수 각각 반환 (첫 진입이면 null)
+      parameters:
+        - $ref: "#/components/parameters/userId"
       responses:
         '200':
           description: 성공
           content:
             application/json:
               schema:
-                $ref:  "#/components/schemas/tendencyProblemList"
+                $ref:  "#/components/schemas/diagnosisProblemList"
         
-        '500':
-          description: 실패
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  resultMessage:
-                    type: string
-                    example: "Error: status code 500"
-
-
-  /diagnosis/knowledge:
-    get:
-      tags: [Test]
-      operationId: DiagnosisKnowledgeProblemsGet
-      summary: 자가진단 지식문제 set (12 문항 예상) 요청
-      responses:
-        '200':
-          description: 성공
-          content:
-            application/json:
-              schema:
-                $ref:  "#/components/schemas/knowledgeProblemList"
         '500':
           description: 실패
           content:
@@ -197,8 +177,9 @@ paths:
       tags: [Test]
       operationId: MinitestProblemsGet
       summary: 미니테스트 set (20문항) 요청
+      description: 각 파트 별 문제 개수에 맞춰 문제 세트 반환 & 과거 풀이 이력 존재 시 과거 문제 리스트와 선택한 답, 그리고 찍기 알람 횟수 각각 반환 (첫 진입이면 null)
       parameters:
-        - $ref: "#/components/parameters/SetNum"
+        - $ref: "#/components/parameters/userId"
       responses:
         '200':
           description: 성공
@@ -413,11 +394,14 @@ paths:
                     resultMessage: Internal Server Error.
 components:
   schemas:
-    tendencyProblemList:
+    diagnosisProblemList:
       properties:
         resultMessage:
           type: string
           example: "Successfully returned"
+        diagProbSetId:
+          type: string
+          example: "2fc89ea8-fb4b-11eb-9a03-0242ac130003"
         tendencyProblems:
           type: array
           example:
@@ -427,11 +411,18 @@ components:
             - 14
             - 15
             - 16
-    knowledgeProblemList:
-      properties:
-        resultMessage:
-          type: string
-          example: "Successfully returned"
+            - 17
+            - 18
+            - 19
+            - 20
+            - 21
+            - 22
+            - 23
+            - 24
+            - 25
+            - 26
+            - 27
+            - 28
         knowledgeProblems:
           type: array
           example:
@@ -444,12 +435,49 @@ components:
             - [19,20,21]
             - [22,23,24]
             - [25,26,27]
+            - [28,29,30]
+            - [31,32,33]
+            - [34,35,36]
+        solvedProblems:
+          type: array
+          example:
+            - 11
+            - 12
+            - 13
+            - 14
+            - 15
+            - 16
+            - 17
+            - 18
+            - 19
+            - 20
+            - 21
+        solvedAnswers:
+          type: array
+          example:
+            - 1
+            - 4
+            - 1
+            - 1
+            - 1
+            - 2
+            - 2
+            - 1
+            - 1
+            - 2
+            - 3
+        guessAlarm:
+          type: integer
+          example: 0
 
     minitestmProblemList:
       properties:
         resultMessage:
           type: string
           example: "Successfully returned"
+        diagProbSetId:
+          type: string
+          example: "2fc89ea8-fb4b-11eb-9a03-0242ac130003"
         minitestProblems:
           type: array
           example:
@@ -473,12 +501,46 @@ components:
             - 18
             - 19
             - 20
+        continueProblems:
+          type: array
+          example:
+            - 21
+            - 22
+            - 23
+            - 24
+            - 25
+            - 26
+            - 27
+            - 28
+            - 29
+            - 30
+            - 31
+            - 32
+            - 33
+            - 34
+            - 35
+            - 36
+            - 37
+            - 38
+            - 39
+            - 40
+        continueAnswers:
+          type: array
+          example:
+            - 1
+            - 4
+            - 3
+            - 5
+            - 2
+        guessAlarm:
+          type: integer
+          example: 0
   parameters:
-    SetNum:
-      in: "query"
-      name: "set_num"
-      description: "선택할 미니테스트 세트 번호. 없으면 random 세트 반환"
+    userId:
+      in: "path"
+      name: "userId"
+      description: "유저 ID"
       schema:
-        type: integer
-        example: 1
-      required: false
+        type: string
+        example: "mkkang"
+      required: true
