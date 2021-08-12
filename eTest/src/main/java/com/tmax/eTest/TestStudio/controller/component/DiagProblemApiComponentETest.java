@@ -74,7 +74,7 @@ public class DiagProblemApiComponentETest {
 						findProblem.getProbID().toString(), findProblem.getAnswerType(),
 						findProblem.getQuestion(), findProblem.getSolution(),
 						findProblem.getDifficulty(), findProblem.getCategory(),
-						findProblem.getImgSrc(), findProblem.getTimeReco(),
+						findProblem.getImgSrc(), findProblem.getTimeReco().toString(),
 						findProblem.getCreatorId(), findProblem.getCreateDate(),
 						findProblem.getValiatorID(), findProblem.getValiateDate(),
 						findProblem.getEditorID(), findProblem.getEditDate(),
