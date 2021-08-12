@@ -16,5 +16,5 @@ public class PutTestProblemDTOIn {
 	//Long
 	private String userID;
 	//
-	private List<BaseTestProblemSetDTO> testproblems;
+	private List<BaseTestProblemSetDTO> testProblems;
 }

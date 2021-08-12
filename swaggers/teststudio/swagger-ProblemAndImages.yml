@@ -52,6 +52,24 @@ paths:
         400:
           description: bad input parameter
 # 
+  /DiagCurrStatus:
+    put:
+      tags:
+      - teststudio
+      summary: change status of diagnosis curriculum
+      description:  
+        자가진단 커리큘럼(주제) 에 대한 출제 상태를 변경 합니다 (출제 보류 <=> 출제 가능)
+      parameters:
+      - in: body
+        required: true
+        schema:
+              $ref: '#/definitions/PutDiagCurrStatusDTOIn'
+      responses:
+        200:
+          description: success
+        400:
+          description: bad input parameter
+# 
   /TestProblems:
     get:
       tags:
@@ -120,6 +138,50 @@ paths:
       responses:
         200:
           description: success
+        400:
+          description: bad input parameter
+# 
+  /Image:
+    post:
+      tags:
+      - teststudio
+      summary: post images
+      description:  
+        이미지를 업로드 합니다 (복수 img file 업로드가능)
+      consumes:
+      - multipart/form-data
+      parameters:
+      - in: formData
+        name: userID
+        type: string
+        required: true
+      - in: formData
+        name: img
+        type: file
+        required: true
+      responses:
+        200:
+          description: success
+        400:
+          description: bad input parameter
+# 
+  /ImageSrc:
+    get:
+      tags:
+      - teststudio
+      summary: get imgSrcs(list) for each problem
+      description:  
+        문제의 이미지 src(이름) 정보를 가져옵니다.
+      parameters:
+      - in: body
+        required: true
+        schema:
+              $ref: '#/definitions/GetProblemDTOIn'
+      responses:
+        200:
+          description: success
+          schema:
+            $ref: '#/definitions/GetProblemImageDTOOut'
         400:
           description: bad input parameter
 
@@ -308,9 +370,23 @@ definitions:
                   type: string
                 subject:
                   type: string
-                status:
-                  type: string
+                # status:
+                #   type: string
+# 
+  PutDiagCurrStatusDTOIn:
+    type: object
+    required:
+    - userID
+    - curriculumID
+    properties:
+      userID:
+        type: string
+        example: 'userIDSample'
+      curriculumID:
+        type: string
+        example: "33"
 
+# 
   GetTestProblemDTOOut:
     type: object
     properties:
@@ -397,7 +473,7 @@ definitions:
     type: object
     required:
     - userID
-    - diagProblems
+    - testProblems
     properties:
       userID:
         type: string
@@ -482,73 +558,22 @@ definitions:
                 status:
                   type: string
 
-  CurriculumList:
+  GetProblemImageDTOOut:
     type: object
-    required:
-    - id
-    - chapter
-    - section
-    - subSection
-    - status
     properties:
-      id:
-        type: integer
-        example: 27
-      chapter:
-        type: string
-        example: "성향"
-      section:
-        type: string
-        example: "투자 현황"
-      subSection:
-        type: string
-        example: "보유 주식 수"
-      setType:
-        type: string
-        example: "A"
-      subject:
-        type: string
-        example: "잘못된 기준점에 의한 의사결정 판단"
-      status:
-        type: string
-        example: "출제 보류"
-  PartList:
-    type: object
-    required:
-    - id
-    - name
-    - order
-    - count
-    properties:
-      id:
-        type: integer
-        example: 3
-      name:
-        type: string
-        example: "파트 3"
-      order:
-        type: integer
-        example: 3
-      count:
-        type: integer
-        example: 4
-  SelfProblemIdList:
-    type: object
-    required:
-    - id
-    - order
-    properties:
-      id:
-        type: integer
-        example: 453
-      order:
-        type: integer
-        example: 3
-      difficulty:
-        type: string
-        example: 중
-# Added by API Auto Mocking Plugin
-host: virtserver.swaggerhub.com
-basePath: /jinhyung_lee/test-studio/1.0.0
+     problemImages:
+      type: array
+      items:
+        type: object
+        properties: 
+          probID:
+            type: string
+          imgSrcs:
+            type: array
+            items:
+              type: string
+
+# host: virtserver.swaggerhub.com
+# basePath: /jinhyung_lee/test-studio/1.0.0
 schemes:
  - https
