@@ -309,8 +309,8 @@ public class TestProblemApiComponentETest {
 						
 			// 문제 n개 업데이트
 			Long idx = -1L;
-			if(request.getTestproblems() != null)
-			for(BaseTestProblemSetDTO requestInfo__ : request.getTestproblems()) {
+			if(request.getTestProblems() != null)
+			for(BaseTestProblemSetDTO requestInfo__ : request.getTestProblems()) {
 				idx++;
 				Long LongProbId = Long.parseLong(requestInfo__.getProblem().getProbID());
 				if( "출제".equals(requestInfo__.getTestProblem().getStatus()) || "보류".equals(requestInfo__.getTestProblem().getStatus())) {
