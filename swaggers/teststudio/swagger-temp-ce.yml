@@ -6,7 +6,7 @@ info:
   contact:
     email: changeon_lim@tmax.co.kr
 paths:
-  /uk:
+  /DiagProblems:
     get:
       tags:
       - teststudio
@@ -14,10 +14,10 @@ paths:
       requestBody:
         description: 자가진단 문제를 가져옵니다.
         required: true
-      content:
-       application/json:
-        schema:
-          $ref: '#/definitions/GetProblemDTOIn'
+        content:
+        application/json:
+          schema:
+            $ref: '#/definitions/GetProblemDTOIn'
       responses:
         200:
           description: success
