@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.tmax.eTest.TestStudio.controller.component.DiagProblemApiComponentETest;
 import com.tmax.eTest.TestStudio.controller.component.TestProblemApiComponentETest;
 import com.tmax.eTest.TestStudio.dto.problems.in.GetProblemDTOIn;
+import com.tmax.eTest.TestStudio.dto.problems.in.PutDiagCurrStatusDTOIn;
 import com.tmax.eTest.TestStudio.dto.problems.in.PutDiagProblemDTOIn;
 import com.tmax.eTest.TestStudio.dto.problems.out.GetDiagProblemDTOOut;
 import com.tmax.eTest.TestStudio.dto.problems.out.GetTestProblemDTOOut;
@@ -66,6 +67,22 @@ public class DiagProblemControllerETest {
 		
 		try {
 			String res = diagProblemApiComponent.updateProblemcomponent(request);
+
+				return new ResponseEntity<>( res, HttpStatus.OK );
+
+			
+		}catch(Exception e) {
+			 e.printStackTrace(); 
+			return new ResponseEntity<>( "fail", HttpStatus.INTERNAL_SERVER_ERROR );	
+		}
+	}
+	
+	@PutMapping("/DiagCurrStatus")
+	public ResponseEntity<String> updateDiagCurrStatus(
+			@RequestBody PutDiagCurrStatusDTOIn request) {
+		
+		try {
+			String res = diagProblemApiComponent.updateDiagCurrStatus(request);
 
 				return new ResponseEntity<>( res, HttpStatus.OK );
 

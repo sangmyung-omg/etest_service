@@ -449,15 +449,20 @@ public class ImageFileServerApiComponentETest {
 	}
 	
 	
-	public GetProblemImageDTOOut ImageListComponent(String probIdStr) throws Exception{
+	public GetProblemImageDTOOut ImageListComponent(
+//			String probIdStr
+			List<Long> probIdList
+			) throws Exception{
 		
-		if(probIdStr==null) return null;
+		if(probIdList==null || probIdList.isEmpty()) return null;
 		
-		String[] strProbIdList = probIdStr.replace(" ","").split(",");
+//		String[] strProbIdList = probIdStr.replace(" ","").split(",");
 		
 		 List<BaseProblemIDandImageSrcsDTO> outputBase = new ArrayList<BaseProblemIDandImageSrcsDTO>();
 		
-		for(String strProbId : strProbIdList) {
+//		for(String strProbId : strProbIdList) {
+	    for(Long probId : probIdList) {
+	    	String strProbId = probId.toString();
 			File folder = new File(pathUtilEtest.getDirPath() + File.separator + strProbId);
 			if( folder.exists()) {
 

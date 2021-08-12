@@ -7,6 +7,7 @@ import java.util.List;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
 
+import com.tmax.eTest.Common.model.problem.DiagnosisProblem;
 import com.tmax.eTest.Common.model.problem.Problem;
 import com.tmax.eTest.Common.model.problem.ProblemChoice;
 import com.tmax.eTest.Common.model.uk.ProblemUKRelation;
@@ -16,6 +17,7 @@ import com.tmax.eTest.TestStudio.dto.problems.base.BaseDiagProblemSetDTO;
 import com.tmax.eTest.TestStudio.dto.problems.base.BaseProbChoiceDTO;
 import com.tmax.eTest.TestStudio.dto.problems.base.BaseProbUKRelDTO;
 import com.tmax.eTest.TestStudio.dto.problems.base.BaseProblemDTO;
+import com.tmax.eTest.TestStudio.dto.problems.in.PutDiagCurrStatusDTOIn;
 import com.tmax.eTest.TestStudio.dto.problems.in.PutDiagProblemDTOIn;
 import com.tmax.eTest.TestStudio.dto.problems.out.GetDiagProblemDTOOut;
 import com.tmax.eTest.TestStudio.service.DiagCurriculumServiceETest;
@@ -37,7 +39,7 @@ public class DiagProblemApiComponentETest {
 	private final ProbChoiceServiceETest probChoiceServiceETest;
 	private final ProbUKRelServiceETest probUKRelServiceETest;
 	private final UKServiceETest ukServiceETest;
-//	private final DiagProblemServiceETest diagProblemServiceETest;
+	private final DiagProblemServiceETest diagProblemServiceETest;
 	private final DiagCurriculumServiceETest diagCurriculumServiceETest;
 	
 //	private final TestProblemApiComponentETest testProblemApiComponent;
@@ -48,22 +50,30 @@ public class DiagProblemApiComponentETest {
 	 * 문제 조회
 	 * 
 	 */
-	public GetDiagProblemDTOOut diagProblemsGetComponent(String probIdStr) throws Exception{
+	public GetDiagProblemDTOOut diagProblemsGetComponent(
+//			String probIdStr
+			List<Long> probIdList
+			) throws Exception{
 		
 		//
 		
 		GetDiagProblemDTOOut output = new GetDiagProblemDTOOut( new ArrayList<BaseDiagProblemSetDTO>() );
 		BaseDiagProblemSetDTO outputBase = new BaseDiagProblemSetDTO();
 		// set : probId []
-		String[] strProbIdList = probIdStr.replace(" ","").split(",");
+//		String[] strProbIdList = probIdStr.replace(" ","").split(",");
 		
-			for(String strProbId : strProbIdList) {
-				if(strProbId==null||strProbId=="") {
+//			for(String strProbId : strProbIdList) {
+//				if(strProbId==null||strProbId=="") {
+//					output.getDiagProblems().add(null);
+//					continue;
+//				}
+//				Long probId = Long.parseLong(strProbId);
+				
+			for(Long probId : probIdList) {
+				if(probId==null) {
 					output.getDiagProblems().add(null);
 					continue;
 				}
-				Long probId = Long.parseLong(strProbId);
-				
 				Problem findProblem = problemServiceETest.findOneSet(probId);
 				
 				List<String> ImgJsonToStrList = imageFileServerApiComponentETest.getImgJsonToStrListByProbIDServiceComponent(probId);
@@ -228,5 +238,34 @@ public class DiagProblemApiComponentETest {
 			 return "fail";		
 		}
 	}
+	
+	
+	/**
+	 * curr status 변경
+	 * 
+	 */
+	public String updateDiagCurrStatus(PutDiagCurrStatusDTOIn request) throws Exception{
+		try {
+						
+			// 문제 n개 업데이트
+			Long idx = -1L;
+			if(request.getUserID() == null || request.getCurriculumID() ==null) return null;
+			
+			if( "ok".equals(diagCurriculumServiceETest.currStatusChange( request.getCurriculumID() ) ) ){
+				for( DiagnosisProblem diagnosisProblem 
+						: diagProblemServiceETest.findByIdOrderSorted( Long.parseLong( request.getCurriculumID() ) )
+					){
+					
+					problemServiceETest.problemValidate(request.getUserID(), diagnosisProblem.getProbId().toString());
+				}
+			}
+	
+			return "success";
+		}catch(Exception e) {
+			 e.printStackTrace(); 
+			 return "fail";		
+		}
+	}
+	
 	
 }

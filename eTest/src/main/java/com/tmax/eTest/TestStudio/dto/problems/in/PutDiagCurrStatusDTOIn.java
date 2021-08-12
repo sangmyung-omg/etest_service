@@ -2,6 +2,8 @@ package com.tmax.eTest.TestStudio.dto.problems.in;
 
 import java.util.List;
 
+import com.tmax.eTest.TestStudio.dto.problems.base.BaseDiagProblemSetDTO;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,9 +11,9 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class GetProblemDTOIn {
-	private String userID;
+public class PutDiagCurrStatusDTOIn {
 	//Long
-	private List<Long> probID;
+	private String userID;
 	//
+	private String curriculumID;
 }

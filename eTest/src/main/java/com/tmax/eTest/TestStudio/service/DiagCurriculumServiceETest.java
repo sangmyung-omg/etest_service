@@ -47,18 +47,34 @@ public class DiagCurriculumServiceETest {
 		if(requestInfo.getSubject()!=null)
 			diagnosisCurriculum.setSubject(requestInfo.getSubject());
 		
-		if(requestInfo.getStatus()!=null)
-			if("출제".equals(requestInfo.getStatus()) || "보류".equals(requestInfo.getStatus())) {
-				diagnosisCurriculum.setStatus(requestInfo.getStatus());
-				
-				for( DiagnosisProblem diagnosisProblem 
-						: diagProblemServiceETest.findByIdOrderSorted( Long.parseLong( requestInfo.getCurriculumID() ) )
-					) {
-					
-					problemServiceETest.problemValidate(userId, diagnosisProblem.getProbId().toString());
-				}
-			}
+//		if(requestInfo.getStatus()!=null)
+//			if("출제".equals(requestInfo.getStatus()) || "보류".equals(requestInfo.getStatus())) {
+//				diagnosisCurriculum.setStatus(requestInfo.getStatus());
+//				
+//				for( DiagnosisProblem diagnosisProblem 
+//						: diagProblemServiceETest.findByIdOrderSorted( Long.parseLong( requestInfo.getCurriculumID() ) )
+//					) {
+//					
+//					problemServiceETest.problemValidate(userId, diagnosisProblem.getProbId().toString());
+//				}
+//			}
 		return "ok";
 	}
 	
+	public String currStatusChange(String curriculumId ) {
+		  
+		//id not null 일경우면 update
+		if(curriculumId == null) return null;
+		DiagnosisCurriculum diagnosisCurriculum = diagCurriculumRepository.findById( Integer.parseInt( curriculumId ) ).get();
+		
+		if( "출제".equals( diagnosisCurriculum.getStatus() ) ) {
+			diagnosisCurriculum.setSubject("보류");
+		}else if( "보류".equals( diagnosisCurriculum.getStatus() ) ) {
+			diagnosisCurriculum.setSubject("출제");
+		}else {
+			return "fail";
+		}
+		
+		return "ok";
+	}
 }
