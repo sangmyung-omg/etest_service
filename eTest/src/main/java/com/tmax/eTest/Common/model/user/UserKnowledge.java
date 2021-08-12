@@ -4,6 +4,7 @@ import java.sql.Timestamp;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.JoinColumn;
@@ -31,7 +32,7 @@ public class UserKnowledge {
 	private Float ukMastery;
 	private Timestamp updateDate;
 	
-	@OneToOne(cascade=(CascadeType.ALL))
+	@OneToOne(cascade=(CascadeType.ALL), fetch = FetchType.LAZY)
 	@JoinColumn(name="ukId", insertable = false, updatable = false)
 	private UkMaster ukDao;
 }

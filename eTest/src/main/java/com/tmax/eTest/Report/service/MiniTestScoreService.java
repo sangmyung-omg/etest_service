@@ -37,7 +37,7 @@ import com.tmax.eTest.Test.repository.UserEmbeddingRepository;
 import com.tmax.eTest.Test.repository.UserKnowledgeRepository;
 
 @Service
-public class MiniTestReportService {
+public class MiniTestScoreService {
 
 	@Autowired
 	LRSAPIManager lrsAPIManager;
