@@ -58,7 +58,7 @@ public class DiagProblemApiComponentETest {
 		//
 		
 		GetDiagProblemDTOOut output = new GetDiagProblemDTOOut( new ArrayList<BaseDiagProblemSetDTO>() );
-		BaseDiagProblemSetDTO outputBase = new BaseDiagProblemSetDTO();
+
 		// set : probId []
 //		String[] strProbIdList = probIdStr.replace(" ","").split(",");
 		
@@ -74,6 +74,8 @@ public class DiagProblemApiComponentETest {
 					output.getDiagProblems().add(null);
 					continue;
 				}
+				BaseDiagProblemSetDTO outputBase = new BaseDiagProblemSetDTO();
+				
 				Problem findProblem = problemServiceETest.findOneSet(probId);
 				
 				List<String> ImgJsonToStrList = imageFileServerApiComponentETest.getImgJsonToStrListByProbIDServiceComponent(probId);

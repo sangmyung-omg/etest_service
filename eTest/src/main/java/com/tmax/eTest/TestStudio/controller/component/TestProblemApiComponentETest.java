@@ -217,7 +217,7 @@ public class TestProblemApiComponentETest {
 			) throws Exception {
 		
 			GetTestProblemDTOOut output = new GetTestProblemDTOOut( new ArrayList<BaseTestProblemSetDTO>() );
-			BaseTestProblemSetDTO outputBase = new BaseTestProblemSetDTO();
+
 			// set : probId []
 //			String[] strProbIdList = probIdStr.replace(" ","").split(",");
 			
@@ -233,7 +233,7 @@ public class TestProblemApiComponentETest {
 						output.getTestProblems().add(null);
 						continue;
 					}
-
+					BaseTestProblemSetDTO outputBase = new BaseTestProblemSetDTO();
 					
 					Problem findProblem = problemServiceETest.findOneSet(probId);
 					
