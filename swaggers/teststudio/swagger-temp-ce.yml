@@ -11,200 +11,47 @@ paths:
       tags:
       - teststudio
       summary: get diagProblems
-      requestBody:
-        description: 자가진단 문제를 가져옵니다.
-        required: true
-        content:
-        application/json:
-          schema:
-            $ref: '#/definitions/GetProblemDTOIn'
-      responses:
-        200:
-          description: success
-          schema:
-            type: object
-            items:
-              $ref: '#/definitions/diagProblems'
-        400:
-          description: bad input parameter
-  /curriculum:
-    get:
-      tags:
-      - teststudio
-      summary: get curriculum list
-      description: |
-        모든 커리큘럼을 가져옵니다.
-      produces:
-      - application/json
-      responses:
-        200:
-          description: success
-          schema:
-            type: array
-            items:
-              $ref: '#/definitions/CurriculumList'
-        400:
-          description: bad input parameter
-  /part:
-    get:
-      tags:
-      - teststudio
-      summary: get part list
-      description: |
-        모든 파트를 가져옵니다.
-      produces:
-      - application/json
-      responses:
-        200:
-          description: success
-          schema:
-            type: array
-            items:
-              $ref: '#/definitions/PartList'
-        400:
-          description: bad input parameter
-    post:
-      tags:
-      - teststudio
-      summary: create part
-      description: |
-        새로운 파트를 저장합니다.
-      consumes:
-      - application/json
+      description:  
+        자가진단 문제를 가져옵니다.
+      # requestBody:
+      #   description: 자가진단 문제를 가져옵니다.
+      #   required: true
+      #   content:
+      #     application/json: 
+      #       schema:
+      #         $ref: '#/definitions/GetProblemDTOIn'
       parameters:
       - in: body
-        name: body
-        description: part
+        # name: body
+        # description: part
         required: true
         schema:
-          $ref: '#/definitions/PartPost'
+              $ref: '#/definitions/GetProblemDTOIn'
       responses:
         200:
           description: success
+          schema:
+            $ref: '#/definitions/GetDiagProblemDTOOut'
         400:
           description: bad input parameter
-  /part/{id}:
+
     put:
       tags:
       - teststudio
-      summary: update part
-      description: |
-        파트를 수정합니다.
-      produces:
-      - application/json
+      summary: update diagProblems
+      description:  
+        자가진단 문제를 수정합니다.
       parameters:
-      - in: path
-        name: id
-        description: part id
-        required: true
-        type: integer
       - in: body
-        name: body
-        description: part
         required: true
         schema:
-          $ref: '#/definitions/PartPost'
+              $ref: '#/definitions/PutDiagProblemDTOIn'
       responses:
         200:
           description: success
         400:
           description: bad input parameter
-    delete:
-      tags:
-      - teststudio
-      summary: delete part
-      description: |
-        파트를 삭제합니다.
-      produces:
-      - application/json
-      parameters:
-      - in: path
-        name: id
-        description: part id
-        required: true
-        type: integer
-      responses:
-        200:
-          description: success
-        400:
-          description: bad input parameter
-  /problems/self:
-    get:
-      tags:
-      - teststudio
-      summary: get self test problem id
-      description: |
-        커리큘럼에 속한 자가진단 문제들을 가져옵니다.
-      produces:
-      - application/json
-      parameters:
-      - in: query
-        name: curriculumId
-        description: curriculum id
-        required: true
-        type: integer
-      responses:
-        200:
-          description: success
-          schema:
-            type: array
-            items:
-              $ref: '#/definitions/SelfProblemIdList'
-        400:
-          description: bad input parameter
-  /problems/mini:
-    get:
-      tags:
-      - teststudio
-      summary: searches mini test problems
-      description: |
-        필터 조건에 맞는 미니진단 문제들을 정렬하여 가져옵니다.
-      produces:
-      - application/json
-      parameters:
-      - in: query
-        name: partId
-        description: "part id (default : all)"
-        required: false
-        type: integer
-      - in: query
-        name: keyword
-        description: "search in question, choice, solution, and subject (default: all)"
-        required: false
-        type: string
-      - in: query
-        name: order
-        description: "order by part, difficulty, status or editDate (default: part name > difficulty > status > edit date)"
-        required: false
-        type: string
-      - in: query
-        name: orderOption
-        description: ascending or descending
-        default: ascending
-        type: string
-      - in: query
-        name: skip
-        description: number of records to skip for pagination
-        default: 0
-        type: integer
-        format: int32
-        minimum: 0
-      - in: query
-        name: limit
-        description: maximum number of records to return
-        default: 20
-        type: integer
-        format: int32
-        minimum: 1
-      responses:
-        200:
-          description: success
-          schema:
-            type: array
-            items:
-              $ref: '#/definitions/MiniProblemList'
-        400:
-          description: bad input parameter
+
           #  -----------------------------------------------------def  #a1
 
 definitions:
@@ -220,91 +67,181 @@ definitions:
       probID:
         type: array
         example: [1,2,3]
-  diagProblems:
-    type: array
-    items:
-      type: object
-      properties: 
-        problem:
-          type: object
-           properties: 
-            probID:
-             type: string
-            answerType:
-             type: string
-            question:
-             type: string
-            solution:
-             type: string
-            difficulty:
-             type: string
-            category:
-             type: string
-            imgSrc:
-             type: string
-            timeRecommendation:
-             type: string
-            creatorID:
-             type: string
-            createDate:
-             type: string
-            validatorID:
-             type: string
-            validateDate:
-             type: string
-            editorID:
-             type: string
-            editDate:
-             type: string
-            source:
-             type: string
-            intention:
-             type: string
-            questionInitial:
-             type: string
-            solutionInitial:
-             type: string
-            imgsOut:
-             type: string
+        items:
+          type: number
+        
+  GetDiagProblemDTOOut:
+    type: object
+    properties:
+     diagProblems:
+      type: array
+      items:
+        type: object
+        properties: 
+          problem:
+            type: object
+            properties: 
+              probID:
+                type: string
+                example: "1"
+              answerType:
+                type: string
+              question:
+                type: string
+              solution:
+                type: string
+              difficulty:
+                type: string
+              category:
+                type: string
+              imgSrc:
+                type: string
+              timeRecommendation:
+                type: string
+              creatorID:
+                type: string
+              createDate:
+                type: string
+              validatorID:
+                type: string
+              validateDate:
+                type: string
+              editorID:
+                type: string
+              editDate:
+                type: string
+              source:
+                type: string
+              intention:
+                type: string
+              questionInitial:
+                type: string
+              solutionInitial:
+                type: string
+              imgsOut:
+                type: string
 
-        probChoices:
-          type: object
-          properties: 
-            choiceNum:
-              type: string
-            ukID:
-              type: string
-            choiceScore:
-              type: string
+          probChoices:
+            type: array
+            items:
+              type: object
+              properties: 
+                choiceNum:
+                  type: string
+                ukID:
+                  type: string
+                choiceScore:
+                  type: string
 
-        probUKRels:
-          type: object
-          properties: 
-            ukID:
-             type: string
+          probUKRels:
+            type: array
+            items:
+              type: object
+              properties:
+                ukID:
+                  type: string
 
-        diagCurriculum:
-          type: object
-          properties: 
-            curriculumID:
-             type: string
-            subject:
-             type: string
-            status:
-             type: string
+          diagCurriculum:
+            type: object
+            properties: 
+              curriculumID:
+                type: string
+              subject:
+                type: string
+              status:
+                type: string
  
-  UKList:
+  PutDiagProblemDTOIn:
     type: object
     required:
-    - id
-    - name
+    - userID
+    - diagProblems
     properties:
-      id:
-        type: integer
-        example: 751
-      name:
+      userID:
         type: string
-        example: "투자 수익"
+        example: 'userIDSample'
+      diagProblems:
+        type: array
+        items:
+          type: object
+          properties:
+            problem:
+              type: object
+              properties: 
+                probID:
+                  type: string
+                  example: "1"
+                answerType:
+                  type: string
+                question:
+                  type: string
+                solution:
+                  type: string
+                difficulty:
+                  type: string
+                category:
+                  type: string
+                # imgSrc:
+                #   type: string
+                timeRecommendation:
+                  type: string
+                # creatorID:
+                #   type: string
+                # createDate:
+                #   type: string
+                # validatorID:
+                #   type: string
+                # validateDate:
+                #   type: string
+                # editorID:
+                #   type: string
+                # editDate:
+                #   type: string
+                source:
+                  type: string
+                intention:
+                  type: string
+                questionInitial:
+                  type: string
+                solutionInitial:
+                  type: string
+                imgListIn:
+                  type: array
+                  items:
+                    type: string
+
+            probChoices:
+              type: array
+              items:
+                type: object
+                properties: 
+                  choiceNum:
+                    type: string
+                  ukID:
+                    type: string
+                  choiceScore:
+                    type: string
+
+            probUKRels:
+              type: array
+              items:
+                type: object
+                properties:
+                  ukID:
+                    type: string
+
+            diagCurriculum:
+              type: object
+              properties: 
+                curriculumID:
+                  type: string
+                subject:
+                  type: string
+                status:
+                  type: string
+
+
+                  
   CurriculumList:
     type: object
     required:
