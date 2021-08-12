@@ -1,6 +1,8 @@
 package com.tmax.eTest.Report.controller;
 
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -9,6 +11,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.tmax.eTest.Report.dto.MiniTestResultDTO;
+import com.tmax.eTest.Report.dto.VideoResultDTO;
 import com.tmax.eTest.Report.service.MiniTestScoreService;
 import com.tmax.eTest.Report.service.MiniTestVideoService;
 import com.tmax.eTest.Test.service.UserInfoService;
@@ -51,10 +54,10 @@ public class MiniTestReportController {
 
 	@CrossOrigin("*")
 	@GetMapping(value="/report/miniTestResult/recommendVideo/{userId}", produces = "application/json; charset=utf-8")
-	public void recommendVideo(
+	public List<VideoResultDTO> recommendVideo(
 			@PathVariable("userId") String userId) throws Exception{
 		
-		miniTestVideoService.getRecommendVideo(userId);
+		return miniTestVideoService.getRecommendVideo(userId);
 		
 	}
 	

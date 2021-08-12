@@ -15,6 +15,6 @@ import org.springframework.data.repository.query.Param;
 
 public interface UserKnowledgeRepo extends JpaRepository<UserKnowledge, UserKnowledgeKey>{
 	
-	@Query("select uk from com.tmax.eTest.Common.model.user.UserKnowledge uk where uk.userUuid = :userUuid and rownum <= 3 order by uk.ukMastery")
-	List<UserKnowledge> findLowMasteryListByUserUuid(@Param("userUuid") String userUuid);
+	@Query("select uk from com.tmax.eTest.Common.model.user.UserKnowledge uk where uk.userUuid = :userUuid order by uk.ukMastery")
+	List<UserKnowledge> findUKListByUserUuid(@Param("userUuid") String userUuid);
 }
