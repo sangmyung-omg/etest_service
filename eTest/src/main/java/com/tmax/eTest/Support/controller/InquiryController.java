@@ -4,8 +4,6 @@ import com.tmax.eTest.Auth.dto.CMRespDto;
 import com.tmax.eTest.Auth.dto.PrincipalDetails;
 import com.tmax.eTest.Auth.repository.UserRepository;
 import com.tmax.eTest.Common.model.support.Inquiry;
-import com.tmax.eTest.Common.model.support.Inquiry_file;
-import com.tmax.eTest.Common.model.user.UserMaster;
 import com.tmax.eTest.Support.dto.CreateInquiryDto;
 import com.tmax.eTest.Support.dto.DeleteInquiryDto;
 import com.tmax.eTest.Support.repository.InquiryFileRepository;
@@ -13,15 +11,9 @@ import com.tmax.eTest.Support.repository.InquiryRepository;
 import com.tmax.eTest.Support.service.InquiryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.*;
 
 @RestController
@@ -50,7 +42,7 @@ public class InquiryController {
     }
 
     @Transactional(readOnly = true)
-    @PostMapping("/inquiry/list")
+    @PostMapping("/inquiry/list/")
     public CMRespDto<?> getInquiryList(@AuthenticationPrincipal PrincipalDetails principalDetails) {
         List<Inquiry> inquiryList = inquiryRepository.findAllByUserUuid(principalDetails.getUserUuid());
         return new CMRespDto<>(200,"1대1 질문 리스트 받아오기 성공",inquiryList);
@@ -67,4 +59,3 @@ public class InquiryController {
         return new CMRespDto<>(400,"해당 질문은 유저가 만든 질문이 아닙니다","fail");
     }
 }
-
