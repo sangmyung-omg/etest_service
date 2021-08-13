@@ -1,6 +1,7 @@
 package com.tmax.eTest.Common.model.user;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -61,6 +62,9 @@ public class UserMaster {
 	@OneToMany(mappedBy="user")
 	private List<ErrorReport> errors = new ArrayList<ErrorReport>();
 
+	@Column(name = "NICK_NAME")
+	private String nickname;
+
 	// 이벤트 알람 동의 (선택)
 	private Boolean event_sms_agreement;
 	// 장기 미 접속시 계정 활성화 (선택)
@@ -75,5 +79,13 @@ public class UserMaster {
 	@OneToMany(mappedBy = "userMaster", fetch = FetchType.LAZY)
 	@JsonIgnoreProperties({"userMaster"})
 	private List<Inquiry> inquiry;
+
+	@Column(name = "CREATE_DATE")
+	private LocalDateTime createDate;
+
+	@PrePersist // 디비에 INSERT 되기 직전에 실행
+	public void createDate() {
+		this.createDate = LocalDateTime.now();
+	}
 
 }
