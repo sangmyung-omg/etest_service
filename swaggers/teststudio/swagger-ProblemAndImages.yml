@@ -1,6 +1,6 @@
 swagger: '2.0'
 info:
-  description: This is an API for test studio.
+  description: This is an API for test studio. 각 API Description 하단의 Model 버튼을 눌러 required 여부(*표시)를 확인하세요
   version: 1.0.0
   title: test studio API
   contact:
@@ -40,7 +40,7 @@ paths:
       - teststudio
       summary: update diagProblems
       description:  
-        자가진단 문제를 수정합니다.
+        자가진단 문제를 수정합니다. *주의* problemChoices, probUKRels는 not required 이지만, 입력하면 해당 문제에 대한 db의 기존 choice, rel 정보는 '삭제' 되고 입력한 정보로 대체 합니다. (choice, rel 에 대해서는 수정 할 정보 뿐만 아니라 모든 정보를 입력하세요)
       parameters:
       - in: body
         required: true
@@ -112,7 +112,7 @@ paths:
       - teststudio
       summary: update testProblems
       description:  
-        미니진단 문제를 수정합니다.
+        미니진단 문제를 수정합니다. *주의* problemChoices, probUKRels는 not required 이지만, 입력하면 해당 문제에 대한 db의 기존 choice, rel 정보는 '삭제' 되고 입력한 정보로 대체 합니다. (choice, rel 에 대해서는 수정 할 정보 뿐만 아니라 모든 정보를 입력하세요)
       parameters:
       - in: body
         required: true
@@ -223,14 +223,26 @@ definitions:
         
   GetDiagProblemDTOOut:
     type: object
+    required:
+    - diagProblems
     properties:
      diagProblems:
       type: array
       items:
         type: object
+        required:
+        - problem
+        # - probChoices
+        - probUKRels
+        - diagCurriculum
         properties: 
           problem:
             type: object
+            required:
+            - probID
+            - answerType
+            - question
+            - solution
             properties: 
               probID:
                 type: string
@@ -276,6 +288,9 @@ definitions:
             type: array
             items:
               type: object
+              required:
+              - choiceNum
+              - ukID
               properties: 
                 choiceNum:
                   type: string
@@ -288,12 +303,16 @@ definitions:
             type: array
             items:
               type: object
+              required:
+              - ukID
               properties:
                 ukID:
                   type: string
 
           diagCurriculum:
             type: object
+            required:
+            - curriculumID
             properties: 
               curriculumID:
                 type: string
@@ -315,9 +334,13 @@ definitions:
         type: array
         items:
           type: object
+          required:
+          - problem
           properties:
             problem:
               type: object
+              required:
+              - probID
               properties: 
                 probID:
                   type: string
@@ -363,8 +386,12 @@ definitions:
 
             probChoices:
               type: array
+              example: [{"choiceNum":"1", "uKID":"11"},{}]
               items:
                 type: object
+                required:
+                - choiceNum
+                - ukID
                 properties: 
                   choiceNum:
                     type: string
@@ -377,12 +404,16 @@ definitions:
               type: array
               items:
                 type: object
+                required:
+                - ukID
                 properties:
                   ukID:
                     type: string
 
             diagCurriculum:
               type: object
+              required:
+              - curriculumID
               properties: 
                 curriculumID:
                   type: string
@@ -413,90 +444,110 @@ definitions:
       userID:
         type: string
         example: 'userIDSample'
-      curriculumID:
+      probID:
         type: string
         example: "33"
 # 
   GetTestProblemDTOOut:
     type: object
+    required:
+    - testProblems
     properties:
-     testProblems:
-      type: array
-      items:
-        type: object
-        properties: 
-          problem:
-            type: object
-            properties: 
-              probID:
-                type: string
-                example: "1"
-              answerType:
-                type: string
-              question:
-                type: string
-              solution:
-                type: string
-              difficulty:
-                type: string
-              category:
-                type: string
-              # imgSrc:
-              #   type: string
-              timeRecommendation:
-                type: string
-              creatorID:
-                type: string
-              createDate:
-                type: string
-              validatorID:
-                type: string
-              validateDate:
-                type: string
-              editorID:
-                type: string
-              editDate:
-                type: string
-              source:
-                type: string
-              intention:
-                type: string
-              questionInitial:
-                type: string
-              solutionInitial:
-                type: string
-              imgsOut:
-                type: string
-
-          probChoices:
-            type: array
-            items:
+      testProblems:
+        type: array
+        items:
+          type: object
+          required:
+          - problem
+          # - probChoices
+          - probUKRels
+          - testProblem
+          properties: 
+            problem:
               type: object
+              required:
+              - probID
+              - answerType
+              - question
+              - solution
               properties: 
-                choiceNum:
+                probID:
                   type: string
-                ukID:
+                  example: "1"
+                answerType:
                   type: string
-                choiceScore:
+                question:
+                  type: string
+                solution:
+                  type: string
+                difficulty:
+                  type: string
+                category:
+                  type: string
+                # imgSrc:
+                #   type: string
+                timeRecommendation:
+                  type: string
+                creatorID:
+                  type: string
+                createDate:
+                  type: string
+                validatorID:
+                  type: string
+                validateDate:
+                  type: string
+                editorID:
+                  type: string
+                editDate:
+                  type: string
+                source:
+                  type: string
+                intention:
+                  type: string
+                questionInitial:
+                  type: string
+                solutionInitial:
+                  type: string
+                imgsOut:
                   type: string
 
-          probUKRels:
-            type: array
-            items:
+            probChoices:
+              type: array
+              items:
+                type: object
+                required:
+                - choiceNum
+                - ukID
+                properties: 
+                  choiceNum:
+                    type: string
+                  ukID:
+                    type: string
+                  choiceScore:
+                    type: string
+
+            probUKRels:
+              type: array
+              items:
+                type: object
+                required:
+                - ukID  
+                properties:
+                  ukID:
+                    type: string
+
+            testProblem:
               type: object
-              properties:
-                ukID:
+              required:
+              - partID  
+              - status
+              properties: 
+                partID:
                   type: string
-
-          testProblem:
-            type: object
-            properties: 
-              partID:
-                type: string
-              subject:
-                type: string
-              status:
-                type: string
+                subject:
+                  type: string
+                status:
+                  type: string
 
 
   PostTestProblemDTOIn:
@@ -512,13 +563,23 @@ definitions:
         type: array
         items:
           type: object
+          required:
+          - problem
+          # - probChoices
+          - probUKRels
+          - testProblem
           properties:
             problem:
               type: object
+              required:
+              # - probID
+              - answerType
+              - question
+              - solution
               properties: 
-                probID:
-                  type: string
-                  example: "string : no need to fill in for Post API !"
+                # probID:
+                #   type: string
+                #   example: "string : no need to fill in for Post API !"
                 answerType:
                   type: string
                 question:
@@ -562,6 +623,9 @@ definitions:
               type: array
               items:
                 type: object
+                required:
+                - choiceNum
+                - ukID
                 properties: 
                   choiceNum:
                     type: string
@@ -574,12 +638,16 @@ definitions:
               type: array
               items:
                 type: object
+                required:
+                - ukID
                 properties:
                   ukID:
                     type: string
 
             testProblem:
               type: object
+              required:
+              - partID
               properties: 
                 partID:
                   type: string
@@ -601,13 +669,17 @@ definitions:
         type: array
         items:
           type: object
+          required:
+          - problem
           properties:
             problem:
               type: object
+              required:
+              - probID
               properties: 
                 probID:
                   type: string
-                  example: "string : no need to fill in for Post API !"
+                  example: "12"
                 answerType:
                   type: string
                 question:
@@ -651,6 +723,9 @@ definitions:
               type: array
               items:
                 type: object
+                required:
+                - choiceNum
+                - ukID
                 properties: 
                   choiceNum:
                     type: string
@@ -663,6 +738,8 @@ definitions:
               type: array
               items:
                 type: object
+                required:
+                - ukID
                 properties:
                   ukID:
                     type: string
@@ -679,11 +756,15 @@ definitions:
 
   GetProblemImageDTOOut:
     type: object
+    required:
+    - problemImages
     properties:
      problemImages:
       type: array
       items:
         type: object
+        required:
+        - probID
         properties: 
           probID:
             type: string
