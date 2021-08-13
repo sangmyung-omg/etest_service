@@ -100,7 +100,7 @@ paths:
       - in: body
         required: true
         schema:
-              $ref: '#/definitions/PostOrPutTestProblemDTOIn'
+              $ref: '#/definitions/PostTestProblemDTOIn'
       responses:
         200:
           description: success
@@ -117,7 +117,7 @@ paths:
       - in: body
         required: true
         schema:
-              $ref: '#/definitions/PostOrPutTestProblemDTOIn'
+              $ref: '#/definitions/PutTestProblemDTOIn'
       responses:
         200:
           description: success
@@ -135,6 +135,24 @@ paths:
         required: true
         schema:
               $ref: '#/definitions/GetProblemDTOIn'
+      responses:
+        200:
+          description: success
+        400:
+          description: bad input parameter
+# 
+  /TestProbStatus:
+    put:
+      tags:
+      - teststudio
+      summary: change status of a test problem
+      description:  
+        미니진단 특정 문제에 대한 출제 상태를 변경 합니다 (출제 보류 <=> 출제 가능)
+      parameters:
+      - in: body
+        required: true
+        schema:
+              $ref: '#/definitions/PutTestProbStatusDTOIn'
       responses:
         200:
           description: success
@@ -385,7 +403,19 @@ definitions:
       curriculumID:
         type: string
         example: "33"
-
+# 
+  PutTestProbStatusDTOIn:
+    type: object
+    required:
+    - userID
+    - probID
+    properties:
+      userID:
+        type: string
+        example: 'userIDSample'
+      curriculumID:
+        type: string
+        example: "33"
 # 
   GetTestProblemDTOOut:
     type: object
@@ -469,7 +499,7 @@ definitions:
                 type: string
 
 
-  PostOrPutTestProblemDTOIn:
+  PostTestProblemDTOIn:
     type: object
     required:
     - userID
@@ -557,6 +587,95 @@ definitions:
                   type: string
                 status:
                   type: string
+# 
+  PutTestProblemDTOIn:
+    type: object
+    required:
+    - userID
+    - testProblems
+    properties:
+      userID:
+        type: string
+        example: 'userIDSample'
+      testProblems:
+        type: array
+        items:
+          type: object
+          properties:
+            problem:
+              type: object
+              properties: 
+                probID:
+                  type: string
+                  example: "string : no need to fill in for Post API !"
+                answerType:
+                  type: string
+                question:
+                  type: string
+                solution:
+                  type: string
+                difficulty:
+                  type: string
+                category:
+                  type: string
+                # imgSrc:
+                #   type: string
+                timeRecommendation:
+                  type: string
+                # creatorID:
+                #   type: string
+                # createDate:
+                #   type: string
+                # validatorID:
+                #   type: string
+                # validateDate:
+                #   type: string
+                # editorID:
+                #   type: string
+                # editDate:
+                #   type: string
+                source:
+                  type: string
+                intention:
+                  type: string
+                questionInitial:
+                  type: string
+                solutionInitial:
+                  type: string
+                imgListIn:
+                  type: array
+                  items:
+                    type: string
+
+            probChoices:
+              type: array
+              items:
+                type: object
+                properties: 
+                  choiceNum:
+                    type: string
+                  ukID:
+                    type: string
+                  choiceScore:
+                    type: string
+
+            probUKRels:
+              type: array
+              items:
+                type: object
+                properties:
+                  ukID:
+                    type: string
+
+            testProblem:
+              type: object
+              properties: 
+                partID:
+                  type: string
+                subject:
+                  type: string
+                # status:
+                #   type: string
 
   GetProblemImageDTOOut:
     type: object

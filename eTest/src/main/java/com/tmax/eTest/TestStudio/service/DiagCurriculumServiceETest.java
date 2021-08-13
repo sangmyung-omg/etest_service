@@ -68,9 +68,9 @@ public class DiagCurriculumServiceETest {
 		DiagnosisCurriculum diagnosisCurriculum = diagCurriculumRepository.findById( Integer.parseInt( curriculumId ) ).get();
 		
 		if( "출제".equals( diagnosisCurriculum.getStatus() ) ) {
-			diagnosisCurriculum.setSubject("보류");
+			diagnosisCurriculum.setStatus("보류");
 		}else if( "보류".equals( diagnosisCurriculum.getStatus() ) ) {
-			diagnosisCurriculum.setSubject("출제");
+			diagnosisCurriculum.setStatus("출제");
 		}else {
 			return "fail";
 		}

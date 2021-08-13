@@ -10,13 +10,16 @@ import java.util.TimeZone;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
 
+import com.tmax.eTest.Common.model.problem.DiagnosisProblem;
 import com.tmax.eTest.Common.model.problem.Problem;
 import com.tmax.eTest.Common.model.problem.ProblemChoice;
 import com.tmax.eTest.Common.model.problem.TestProblem;
 import com.tmax.eTest.Common.model.uk.ProblemUKRelation;
 import com.tmax.eTest.Common.model.uk.UkMaster;
 import com.tmax.eTest.TestStudio.dto.problems.in.PostTestProblemDTOIn;
+import com.tmax.eTest.TestStudio.dto.problems.in.PutDiagCurrStatusDTOIn;
 import com.tmax.eTest.TestStudio.dto.problems.in.PutDiagProblemDTOIn;
+import com.tmax.eTest.TestStudio.dto.problems.in.PutTestProbStatusDTOIn;
 import com.tmax.eTest.TestStudio.dto.problems.in.PutTestProblemDTOIn;
 import com.tmax.eTest.TestStudio.dto.problems.out.GetDiagProblemDTOOut;
 import com.tmax.eTest.TestStudio.dto.problems.out.GetTestProblemDTOOut;
@@ -103,7 +106,9 @@ public class TestProblemApiComponentETest {
 						
 				problem.setCreatorId(request.getUserID());
 				problem.setCreateDate(timestamp);
-				if( "출제".equals(requestInfo__.getTestProblem().getStatus()) || "보류".equals(requestInfo__.getTestProblem().getStatus())) {
+				if( "출제".equals(requestInfo__.getTestProblem().getStatus())
+//						|| "보류".equals(requestInfo__.getTestProblem().getStatus())
+						) {
 					problem.setValiatorID(request.getUserID());
 					problem.setValiateDate(timestamp);
 				}
@@ -157,7 +162,11 @@ public class TestProblemApiComponentETest {
 				testProblem.setProbID(problem.getProbID());
 				testProblem.setPartID(Integer.parseInt( requestInfo__.getTestProblem().getPartID() ));
 				testProblem.setSubject(requestInfo__.getTestProblem().getSubject());
-				testProblem.setStatus(requestInfo__.getTestProblem().getStatus());
+				if( "출제".equals(requestInfo__.getTestProblem().getStatus() ) ){
+					testProblem.setStatus(requestInfo__.getTestProblem().getStatus());
+				}else {
+					testProblem.setStatus( "보류" );
+				}
 				testProblemServiceETest.testProblemCreate(testProblem);
 				
 				/*
@@ -321,19 +330,19 @@ public class TestProblemApiComponentETest {
 	 */
 	public String updateProblemcomponent(PutTestProblemDTOIn request) throws Exception{
 		try {
-						
+					
 			// 문제 n개 업데이트
 			Long idx = -1L;
 			if(request.getTestProblems() != null)
 			for(BaseTestProblemSetDTO requestInfo__ : request.getTestProblems()) {
 				idx++;
 				Long LongProbId = Long.parseLong(requestInfo__.getProblem().getProbID());
-				if( "출제".equals(requestInfo__.getTestProblem().getStatus()) || "보류".equals(requestInfo__.getTestProblem().getStatus())) {
-					requestInfo__.getProblem().setValidatorID("T");
-					if(requestInfo__.getProblem().getProbID()==null) {
-						requestInfo__.getProblem().setProbID( requestInfo__.getTestProblem().getProbID() );
-					}
-				}
+//				if( "출제".equals(requestInfo__.getTestProblem().getStatus()) || "보류".equals(requestInfo__.getTestProblem().getStatus())) {
+//					requestInfo__.getProblem().setValidatorID("T");
+//					if(requestInfo__.getProblem().getProbID()==null) {
+//						requestInfo__.getProblem().setProbID( requestInfo__.getTestProblem().getProbID() );
+//					}
+//				}
 				
 				//problem table
 				problemServiceETest.problemUpdate( request.getUserID() ,requestInfo__.getProblem());
@@ -410,6 +419,28 @@ public class TestProblemApiComponentETest {
 			}
 			
 			
+			return "success";
+		}catch(Exception e) {
+			 e.printStackTrace(); 
+			 return "fail";		
+		}
+	}
+	
+	/**
+	 * testProb status 변경
+	 * 
+	 */
+	public String updateTestProbStatus(PutTestProbStatusDTOIn request) throws Exception{
+		try {
+						
+			// 문제 n개 업데이트
+			Long idx = -1L;
+			if(request.getUserID() == null || request.getProbID() ==null) return null;
+			
+			if( "ok".equals(testProblemServiceETest.testProbStatusChange( request.getProbID() ) ) ){
+					problemServiceETest.problemValidate( request.getUserID(), request.getProbID() );
+			}
+	
 			return "success";
 		}catch(Exception e) {
 			 e.printStackTrace(); 

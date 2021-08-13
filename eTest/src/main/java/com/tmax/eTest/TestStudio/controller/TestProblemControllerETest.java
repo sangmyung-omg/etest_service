@@ -20,7 +20,9 @@ import com.tmax.eTest.TestStudio.controller.component.TestProblemApiComponentETe
 import com.tmax.eTest.TestStudio.dto.problems.in.DeleteProblemDTOIn;
 import com.tmax.eTest.TestStudio.dto.problems.in.GetProblemDTOIn;
 import com.tmax.eTest.TestStudio.dto.problems.in.PostTestProblemDTOIn;
+import com.tmax.eTest.TestStudio.dto.problems.in.PutDiagCurrStatusDTOIn;
 import com.tmax.eTest.TestStudio.dto.problems.in.PutDiagProblemDTOIn;
+import com.tmax.eTest.TestStudio.dto.problems.in.PutTestProbStatusDTOIn;
 import com.tmax.eTest.TestStudio.dto.problems.in.PutTestProblemDTOIn;
 import com.tmax.eTest.TestStudio.dto.problems.out.GetTestProblemDTOOut;
 
@@ -135,6 +137,22 @@ public class TestProblemControllerETest {
 		
 		try {
 			String res = testProblemApiComponent.updateProblemcomponent(request);
+
+				return new ResponseEntity<>( res, HttpStatus.OK );
+
+			
+		}catch(Exception e) {
+			 e.printStackTrace(); 
+			return new ResponseEntity<>( "fail", HttpStatus.INTERNAL_SERVER_ERROR );	
+		}
+	}
+	
+	@PutMapping("/TestProbStatus")
+	public ResponseEntity<String> updateTestProbStatus(
+			@RequestBody PutTestProbStatusDTOIn request) {
+		
+		try {
+			String res = testProblemApiComponent.updateTestProbStatus(request);
 
 				return new ResponseEntity<>( res, HttpStatus.OK );
 

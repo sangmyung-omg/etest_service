@@ -7,6 +7,7 @@ import java.sql.Timestamp;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.tmax.eTest.Common.model.problem.DiagnosisCurriculum;
 import com.tmax.eTest.Common.model.problem.DiagnosisProblem;
 import com.tmax.eTest.Common.model.problem.Part;
 import com.tmax.eTest.Common.model.problem.Problem;
@@ -69,6 +70,24 @@ public class TestProblemServiceETest {
 		
 		return "ok";
 	}
+	
+	public String testProbStatusChange(String probID ) {
+		  
+		//id not null 일경우면 update
+		if(probID == null) return null;
+		TestProblem testProblem = testProblemRepositoryETest.findById( Integer.parseInt( probID ) ).get();
+		
+		if( "출제".equals( testProblem.getStatus() ) ) {
+			testProblem.setStatus("보류");
+		}else if( "보류".equals( testProblem.getStatus() ) ) {
+			testProblem.setStatus("출제");
+		}else {
+			return "fail";
+		}
+		
+		return "ok";
+	}
+	
 	
 	/**
 	 *  삭제
