@@ -17,12 +17,14 @@ public class PrincipalDetails implements OAuth2User, UserDetails {
     private String userUuid;
     private Collection<? extends GrantedAuthority> authorities;
     private Map<String, Object> attributes;
+    private String nickname;
 
-    public PrincipalDetails( String email, String password, String userUuid, Collection<? extends GrantedAuthority> authorities) {
+    public PrincipalDetails( String email, String password, String userUuid, String nickname, Collection<? extends GrantedAuthority> authorities) {
         this.email = email;
         this.password = password;
         this.authorities = authorities;
         this.userUuid = userUuid;
+        this.nickname = nickname;
     }
 
     public static PrincipalDetails create(UserMaster user) {
@@ -33,6 +35,7 @@ public class PrincipalDetails implements OAuth2User, UserDetails {
                 user.getEmail(),
                 user.getPassword(),
                 user.getUserUuid(),
+                user.getNickname(),
                 authorities
         );
     }
@@ -98,4 +101,8 @@ public class PrincipalDetails implements OAuth2User, UserDetails {
     }
 
     public String getUserUuid() { return userUuid;}
+
+    public String getNickname() {
+        return nickname;
+    }
 }
