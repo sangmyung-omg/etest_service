@@ -40,7 +40,10 @@ public class TestProblemControllerETest {
 	 * new ResponseEntity<>(probGetResponse, HttpStatus.ACCEPTED);
 	 */
 	@PostMapping("/TestProblems")
-	public ResponseEntity<List<String>> CreateProblem(
+	public 
+//			ResponseEntity<List<String>> 
+			ResponseEntity<String>
+			CreateProblem(
 			@RequestBody PostTestProblemDTOIn request
 			) {
 		
@@ -90,7 +93,8 @@ public class TestProblemControllerETest {
 //				return new ResponseEntity<>(res, HttpStatus.ACCEPTED);
 //			}
 			
-			List<String> res =probIdStrList; 
+//			List<String> res =probIdStrList; 
+			String res = "success";
 //					new GetProblemDTOOut("200","success",probIdStrList);
 			return new ResponseEntity<>(res, HttpStatus.OK);
 			

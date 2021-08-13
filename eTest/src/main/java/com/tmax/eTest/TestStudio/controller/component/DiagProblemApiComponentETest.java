@@ -208,6 +208,7 @@ public class DiagProblemApiComponentETest {
 					}
 				}
 				//
+				if(requestInfo__.getDiagCurriculum()!=null)
 				diagCurriculumServiceETest.problemUpdate( request.getUserID() ,requestInfo__.getDiagCurriculum());
 				
 				// problem image

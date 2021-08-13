@@ -54,7 +54,7 @@ public class ProbChoiceServiceETest {
 		if(requestInfos==null) return null;
 		
 		for(BaseProbChoiceDTO requestInfo : requestInfos) {
-			if(requestInfo.getChoiceNum() == null) return null;
+			if(requestInfo.getChoiceNum() == null) continue;
 			
 			ProblemChoiceCompositeKey compositeKey = new ProblemChoiceCompositeKey();
 			compositeKey.setProbID( LongProbId );

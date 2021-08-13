@@ -388,10 +388,12 @@ public class TestProblemApiComponentETest {
 				
 				
 				//
-				if(requestInfo__.getProblem().getProbID() !=null) {
-					requestInfo__.getTestProblem().setProbID( requestInfo__.getProblem().getProbID() );
+				if(requestInfo__.getTestProblem()!=null) {
+					if(requestInfo__.getProblem().getProbID() !=null) {
+						requestInfo__.getTestProblem().setProbID( requestInfo__.getProblem().getProbID() );
+					}
+					testProblemServiceETest.testProblemUpdate(request.getUserID(), requestInfo__.getTestProblem());
 				}
-				testProblemServiceETest.testProblemUpdate(request.getUserID(), requestInfo__.getTestProblem());
 				
 				// problem image			
 				if(requestInfo__.getProblem().getImgListIn()!=null) {	
