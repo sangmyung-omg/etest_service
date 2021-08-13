@@ -14,10 +14,18 @@ import java.util.Optional;
 @Repository("AU-UserRepository")
 public interface UserRepository extends JpaRepository<UserMaster, Long> {
     Optional<UserMaster> findByEmail(String email);
+
     Boolean existsByEmail(String email);
+
     Optional<UserMaster> findByUserUuid(String userUuid);
+
     @Query("select u from com.tmax.eTest.Common.model.user.UserMaster u where u.providerId = :providerId and u.provider = :provider")
     Optional<UserMaster> findByProviderIdAndProvider(@Param("providerId") String providerId,
                                                      @Param("provider") AuthProvider provider);
+
+    Boolean existsByNickname(String nickname);
+
+
+
 }
 
