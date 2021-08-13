@@ -466,6 +466,20 @@ components:
             - 1
             - 2
             - 3
+        isCorrect:
+          type: array
+          example:
+            - 1
+            - 1
+            - 1
+            - 1
+            - 0
+            - 0
+            - 0
+            - 1
+            - 1
+            - 1
+            - 0
         guessAlarm:
           type: integer
           example: 0
@@ -532,6 +546,14 @@ components:
             - 3
             - 5
             - 2
+        isCorrect:
+          type: array
+          example:
+            - 1
+            - 1
+            - 1
+            - 0
+            - 0
         guessAlarm:
           type: integer
           example: 0
