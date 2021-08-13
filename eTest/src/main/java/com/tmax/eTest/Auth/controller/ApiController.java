@@ -15,10 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Date;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -51,6 +48,10 @@ public class ApiController {
     @Transactional
     public CMRespDto<?> signup(@RequestBody SignUpRequestDto signUpRequestDto){
         UserMaster userMaster = authService.singUp(signUpRequestDto);
+        if (userMaster == null) {
+            return new CMRespDto<> (201 , "회원가입 불가능","이메일이나 닉네임 중복 회원이 존재합니다.");
+        }
+
         String jwtToken = JWT.create()
                 .withSubject(userMaster.getEmail())
                 .withExpiresAt(new Date(System.currentTimeMillis()+ JwtProperties.EXPIRATION_TIME))
@@ -62,12 +63,25 @@ public class ApiController {
 
     @PostMapping("/duplicateCheck")
     public CMRespDto<?> duplicateCheck(@RequestBody DuplicateCheckDto duplicateCheckDto) {
-        String email = duplicateCheckDto.getEmail();
-        Boolean res = userRepository.existsByEmail(email);
+        Map<String,String> data = new HashMap<>();
+        Boolean res = false;
+
+        if ( authService.emailDuplicateCheck(duplicateCheckDto.getEmail()) ){
+            data.put("email", "중복된 회원이 존재합니다");
+            res = true;
+        }else{
+            data.put("email","중복된 회원 없음");
+        }
+        if ( authService.nickNameDuplicateCheck(duplicateCheckDto.getNickname()) ){
+            data.put("nickname","중복된 회원이 존재합니다");
+            res = true;
+        }else{
+            data.put("nickname","중복된 회원 없음");
+        }
         if (res == true) {
-            return new CMRespDto<>(201, "중복 회원 존재", true);
+            return new CMRespDto<>(201, "중복 회원 존재", data);
         } else{
-            return new CMRespDto<>(200, "회원가입 가능", false);
+            return new CMRespDto<>(200, "회원가입 가능", data);
         }
     }
 }
