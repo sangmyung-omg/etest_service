@@ -2,6 +2,7 @@ package com.tmax.eTest.Test.service;
 
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.UUID;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -15,6 +16,8 @@ import static java.util.stream.Collectors.*;
 
 import java.text.ParseException;
 
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -148,8 +151,17 @@ public class ProblemService {
 	public Map<String, Object> getMinitestProblems(String userId) throws Exception {
 		final Integer TOTAL_PART_NUM = 5;
 		final Integer TOTAL_PROB_NUM = 20;
+
+		// outputs
 		Map<String, Object> map = new HashMap<String, Object>();
+		String newProbSetId = UUID.randomUUID().toString();
 		List<Integer> minitestProblems = new ArrayList<Integer>();
+		String continueProbSetId = "";
+		List<Integer> continueProblems = new ArrayList<Integer>();
+		List<String> continueAnswers = new ArrayList<String>();
+		List<Integer> isCorrect = new ArrayList<Integer>();
+		Integer guessAlarm = 0;
+
 
 		/*
 		*	LRS에서 문제 풀이 이력 참고해 중복 방지.
@@ -162,6 +174,7 @@ public class ProblemService {
 
 		logger.info("Getting LRS log data......");
 		try {
+			// Ordering? --> Order by Timestamp ASC
 			statementQuery = lrsAPIManager.getStatementList(statementInput);
 			logger.info("length of the statement query result : " + Integer.toString(statementQuery.size()));
 		} catch (ParseException e) {
@@ -183,9 +196,55 @@ public class ProblemService {
 
 		// 푼 문제 리스트
 		List<Integer> solvedProbList = new ArrayList<Integer>();
+		int isLatest = 0;
+
+		JSONParser parser = new JSONParser();
+		JSONObject json = new JSONObject();
 
 		for (StatementDTO query : statementQuery) {
+			logger.info(query.toString());
+			String extension = query.getExtension();
+			if (isLatest < 2 && extension != null) {											// 최근 푼 문제 세트 범위이면서, extension이 null 이 아니라면
+				if (extension.contains("{") && extension.contains("}")) {						// json 포맷이 맞다면
+					try {
+						json = (JSONObject) parser.parse(extension);
+						if (json.containsKey("diagProbSetId")) {
+							// 최근 푼 세트 ID 수집
+							if (isLatest == 0) {
+								if (!json.get("diagProbSetId").toString().equalsIgnoreCase("")) {
+									continueProbSetId = json.get("diagProbSetId").toString();
+									isLatest++;
+								}
+							}
+				
+							// 최근 푼 세트에 해당하는 문제 풀이 정보 저장 (문제 / 유저 답 / 정답여부)
+							if (isLatest == 1) {
+								if (json.get("diagProbSetId").toString().equalsIgnoreCase(continueProbSetId)) {
+									// 오류로 인한 LRS 중복 기록 있을 수 있음.
+									if (!continueProblems.contains(Integer.parseInt(query.getSourceId()))){
+										continueProblems.add(Integer.parseInt(query.getSourceId()));
+										isCorrect.add(query.getIsCorrect());
+										continueAnswers.add(query.getUserAnswer());
+									}
+								} else isLatest++;
+							}
+						} else {
+							logger.info("The key 'diagProbSetId' does not exist in extension json : " + json.toString());
+						}
+					} catch (Exception e) {
+						logger.info("Extension Parsing Error with String Value : " + extension.toString() + ", error message : " + e.toString());
+					}
+				} else logger.info("No json format, which is surrounded by '{' and '}', not found in extension : " + query.getExtension().toString());
+			}
+
+			// 중복 방지 용 푼 문제 ID 수집
 			solvedProbList.add(Integer.parseInt(query.getSourceId()));
+		}
+
+		if (continueProblems.size() >= 20) {
+			continueProblems.clear();
+			isCorrect.clear();
+			continueAnswers.clear();
 		}
 
 		/*
@@ -314,7 +373,13 @@ public class ProblemService {
 				minitestProblems.add(probIdList.get(i));
 			}
 		}
+		map.put("newProbSetId", newProbSetId);
 		map.put("minitestProblems", minitestProblems);
+		map.put("continueProbSetId", continueProbSetId);
+		map.put("continueProblems", continueProblems);
+		map.put("continueAnswers", continueAnswers);
+		map.put("isCorrect", isCorrect);
+		map.put("guessAlarm", guessAlarm);
 		return map;
 	}
 
