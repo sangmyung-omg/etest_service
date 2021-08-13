@@ -54,15 +54,15 @@ public class ProbChoiceServiceETest {
 		if(requestInfos==null) return null;
 		
 		for(BaseProbChoiceDTO requestInfo : requestInfos) {
-			if(requestInfo.getChoiceNum() == null) continue;
+			if(requestInfo.getChoiceNum() == null) continue ;
 			
 			ProblemChoiceCompositeKey compositeKey = new ProblemChoiceCompositeKey();
 			compositeKey.setProbID( LongProbId );
 			compositeKey.setChoiceNum( Integer.parseInt( requestInfo.getChoiceNum() ) );
 			ProblemChoice problemChoice = probChoiceRepositoryETest.findById( compositeKey ).get();
 			
-			if(requestInfo.getChoiceNum()!=null)
-				problemChoice.setChoiceNum( Integer.parseInt( requestInfo.getChoiceNum() ) );
+//			if(requestInfo.getChoiceNum()!=null)
+//				problemChoice.setChoiceNum( Integer.parseInt( requestInfo.getChoiceNum() ) );
 			
 			if(requestInfo.getUkID()!=null) {
 				UkMaster temp = new UkMaster();
