@@ -450,7 +450,7 @@ definitions:
       userID:
         type: string
         example: 'userIDSample'
-      probID:
+      curriculumID:
         type: string
         example: "33"
 # 
