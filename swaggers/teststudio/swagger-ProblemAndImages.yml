@@ -104,6 +104,8 @@ paths:
       responses:
         200:
           description: success
+          schema:
+              $ref: '#/definitions/PostTestProblemDTOOut'
         400:
           description: bad input parameter    
 
@@ -210,16 +212,16 @@ definitions:
     type: object
     required:
     - userID
-    - probID
+    - probIDs
     properties:
       userID:
         type: string
         example: 'userIDSample'
-      probID:
+      probIDs:
         type: array
-        example: [1,2,3]
+        example: ["1","2","3"]
         items:
-          type: number
+          type: string
         
   GetDiagProblemDTOOut:
     type: object
@@ -655,6 +657,20 @@ definitions:
                   type: string
                 status:
                   type: string
+# 
+  PostTestProblemDTOOut:
+    type: object
+    required:
+    - probIDs
+    properties:
+      resultMessage:
+        type: string
+        example: "success"
+      probIDs:
+        type: array
+        example: ["1","2"]
+        items: 
+          type: string
 # 
   PutTestProblemDTOIn:
     type: object

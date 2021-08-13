@@ -12,6 +12,6 @@ import lombok.NoArgsConstructor;
 public class GetProblemDTOIn {
 	private String userID;
 	//Long
-	private List<Long> probID;
+	private List<String> probIDs;
 	//
 }

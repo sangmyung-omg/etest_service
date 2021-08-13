@@ -25,6 +25,7 @@ import com.tmax.eTest.TestStudio.dto.problems.in.PutDiagProblemDTOIn;
 import com.tmax.eTest.TestStudio.dto.problems.in.PutTestProbStatusDTOIn;
 import com.tmax.eTest.TestStudio.dto.problems.in.PutTestProblemDTOIn;
 import com.tmax.eTest.TestStudio.dto.problems.out.GetTestProblemDTOOut;
+import com.tmax.eTest.TestStudio.dto.problems.out.PostTestProblemDTOOut;
 
 import lombok.RequiredArgsConstructor;
 
@@ -41,8 +42,8 @@ public class TestProblemControllerETest {
 	 */
 	@PostMapping("/TestProblems")
 	public 
-//			ResponseEntity<List<String>> 
-			ResponseEntity<String>
+			ResponseEntity<PostTestProblemDTOOut> 
+//			ResponseEntity<String>
 			CreateProblem(
 			@RequestBody PostTestProblemDTOIn request
 			) {
@@ -93,8 +94,9 @@ public class TestProblemControllerETest {
 //				return new ResponseEntity<>(res, HttpStatus.ACCEPTED);
 //			}
 			
-//			List<String> res =probIdStrList; 
-			String res = "success";
+//			List<String> res =probIdStrList;
+			PostTestProblemDTOOut res = new PostTestProblemDTOOut("success",probIdStrList);
+//			String res = "success";
 //					new GetProblemDTOOut("200","success",probIdStrList);
 			return new ResponseEntity<>(res, HttpStatus.OK);
 			
@@ -121,7 +123,7 @@ public class TestProblemControllerETest {
 		try {
 //			System.out.println(request.getProbID());
 			
-			GetTestProblemDTOOut res = testProblemApiComponent.testProblemsGetComponent( request.getProbID() ) ;
+			GetTestProblemDTOOut res = testProblemApiComponent.testProblemsGetComponent( request.getProbIDs() ) ;
 			
 			return new ResponseEntity<>( res, HttpStatus.OK );
 			
@@ -175,7 +177,7 @@ public class TestProblemControllerETest {
 	public ResponseEntity<String> delete(@RequestBody DeleteProblemDTOIn request) {
 		
 		try {
-			String res = testProblemApiComponent.deleteProbComponent(request.getUserID(), request.getProbID() );
+			String res = testProblemApiComponent.deleteProbComponent(request.getUserID(), request.getProbIDs() );
 
 				return new ResponseEntity<>( res, HttpStatus.OK );
 

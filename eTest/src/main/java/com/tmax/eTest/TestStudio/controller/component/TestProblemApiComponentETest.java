@@ -222,7 +222,8 @@ public class TestProblemApiComponentETest {
 	 */	
 	public GetTestProblemDTOOut testProblemsGetComponent(
 //			String probIdStr
-			List<Long> probIdList
+//			List<Long> probIdList
+			List<String> strProbIdList
 			) throws Exception {
 		
 			GetTestProblemDTOOut output = new GetTestProblemDTOOut( new ArrayList<BaseTestProblemSetDTO>() );
@@ -230,18 +231,18 @@ public class TestProblemApiComponentETest {
 			// set : probId []
 //			String[] strProbIdList = probIdStr.replace(" ","").split(",");
 			
-//				for(String strProbId : strProbIdList) {
-//					if(strProbId==null||strProbId=="") {
-//						output.getTestProblems().add(null);
-//						continue;
-//					}
-//					Long probId = Long.parseLong(strProbId);	
-			
-				for(Long probId : probIdList) {
-					if(probId==null) {
+				for(String strProbId : strProbIdList) {
+					if(strProbId==null||strProbId=="") {
 						output.getTestProblems().add(null);
 						continue;
 					}
+					Long probId = Long.parseLong(strProbId);	
+			
+//				for(Long probId : probIdList) {
+//					if(probId==null) {
+//						output.getTestProblems().add(null);
+//						continue;
+//					}
 					BaseTestProblemSetDTO outputBase = new BaseTestProblemSetDTO();
 					
 					Problem findProblem = problemServiceETest.findOneSet(probId);
@@ -266,8 +267,8 @@ public class TestProblemApiComponentETest {
 							findProblem.getEditorID(), findProblem.getEditDate(),
 							findProblem.getSource(), findProblem.getIntention(),
 							findProblem.getQuestionInitial(),findProblem.getSolutionInitial(),
-							imgJsonObjectNormToString,null,
-							null,null
+							imgJsonObjectNormToString,null
+//							,null,null
 							);
 
 					outputBase.setProblem(collect);
@@ -454,13 +455,21 @@ public class TestProblemApiComponentETest {
 	 *  삭제
 	 *  
 	 */
-	public String deleteProbComponent(String userId,List<Long> probIdList) {
+	public String deleteProbComponent(
+			String userId,
+//			List<Long> probIdList
+			List<String> strProbIdList
+			) {
 		
 		try {
 			
-			if(userId==null || probIdList==null || probIdList.isEmpty() ) return null;
+//			if(userId==null || probIdList==null || probIdList.isEmpty() ) return null;
+			if(userId==null || strProbIdList==null || strProbIdList.isEmpty() ) return null;
 //			 실제 데이터 삭제 
-			for(Long probId : probIdList) {
+//			for(Long probId : probIdList) {
+			for(String strProbId : strProbIdList) {
+				Long probId = Long.parseLong(strProbId);
+				
 				problemServiceETest.problemDeleteById(probId);
 				probChoiceServiceETest.probChoiceDeleteAllByProbId(probId);
 				probUKRelServiceETest.probUKRelDeleteAllByProbId(probId);	

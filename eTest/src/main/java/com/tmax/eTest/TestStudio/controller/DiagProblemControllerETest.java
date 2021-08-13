@@ -46,7 +46,7 @@ public class DiagProblemControllerETest {
 		try {
 //			System.out.println(request.getProbID());
 			
-			GetDiagProblemDTOOut res = diagProblemApiComponent.diagProblemsGetComponent( request.getProbID() );
+			GetDiagProblemDTOOut res = diagProblemApiComponent.diagProblemsGetComponent( request.getProbIDs() );
 			
 			return new ResponseEntity<>( res, HttpStatus.OK );
 			
