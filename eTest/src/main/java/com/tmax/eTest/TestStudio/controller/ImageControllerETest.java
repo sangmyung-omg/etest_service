@@ -67,7 +67,7 @@ public class ImageControllerETest {
 	
 		try {
 
-			return new ResponseEntity<>( imageFileServerApiComponentETest.ImageListComponent(request.getProbID()), HttpStatus.OK );
+			return new ResponseEntity<>( imageFileServerApiComponentETest.ImageListComponent(request.getProbIDs()), HttpStatus.OK );
 		
 		} catch (Exception e) {
 			

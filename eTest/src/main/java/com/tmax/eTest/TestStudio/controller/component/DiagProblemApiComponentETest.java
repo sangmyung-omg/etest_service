@@ -52,7 +52,8 @@ public class DiagProblemApiComponentETest {
 	 */
 	public GetDiagProblemDTOOut diagProblemsGetComponent(
 //			String probIdStr
-			List<Long> probIdList
+//			List<Long> probIdList
+			List<String> strProbIdList
 			) throws Exception{
 		
 		//
@@ -62,18 +63,18 @@ public class DiagProblemApiComponentETest {
 		// set : probId []
 //		String[] strProbIdList = probIdStr.replace(" ","").split(",");
 		
-//			for(String strProbId : strProbIdList) {
-//				if(strProbId==null||strProbId=="") {
-//					output.getDiagProblems().add(null);
-//					continue;
-//				}
-//				Long probId = Long.parseLong(strProbId);
-				
-			for(Long probId : probIdList) {
-				if(probId==null) {
+			for(String strProbId : strProbIdList) {
+				if(strProbId==null||strProbId=="") {
 					output.getDiagProblems().add(null);
 					continue;
 				}
+				Long probId = Long.parseLong(strProbId);
+				
+//			for(Long probId : probIdList) {
+//				if(probId==null) {
+//					output.getDiagProblems().add(null);
+//					continue;
+//				}
 				BaseDiagProblemSetDTO outputBase = new BaseDiagProblemSetDTO();
 				
 				Problem findProblem = problemServiceETest.findOneSet(probId);
@@ -93,8 +94,8 @@ public class DiagProblemApiComponentETest {
 						findProblem.getEditorID(), findProblem.getEditDate(),
 						findProblem.getSource(), findProblem.getIntention(),
 						findProblem.getQuestionInitial(),findProblem.getSolutionInitial(),
-						imgJsonObjectNormToString,null,
-						null,null
+						imgJsonObjectNormToString,null
+//						,null,null
 						);
 				
 				outputBase.setProblem(collect); 
