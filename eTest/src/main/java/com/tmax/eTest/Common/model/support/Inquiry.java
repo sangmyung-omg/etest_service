@@ -29,11 +29,9 @@ public class Inquiry {
     @ManyToOne
     private UserMaster userMaster;
 
-
     @JsonIgnoreProperties({"inquiry"})
     @OneToMany(mappedBy = "inquiry", fetch = FetchType.LAZY)
     private List<Inquiry_file> inquiry_file;
-
 
     @Column(name="INQUIRY_STATUS")
     private String status;
@@ -49,7 +47,6 @@ public class Inquiry {
 
     @Column(name = "INQUIRY_CONTENT")
     private String content;
-
 
     @Column(name = "INQUIRY_ANSWER")
     private String answer;
