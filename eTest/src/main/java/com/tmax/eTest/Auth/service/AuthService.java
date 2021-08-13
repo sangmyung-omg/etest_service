@@ -11,6 +11,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.ParseException;
 import java.util.UUID;
 
 @Service
@@ -25,28 +26,40 @@ public class AuthService {
 
     @Transactional
     public UserMaster singUp(SignUpRequestDto signUpRequestDto) {
-        UserMaster userMaster = UserMaster.builder()
-                .password(bCryptPasswordEncoder.encode(UUID.randomUUID().toString()))
-                .email(signUpRequestDto.getEmail())
-                .provider(signUpRequestDto.getProvider())
-                .role(Role.USER)
-                .userUuid(UUID.randomUUID().toString())
-                .gender(signUpRequestDto.getGender())
-                .providerId(signUpRequestDto.getProviderId())
-                .birthday(signUpRequestDto.getBirthday())
-                .event_sms_agreement(signUpRequestDto.getEvent_sms_agreement())
-                .account_active(signUpRequestDto.getAccount_active())
-                .older_than_14(true)
-                .service_agreement(true)
-                .collect_info(true)
-                .build();
-        userRepository.save(userMaster);
-        System.out.println("save완료");
-        return userMaster;
+        System.out.println("signup 진입 : " + emailDuplicateCheck(signUpRequestDto.getEmail()) + nickNameDuplicateCheck(signUpRequestDto.getNickname()) +(!emailDuplicateCheck(signUpRequestDto.getEmail()) && !nickNameDuplicateCheck(signUpRequestDto.getNickname())) );
+            if (!emailDuplicateCheck(signUpRequestDto.getEmail()) && !nickNameDuplicateCheck(signUpRequestDto.getNickname())) {
+                UserMaster userMaster = UserMaster.builder()
+                        .nickname(signUpRequestDto.getNickname())
+                        .password(bCryptPasswordEncoder.encode(UUID.randomUUID().toString()))
+                        .email(signUpRequestDto.getEmail())
+                        .provider(signUpRequestDto.getProvider())
+                        .role(Role.USER)
+                        .userUuid(UUID.randomUUID().toString())
+                        .gender(signUpRequestDto.getGender())
+                        .providerId(signUpRequestDto.getProviderId())
+                        .birthday(signUpRequestDto.getBirthday())
+                        .event_sms_agreement(signUpRequestDto.getEvent_sms_agreement())
+                        .account_active(signUpRequestDto.getAccount_active())
+                        .older_than_14(true)
+                        .service_agreement(true)
+                        .collect_info(true)
+                        .build();
+                userRepository.save(userMaster);
+                return userMaster;
+            }
+        return null;
     }
 
     @Transactional(readOnly = true)
-    public boolean duplicateCheck(String email) {
+    public boolean emailDuplicateCheck(String email) {
         return userRepository.existsByEmail(email);
     }
+
+    @Transactional(readOnly = true)
+    public boolean nickNameDuplicateCheck(String nickname) {
+        return userRepository.existsByNickname(nickname);
+    }
+
+
+
 }
