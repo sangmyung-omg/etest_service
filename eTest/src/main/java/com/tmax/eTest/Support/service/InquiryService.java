@@ -54,6 +54,7 @@ public class InquiryService {
                         .type(createInquiryDto.getType())
                         .build();
         inquiryRepository.save(inquiry);
+
         for(int i=0; i<createInquiryDto.getFileList().size(); i++){
             String fileName = UUID.randomUUID().toString() + "_" + createInquiryDto.getFileList().get(i).getOriginalFilename();
             Path imageFilePath = Paths.get(uploadFolder + fileName);
