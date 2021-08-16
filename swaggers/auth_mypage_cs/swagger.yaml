@@ -47,7 +47,7 @@ paths:
           application/json:
             schema:
               properties:
-                id:
+                providerId:
                   description: 고유번호
                   type: string
                 provider:
@@ -55,6 +55,11 @@ paths:
                   type: string
               required:
                 - status
+              example: {
+                            "providerId": "1234",
+                            "provider": "google",
+                            "email": "hong@tmax.co.kr"
+                        }
       responses:
         '200':
           description: 회원가입이 이미 된 유저
@@ -107,6 +112,18 @@ paths:
                 account_active:
                   description: 장기 미접속 시계정 활성 상태를 유지합니다
                   type: string
+              example: {
+                          "providerId": "test",
+                          "gender": "male",
+                          "email": "test@naver.com",
+                          "birthday": "1995-04-25",
+                          "role": "USER",
+                          "password": "3245345",
+                          "provider": "naver",
+                          "event_sms_agreement": "false",
+                          "account_active": "false",
+                          "nickname": "minjoon"
+                      }
       responses:
         '200':
           description: 회원 가입 성공
@@ -131,7 +148,10 @@ paths:
                 email:
                   description: 이메일
                   type: string
-
+              example: {
+                            "email" : "test@naver.com",
+                            "nickname" : "test"
+                        }
       responses:
         '201':
           description: 중복 회원 체크
@@ -168,7 +188,11 @@ paths:
                 example:
                   code: 200
                   message: 공지사항 가져오기 성공
-                  data: noticeList                  
+                  data: noticeList      
+              example: {
+                            "title": "투자 정보 콘텐츠가 개선됩니다.",
+                            "content": "진단 문제가 1000문제 업데이트 됩니다. 더 많은 문제 풀을 통해 더 정교하고 섬세한 진단 및 학습이 가능해졌습니다. 감사합니다 금융 투자 교육원 드림"
+                        }        
   /faq:
     get:
       tags:
@@ -184,7 +208,10 @@ paths:
                 example:
                   code: 200
                   message: faqList 반환 성공
-                  data: faqList                  
+                  data: faqList       
+
+
+
   /user/inquiry/create:
     post:
       tags:
@@ -242,7 +269,7 @@ paths:
     get:
       tags:
         - 1대1문의
-      description: 1대1문의 만들기
+      description: 해당 유저의 1대1 문의 반환하기
       parameters:
         - name: Cookie
           in: header
@@ -266,7 +293,7 @@ paths:
     post:
       tags:
         - 1대1문의
-      description: 1대1문의 지우기
+      description: 해당 유저의 1대1문의 지우기
       parameters:
         - name: Cookie
           in: header
@@ -280,10 +307,9 @@ paths:
           application/json:
             schema:
               properties:
-                title:
-                  description: 제목
+                inquiryId:
+                  description: 질문 번호
                   type: number      
-
               example: {   
                           "inquiryId": 1
                         }
