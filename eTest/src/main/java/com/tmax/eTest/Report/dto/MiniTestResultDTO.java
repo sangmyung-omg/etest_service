@@ -24,9 +24,8 @@ public class MiniTestResultDTO {
 	int percentage = 0;
 	
 	List<List<String>> partUnderstanding =new ArrayList<List<String>>();
-	
-	//List<List<String>> weakPartDetail = new ArrayList<List<String>>();
-	
+
+	// 파트 이름, 파트에 포함된 UK 정보들[UK 이름, UK 등급(A to F), UK 평균 등급(A to F), UK 설명]
 	Map<String, List<List<String>>> partUkDetail = new HashMap<>();
 	
 	List<List<String>> diagnosisQuestionInfo;

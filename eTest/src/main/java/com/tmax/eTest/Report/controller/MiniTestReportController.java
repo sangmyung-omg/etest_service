@@ -41,6 +41,22 @@ public class MiniTestReportController {
 		return output;
 	}
 	
+
+	@CrossOrigin("*")
+	@GetMapping(value="/report/miniTestResult/{id}/{probSetId}", produces = "application/json; charset=utf-8")
+	public MiniTestResultDTO miniTestResult(
+			@PathVariable("id") String id,
+			@PathVariable("probSetId") String probSetId) throws Exception{
+		
+		// Saving user ID of not-logged-in users - by S.M.
+		String updateResult = userService.updateUserInfo(id);
+		// ------------------------------------------------
+		
+		MiniTestResultDTO output = miniTestScoreService.getMiniTestResult(id);
+
+		return output;
+	}
+	
 	@CrossOrigin("*")
 	@PutMapping(value="/report/miniTestResult/recommendVideoBookmark/{userId}/{videoId}/{isBookmarkOn}", produces = "application/json; charset=utf-8")
 	public boolean setVideoBookmark(
