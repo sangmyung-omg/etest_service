@@ -399,7 +399,7 @@ components:
         resultMessage:
           type: string
           example: "Successfully returned"
-        newProbSetId:
+        diagProbSetId:
           type: string
           example: "2fc89ea8-fb4b-11eb-9a03-0242ac130003"
         tendencyProblems:
@@ -438,54 +438,6 @@ components:
             - [28,29,30]
             - [31,32,33]
             - [34,35,36]
-        continueProbSetId:
-          type: string
-          example: "429589d8-fbe1-11eb-9a03-0242ac130003"
-        solvedProblems:
-          type: array
-          example:
-            - 11
-            - 12
-            - 13
-            - 14
-            - 15
-            - 16
-            - 17
-            - 18
-            - 19
-            - 20
-            - 21
-        solvedAnswers:
-          type: array
-          example:
-            - 1
-            - 4
-            - 1
-            - 1
-            - 1
-            - 2
-            - 2
-            - 1
-            - 1
-            - 2
-            - 3
-        isCorrect:
-          type: array
-          example:
-            - 1
-            - 1
-            - 1
-            - 1
-            - 0
-            - 0
-            - 0
-            - 1
-            - 1
-            - 1
-            - 0
-        guessAlarm:
-          type: integer
-          example: 0
 
     minitestmProblemList:
       properties:
