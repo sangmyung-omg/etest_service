@@ -70,7 +70,12 @@ paths:
                 example:
                   code: 200
                   message: success
-                  data: jwt토큰
+                  data: {
+                          "provider": "naver",
+                          "nickname": "sdgsd",
+                          "jwtToken": "sdfsfsfsdfdff",
+                          "email": "asdfads@naver.com"
+                        }
         '201':
           description: 회원가입이 안 된 유저
           content:

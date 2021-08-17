@@ -38,7 +38,12 @@ public class ApiController {
                     .withClaim("userUuid", userEntity.get().getUserUuid())
                     .withClaim("email", userEntity.get().getEmail())
                     .sign(Algorithm.HMAC512(JwtProperties.SECRET));
-            return new CMRespDto<>(200, "jwt 반환", jwtToken);
+            Map<String,String> info = new HashMap<>();
+            info.put("jwtToken",jwtToken);
+            info.put("email",userEntity.get().getEmail());
+            info.put("nickname",userEntity.get().getNickname());
+            info.put("provider",userEntity.get().getProvider().toString());
+            return new CMRespDto<>(200, "jwt 반환", info);
         }
 
         System.out.println("처음 로그인 하는 유저입니다");
