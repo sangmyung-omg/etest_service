@@ -6,6 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
 import java.util.List;
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -42,15 +44,19 @@ public class Inquiry {
     @Column(name = "INQUIRY_TYPE")
     private String type;
 
-    @Column(name = "INQUIRY_DATE")
-    private LocalDate date;
-
     @Column(name = "INQUIRY_CONTENT")
     private String content;
 
     @Column(name = "INQUIRY_ANSWER")
     private String answer;
 
+    @Column(name = "CREATE_DATE")
+    private LocalDateTime createDate;
+
+    @PrePersist // 디비에 INSERT 되기 직전에 실행
+    public void createDate() {
+        this.createDate = LocalDateTime.now();
+    }
 }
 
 

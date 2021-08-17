@@ -22,9 +22,6 @@ public class CreateInquiryDto {
 
     private String type;
 
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    private LocalDate date;
-
     private String content;
 
     private String answer;
