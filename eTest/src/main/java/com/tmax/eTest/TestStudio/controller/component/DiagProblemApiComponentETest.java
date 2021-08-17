@@ -94,7 +94,8 @@ public class DiagProblemApiComponentETest {
 						findProblem.getEditorID(), findProblem.getEditDate(),
 						findProblem.getSource(), findProblem.getIntention(),
 						findProblem.getQuestionInitial(),findProblem.getSolutionInitial(),
-						imgJsonObjectNormToString,null
+						imgJsonObjectNormToString,null,
+						null
 //						,null,null
 						);
 				
@@ -213,7 +214,7 @@ public class DiagProblemApiComponentETest {
 				diagCurriculumServiceETest.problemUpdate( request.getUserID() ,requestInfo__.getDiagCurriculum());
 				
 				// problem image
-				if(requestInfo__.getProblem().getImgListIn()!=null) {
+				if(requestInfo__.getProblem().getImgSrcListIn()!=null) {
 					
 					File folder = new File( pathUtilEtest.getDirPath()
 											+ File.separator + requestInfo__.getProblem().getProbID() );
@@ -223,13 +224,13 @@ public class DiagProblemApiComponentETest {
 						for( String imgSrc__ : folder.list() ) {
 							willDelImgData.add(imgSrc__);
 						}
-						for(String src: requestInfo__.getProblem().getImgListIn()) {
+						for(String src: requestInfo__.getProblem().getImgSrcListIn()) {
 							willDelImgData.remove(src);
 						}
 						imageFileServerApiComponentETest.deleteImgSrcsOfProbIDServiceComponent(LongProbId, willDelImgData );
 					}
 					Boolean isSuccess = imageFileServerApiComponentETest
-							.assignImgFileListServiceComponent(request.getUserID(), LongProbId, requestInfo__.getProblem().getImgListIn());
+							.assignImgFileListServiceComponent(request.getUserID(), LongProbId, requestInfo__.getProblem().getImgSrcListIn());
 				
 				}
 				
