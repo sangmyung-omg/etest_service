@@ -30,10 +30,25 @@ public class SelfDiagnosisReportController {
 			@PathVariable("id") String id) throws Exception{
 		
 		// Saving user ID of not-logged-in users - by S.M.
-		String queryResult = userService.updateUserInfo(id);
+		//String queryResult = userService.updateUserInfo(id);
 		// ------------------------------------------------
 		
-		DiagnosisResultDTO output = selfDiagnosisReportService.calculateDiagnosisResult(id);
+		DiagnosisResultDTO output = selfDiagnosisReportService.calculateDiagnosisResult(id, null);
+		
+		return output;
+	}
+	
+	@CrossOrigin("*")
+	@GetMapping(value="/report/diagnosisResult/{id}/{probSetId}", produces = "application/json; charset=utf-8")
+	public DiagnosisResultDTO diagnosisResult(
+			@PathVariable("id") String id,
+			@PathVariable("id") String probSetId) throws Exception{
+		
+		// Saving user ID of not-logged-in users - by S.M.
+		//String queryResult = userService.updateUserInfo(id);
+		// ------------------------------------------------
+		
+		DiagnosisResultDTO output = selfDiagnosisReportService.calculateDiagnosisResult(id, probSetId);
 		
 		return output;
 	}
