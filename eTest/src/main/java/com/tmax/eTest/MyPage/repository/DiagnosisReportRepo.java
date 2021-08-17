@@ -9,5 +9,6 @@ import java.util.Optional;
 
 @Repository("MY-DiagnosisReportRepo")
 public interface DiagnosisReportRepo extends JpaRepository<DiagnosisReport, DiagnosisReportKey> {
+
     List<DiagnosisReport> findAllByUserUuid(String UserUuid);
 }

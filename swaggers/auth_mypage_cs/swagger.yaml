@@ -25,7 +25,7 @@ tags:
     description: Access to Petstore orders
   - name: 자가진단
     description: Access to Petstore orders
-  - name: 이용약관
+  - name: 미니테스트
     description: Operations about user
     externalDocs:
       description: Find out more about our store
@@ -249,7 +249,6 @@ paths:
                           "status": "대기중",
                           "title": "두번째 질문이 있습니다",
                           "type": "error",
-                          "date": "2021-08-15",
                           "content": "페이지가 안보입니다",
                           "fileList": ["제목없음.png","제목없음2.png"]
                         }
@@ -335,7 +334,52 @@ paths:
                   code: 400
                   message: 해당 질문은 유저가 만든 질문이 아닙니다
                   data: fail     
-                  
-                  
-                  
-                  
+
+  /user/myPage/getMiniTestList:
+    get:
+      tags:
+        - 미니테스트
+      description: 해당 유저의 미니테스트 리스트 받아오기
+      parameters:
+        - name: Cookie
+          in: header
+          description: user JWTtoken
+          required: true
+          schema:
+            type: string
+            format: string      
+      responses:
+        '200':
+          description: 해당 유저의 모든 미니 테스트 리포트 반환
+          content:
+            json:
+              schema:
+                type: object
+                example:
+                  code: 200
+                  message: 성공
+                  data: 유저의 미니테스트 기록                     
+  /user/myPage/getDiagnosisList:
+    get:
+      tags:
+        - 자가진단
+      description: 해당 유저의 자가진단 리스트 받아오기
+      parameters:
+        - name: Cookie
+          in: header
+          description: user JWTtoken
+          required: true
+          schema:
+            type: string
+            format: string      
+      responses:
+        '200':
+          description: 해당 유저의 모든 미니 테스트 리포트 반환
+          content:
+            json:
+              schema:
+                type: object
+                example:
+                  code: 200
+                  message: 성공
+                  data: 유저의 미니테스트 기록                
