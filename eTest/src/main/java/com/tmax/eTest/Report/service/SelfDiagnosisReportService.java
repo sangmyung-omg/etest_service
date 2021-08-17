@@ -65,15 +65,15 @@ public class SelfDiagnosisReportService {
 	private final Logger logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
 	
 	
-	public DiagnosisResultDTO calculateDiagnosisResult(String id) throws Exception
+	public DiagnosisResultDTO calculateDiagnosisResult(String id, String probSetId) throws Exception
 	{
+		long startTime = System.currentTimeMillis();
 		DiagnosisResultDTO result = new DiagnosisResultDTO();
-		List<StatementDTO> diagnosisProbStatements = getStatementDiagnosisProb(id);
+		List<StatementDTO> diagnosisProbStatements = getStatementDiagnosisProb(id, probSetId);
 		List<Problem> probList = getProblemInfos(diagnosisProbStatements);
 		List<Pair<Problem, Integer>> probAndUserChoice = getProblemAndChoiceInfos(probList, diagnosisProbStatements);
 		Map<String, Integer> scoreMap = ruleBaseScoreCalculator.probDivideAndCalculateScores(probAndUserChoice);
 		Map<String, List<String>> commentMap = commentGenerator.getTotalComments(scoreMap);
-		
 		//result.initForDummy();
 				
 		Map<String, Integer> partRes = new HashMap<>();
@@ -95,8 +95,6 @@ public class SelfDiagnosisReportService {
 		result.setInvestKnowledge(commentMap.get(SelfDiagnosisComment.INVEST_KNOWLEDGE_KEY));
 		result.setRiskFidelity(commentMap.get(SelfDiagnosisComment.RISK_FID_KEY));
 		result.setSimilarTypeInfo(commentMap.get(SelfDiagnosisComment.SIMILAR_TYPE_KEY));
-		
-		
 		
 		// Rule Based 점수들 산출
 		Map<String, List<Object>> probInfoForTriton = stateAndProbProcess.makeInfoForTriton(diagnosisProbStatements, probList);
@@ -150,9 +148,11 @@ public class SelfDiagnosisReportService {
 				
 				partAvgScore /= partScoreList.size();
 				saveDiagnosisReport(id, scoreMap, partAvgScore);
+				
 			}
 		}
 		
+		logger.info("6 : "+(System.currentTimeMillis() - startTime));
 		return result;
 	}
 	
@@ -162,7 +162,7 @@ public class SelfDiagnosisReportService {
 	{
 		PartUnderstandingDTO res = new PartUnderstandingDTO();
 		
-		List<StatementDTO> diagnosisProbStatements = getStatementDiagnosisProb(id);
+		List<StatementDTO> diagnosisProbStatements = getStatementDiagnosisProb(id, null);
 		List<Problem> probList = getProblemInfos(diagnosisProbStatements);
 		Map<String, List<Object>> probInfoForTriton = stateAndProbProcess.makeInfoForTriton(diagnosisProbStatements, probList);
 		TritonResponseDTO tritonResponse = tritonAPIManager.getUnderstandingScoreInTriton(probInfoForTriton);
@@ -288,11 +288,11 @@ public class SelfDiagnosisReportService {
 			try {
 				int probId = Integer.parseInt(dto.getSourceId());
 				probIdList.add(probId);
-				probList = problemRepo.findAllById(probIdList);
 			} catch (Exception e) {
 				logger.info("getProblemInfos : " + e.toString() + " id : " + dto.getSourceId() + " error!");
 			}
 		}
+		probList = problemRepo.findAllById(probIdList);
 
 		// problem 관련 정보를 가공하여 TritonInput 화.
 		return probList;
@@ -300,7 +300,7 @@ public class SelfDiagnosisReportService {
 	
 
 	
-	private List<StatementDTO> getStatementDiagnosisProb(String id)
+	private List<StatementDTO> getStatementDiagnosisProb(String id, String probSetId)
 	{
 		GetStatementInfoDTO getStateInfo = new GetStatementInfoDTO();
 	
@@ -309,6 +309,9 @@ public class SelfDiagnosisReportService {
 		getStateInfo.pushSourceType("diagnosis");	
 		getStateInfo.pushSourceType("diagnosis_pattern");		
 		getStateInfo.pushActionType("submit");
+		
+		if(probSetId != null)
+			getStateInfo.pushExtensionStr(probSetId);
 		
 		try
 		{

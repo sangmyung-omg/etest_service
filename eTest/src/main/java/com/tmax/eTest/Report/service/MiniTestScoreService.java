@@ -62,12 +62,12 @@ public class MiniTestScoreService {
 
 	private final Logger logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
 
-	public MiniTestResultDTO getMiniTestResult(String userId) {
+	public MiniTestResultDTO getMiniTestResult(String userId, String probSetId) {
 		MiniTestResultDTO result = new MiniTestResultDTO();
 		result.initForDummy();
 
 		// Mini Test 관련 문제 풀이 정보 획득.
-		List<StatementDTO> miniTestRes = getMiniTestResultInLRS(userId);
+		List<StatementDTO> miniTestRes = getMiniTestResultInLRS(userId, probSetId);
 		List<Problem> probInfos = getProblemInfos(miniTestRes);
 		Map<String, List<Object>> probInfoForTriton = stateAndProbProcess.makeInfoForTriton(miniTestRes, probInfos);
 		TritonResponseDTO tritonResponse = tritonAPIManager.getUnderstandingScoreInTriton(probInfoForTriton);
@@ -150,12 +150,15 @@ public class MiniTestScoreService {
 	}
 
 
-	private List<StatementDTO> getMiniTestResultInLRS(String userID) {
+	private List<StatementDTO> getMiniTestResultInLRS(String userID, String probSetId) {
 		List<StatementDTO> result = new ArrayList<>();
 		GetStatementInfoDTO statementInput = new GetStatementInfoDTO();
 		statementInput.pushUserId(userID);
 		statementInput.pushSourceType("mini_test_question");
 		statementInput.pushActionType("submit");
+		
+		if(probSetId != null)
+			statementInput.pushExtensionStr(probSetId);
 
 		try {
 			result = lrsAPIManager.getStatementList(statementInput);
