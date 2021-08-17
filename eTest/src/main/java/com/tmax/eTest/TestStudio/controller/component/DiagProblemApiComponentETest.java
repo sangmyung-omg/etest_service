@@ -214,7 +214,8 @@ public class DiagProblemApiComponentETest {
 				diagCurriculumServiceETest.problemUpdate( request.getUserID() ,requestInfo__.getDiagCurriculum());
 				
 				// problem image
-				if(requestInfo__.getProblem().getImgSrcListIn()!=null) {
+				if(requestInfo__.getProblem().getImgSrcListIn()!=null
+						&& requestInfo__.getProblem().getImgToEditSrcListIn()!=null) {
 					
 					File folder = new File( pathUtilEtest.getDirPath()
 											+ File.separator + requestInfo__.getProblem().getProbID() );
@@ -229,8 +230,10 @@ public class DiagProblemApiComponentETest {
 						}
 						imageFileServerApiComponentETest.deleteImgSrcsOfProbIDServiceComponent(LongProbId, willDelImgData );
 					}
+//					Boolean isSuccess = imageFileServerApiComponentETest
+//							.assignImgFileListServiceComponent(request.getUserID(), LongProbId, requestInfo__.getProblem().getImgSrcListIn());
 					Boolean isSuccess = imageFileServerApiComponentETest
-							.assignImgFileListServiceComponent(request.getUserID(), LongProbId, requestInfo__.getProblem().getImgSrcListIn());
+							.assignImgFileListServiceComponent(request.getUserID(), LongProbId, requestInfo__.getProblem().getImgToEditSrcListIn());
 				
 				}
 				

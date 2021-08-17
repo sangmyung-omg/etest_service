@@ -175,13 +175,10 @@ public class TestProblemApiComponentETest {
 				
 				if(requestInfo.getImgSrcListIn()!=null) {
 					if(!requestInfo.getImgSrcListIn().isEmpty()) {
-							
-//						if(requestInfo.getImgSrcListIn()!=null) {
-//							if(!requestInfo.getImgSrcListIn().isEmpty()) {
-								Problem problem__ = problemServiceETest.findOne(problem.getProbID().longValue());
-								problem__.setImgSrc(pathUtilEtest.getDirPath() + File.separator + problem.getProbID());
-//							}
-//						}
+
+						Problem problem__ = problemServiceETest.findOne(problem.getProbID().longValue());
+						problem__.setImgSrc(pathUtilEtest.getDirPath() + File.separator + problem.getProbID());
+
 						imageFileServerApiComponentETest.deleteImgSrcFileOfProbIDServiceComponent( problem.getProbID().longValue() );
 						Boolean isSuccess = imageFileServerApiComponentETest
 								.assignImgFileListServiceComponent(
@@ -398,7 +395,8 @@ public class TestProblemApiComponentETest {
 				}
 				
 				// problem image			
-				if(requestInfo__.getProblem().getImgSrcListIn()!=null) {	
+				if(requestInfo__.getProblem().getImgSrcListIn()!=null
+						&& requestInfo__.getProblem().getImgToEditSrcListIn()!=null) {	
 					
 					File folder = new File( pathUtilEtest.getDirPath()
 											+ File.separator + requestInfo__.getProblem().getProbID() );
@@ -413,8 +411,10 @@ public class TestProblemApiComponentETest {
 						}
 						imageFileServerApiComponentETest.deleteImgSrcsOfProbIDServiceComponent(LongProbId, willDelImgData );
 					}
+//					Boolean isSuccess = imageFileServerApiComponentETest
+//							.assignImgFileListServiceComponent(request.getUserID(), LongProbId, requestInfo__.getProblem().getImgSrcListIn());
 					Boolean isSuccess = imageFileServerApiComponentETest
-							.assignImgFileListServiceComponent(request.getUserID(), LongProbId, requestInfo__.getProblem().getImgSrcListIn());
+							.assignImgFileListServiceComponent(request.getUserID(), LongProbId, requestInfo__.getProblem().getImgToEditSrcListIn());
 				
 				}
 				

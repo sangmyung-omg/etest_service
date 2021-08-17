@@ -121,6 +121,12 @@ public class ProblemServiceETest {
 	
 	////
 	public Integer NPID() {
-		return problemQRepositoryETest.searchLatestProblem().getProbID() + 1 ;
+	
+		if(problemQRepositoryETest.searchLatestProblem().getProbID() == null ) {
+			return 1;
+		}else {
+			return problemQRepositoryETest.searchLatestProblem().getProbID() + 1;
+		}
+	
 	}
 }
