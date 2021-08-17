@@ -43,13 +43,13 @@ public class InquiryService {
     public Inquiry createInquiry(CreateInquiryDto createInquiryDto, PrincipalDetails principalDetails) {
         List<MultipartFile> fileList = createInquiryDto.getFileList();
         Optional<UserMaster> userMaster_temp = userRepository.findByEmail(principalDetails.getEmail());
+
         UserMaster userMasterEntity= userMaster_temp.get();
         Inquiry inquiry =
                 Inquiry.builder()
                         .userMaster(userMasterEntity)
                         .content(createInquiryDto.getContent())
                         .status(createInquiryDto.getStatus())
-                        .date(createInquiryDto.getDate())
                         .title(createInquiryDto.getTitle())
                         .type(createInquiryDto.getType())
                         .build();
@@ -64,15 +64,12 @@ public class InquiryService {
                     .inquiry(inquiry)
                     .build();
             try {
-
                 Files.write(imageFilePath, createInquiryDto.getFileList().get(i).getBytes());
             } catch (Exception e) {
                 e.printStackTrace();
             }
             inquiryFileRepository.save(inquiry_file);
         }
-
-
         return inquiry;
     }
 
