@@ -42,7 +42,7 @@ public class InquiryController {
     }
 
     @Transactional(readOnly = true)
-    @PostMapping("/inquiry/list/")
+    @GetMapping("/inquiry/list")
     public CMRespDto<?> getInquiryList(@AuthenticationPrincipal PrincipalDetails principalDetails) {
         List<Inquiry> inquiryList = inquiryRepository.findAllByUserUuid(principalDetails.getUserUuid());
         return new CMRespDto<>(200,"1대1 질문 리스트 받아오기 성공",inquiryList);
