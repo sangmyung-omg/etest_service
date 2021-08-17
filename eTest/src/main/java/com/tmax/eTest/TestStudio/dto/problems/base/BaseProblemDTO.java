@@ -37,6 +37,7 @@ public class BaseProblemDTO {
 	private String imgsOut;
 //	private String darkImgsOut;
 	//
-	private List<String> imgListIn;
+	private List<String> imgSrcListIn;
+	private List<String> imgToEditSrcListIn;
 //	private List<String> darkImgListIn;
 }

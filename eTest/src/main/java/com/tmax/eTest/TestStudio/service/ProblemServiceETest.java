@@ -80,7 +80,7 @@ public class ProblemServiceETest {
 		
 //		if(requestInfo.getImgSrc()!=null)
 //			problem.setImgSrc(requestInfo.getImgSrc());
-		if(!requestInfo.getImgListIn().isEmpty()) {
+		if(!requestInfo.getImgSrcListIn().isEmpty()) {
 			problem.setImgSrc(pathUtilEtest.getDirPath() + File.separator + problem.getProbID());
 		}
 		

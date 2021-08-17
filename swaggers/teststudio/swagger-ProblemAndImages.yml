@@ -381,7 +381,11 @@ definitions:
                   type: string
                 solutionInitial:
                   type: string
-                imgListIn:
+                imgSrcListIn:
+                  type: array
+                  items:
+                    type: string
+                imgToEditSrcListIn:
                   type: array
                   items:
                     type: string
@@ -616,7 +620,7 @@ definitions:
                   type: string
                 solutionInitial:
                   type: string
-                imgListIn:
+                imgSrcListIn:
                   type: array
                   items:
                     type: string
@@ -730,10 +734,14 @@ definitions:
                   type: string
                 solutionInitial:
                   type: string
-                imgListIn:
+                imgSrcListIn:
                   type: array
                   items:
                     type: string
+                imgToEditSrcListIn:
+                  type: array
+                  items:
+                    type: string            
 
             probChoices:
               type: array

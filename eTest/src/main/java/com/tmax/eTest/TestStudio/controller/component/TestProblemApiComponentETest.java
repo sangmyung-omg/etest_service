@@ -173,21 +173,21 @@ public class TestProblemApiComponentETest {
 				 * probImage table
 				 */
 				
-				if(requestInfo.getImgListIn()!=null) {
-					if(!requestInfo.getImgListIn().isEmpty()) {
+				if(requestInfo.getImgSrcListIn()!=null) {
+					if(!requestInfo.getImgSrcListIn().isEmpty()) {
 							
-						if(requestInfo.getImgListIn()!=null) {
-							if(!requestInfo.getImgListIn().isEmpty()) {
+//						if(requestInfo.getImgSrcListIn()!=null) {
+//							if(!requestInfo.getImgSrcListIn().isEmpty()) {
 								Problem problem__ = problemServiceETest.findOne(problem.getProbID().longValue());
 								problem__.setImgSrc(pathUtilEtest.getDirPath() + File.separator + problem.getProbID());
-							}
-						}
+//							}
+//						}
 						imageFileServerApiComponentETest.deleteImgSrcFileOfProbIDServiceComponent( problem.getProbID().longValue() );
 						Boolean isSuccess = imageFileServerApiComponentETest
 								.assignImgFileListServiceComponent(
 																   request.getUserID(), 
 																   problem.getProbID().longValue(),
-																   requestInfo.getImgListIn()
+																   requestInfo.getImgSrcListIn()
 																  );
 						if(!isSuccess) imgSuccess=false;
 					}
@@ -268,6 +268,7 @@ public class TestProblemApiComponentETest {
 							findProblem.getSource(), findProblem.getIntention(),
 							findProblem.getQuestionInitial(),findProblem.getSolutionInitial(),
 							imgJsonObjectNormToString,null
+							,null
 //							,null,null
 							);
 
@@ -397,7 +398,7 @@ public class TestProblemApiComponentETest {
 				}
 				
 				// problem image			
-				if(requestInfo__.getProblem().getImgListIn()!=null) {	
+				if(requestInfo__.getProblem().getImgSrcListIn()!=null) {	
 					
 					File folder = new File( pathUtilEtest.getDirPath()
 											+ File.separator + requestInfo__.getProblem().getProbID() );
@@ -407,13 +408,13 @@ public class TestProblemApiComponentETest {
 						for( String imgSrc__ : folder.list() ) {
 							willDelImgData.add(imgSrc__);
 						}
-						for(String src: requestInfo__.getProblem().getImgListIn()) {
+						for(String src: requestInfo__.getProblem().getImgSrcListIn()) {
 							willDelImgData.remove(src);
 						}
 						imageFileServerApiComponentETest.deleteImgSrcsOfProbIDServiceComponent(LongProbId, willDelImgData );
 					}
 					Boolean isSuccess = imageFileServerApiComponentETest
-							.assignImgFileListServiceComponent(request.getUserID(), LongProbId, requestInfo__.getProblem().getImgListIn());
+							.assignImgFileListServiceComponent(request.getUserID(), LongProbId, requestInfo__.getProblem().getImgSrcListIn());
 				
 				}
 				
