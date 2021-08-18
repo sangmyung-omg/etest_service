@@ -16,8 +16,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.tmax.eTest.TestStudio.controller.component.DiagProblemApiComponentETest;
-import com.tmax.eTest.TestStudio.controller.component.TestProblemApiComponentETest;
+import com.tmax.eTest.TestStudio.controller.component.DiagProblemApiComponentTs;
+import com.tmax.eTest.TestStudio.controller.component.TestProblemApiComponentTs;
 import com.tmax.eTest.TestStudio.dto.problems.in.GetProblemDTOIn;
 import com.tmax.eTest.TestStudio.dto.problems.in.PutDiagCurrStatusDTOIn;
 import com.tmax.eTest.TestStudio.dto.problems.in.PutDiagProblemDTOIn;
@@ -31,7 +31,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class DiagProblemControllerETest {
 	
-	private final DiagProblemApiComponentETest diagProblemApiComponent;
+	private final DiagProblemApiComponentTs diagProblemApiComponent;
 	
 	/**
 	 * 조회
