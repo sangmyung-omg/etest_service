@@ -8,16 +8,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.tmax.eTest.Common.model.problem.DiagnosisProblem;
-import com.tmax.eTest.TestStudio.repository.DiagProblemRepositoryETest;
+import com.tmax.eTest.TestStudio.repository.DiagProblemRepositoryTs;
 
 import lombok.RequiredArgsConstructor;
 
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class DiagProblemServiceETest {
+public class DiagProblemServiceTs {
 	
-	private final DiagProblemRepositoryETest diagProblemRepository;
+	private final DiagProblemRepositoryTs diagProblemRepository;
 	
 	/**
 	 * 문제 조회

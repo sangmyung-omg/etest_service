@@ -21,8 +21,8 @@ import org.springframework.web.multipart.MultipartFile;
 import com.google.gson.JsonObject;
 import com.tmax.eTest.TestStudio.dto.problems.base.BaseProblemIDandImageSrcsDTO;
 import com.tmax.eTest.TestStudio.dto.problems.out.GetProblemImageDTOOut;
-import com.tmax.eTest.TestStudio.service.ProblemServiceETest;
-import com.tmax.eTest.TestStudio.util.PathUtilEtest;
+import com.tmax.eTest.TestStudio.service.ProblemServiceTs;
+import com.tmax.eTest.TestStudio.util.PathUtilTs;
 
 import lombok.RequiredArgsConstructor;
 
@@ -31,11 +31,11 @@ import lombok.RequiredArgsConstructor;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class ImageFileServerApiComponentETest {
+public class ImageFileServerApiComponentTs {
 	
 
-	private final ProblemServiceETest problemServiceETest;
-	private final PathUtilEtest pathUtilEtest = new PathUtilEtest();
+	private final ProblemServiceTs problemServiceETest;
+	private final PathUtilTs pathUtilEtest = new PathUtilTs();
 	
 	/**
 	 * Image Post 

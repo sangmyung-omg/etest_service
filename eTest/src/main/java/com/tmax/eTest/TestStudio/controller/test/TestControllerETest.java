@@ -19,15 +19,15 @@ import org.springframework.web.bind.annotation.RestController;
 import com.tmax.eTest.Common.model.problem.DiagnosisProblem;
 import com.tmax.eTest.Common.model.problem.ProblemChoice;
 import com.tmax.eTest.Common.model.uk.ProblemUKRelation;
-import com.tmax.eTest.TestStudio.controller.component.TestProblemApiComponentETest;
+import com.tmax.eTest.TestStudio.controller.component.TestProblemApiComponentTs;
 import com.tmax.eTest.TestStudio.dto.problems.base.BaseTestProblemSetDTO;
 import com.tmax.eTest.TestStudio.dto.problems.in.GetProblemDTOIn;
 import com.tmax.eTest.TestStudio.dto.problems.in.PostTestProblemDTOIn;
 import com.tmax.eTest.TestStudio.dto.problems.out.GetTestProblemDTOOut;
-import com.tmax.eTest.TestStudio.repository.ProbChoiceQRepositoryETest;
-import com.tmax.eTest.TestStudio.service.DiagProblemServiceETest;
-import com.tmax.eTest.TestStudio.service.ProbChoiceServiceETest;
-import com.tmax.eTest.TestStudio.service.ProbUKRelServiceETest;
+import com.tmax.eTest.TestStudio.repository.ProbChoiceQRepositoryTs;
+import com.tmax.eTest.TestStudio.service.DiagProblemServiceTs;
+import com.tmax.eTest.TestStudio.service.ProbChoiceServiceTs;
+import com.tmax.eTest.TestStudio.service.ProbUKRelServiceTs;
 
 import lombok.RequiredArgsConstructor;
 
@@ -36,12 +36,12 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class TestControllerETest {
 	
-	private final TestProblemApiComponentETest problemApiComponent;
-	private final DiagProblemServiceETest diagProblemServiceETest;
+	private final TestProblemApiComponentTs problemApiComponent;
+	private final DiagProblemServiceTs diagProblemServiceETest;
 	private final TestProblemQRepositoryETest tempTestRepository; 
-	private final ProbChoiceServiceETest probChoiceServiceETest;
-	private final ProbUKRelServiceETest probUKRelServiceETest;
-	private final ProbChoiceQRepositoryETest probChoiceQRepositoryETest;
+	private final ProbChoiceServiceTs probChoiceServiceETest;
+	private final ProbUKRelServiceTs probUKRelServiceETest;
+	private final ProbChoiceQRepositoryTs probChoiceQRepositoryETest;
 	/**
 	 * 등록
 	 * new ResponseEntity<>(probGetResponse, HttpStatus.ACCEPTED);

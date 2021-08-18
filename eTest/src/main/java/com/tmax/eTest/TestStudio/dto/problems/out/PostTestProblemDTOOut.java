@@ -15,4 +15,8 @@ public class PostTestProblemDTOOut {
 	//Long
 	private String resultMessasge;
 	private List<String> probIDs;
+	
+	public PostTestProblemDTOOut(String resultMessasge) {
+		this.resultMessasge = resultMessasge;
+	}
 }

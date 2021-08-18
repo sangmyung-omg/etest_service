@@ -13,21 +13,21 @@ import com.tmax.eTest.Common.model.problem.ProblemChoiceCompositeKey;
 import com.tmax.eTest.Common.model.uk.UkMaster;
 import com.tmax.eTest.TestStudio.dto.problems.base.BaseProbChoiceDTO;
 import com.tmax.eTest.TestStudio.dto.problems.base.BaseProblemDTO;
-import com.tmax.eTest.TestStudio.repository.ProbChoiceQRepositoryETest;
-import com.tmax.eTest.TestStudio.repository.ProbChoiceRepositoryETest;
-import com.tmax.eTest.TestStudio.repository.ProblemQRepositoryETest;
-import com.tmax.eTest.TestStudio.repository.ProblemRepositoryETest;
-import com.tmax.eTest.TestStudio.util.PathUtilEtest;
+import com.tmax.eTest.TestStudio.repository.ProbChoiceQRepositoryTs;
+import com.tmax.eTest.TestStudio.repository.ProbChoiceRepositoryTs;
+import com.tmax.eTest.TestStudio.repository.ProblemQRepositoryTs;
+import com.tmax.eTest.TestStudio.repository.ProblemRepositoryTs;
+import com.tmax.eTest.TestStudio.util.PathUtilTs;
 
 import lombok.RequiredArgsConstructor;
 
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class ProbChoiceServiceETest {
+public class ProbChoiceServiceTs {
 	
-	private final ProbChoiceRepositoryETest probChoiceRepositoryETest;
-	private final ProbChoiceQRepositoryETest probChoiceQRepositoryETest;
+	private final ProbChoiceRepositoryTs probChoiceRepositoryETest;
+	private final ProbChoiceQRepositoryTs probChoiceQRepositoryETest;
 	
 	/**
 	 * 문제 조회

@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.tmax.eTest.TestStudio.controller.component.ImageFileServerApiComponentETest;
+import com.tmax.eTest.TestStudio.controller.component.ImageFileServerApiComponentTs;
 import com.tmax.eTest.TestStudio.dto.problems.base.BaseProblemIDandImageSrcsDTO;
 import com.tmax.eTest.TestStudio.dto.problems.in.GetProblemDTOIn;
 import com.tmax.eTest.TestStudio.dto.problems.out.GetProblemImageDTOOut;
@@ -30,7 +30,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ImageControllerETest {
 	
-	private final ImageFileServerApiComponentETest imageFileServerApiComponentETest;
+	private final ImageFileServerApiComponentTs imageFileServerApiComponentETest;
 	
 
 	/**

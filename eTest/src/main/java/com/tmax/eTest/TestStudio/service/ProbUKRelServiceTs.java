@@ -13,23 +13,23 @@ import com.tmax.eTest.Common.model.uk.ProblemUKRelation;
 import com.tmax.eTest.TestStudio.dto.problems.base.BaseProbChoiceDTO;
 import com.tmax.eTest.TestStudio.dto.problems.base.BaseProbUKRelDTO;
 import com.tmax.eTest.TestStudio.dto.problems.base.BaseProblemDTO;
-import com.tmax.eTest.TestStudio.repository.ProbChoiceQRepositoryETest;
-import com.tmax.eTest.TestStudio.repository.ProbChoiceRepositoryETest;
-import com.tmax.eTest.TestStudio.repository.ProbUKRelQRepositoryETest;
-import com.tmax.eTest.TestStudio.repository.ProbUKRelRepositoryETest;
-import com.tmax.eTest.TestStudio.repository.ProblemQRepositoryETest;
-import com.tmax.eTest.TestStudio.repository.ProblemRepositoryETest;
-import com.tmax.eTest.TestStudio.util.PathUtilEtest;
+import com.tmax.eTest.TestStudio.repository.ProbChoiceQRepositoryTs;
+import com.tmax.eTest.TestStudio.repository.ProbChoiceRepositoryTs;
+import com.tmax.eTest.TestStudio.repository.ProbUKRelQRepositoryTs;
+import com.tmax.eTest.TestStudio.repository.ProbUKRelRepositoryTs;
+import com.tmax.eTest.TestStudio.repository.ProblemQRepositoryTs;
+import com.tmax.eTest.TestStudio.repository.ProblemRepositoryTs;
+import com.tmax.eTest.TestStudio.util.PathUtilTs;
 
 import lombok.RequiredArgsConstructor;
 
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class ProbUKRelServiceETest {
+public class ProbUKRelServiceTs {
 
-	private final ProbUKRelRepositoryETest probUKRelRepositoryETest;
-	private final ProbUKRelQRepositoryETest probUKRelQRepositoryETest;
+	private final ProbUKRelRepositoryTs probUKRelRepositoryETest;
+	private final ProbUKRelQRepositoryTs probUKRelQRepositoryETest;
 
 	
 	/**

@@ -20,31 +20,31 @@ import com.tmax.eTest.TestStudio.dto.problems.base.BaseProblemDTO;
 import com.tmax.eTest.TestStudio.dto.problems.in.PutDiagCurrStatusDTOIn;
 import com.tmax.eTest.TestStudio.dto.problems.in.PutDiagProblemDTOIn;
 import com.tmax.eTest.TestStudio.dto.problems.out.GetDiagProblemDTOOut;
-import com.tmax.eTest.TestStudio.service.DiagCurriculumServiceETest;
-import com.tmax.eTest.TestStudio.service.DiagProblemServiceETest;
-import com.tmax.eTest.TestStudio.service.ProbChoiceServiceETest;
-import com.tmax.eTest.TestStudio.service.ProbUKRelServiceETest;
-import com.tmax.eTest.TestStudio.service.ProblemServiceETest;
+import com.tmax.eTest.TestStudio.service.DiagCurriculumServiceTs;
+import com.tmax.eTest.TestStudio.service.DiagProblemServiceTs;
+import com.tmax.eTest.TestStudio.service.ProbChoiceServiceTs;
+import com.tmax.eTest.TestStudio.service.ProbUKRelServiceTs;
+import com.tmax.eTest.TestStudio.service.ProblemServiceTs;
 import com.tmax.eTest.TestStudio.service.UKServiceETest;
-import com.tmax.eTest.TestStudio.util.PathUtilEtest;
+import com.tmax.eTest.TestStudio.util.PathUtilTs;
 
 import lombok.RequiredArgsConstructor;
 
 @Controller
 @CrossOrigin(origins = "*")
 @RequiredArgsConstructor
-public class DiagProblemApiComponentETest {
+public class DiagProblemApiComponentTs {
 	
-	private final ProblemServiceETest problemServiceETest;
-	private final ProbChoiceServiceETest probChoiceServiceETest;
-	private final ProbUKRelServiceETest probUKRelServiceETest;
+	private final ProblemServiceTs problemServiceETest;
+	private final ProbChoiceServiceTs probChoiceServiceETest;
+	private final ProbUKRelServiceTs probUKRelServiceETest;
 	private final UKServiceETest ukServiceETest;
-	private final DiagProblemServiceETest diagProblemServiceETest;
-	private final DiagCurriculumServiceETest diagCurriculumServiceETest;
+	private final DiagProblemServiceTs diagProblemServiceETest;
+	private final DiagCurriculumServiceTs diagCurriculumServiceETest;
 	
 //	private final TestProblemApiComponentETest testProblemApiComponent;
-	private final ImageFileServerApiComponentETest imageFileServerApiComponentETest;
-	private final PathUtilEtest pathUtilEtest = new PathUtilEtest();
+	private final ImageFileServerApiComponentTs imageFileServerApiComponentETest;
+	private final PathUtilTs pathUtilEtest = new PathUtilTs();
 	
 	/**
 	 * 문제 조회
@@ -165,7 +165,7 @@ public class DiagProblemApiComponentETest {
 			for(BaseDiagProblemSetDTO requestInfo__ : request.getDiagProblems()) {
 				idx++;
 				Long LongProbId = Long.parseLong(requestInfo__.getProblem().getProbID());
-//				if( "출제".equals(requestInfo__.getDiagCurriculum().getStatus()) || "보류".equals(requestInfo__.getDiagCurriculum().getStatus())) {
+//				if( pathUtilEtest.getStatusOn().equals(requestInfo__.getDiagCurriculum().getStatus()) || pathUtilEtest.getStatusOff().equals(requestInfo__.getDiagCurriculum().getStatus())) {
 //					requestInfo__.getProblem().setValidatorID("T");
 //				}
 				//problem table

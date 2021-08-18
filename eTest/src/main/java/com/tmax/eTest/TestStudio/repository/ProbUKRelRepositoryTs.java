@@ -9,7 +9,7 @@ import com.tmax.eTest.Common.model.problem.ProblemChoice;
 import com.tmax.eTest.Common.model.uk.ProbUKCompositeKey;
 import com.tmax.eTest.Common.model.uk.ProblemUKRelation;
 
-public interface ProbUKRelRepositoryETest extends JpaRepository<ProblemUKRelation, ProbUKCompositeKey> {
+public interface ProbUKRelRepositoryTs extends JpaRepository<ProblemUKRelation, ProbUKCompositeKey> {
 	
 	public List<ProblemUKRelation> findAllByProbID_ProbIDIs(Integer probID);
 	

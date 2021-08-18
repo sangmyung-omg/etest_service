@@ -10,13 +10,13 @@ import com.tmax.eTest.Common.model.problem.Problem;
 import com.tmax.eTest.Common.model.problem.QProblem; 
 
 @Repository
-public class ProblemQRepositoryETest {
+public class ProblemQRepositoryTs {
 
 	@PersistenceContext
 	private EntityManager em;
 	private JPAQueryFactory queryFactory;
 	
-	public ProblemQRepositoryETest(EntityManager em) {
+	public ProblemQRepositoryTs(EntityManager em) {
 		this.em = em;
 		this.queryFactory = new JPAQueryFactory(em);
 	}

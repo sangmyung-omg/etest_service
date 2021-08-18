@@ -4,7 +4,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.tmax.eTest.Common.model.problem.TestProblem;
 
-public interface TestProblemRepositoryETest extends JpaRepository<TestProblem, Integer> {
+public interface TestProblemRepositoryTs extends JpaRepository<TestProblem, Integer> {
 
 
 }	

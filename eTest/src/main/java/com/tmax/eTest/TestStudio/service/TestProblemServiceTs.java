@@ -14,16 +14,18 @@ import com.tmax.eTest.Common.model.problem.Problem;
 import com.tmax.eTest.Common.model.problem.TestProblem;
 import com.tmax.eTest.TestStudio.dto.problems.base.BaseProblemDTO;
 import com.tmax.eTest.TestStudio.dto.problems.base.BaseTestProblemDTO;
-import com.tmax.eTest.TestStudio.repository.TestProblemRepositoryETest;
+import com.tmax.eTest.TestStudio.repository.TestProblemRepositoryTs;
+import com.tmax.eTest.TestStudio.util.PathUtilTs;
 
 import lombok.RequiredArgsConstructor;
 
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class TestProblemServiceETest {
+public class TestProblemServiceTs {
 	
-	private final TestProblemRepositoryETest testProblemRepositoryETest;
+	private final TestProblemRepositoryTs testProblemRepositoryETest;
+	private final PathUtilTs pathUtilEtest;
 	
 	/**
 	 *  생성
@@ -64,7 +66,7 @@ public class TestProblemServiceETest {
 			testProblem.setSubject(requestInfo.getSubject());
 		
 		if(requestInfo.getStatus()!=null)
-			if("출제".equals(requestInfo.getStatus()) || "보류".equals(requestInfo.getStatus())) {
+			if(pathUtilEtest.getStatusOn().equals(requestInfo.getStatus()) || pathUtilEtest.getStatusOff().equals(requestInfo.getStatus())) {
 				testProblem.setStatus(requestInfo.getStatus());
 			}
 		
@@ -77,10 +79,10 @@ public class TestProblemServiceETest {
 		if(probID == null) return null;
 		TestProblem testProblem = testProblemRepositoryETest.findById( Integer.parseInt( probID ) ).get();
 		
-		if( "출제".equals( testProblem.getStatus() ) ) {
-			testProblem.setStatus("보류");
-		}else if( "보류".equals( testProblem.getStatus() ) ) {
-			testProblem.setStatus("출제");
+		if( pathUtilEtest.getStatusOn().equals( testProblem.getStatus() ) ) {
+			testProblem.setStatus(pathUtilEtest.getStatusOff());
+		}else if( pathUtilEtest.getStatusOff().equals( testProblem.getStatus() ) ) {
+			testProblem.setStatus(pathUtilEtest.getStatusOn());
 		}else {
 			return "fail";
 		}

@@ -23,34 +23,36 @@ import com.tmax.eTest.TestStudio.dto.problems.in.PutTestProbStatusDTOIn;
 import com.tmax.eTest.TestStudio.dto.problems.in.PutTestProblemDTOIn;
 import com.tmax.eTest.TestStudio.dto.problems.out.GetDiagProblemDTOOut;
 import com.tmax.eTest.TestStudio.dto.problems.out.GetTestProblemDTOOut;
+import com.tmax.eTest.TestStudio.controller.component.exception.CustomExceptionTs;
+import com.tmax.eTest.TestStudio.controller.component.exception.ErrorCodeTs;
 import com.tmax.eTest.TestStudio.dto.problems.base.BaseDiagCurriculumDTO;
 import com.tmax.eTest.TestStudio.dto.problems.base.BaseProbChoiceDTO;
 import com.tmax.eTest.TestStudio.dto.problems.base.BaseProbUKRelDTO;
 import com.tmax.eTest.TestStudio.dto.problems.base.BaseProblemDTO;
 import com.tmax.eTest.TestStudio.dto.problems.base.BaseTestProblemDTO;
 import com.tmax.eTest.TestStudio.dto.problems.base.BaseTestProblemSetDTO;
-import com.tmax.eTest.TestStudio.service.ProbChoiceServiceETest;
-import com.tmax.eTest.TestStudio.service.ProbUKRelServiceETest;
-import com.tmax.eTest.TestStudio.service.ProblemServiceETest;
-import com.tmax.eTest.TestStudio.service.TestProblemServiceETest;
+import com.tmax.eTest.TestStudio.service.ProbChoiceServiceTs;
+import com.tmax.eTest.TestStudio.service.ProbUKRelServiceTs;
+import com.tmax.eTest.TestStudio.service.ProblemServiceTs;
+import com.tmax.eTest.TestStudio.service.TestProblemServiceTs;
 import com.tmax.eTest.TestStudio.service.UKServiceETest;
-import com.tmax.eTest.TestStudio.util.PathUtilEtest;
+import com.tmax.eTest.TestStudio.util.PathUtilTs;
 
 import lombok.RequiredArgsConstructor;
 
 @Controller
 @CrossOrigin(origins = "*")
 @RequiredArgsConstructor
-public class TestProblemApiComponentETest {
+public class TestProblemApiComponentTs {
 	
-	private final ProblemServiceETest problemServiceETest;
-	private final ProbChoiceServiceETest probChoiceServiceETest;
-	private final ProbUKRelServiceETest probUKRelServiceETest;
+	private final ProblemServiceTs problemServiceETest;
+	private final ProbChoiceServiceTs probChoiceServiceETest;
+	private final ProbUKRelServiceTs probUKRelServiceETest;
 	private final UKServiceETest ukServiceETest;
-	private final TestProblemServiceETest testProblemServiceETest;
+	private final TestProblemServiceTs testProblemServiceETest;
 	
-	private final ImageFileServerApiComponentETest imageFileServerApiComponentETest;
-	private final PathUtilEtest pathUtilEtest = new PathUtilEtest();
+	private final ImageFileServerApiComponentTs imageFileServerApiComponentETest;
+	private final PathUtilTs pathUtilEtest = new PathUtilTs();
 	
 	/**
 	 * 문제 생성 problemCreate component
@@ -106,8 +108,8 @@ public class TestProblemApiComponentETest {
 						
 				problem.setCreatorId(request.getUserID());
 				problem.setCreateDate(timestamp);
-				if( "출제".equals(requestInfo__.getTestProblem().getStatus())
-//						|| "보류".equals(requestInfo__.getTestProblem().getStatus())
+				if( pathUtilEtest.getStatusOn().equals(requestInfo__.getTestProblem().getStatus())
+//						|| pathUtilEtest.getStatusOff().equals(requestInfo__.getTestProblem().getStatus())
 						) {
 					problem.setValiatorID(request.getUserID());
 					problem.setValiateDate(timestamp);
@@ -162,10 +164,10 @@ public class TestProblemApiComponentETest {
 				testProblem.setProbID(problem.getProbID());
 				testProblem.setPartID(Integer.parseInt( requestInfo__.getTestProblem().getPartID() ));
 				testProblem.setSubject(requestInfo__.getTestProblem().getSubject());
-				if( "출제".equals(requestInfo__.getTestProblem().getStatus() ) ){
+				if( pathUtilEtest.getStatusOn().equals(requestInfo__.getTestProblem().getStatus() ) ){
 					testProblem.setStatus(requestInfo__.getTestProblem().getStatus());
 				}else {
-					testProblem.setStatus( "보류" );
+					testProblem.setStatus( pathUtilEtest.getStatusOff() );
 				}
 				testProblemServiceETest.testProblemCreate(testProblem);
 				
@@ -336,7 +338,7 @@ public class TestProblemApiComponentETest {
 			for(BaseTestProblemSetDTO requestInfo__ : request.getTestProblems()) {
 				idx++;
 				Long LongProbId = Long.parseLong(requestInfo__.getProblem().getProbID());
-//				if( "출제".equals(requestInfo__.getTestProblem().getStatus()) || "보류".equals(requestInfo__.getTestProblem().getStatus())) {
+//				if( pathUtilEtest.getStatusOn().equals(requestInfo__.getTestProblem().getStatus()) || pathUtilEtest.getStatusOff().equals(requestInfo__.getTestProblem().getStatus())) {
 //					requestInfo__.getProblem().setValidatorID("T");
 //					if(requestInfo__.getProblem().getProbID()==null) {
 //						requestInfo__.getProblem().setProbID( requestInfo__.getTestProblem().getProbID() );
@@ -435,7 +437,7 @@ public class TestProblemApiComponentETest {
 	 * 
 	 */
 	public String updateTestProbStatus(PutTestProbStatusDTOIn request) throws Exception{
-		try {
+	
 						
 			// 문제 n개 업데이트
 			Long idx = -1L;
@@ -443,13 +445,12 @@ public class TestProblemApiComponentETest {
 			
 			if( "ok".equals(testProblemServiceETest.testProbStatusChange( request.getProbID() ) ) ){
 					problemServiceETest.problemValidate( request.getUserID(), request.getProbID() );
+					return "success";
+			}else {
+//				throw new Exception("the current status(at DB) is not "+pathUtilEtest.getStatusOn()+"or "+pathUtilEtest.getStatusOff());
+				throw new CustomExceptionTs(ErrorCodeTs.INVALID_STATUS_RESOURCE);
 			}
 	
-			return "success";
-		}catch(Exception e) {
-			 e.printStackTrace(); 
-			 return "fail";		
-		}
 	}
 	
 	/**

@@ -8,20 +8,20 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.tmax.eTest.Common.model.problem.Problem;
 import com.tmax.eTest.TestStudio.dto.problems.base.BaseProblemDTO;
-import com.tmax.eTest.TestStudio.repository.ProblemQRepositoryETest;
-import com.tmax.eTest.TestStudio.repository.ProblemRepositoryETest;
-import com.tmax.eTest.TestStudio.util.PathUtilEtest;
+import com.tmax.eTest.TestStudio.repository.ProblemQRepositoryTs;
+import com.tmax.eTest.TestStudio.repository.ProblemRepositoryTs;
+import com.tmax.eTest.TestStudio.util.PathUtilTs;
 
 import lombok.RequiredArgsConstructor;
 
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class ProblemServiceETest {
+public class ProblemServiceTs {
 	
-	private final ProblemRepositoryETest problemRepository;
-	private final ProblemQRepositoryETest problemQRepositoryETest;
-	private final PathUtilEtest pathUtilEtest = new PathUtilEtest();
+	private final ProblemRepositoryTs problemRepository;
+	private final ProblemQRepositoryTs problemQRepositoryETest;
+	private final PathUtilTs pathUtilEtest = new PathUtilTs();
 	
 	/**
 	 * 문제 조회

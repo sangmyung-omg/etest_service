@@ -12,19 +12,20 @@ import com.tmax.eTest.Common.model.problem.DiagnosisProblem;
 import com.tmax.eTest.Common.model.problem.Problem;
 import com.tmax.eTest.TestStudio.dto.problems.base.BaseDiagCurriculumDTO;
 import com.tmax.eTest.TestStudio.dto.problems.base.BaseProblemDTO;
-import com.tmax.eTest.TestStudio.repository.DiagCurriculumRepositoryETest;
+import com.tmax.eTest.TestStudio.repository.DiagCurriculumRepositoryTs;
+import com.tmax.eTest.TestStudio.util.PathUtilTs;
 
 import lombok.RequiredArgsConstructor;
 
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class DiagCurriculumServiceETest {
+public class DiagCurriculumServiceTs {
 	
-	private final DiagCurriculumRepositoryETest diagCurriculumRepository;
-	
-	private final ProblemServiceETest problemServiceETest;
-	private final DiagProblemServiceETest diagProblemServiceETest;
+	private final DiagCurriculumRepositoryTs diagCurriculumRepository;
+	private final ProblemServiceTs problemServiceETest;
+	private final DiagProblemServiceTs diagProblemServiceETest;
+	private final PathUtilTs pathUtilEtest;
 	
 	/**
 	 * 문제 조회
@@ -48,7 +49,7 @@ public class DiagCurriculumServiceETest {
 			diagnosisCurriculum.setSubject(requestInfo.getSubject());
 		
 //		if(requestInfo.getStatus()!=null)
-//			if("출제".equals(requestInfo.getStatus()) || "보류".equals(requestInfo.getStatus())) {
+//			if(pathUtilEtest.getStatusOn().equals(requestInfo.getStatus()) || pathUtilEtest.getStatusOff().equals(requestInfo.getStatus())) {
 //				diagnosisCurriculum.setStatus(requestInfo.getStatus());
 //				
 //				for( DiagnosisProblem diagnosisProblem 
@@ -67,10 +68,10 @@ public class DiagCurriculumServiceETest {
 		if(curriculumId == null) return null;
 		DiagnosisCurriculum diagnosisCurriculum = diagCurriculumRepository.findById( Integer.parseInt( curriculumId ) ).get();
 		
-		if( "출제".equals( diagnosisCurriculum.getStatus() ) ) {
-			diagnosisCurriculum.setStatus("보류");
-		}else if( "보류".equals( diagnosisCurriculum.getStatus() ) ) {
-			diagnosisCurriculum.setStatus("출제");
+		if( pathUtilEtest.getStatusOn().equals( diagnosisCurriculum.getStatus() ) ) {
+			diagnosisCurriculum.setStatus(pathUtilEtest.getStatusOff());
+		}else if( pathUtilEtest.getStatusOff().equals( diagnosisCurriculum.getStatus() ) ) {
+			diagnosisCurriculum.setStatus(pathUtilEtest.getStatusOn());
 		}else {
 			return "fail";
 		}

@@ -12,26 +12,25 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.tmax.eTest.Common.model.problem.Problem;
 import com.tmax.eTest.Common.model.problem.QProblem;
 import com.tmax.eTest.Common.model.problem.QProblemChoice;
-import com.tmax.eTest.Common.model.uk.QProblemUKRelation;
 
 @Repository
 @Transactional
-public class ProbUKRelQRepositoryETest {
+public class ProbChoiceQRepositoryTs {
 	
 	@PersistenceContext
 	private EntityManager em;
 	private JPAQueryFactory queryFactory;
 	
-	public ProbUKRelQRepositoryETest(EntityManager em) {
+	public ProbChoiceQRepositoryTs(EntityManager em) {
 		this.em = em;
 		this.queryFactory = new JPAQueryFactory(em);
 	}
 	
-	public Long probUKRelDeleteAllByProbId(Integer probID) {
+	public Long probChoiceDeleteByProbId(Integer probID) {
 
-		QProblemUKRelation qProblemUKRelation = QProblemUKRelation.problemUKRelation;
-		Long count = queryFactory.delete(qProblemUKRelation)
-										.where(qProblemUKRelation.probID.probID.eq(probID))
+		QProblemChoice qProblemChoice = QProblemChoice.problemChoice;
+		Long count = queryFactory.delete(qProblemChoice)
+										.where(qProblemChoice.probIDOnly.eq(probID))
 										.execute();
 										
 		return count;

@@ -10,6 +10,6 @@ import com.tmax.eTest.Common.model.uk.ProbUKCompositeKey;
 import com.tmax.eTest.Common.model.uk.ProblemUKRelation;
 import com.tmax.eTest.Common.model.uk.UkMaster;
 
-public interface UKRepositoryETest extends JpaRepository<UkMaster, Integer> {
+public interface UKRepositoryTs extends JpaRepository<UkMaster, Integer> {
 	
 }

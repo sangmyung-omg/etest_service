@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.tmax.eTest.TestStudio.controller.component.TestProblemApiComponentETest;
+import com.tmax.eTest.TestStudio.controller.component.TestProblemApiComponentTs;
 import com.tmax.eTest.TestStudio.dto.problems.in.DeleteProblemDTOIn;
 import com.tmax.eTest.TestStudio.dto.problems.in.GetProblemDTOIn;
 import com.tmax.eTest.TestStudio.dto.problems.in.PostTestProblemDTOIn;
@@ -34,7 +34,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class TestProblemControllerETest {
 	
-	private final TestProblemApiComponentETest testProblemApiComponent;
+	private final TestProblemApiComponentTs testProblemApiComponent;
 	
 	/**
 	 * 등록
@@ -102,7 +102,7 @@ public class TestProblemControllerETest {
 			
 		}catch (Exception e) {
 			e.printStackTrace();
-			return null;
+			return new ResponseEntity<>( new PostTestProblemDTOOut( e.getMessage() ), HttpStatus.INTERNAL_SERVER_ERROR);
 //			GetProblemDTOOut res = new GetProblemDTOOut("500","fail: errMessage: "+e.getMessage());
 //			return new ResponseEntity<>(res, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
@@ -155,7 +155,7 @@ public class TestProblemControllerETest {
 	
 	@PutMapping("/TestProbStatus")
 	public ResponseEntity<String> updateTestProbStatus(
-			@RequestBody PutTestProbStatusDTOIn request) {
+			@RequestBody PutTestProbStatusDTOIn request) throws Exception {
 		
 		try {
 			String res = testProblemApiComponent.updateTestProbStatus(request);
@@ -164,8 +164,9 @@ public class TestProblemControllerETest {
 
 			
 		}catch(Exception e) {
-			 e.printStackTrace(); 
-			return new ResponseEntity<>( "fail", HttpStatus.INTERNAL_SERVER_ERROR );	
+			throw e;
+//			 e.printStackTrace(); 
+//			return new ResponseEntity<>( "fail"+", "+"errorMessage: "+e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR );	
 		}
 	}
 	

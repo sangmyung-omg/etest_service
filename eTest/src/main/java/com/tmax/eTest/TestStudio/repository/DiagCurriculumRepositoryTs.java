@@ -4,6 +4,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.tmax.eTest.Common.model.problem.DiagnosisCurriculum;
 
-public interface DiagCurriculumRepositoryETest extends JpaRepository<DiagnosisCurriculum, Integer> {
+public interface DiagCurriculumRepositoryTs extends JpaRepository<DiagnosisCurriculum, Integer> {
 
 }	
