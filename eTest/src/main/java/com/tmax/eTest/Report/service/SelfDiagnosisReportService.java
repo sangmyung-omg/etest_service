@@ -8,6 +8,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,7 +34,7 @@ import com.tmax.eTest.Report.util.TritonAPIManager;
 import com.tmax.eTest.Report.util.UKScoreCalculator;
 import com.tmax.eTest.Common.model.report.DiagnosisReport;
 import com.tmax.eTest.Common.model.uk.UkMaster;
-import com.tmax.eTest.Test.repository.DiagnosisReportRepo;
+import com.tmax.eTest.Common.repository.report.DiagnosisReportRepo;
 import com.tmax.eTest.Test.repository.UserKnowledgeRepository;
 
 @Service
@@ -65,37 +66,36 @@ public class SelfDiagnosisReportService {
 	private final Logger logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
 	
 	
-	public DiagnosisResultDTO calculateDiagnosisResult(String id, String probSetId) throws Exception
+	public DiagnosisResultDTO calculateDiagnosisResult(
+			String userId, 
+			String probSetId) throws Exception
 	{
-		long startTime = System.currentTimeMillis();
 		DiagnosisResultDTO result = new DiagnosisResultDTO();
-		List<StatementDTO> diagnosisProbStatements = getStatementDiagnosisProb(id, probSetId);
+		
+		// 1. Get Statement Info
+		List<StatementDTO> diagnosisProbStatements = getStatementDiagnosisProb(userId, probSetId);
+		
+		// 2. get Problem List from Statement Info
 		List<Problem> probList = getProblemInfos(diagnosisProbStatements);
+		
+		// 3. get Problem Answer Info from Problem Info + Statement Info
 		List<Pair<Problem, Integer>> probAndUserChoice = getProblemAndChoiceInfos(probList, diagnosisProbStatements);
+		
+		// 4. get Score Map from Problem Answer Info
 		Map<String, Integer> scoreMap = ruleBaseScoreCalculator.probDivideAndCalculateScores(probAndUserChoice);
+		
+		// 5. get Comment From Score Map
 		Map<String, List<String>> commentMap = commentGenerator.getTotalComments(scoreMap);
-		//result.initForDummy();
-				
-		Map<String, Integer> partRes = new HashMap<>();
-		partRes.put(RuleBaseScoreCalculator.RISK_FIDELITY_SCORE_KEY, 
-				scoreMap.get(RuleBaseScoreCalculator.RISK_FIDELITY_SCORE_KEY));
-		partRes.put(RuleBaseScoreCalculator.DECISION_MAKING_SCORE_KEY, 
+			
+		// 6. set Main Score Info (RISK_FIDELITY, DECISION_MAKING, INVESTMENT_KNOWLEDGE SCORE)
+		Map<String, Integer> mainScoreInfo = new HashMap<>();
+		mainScoreInfo.put(RuleBaseScoreCalculator.RISK_PROFILE_SCORE, 
+				scoreMap.get(RuleBaseScoreCalculator.RISK_PROFILE_SCORE));
+		mainScoreInfo.put(RuleBaseScoreCalculator.DECISION_MAKING_SCORE_KEY, 
 				scoreMap.get(RuleBaseScoreCalculator.DECISION_MAKING_SCORE_KEY));
-		partRes.put(RuleBaseScoreCalculator.INVEST_KNOWLEDGE_KEY, 
+		mainScoreInfo.put(RuleBaseScoreCalculator.INVEST_KNOWLEDGE_KEY, 
 				scoreMap.get(RuleBaseScoreCalculator.INVEST_KNOWLEDGE_KEY));
-		result.setPartDiagnosisResult(partRes);
-		result.setGiScore(scoreMap.get(RuleBaseScoreCalculator.GI_SCORE_KEY));
-		result.setGiPercentage(sndCalculator.calculateForSelfDiag(
-				scoreMap.get(RuleBaseScoreCalculator.GI_SCORE_KEY)));
-		
-		
-		// Comment Setting
-		result.setTotalResult(commentMap.get(SelfDiagnosisComment.TOTAL_RES_KEY));
-		result.setDecisionMaking(commentMap.get(SelfDiagnosisComment.DECISION_MAKING_KEY));
-		result.setInvestKnowledge(commentMap.get(SelfDiagnosisComment.INVEST_KNOWLEDGE_KEY));
-		result.setRiskFidelity(commentMap.get(SelfDiagnosisComment.RISK_FID_KEY));
-		result.setSimilarTypeInfo(commentMap.get(SelfDiagnosisComment.SIMILAR_TYPE_KEY));
-		
+
 		// Rule Based 점수들 산출
 		Map<String, List<Object>> probInfoForTriton = stateAndProbProcess.makeInfoForTriton(diagnosisProbStatements, probList);
 		TritonResponseDTO tritonResponse = tritonAPIManager.getUnderstandingScoreInTriton(probInfoForTriton);
@@ -147,12 +147,24 @@ public class SelfDiagnosisReportService {
 				}
 				
 				partAvgScore /= partScoreList.size();
-				saveDiagnosisReport(id, scoreMap, partAvgScore);
+				saveDiagnosisReport(userId, probSetId, scoreMap, partAvgScore);
 				
 			}
 		}
 		
-		logger.info("6 : "+(System.currentTimeMillis() - startTime));
+
+		// Result Setting
+		result.setPartDiagnosisResult(mainScoreInfo);
+		result.setGiScore(scoreMap.get(RuleBaseScoreCalculator.GI_SCORE_KEY));
+		result.setGiPercentage(sndCalculator.calculateForSelfDiag(
+				scoreMap.get(RuleBaseScoreCalculator.GI_SCORE_KEY)));
+		result.setTotalResult(commentMap.get(SelfDiagnosisComment.TOTAL_RES_KEY));
+		result.setDecisionMaking(commentMap.get(SelfDiagnosisComment.DECISION_MAKING_KEY));
+		result.setInvestKnowledge(commentMap.get(SelfDiagnosisComment.INVEST_KNOWLEDGE_KEY));
+		result.setRiskFidelity(commentMap.get(SelfDiagnosisComment.RISK_FID_KEY));
+		result.setSimilarTypeInfo(commentMap.get(SelfDiagnosisComment.SIMILAR_TYPE_KEY));
+		result.setScoreMap(scoreMap);
+		
 		return result;
 	}
 	
@@ -212,7 +224,11 @@ public class SelfDiagnosisReportService {
 		return res;
 	}
 	
-	private void saveDiagnosisReport(String id, Map<String, Integer> scoreMap, float avgUkMastery)
+	private void saveDiagnosisReport(
+			String id,
+			String probSetId,
+			Map<String, Integer> scoreMap, 
+			float avgUkMastery)
 	{
 		DiagnosisReport report = new DiagnosisReport();
 
@@ -228,10 +244,14 @@ public class SelfDiagnosisReportService {
 		if(scoreMap.get(RuleBaseScoreCalculator.STOCK_RATIO_ANS) != null
 				&& scoreMap.get(RuleBaseScoreCalculator.STOCK_RATIO_ANS) < investStockRatioList.length)
 			investItemNum = investStockRatioList[scoreMap.get(RuleBaseScoreCalculator.STOCK_RATIO_ANS)];
-			
+		
+		
+		report.setDiagnosisId((probSetId == null)
+				? UUID.randomUUID().toString()
+				: probSetId);
 		report.setUserUuid(id);
 		report.setGiScore((float)scoreMap.get(RuleBaseScoreCalculator.GI_SCORE_KEY));
-		report.setRiskScore(scoreMap.get(RuleBaseScoreCalculator.RISK_FIDELITY_SCORE_KEY));
+		report.setRiskScore(scoreMap.get(RuleBaseScoreCalculator.RISK_PROFILE_SCORE));
 		report.setInvestScore(scoreMap.get(RuleBaseScoreCalculator.DECISION_MAKING_SCORE_KEY));
 		report.setKnowledgeScore(scoreMap.get(RuleBaseScoreCalculator.INVEST_KNOWLEDGE_KEY));
 		report.setAvgUkMastery(avgUkMastery);

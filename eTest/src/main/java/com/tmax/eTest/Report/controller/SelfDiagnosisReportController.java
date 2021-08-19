@@ -54,7 +54,7 @@ public class SelfDiagnosisReportController {
 	}
 	
 	@CrossOrigin("*")
-	@GetMapping(value="/report/diagnosisResult/{id}/{part}", produces = "application/json; charset=utf-8")
+	@GetMapping(value="/report/diagnosisPart/{id}/{part}", produces = "application/json; charset=utf-8")
 	public PartUnderstandingDTO partUnderstanding(
 			@PathVariable("id") String id,
 			@PathVariable("part") String part) throws Exception{

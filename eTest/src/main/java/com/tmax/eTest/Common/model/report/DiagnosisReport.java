@@ -20,6 +20,7 @@ import lombok.Data;
 @IdClass(DiagnosisReportKey.class)
 public class DiagnosisReport {
 	@Id
+	private String diagnosisId;
 	private String userUuid;
 	private Float giScore;
 	private Integer riskScore;
@@ -29,7 +30,6 @@ public class DiagnosisReport {
 	private String userMbti;
 	private Integer investItemNum;
 	private Integer stockRatio;
-	@Id
 	private Timestamp diagnosisDate;
 	
 // error 및 미사용

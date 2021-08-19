@@ -33,6 +33,8 @@ public class DiagnosisResultDTO {
 	List<String> decisionMaking = new ArrayList<>();	// 투자 의사 결정
 	List<String> investKnowledge = new ArrayList<>();	// 투자 지식
 	
+	Map<String, Integer> scoreMap = new HashMap<String,Integer>();
+	
 	
 	public boolean pushStrongPartInfo(String partName, String partDescription, int score)
 	{
