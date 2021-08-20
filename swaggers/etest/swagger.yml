@@ -59,12 +59,8 @@ paths:
                 example:
                   message: 'Failed: {id}에 해당하는 데이터가 없습니다'
                   data: {}
-<<<<<<< Upstream, based on origin/master
   /contents/v1/problems/{id}/answer-check:
-=======
-  /contents/v0/problems/{id}/answer-check:
->>>>>>> 7dfe9c4 feat: Add versioning on controllers and services of TEST and Modify api description in swagger
-    get:
+    post:
       tags:
       - Problem
       summary: 정답 체크하기
@@ -77,16 +73,6 @@ paths:
         schema:
           type: string
           format: string
-<<<<<<< Upstream, based on origin/master
-=======
-      - name: answer
-        in: query
-        description: 유저가 입력한 답
-        required: true
-        schema:
-          type: string
-          format: string
->>>>>>> 7dfe9c4 feat: Add versioning on controllers and services of TEST and Modify api description in swagger
       requestBody:
         $ref: "#/components/requestBodies/LRSBody"
       responses:
@@ -96,11 +82,7 @@ paths:
             json:
               schema:
                 type: boolean
-<<<<<<< Upstream, based on origin/master
   /contents/v1/problems/{id}/solution:
-=======
-  /contents/v0/problems/{id}/solution:
->>>>>>> 7dfe9c4 feat: Add versioning on controllers and services of TEST and Modify api description in swagger
     get:
       tags:
       - Problem
@@ -517,7 +499,6 @@ components:
             - 3
             - 5
             - 2
-<<<<<<< Upstream, based on origin/master
         isCorrect:
           type: array
           example:
@@ -526,8 +507,6 @@ components:
             - 0
             - 0
             - 1
-=======
->>>>>>> 7dfe9c4 feat: Add versioning on controllers and services of TEST and Modify api description in swagger
         guessAlarm:
           type: integer
           example: 0

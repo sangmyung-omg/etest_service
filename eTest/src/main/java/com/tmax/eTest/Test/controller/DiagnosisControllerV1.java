@@ -1,10 +1,9 @@
 package com.tmax.eTest.Test.controller;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,40 +34,33 @@ public class DiagnosisControllerV1 {
 	ProblemServiceBase problemService;
 	
 	@GetMapping(value = "/diagnosis", produces = "application/json; charset=utf-8")
-	public ResponseEntity<Object> getDiagnosisTendencyProblems(@RequestParam String userId) throws Exception {
+	public ResponseEntity<Object> getDiagnosisProblems(@AuthenticationPrincipal PrincipalDetails principalDetails,
+																@RequestParam String userId) throws Exception {
 		Map<String, Object> res = new HashMap<String, Object>();
-		// try{
-		// 	res = problemService.getDiagnosisTendencyProblems();
-		// 	res.put("resultMessage", "Successfully returned.");
-		// 	res.put("knowledgeProblems", problemService.getDiagnosisKnowledgeProblems().get("knowledgeProblems"));
-		// 	return new ResponseEntity<>(res, HttpStatus.OK);
 
-		// } catch (Exception E){
-		// 	logger.info(E.getMessage());
-		// 	res = new HashMap<String, Object>();
-		// 	res.put("resultMessage", "Internal Server Error.");
-		// 	return new ResponseEntity<>(res, HttpStatus.INTERNAL_SERVER_ERROR);
-		// }
+		// 성향 문제 조회
+		try{
+			res = problemService.getDiagnosisTendencyProblems();
+			
+		} catch (Exception E){
+			logger.info(E.getMessage());
+			res.put("resultMessage", "Internal Server Error.\n" + E.getMessage());
+			return new ResponseEntity<>(res, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		
+		// 지식 문제 조회
+		try{
+			res.put("knowledgeProblems", problemService.getDiagnosisKnowledgeProblems().get("knowledgeProblems"));
+
+		} catch (Exception E){
+			res.clear();
+			logger.info(E.getMessage());
+			res.put("resultMessage", "Internal Server Error.\n" + E.getMessage());
+			return new ResponseEntity<>(res, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 
 		res.put("resultMessage", "Successfully returned.");
-		res.put("diagProbSetId", "2fc89ea8-fb4b-11eb-9a03-0242ac130003");
-		
-		res.put("tendencyProblems", Arrays.asList(21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 40, 41, 42, 43, 44));	
-
-		List<List<Integer>> knowledgeProblems = new ArrayList<List<Integer>>();
-		knowledgeProblems.add(Arrays.asList(55));
-		knowledgeProblems.add(Arrays.asList(56, 57));
-		knowledgeProblems.add(Arrays.asList(58, 59, 60));
-		knowledgeProblems.add(Arrays.asList(61, 62, 63));
-		knowledgeProblems.add(Arrays.asList(64, 65, 66));
-		knowledgeProblems.add(Arrays.asList(67, 68, 69));
-		knowledgeProblems.add(Arrays.asList(70, 71, 72));
-		knowledgeProblems.add(Arrays.asList(73, 74, 75));
-		knowledgeProblems.add(Arrays.asList(76, 77, 78));
-		knowledgeProblems.add(Arrays.asList(79, 80, 81));
-		knowledgeProblems.add(Arrays.asList(82, 83, 84));
-		knowledgeProblems.add(Arrays.asList(85, 86, 87));
-		res.put("knowledgeProblems", knowledgeProblems);
+		res.put("diagProbSetId", UUID.randomUUID().toString());
 		return new ResponseEntity<>(res, HttpStatus.OK);
 	}
 	
@@ -105,6 +97,7 @@ public class DiagnosisControllerV1 {
 		map.put("contiueProbSetId", "429589d8-fbe1-11eb-9a03-0242ac130003");
 		map.put("continueProblems", Arrays.asList(88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107));
 		map.put("continueAnswers", Arrays.asList(1, 4, 3, 5, 2));
+		map.put("isCorrect", Arrays.asList(0, 1, 0, 0, 1));
 		map.put("guessAlarm", 1);
 		return new ResponseEntity<>(map, HttpStatus.OK);
 	}
