@@ -73,9 +73,7 @@ public class SelfDiagnosisReportService {
 		
 		// 1. Get Statement Info
 		List<StatementDTO> diagnosisProbStatements = getStatementDiagnosisProb(userId, probSetId);
-		
-		logger.info(diagnosisProbStatements.toString());
-		
+
 		// 2. get Problem List from Statement Info
 		List<Problem> probList = getProblemInfos(diagnosisProbStatements);
 		
@@ -302,7 +300,7 @@ public class SelfDiagnosisReportService {
 		
 		// score 관련 저장
 		report.setGiScore((float)scoreMap.get(RuleBaseScoreCalculator.GI_SCORE_KEY));
-		
+
 		report.setRiskScore(scoreMap.get(RuleBaseScoreCalculator.RISK_SCORE));
 		report.setRiskProfileScore(scoreMap.get(RuleBaseScoreCalculator.RISK_PROFILE_SCORE));
 		report.setRiskTracingScore(scoreMap.get(RuleBaseScoreCalculator.RISK_TRACING_SCORE));
