@@ -4,6 +4,7 @@ import com.tmax.eTest.Auth.dto.CMRespDto;
 import com.tmax.eTest.Auth.dto.PrincipalDetails;
 import com.tmax.eTest.Common.model.report.DiagnosisReport;
 import com.tmax.eTest.MyPage.dto.DeleteDiagnosisReportDTO;
+import com.tmax.eTest.MyPage.dto.DiagnosisReportHistoryDTO;
 import com.tmax.eTest.MyPage.service.MyPageDiagnosisService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -22,8 +23,7 @@ public class MyPageDiagnosisController {
 
     @GetMapping("/myPage/getDiagnosisList")
     public CMRespDto<?> getDiagnosisList(@AuthenticationPrincipal PrincipalDetails principalDetails) {
-        List<DiagnosisReport> diagnosisReport = diagnosisService.getDiagnosisList(principalDetails.getUserUuid());
-//        Optional<DiagnosisReport> diagnosisReport = diagnosisService.getDiagnosisList("022ed3de-08b3-4874-95b7-0a557581d85b");
+        List<DiagnosisReportHistoryDTO> diagnosisReport = diagnosisService.getDiagnosisList(principalDetails.getUserUuid());
         return new CMRespDto<>(200, "test", diagnosisReport);
     }
 

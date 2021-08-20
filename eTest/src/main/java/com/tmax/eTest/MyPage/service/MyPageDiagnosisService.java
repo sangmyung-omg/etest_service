@@ -1,6 +1,7 @@
 package com.tmax.eTest.MyPage.service;
 
 import com.tmax.eTest.Common.model.report.DiagnosisReport;
+import com.tmax.eTest.MyPage.dto.DiagnosisReportHistoryDTO;
 import com.tmax.eTest.MyPage.repository.DiagnosisReportRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -16,8 +17,8 @@ public class MyPageDiagnosisService {
     @Autowired
     DiagnosisReportRepo diagnosisReportRepo;
 
-    public List<DiagnosisReport> getDiagnosisList(String UserUuid) {
-       List<DiagnosisReport> diagnosisReport_list = diagnosisReportRepo.findAllByUserUuid(UserUuid);
+    public List<DiagnosisReportHistoryDTO> getDiagnosisList(String UserUuid) {
+       List<DiagnosisReportHistoryDTO> diagnosisReport_list = diagnosisReportRepo.findAllByUserUuid(UserUuid);
         return diagnosisReport_list;
     }
 
