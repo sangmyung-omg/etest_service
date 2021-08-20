@@ -59,7 +59,7 @@ paths:
                 example:
                   message: 'Failed: {id}에 해당하는 데이터가 없습니다'
                   data: {}
-  /contents/v0/problems/{id}/answer-check:
+  /contents/v1/problems/{id}/answer-check:
     get:
       tags:
       - Problem
@@ -73,13 +73,6 @@ paths:
         schema:
           type: string
           format: string
-      - name: answer
-        in: query
-        description: 유저가 입력한 답
-        required: true
-        schema:
-          type: string
-          format: string
       requestBody:
         $ref: "#/components/requestBodies/LRSBody"
       responses:
@@ -89,7 +82,7 @@ paths:
             json:
               schema:
                 type: boolean
-  /contents/v0/problems/{id}/solution:
+  /contents/v1/problems/{id}/solution:
     get:
       tags:
       - Problem
@@ -506,6 +499,14 @@ components:
             - 3
             - 5
             - 2
+        isCorrect:
+          type: array
+          example:
+            - 0
+            - 1
+            - 0
+            - 0
+            - 1
         guessAlarm:
           type: integer
           example: 0

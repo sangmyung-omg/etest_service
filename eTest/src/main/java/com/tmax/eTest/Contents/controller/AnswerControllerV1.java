@@ -1,6 +1,7 @@
 package com.tmax.eTest.Contents.controller;
 
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -22,15 +23,20 @@ import org.springframework.web.bind.annotation.RestController;
 import com.tmax.eTest.Contents.exception.problem.NoDataException;
 import com.tmax.eTest.Contents.service.AnswerServices;
 import com.tmax.eTest.Contents.service.ProblemServices;
+import com.tmax.eTest.Report.dto.lrs.StatementDTO;
+
 import reactor.core.publisher.Mono;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 
+/**
+ * Improve logics from CBT and Adjust to new API requirements
+ * @author Sangmyung Lee
+ */
 
-
-@CrossOrigin(origins="*")
-@PropertySource("classpath:application.properties")
+// @PropertySource("classpath:application.properties")
 @RestController
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 @RequestMapping(path = "/contents" + "/v1")
 public class AnswerControllerV1 {
 	
@@ -49,7 +55,8 @@ public class AnswerControllerV1 {
 	private String LRS_PORT;
 	
 	@PostMapping(value="problems/{id}/answer-check", produces = "application/json; charset=utf-8")
-	public int checkAnswer(@PathVariable("id") Integer id, @RequestParam String answer, @RequestBody String lrsbody) throws Exception {
+	public int checkAnswer(@PathVariable("id") Integer id, @RequestBody ArrayList<StatementDTO> lrsbody) throws Exception {
+		String userAnswer = lrsbody.get(0).getUserAnswer();
 		Map<String, Object> data = null;
 		data = answerServices.getProblemSolution(id);
 		String inputString = data.get("solution").toString();
@@ -69,8 +76,8 @@ public class AnswerControllerV1 {
 					.defaultHeader(HttpHeaders.CONTENT_TYPE, mediaType.toString())
 				.build();
 		
-		if(temp.equals(answer)) {
-			String body = lrsbody;
+		if(temp.equals(userAnswer)) {
+			String body = lrsbody.toString();
 			int end=0;
 			int start = body.lastIndexOf("isCorrect")+8;
 			while(true) {
