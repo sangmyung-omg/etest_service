@@ -4,5 +4,5 @@ import java.io.Serializable;
 
 public class ProbUKCompositeKey implements Serializable{
 	private long probID;
-	private String ukId;
+	private Integer ukId;
 }

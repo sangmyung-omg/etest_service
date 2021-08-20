@@ -202,12 +202,12 @@ public class SelfDiagnosisComment {
 		
 		//(int riskFidelityScore, int investDecisionScore, int knowledgeScore)
 
-		int riskFidelScore = scoreMap.get(RuleBaseScoreCalculator.RISK_FIDELITY_SCORE_KEY);
+		int riskFidelScore = scoreMap.get(RuleBaseScoreCalculator.RISK_PROFILE_SCORE);
 		int decisionMakingScore = scoreMap.get(RuleBaseScoreCalculator.DECISION_MAKING_SCORE_KEY);
 		int riskA1 = scoreMap.get(RuleBaseScoreCalculator.RISK_ANSWER_1_KEY);
 		int riskA2 = scoreMap.get(RuleBaseScoreCalculator.RISK_ANSWER_2_KEY);
-		int riskScore = scoreMap.get(RuleBaseScoreCalculator.RISK_SCORE_KEY);
-		int investCondScore = scoreMap.get(RuleBaseScoreCalculator.INVEST_COND_SCORE_KEY);
+		int riskScore = scoreMap.get(RuleBaseScoreCalculator.RISK_SCORE);
+		int investCondScore = scoreMap.get(RuleBaseScoreCalculator.RISK_TRACING_SCORE);
 		int investKnowledgeScore = scoreMap.get(RuleBaseScoreCalculator.INVEST_KNOWLEDGE_KEY);
 		int investRuleScore = scoreMap.get(RuleBaseScoreCalculator.INVEST_RULE_SCORE_KEY);
 		int cogBiasScore = scoreMap.get(RuleBaseScoreCalculator.COGNITIVE_BIAS_SCORE_KEY);

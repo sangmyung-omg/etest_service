@@ -33,10 +33,10 @@ public class MiniTestReportController {
 	public MiniTestResultDTO miniTestResult(@PathVariable("id") String id) throws Exception{
 		
 		// Saving user ID of not-logged-in users - by S.M.
-		String updateResult = userService.updateUserInfo(id);
+		//String updateResult = userService.updateUserInfo(id);
 		// ------------------------------------------------
 		
-		MiniTestResultDTO output = miniTestScoreService.getMiniTestResult(id);
+		MiniTestResultDTO output = miniTestScoreService.getMiniTestResult(id, null);
 
 		return output;
 	}
@@ -49,13 +49,15 @@ public class MiniTestReportController {
 			@PathVariable("probSetId") String probSetId) throws Exception{
 		
 		// Saving user ID of not-logged-in users - by S.M.
-		String updateResult = userService.updateUserInfo(id);
+		//String updateResult = userService.updateUserInfo(id);
 		// ------------------------------------------------
 		
-		MiniTestResultDTO output = miniTestScoreService.getMiniTestResult(id);
+		MiniTestResultDTO output = miniTestScoreService.getMiniTestResult(id, probSetId);
 
 		return output;
 	}
+
+	
 	
 	@CrossOrigin("*")
 	@PutMapping(value="/report/miniTestResult/recommendVideoBookmark/{userId}/{videoId}/{isBookmarkOn}", produces = "application/json; charset=utf-8")
@@ -74,6 +76,8 @@ public class MiniTestReportController {
 			@PathVariable("userId") String userId) throws Exception{
 		
 		return miniTestVideoService.getRecommendVideo(userId);
+		
+		
 		
 	}
 	
