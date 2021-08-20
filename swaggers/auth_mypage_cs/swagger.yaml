@@ -284,7 +284,7 @@ paths:
             format: string        
       responses:
         '200':
-          description: 해당 유저의 모든 1대1 리스트 반환
+          description: 해당 유저의 모든 1대1 리스트 기록 반환
           content:
             json:
               schema:
@@ -293,6 +293,30 @@ paths:
                   code: 200
                   message: 1대1 질문 리스트 받아오기 성공
                   data: inquiryList                      
+  /user/inquiry:
+    post:
+      tags:
+        - 1대1문의
+      description: 해당 유저의 특정 1대1문의 자세한 정보 반환
+      parameters:
+        - name: Cookie
+          in: header
+          description: user JWTtoken
+          required: true
+          schema:
+            type: string
+            format: string      
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                inquiryId:
+                  description: 질문 번호
+                  type: number      
+              example: {   
+                          "id": 1
+                        }
   /user/inquiry/delete:
     post:
       tags:

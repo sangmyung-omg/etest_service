@@ -2,6 +2,7 @@ package com.tmax.eTest.MyPage.service;
 
 import com.tmax.eTest.Auth.dto.PrincipalDetails;
 import com.tmax.eTest.Common.model.report.MinitestReport;
+import com.tmax.eTest.MyPage.dto.MiniTestReportHistoryDTO;
 import com.tmax.eTest.MyPage.repository.DiagnosisReportRepo;
 import com.tmax.eTest.MyPage.repository.MinitestReportRepo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,16 +24,8 @@ public class MyPageMiniTestService {
     MinitestReportRepo minitestReportRepo;
 
     @Transactional(readOnly = true)
-    public List<MinitestReport>
-
-    getMinitestReportList(String UserUuid) {
-        List<MinitestReport> minitestReports =  minitestReportRepo.findAllByUserUuid(UserUuid);
-
-
-
-
-
-
+    public List<MiniTestReportHistoryDTO> getMinitestReportList(String UserUuid) {
+        List<MiniTestReportHistoryDTO> minitestReports =  minitestReportRepo.findAllByUserUuid(UserUuid);
         return minitestReports;
     }
 }
