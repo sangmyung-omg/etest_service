@@ -27,6 +27,7 @@ public class MinitestReport {
 	private Integer wrongNum;
 	private Integer dunnoNum;
 	private Timestamp minitestDate;
+	private String minitestUkMastery;
 	
 	@ManyToOne
 	@JoinColumn(name="userUuid", insertable = false, updatable = false)
