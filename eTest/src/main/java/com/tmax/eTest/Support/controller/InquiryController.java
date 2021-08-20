@@ -6,9 +6,12 @@ import com.tmax.eTest.Auth.repository.UserRepository;
 import com.tmax.eTest.Common.model.support.Inquiry;
 import com.tmax.eTest.Support.dto.CreateInquiryDto;
 import com.tmax.eTest.Support.dto.DeleteInquiryDto;
+import com.tmax.eTest.Support.dto.InquiryDTO;
+import com.tmax.eTest.Support.dto.InquiryHistoryDTO;
 import com.tmax.eTest.Support.repository.InquiryFileRepository;
 import com.tmax.eTest.Support.repository.InquiryRepository;
 import com.tmax.eTest.Support.service.InquiryService;
+import io.swagger.models.auth.In;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -44,9 +47,18 @@ public class InquiryController {
     @Transactional(readOnly = true)
     @GetMapping("/inquiry/list")
     public CMRespDto<?> getInquiryList(@AuthenticationPrincipal PrincipalDetails principalDetails) {
-        List<Inquiry> inquiryList = inquiryRepository.findAllByUserUuid(principalDetails.getUserUuid());
-        return new CMRespDto<>(200,"1대1 질문 리스트 받아오기 성공",inquiryList);
+        List<InquiryHistoryDTO> inquiryHistoryDTOList = inquiryRepository.findAllInquiryHistoryByUserUuid(principalDetails.getUserUuid());
+        return new CMRespDto<>(200,"1대1 질문 리스트 받아오기 성공",inquiryHistoryDTOList);
     }
+
+    @Transactional(readOnly = true)
+    @PostMapping("/inquiry")
+    public CMRespDto<?> getInquiry(@RequestBody InquiryDTO inquiryDTO,@AuthenticationPrincipal PrincipalDetails principalDetails ) {
+        System.out.println("INQUIRY_ID : "+inquiryDTO.getId());
+        Optional<Inquiry> inquiryOptional = inquiryRepository.findByUserUuid(inquiryDTO.getId());
+        return new CMRespDto<>(200, "1대1 질문 리스트 받아오기 성공", inquiryOptional.get());
+    }
+
 
     @PostMapping("/inquiry/delete")
     public CMRespDto<?> deleteInquiry(@RequestBody DeleteInquiryDto deleteInquiryDto, @AuthenticationPrincipal PrincipalDetails principalDetails) {
