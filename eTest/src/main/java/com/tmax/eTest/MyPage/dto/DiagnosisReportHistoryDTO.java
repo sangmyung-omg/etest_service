@@ -1,4 +1,9 @@
 package com.tmax.eTest.MyPage.dto;
 
-public class DiagnosisReportHistoryDTO {
+import java.sql.Timestamp;
+
+public interface DiagnosisReportHistoryDTO {
+    String getDIAGNOSIS_ID();
+    Float getGI_SCORE();
+    Timestamp getDIAGNOSIS_DATE();
 }
