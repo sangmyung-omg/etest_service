@@ -19,13 +19,13 @@ import lombok.Data;
 @IdClass(MinitestReportKey.class)
 public class MinitestReport {
 	@Id
+	private String minitestId;
 	private String userUuid;
 	private Float avgUkMastery;
 	private Integer setNum;
 	private Integer correctNum;
 	private Integer wrongNum;
 	private Integer dunnoNum;
-	@Id
 	private Timestamp minitestDate;
 	
 	@ManyToOne

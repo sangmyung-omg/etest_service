@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,7 +38,7 @@ import com.tmax.eTest.Test.repository.UserEmbeddingRepository;
 import com.tmax.eTest.Test.repository.UserKnowledgeRepository;
 
 @Service
-public class MiniTestReportService {
+public class MiniTestScoreService {
 
 	@Autowired
 	LRSAPIManager lrsAPIManager;
@@ -62,12 +63,12 @@ public class MiniTestReportService {
 
 	private final Logger logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
 
-	public MiniTestResultDTO getMiniTestResult(String userId) {
+	public MiniTestResultDTO getMiniTestResult(String userId, String probSetId) {
 		MiniTestResultDTO result = new MiniTestResultDTO();
 		result.initForDummy();
 
 		// Mini Test 관련 문제 풀이 정보 획득.
-		List<StatementDTO> miniTestRes = getMiniTestResultInLRS(userId);
+		List<StatementDTO> miniTestRes = getMiniTestResultInLRS(userId, probSetId);
 		List<Problem> probInfos = getProblemInfos(miniTestRes);
 		Map<String, List<Object>> probInfoForTriton = stateAndProbProcess.makeInfoForTriton(miniTestRes, probInfos);
 		TritonResponseDTO tritonResponse = tritonAPIManager.getUnderstandingScoreInTriton(probInfoForTriton);
@@ -101,7 +102,6 @@ public class MiniTestReportService {
 				
 				List<List<String>> partScoreList = scoreCalculator.makePartScore(usedUkMap, ukScoreMap);
 				Map<String, List<List<String>>> partUkDetail = scoreCalculator.makePartUkDetail(usedUkMap, ukScoreMap, partScoreList);
-				//List<List<String>> weakPartDetail = scoreCalculator.makeWeakPartDetail(usedUkMap, ukScoreMap, partScoreList);
 				int setNum = 0;
 				
 				if(probInfos.size() > 0)
@@ -116,7 +116,10 @@ public class MiniTestReportService {
 					avg += Float.parseFloat(part.get(2));
 				}
 				
-				int ukAvgScore = Math.round(avg / partScoreList.size());
+				int ukAvgScore = 0;
+				
+				if(partScoreList.size() > 0)
+					ukAvgScore = Math.round(avg / partScoreList.size());
 	
 				result.setScore(ukAvgScore);
 				result.setPercentage(sndCalculator.calculateForMiniTest(ukAvgScore));
@@ -139,6 +142,7 @@ public class MiniTestReportService {
 	{
 		MinitestReport miniReport = new MinitestReport();
 		
+		miniReport.setMinitestId(UUID.randomUUID().toString());
 		miniReport.setUserUuid(id);
 		miniReport.setAvgUkMastery((float) ukAvgScore);
 		miniReport.setCorrectNum(diagQuestionInfo.get(0).size());
@@ -151,12 +155,15 @@ public class MiniTestReportService {
 	}
 
 
-	private List<StatementDTO> getMiniTestResultInLRS(String userID) {
+	private List<StatementDTO> getMiniTestResultInLRS(String userID, String probSetId) {
 		List<StatementDTO> result = new ArrayList<>();
 		GetStatementInfoDTO statementInput = new GetStatementInfoDTO();
 		statementInput.pushUserId(userID);
 		statementInput.pushSourceType("mini_test_question");
 		statementInput.pushActionType("submit");
+		
+		if(probSetId != null)
+			statementInput.pushExtensionStr(probSetId);
 
 		try {
 			result = lrsAPIManager.getStatementList(statementInput);

@@ -3,6 +3,7 @@ package com.tmax.eTest.Common.model.report;
 import java.sql.Timestamp;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.JoinColumn;
@@ -19,6 +20,7 @@ import lombok.Data;
 @IdClass(DiagnosisReportKey.class)
 public class DiagnosisReport {
 	@Id
+	private String diagnosisId;
 	private String userUuid;
 	private Float giScore;
 	private Integer riskScore;
@@ -28,10 +30,10 @@ public class DiagnosisReport {
 	private String userMbti;
 	private Integer investItemNum;
 	private Integer stockRatio;
-	@Id
 	private Timestamp diagnosisDate;
 	
-	@ManyToOne
-	@JoinColumn(name="userUuid", insertable = false, updatable = false)
-	private UserMaster user;
+// error 및 미사용
+//	@ManyToOne(fetch = FetchType.LAZY)
+//	@JoinColumn(name="userUuid", insertable = false, updatable = false)
+//	private UserMaster user;
 }

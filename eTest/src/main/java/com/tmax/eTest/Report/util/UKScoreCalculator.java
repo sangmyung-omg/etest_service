@@ -50,6 +50,7 @@ public class UKScoreCalculator {
 				//partUK.add(ukScore.get(ukId).toString());
 				partUK.add(calculateUKScoreString(ukScore.get(ukId)));
 				partUK.add("C");
+				partUK.add(recentUK.getUkDescription());
 
 				if(result.get(recentUK.getPart()) == null)
 				{

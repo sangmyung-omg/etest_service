@@ -4,6 +4,5 @@ import java.io.Serializable;
 import java.sql.Timestamp;
 
 public class MinitestReportKey implements Serializable {
-	String userUuid;
-	Timestamp minitestDate;
+	String minitestId;
 }
