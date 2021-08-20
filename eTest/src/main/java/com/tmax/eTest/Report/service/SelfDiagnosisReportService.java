@@ -65,6 +65,73 @@ public class SelfDiagnosisReportService {
 	
 	private final Logger logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
 	
+	public boolean saveDiagnosisResult(
+			String userId, 
+			String probSetId) throws Exception
+	{
+		boolean result = true;
+		
+		// 1. Get Statement Info
+		List<StatementDTO> diagnosisProbStatements = getStatementDiagnosisProb(userId, probSetId);
+		
+		// 2. get Problem List from Statement Info
+		List<Problem> probList = getProblemInfos(diagnosisProbStatements);
+		
+		// 3. get Problem Answer Info from Problem Info + Statement Info
+		List<Pair<Problem, Integer>> probAndUserChoice = getProblemAndChoiceInfos(probList, diagnosisProbStatements);
+		
+		// 4. get Score Map from Problem Answer Info
+		Map<String, Integer> scoreMap = ruleBaseScoreCalculator.probDivideAndCalculateScoresV2(probAndUserChoice);
+
+		// Rule Based 점수들 산출
+		Map<String, List<Object>> probInfoForTriton = stateAndProbProcess.makeInfoForTriton(diagnosisProbStatements, probList);
+		TritonResponseDTO tritonResponse = tritonAPIManager.getUnderstandingScoreInTriton(probInfoForTriton);
+		TritonDataDTO embeddingData = null;
+		TritonDataDTO masteryData = null;
+		
+		if(tritonResponse != null)
+		{
+			for (TritonDataDTO dto : tritonResponse.getOutputs()) {
+				if (dto.getName().equals("Embeddings")) {
+					embeddingData = dto;
+				} else if (dto.getName().equals("Mastery")) {
+					masteryData = dto;
+				}
+			}
+	
+			if (embeddingData != null && masteryData != null) {
+				Map<Integer, UkMaster> usedUkMap =stateAndProbProcess.makeUsedUkMap(probList);
+				Map<Integer, Float> ukScoreMap = ukScoreCalculator.makeUKScoreMap(masteryData);
+				
+				//[파트이름, 스코어 등급(A~F), 스코어 점수]
+				List<List<String>> partScoreList = ukScoreCalculator.makePartScore(usedUkMap, ukScoreMap);
+				
+				Collections.sort(partScoreList, new Comparator<List<String>>() {
+					@Override
+					public int compare(List<String> o1, List<String> o2) {
+						// TODO Auto-generated method stub
+						return o1.get(2).compareTo(o2.get(2));
+					}
+				});
+				
+				float partAvgScore = 0;
+				
+				for(int i = 0; i < partScoreList.size(); i++)
+				{
+					List<String> partScoreInfo = partScoreList.get(i);
+					int partScore = Integer.parseInt(partScoreInfo.get(2));
+					partAvgScore += partScore;
+				}
+				
+				if(partScoreList.size() > 0)
+					partAvgScore /= partScoreList.size();
+				saveDiagnosisReport(userId, probSetId, scoreMap, partAvgScore);
+				
+			}
+		}
+		
+		return result;
+	}
 	
 	public DiagnosisResultDTO calculateDiagnosisResult(
 			String userId, 
@@ -91,10 +158,10 @@ public class SelfDiagnosisReportService {
 		Map<String, Integer> mainScoreInfo = new HashMap<>();
 		mainScoreInfo.put(RuleBaseScoreCalculator.RISK_SCORE, 
 				scoreMap.get(RuleBaseScoreCalculator.RISK_SCORE));
-		mainScoreInfo.put(RuleBaseScoreCalculator.DECISION_MAKING_SCORE_KEY, 
-				scoreMap.get(RuleBaseScoreCalculator.DECISION_MAKING_SCORE_KEY));
-		mainScoreInfo.put(RuleBaseScoreCalculator.INVEST_KNOWLEDGE_KEY, 
-				scoreMap.get(RuleBaseScoreCalculator.INVEST_KNOWLEDGE_KEY));
+		mainScoreInfo.put(RuleBaseScoreCalculator.INVEST_SCORE, 
+				scoreMap.get(RuleBaseScoreCalculator.INVEST_SCORE));
+		mainScoreInfo.put(RuleBaseScoreCalculator.KNOWLEDGE_SCORE, 
+				scoreMap.get(RuleBaseScoreCalculator.KNOWLEDGE_SCORE));
 
 		// Rule Based 점수들 산출
 		Map<String, List<Object>> probInfoForTriton = stateAndProbProcess.makeInfoForTriton(diagnosisProbStatements, probList);
@@ -144,16 +211,6 @@ public class SelfDiagnosisReportService {
 		}
 		
 
-		// Result Setting
-		result.setPartAiResult(mainScoreInfo);
-		result.setGiScore(scoreMap.get(RuleBaseScoreCalculator.GI_SCORE_KEY));
-		result.setGiPercentage(sndCalculator.calculateForSelfDiag(
-				scoreMap.get(RuleBaseScoreCalculator.GI_SCORE_KEY)));
-		result.setTotalResult(commentMap.get(SelfDiagnosisComment.TOTAL_RES_KEY));
-		result.setDecisionMaking(commentMap.get(SelfDiagnosisComment.DECISION_MAKING_KEY));
-		result.setInvestKnowledge(commentMap.get(SelfDiagnosisComment.INVEST_KNOWLEDGE_KEY));
-		result.setRiskFidelity(commentMap.get(SelfDiagnosisComment.RISK_FID_KEY));
-		result.setScoreMap(scoreMap);
 		
 		return result;
 	}
@@ -242,8 +299,8 @@ public class SelfDiagnosisReportService {
 		report.setUserUuid(id);
 		report.setGiScore((float)scoreMap.get(RuleBaseScoreCalculator.GI_SCORE_KEY));
 		report.setRiskScore(scoreMap.get(RuleBaseScoreCalculator.RISK_PROFILE_SCORE));
-		report.setInvestScore(scoreMap.get(RuleBaseScoreCalculator.DECISION_MAKING_SCORE_KEY));
-		report.setKnowledgeScore(scoreMap.get(RuleBaseScoreCalculator.INVEST_KNOWLEDGE_KEY));
+		report.setInvestScore(scoreMap.get(RuleBaseScoreCalculator.INVEST_SCORE));
+		report.setKnowledgeScore(scoreMap.get(RuleBaseScoreCalculator.KNOWLEDGE_SCORE));
 		report.setAvgUkMastery(avgUkMastery);
 		report.setUserMbti("XXXX");
 		report.setInvestItemNum(investItemNum);

@@ -48,8 +48,8 @@ public class SelfDiagnosisReportController {
 	
 	//legacy
 	@CrossOrigin("*")
-	@PutMapping(value="/report/diagnosis/result/{id}/{probSetId}", produces = "application/json; charset=utf-8")
-	public DiagnosisResultDTO diagnosisResult(
+	@PutMapping(value="/report/diagnosis/saveResult/{id}/{probSetId}", produces = "application/json; charset=utf-8")
+	public boolean diagnosisResult(
 			@PathVariable("id") String id,
 			@PathVariable("id") String probSetId) throws Exception{
 		
@@ -57,7 +57,7 @@ public class SelfDiagnosisReportController {
 		//String queryResult = userService.updateUserInfo(id);
 		// ------------------------------------------------
 		
-		DiagnosisResultDTO output = selfDiagnosisReportService.calculateDiagnosisResult(id, probSetId);
+		boolean output = selfDiagnosisReportService.saveDiagnosisResult(id, probSetId);
 		
 		return output;
 	}
