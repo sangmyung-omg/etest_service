@@ -154,8 +154,7 @@ public class RuleBaseScoreCalculator {
 				knowledgeTypeProb,
 				knowledgeChangeProb,
 				knowledgeSellProb));
-		
-		res.put(GI_SCORE_KEY, Double.valueOf(res.get(RISK_SCORE) * 0.3
+		res.put(GI_SCORE_KEY, Double.valueOf(res.get(RISK_PROFILE_SCORE) * 0.3
 				+ res.get(INVEST_SCORE) * 0.3
 				+ res.get(KNOWLEDGE_SCORE)* 0.4).intValue());
 	

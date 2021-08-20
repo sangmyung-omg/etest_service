@@ -74,8 +74,6 @@ public class SelfDiagnosisReportService {
 		// 1. Get Statement Info
 		List<StatementDTO> diagnosisProbStatements = getStatementDiagnosisProb(userId, probSetId);
 		
-		logger.info(diagnosisProbStatements.toString());
-		
 		// 2. get Problem List from Statement Info
 		List<Problem> probList = getProblemInfos(diagnosisProbStatements);
 		
