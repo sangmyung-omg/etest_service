@@ -10,8 +10,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.tmax.eTest.Report.dto.MiniTestRecordDTO;
 import com.tmax.eTest.Report.dto.MiniTestResultDTO;
 import com.tmax.eTest.Report.dto.VideoResultDTO;
+import com.tmax.eTest.Report.service.MiniTestRecordService;
 import com.tmax.eTest.Report.service.MiniTestScoreService;
 import com.tmax.eTest.Report.service.MiniTestVideoService;
 import com.tmax.eTest.Test.service.UserInfoService;
@@ -23,6 +25,8 @@ public class MiniTestReportController {
 	MiniTestScoreService miniTestScoreService;
 	@Autowired
 	MiniTestVideoService miniTestVideoService;
+	@Autowired
+	MiniTestRecordService miniTestRecordService;
 
 	
 	@Autowired
@@ -53,6 +57,21 @@ public class MiniTestReportController {
 		// ------------------------------------------------
 		
 		MiniTestResultDTO output = miniTestScoreService.getMiniTestResult(id, probSetId);
+
+		return output;
+	}
+
+	@CrossOrigin("*")
+	@GetMapping(value="/report/miniTest/record/{id}/{probSetId}", produces = "application/json; charset=utf-8")
+	public MiniTestRecordDTO miniTestRecord(
+			@PathVariable("id") String id,
+			@PathVariable("probSetId") String probSetId) throws Exception{
+		
+		// Saving user ID of not-logged-in users - by S.M.
+		//String updateResult = userService.updateUserInfo(id);
+		// ------------------------------------------------
+		
+		MiniTestRecordDTO output = miniTestRecordService.getMiniTestRecord(id, probSetId);
 
 		return output;
 	}
