@@ -134,11 +134,10 @@ public class SelfDiagnosisReportService {
 					List<String> partScoreInfo = partScoreList.get(i);
 					int partScore = Integer.parseInt(partScoreInfo.get(2));
 					partAvgScore += partScore;
-					
-					
 				}
 				
-				partAvgScore /= partScoreList.size();
+				if(partScoreList.size() > 0)
+					partAvgScore /= partScoreList.size();
 				saveDiagnosisReport(userId, probSetId, scoreMap, partAvgScore);
 				
 			}

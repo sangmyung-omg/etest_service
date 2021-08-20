@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -115,7 +116,10 @@ public class MiniTestScoreService {
 					avg += Float.parseFloat(part.get(2));
 				}
 				
-				int ukAvgScore = Math.round(avg / partScoreList.size());
+				int ukAvgScore = 0;
+				
+				if(partScoreList.size() > 0)
+					ukAvgScore = Math.round(avg / partScoreList.size());
 	
 				result.setScore(ukAvgScore);
 				result.setPercentage(sndCalculator.calculateForMiniTest(ukAvgScore));
@@ -138,6 +142,7 @@ public class MiniTestScoreService {
 	{
 		MinitestReport miniReport = new MinitestReport();
 		
+		miniReport.setMinitestId(UUID.randomUUID().toString());
 		miniReport.setUserUuid(id);
 		miniReport.setAvgUkMastery((float) ukAvgScore);
 		miniReport.setCorrectNum(diagQuestionInfo.get(0).size());
