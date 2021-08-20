@@ -13,6 +13,7 @@ public class GetStatementInfoDTO {
 	public Integer recentStatementNum;
 	public List<String> sourceTypeList;
 	public List<String> userIdList;
+	public List<String> containExtension;
 	
 	public boolean pushUserId(String id)
 	{
@@ -36,5 +37,13 @@ public class GetStatementInfoDTO {
 			actionTypeList = new ArrayList<>();
 		
 		return actionTypeList.add(actionType);
+	}
+	
+	public boolean pushExtensionStr(String str)
+	{
+		if(containExtension == null)
+			containExtension = new ArrayList<>();
+		
+		return containExtension.add(str);
 	}
 }

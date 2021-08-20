@@ -20,13 +20,20 @@ import com.tmax.eTest.Common.model.problem.ProblemChoice;
 @Component
 // Rule Base 점수, Triton 점수 관련 Method 집합 Class
 public class RuleBaseScoreCalculator {
-
-	final public static String RISK_SCORE_KEY = "리스크점수";
-	final public static String INVEST_COND_SCORE_KEY = "투자현황점수";
-	final public static String RISK_FIDELITY_SCORE_KEY = "위험적합도점수";
+	final public static String RISK_SCORE = "리스크점수";
+	final public static String RISK_TRACING_SCORE = "리스크트레이싱점수";
+	final public static String RISK_TRACING_TRADE_PERIOD = "증권사거래기간";
+	final public static String RISK_TRACING_STOCK_RATIO = "자산중주식비중";
+	final public static String RISK_TRACING_STOCK_NUM = "보유주식수";
+	final public static String RISK_TRACING_PORTFOLIO = "보유포트폴리오";
+	final public static String RISK_PROFILE_SCORE = "리스크프로파일점수";
+	final public static String RISK_PROFILE_CAPA = "리스크감내역량점수";
+	final public static String RISK_PROFILE_LEVEL = "리스크감내수준점수";
+	
+	
+	final public static String DECISION_MAKING_SCORE_KEY = "의사결정적합도점수";
 	final public static String INVEST_RULE_SCORE_KEY = "투자원칙점수";
 	final public static String COGNITIVE_BIAS_SCORE_KEY = "인지편향점수";
-	final public static String DECISION_MAKING_SCORE_KEY = "의사결정적합도점수";
 	final public static String INVEST_KNOWLEDGE_KEY = "지식이해도";
 	final public static String GI_SCORE_KEY = "GI점수";
 	final public static String RISK_ANSWER_1_KEY = "RiskA1";
@@ -41,12 +48,15 @@ public class RuleBaseScoreCalculator {
 	public Map<String,Integer> probDivideAndCalculateScores(List<Pair<Problem, Integer>> probInfos)
 	{
 		Map<String,Integer> res = new HashMap<>();
-		List<Pair<Problem, Integer>> investCondProb = new ArrayList<>(); // 투자현황
-		List<Pair<Problem, Integer>> riskProb = new ArrayList<>(); // 리스크
+
+		List<Pair<Problem, Integer>> riskTracingProb = new ArrayList<>(); // 투자현황
 		List<Pair<Problem, Integer>> investRuleProb = new ArrayList<>(); // 투자원칙
 		List<Pair<Problem, Integer>> cogBiasProb = new ArrayList<>(); // 인지편향
 		List<Pair<Problem, Integer>> investKnowledgeProb = new ArrayList<>(); // 투자지식
-		List<Pair<Problem, Integer>> riskPatienceProb = new ArrayList<>();
+		
+		// 리스크
+		List<Pair<Problem, Integer>> riskLevelProb = new ArrayList<>(); // 리스크 감내 수준
+		List<Pair<Problem, Integer>> riskPatiProb = new ArrayList<>();	//리스크 감내 역량
 
 		for(Pair<Problem, Integer> probInfo : probInfos)
 		{
@@ -60,16 +70,17 @@ public class RuleBaseScoreCalculator {
 				switch(section)
 				{
 				case "투자현황":
-					investCondProb.add(probInfo);
+					riskTracingProb.add(probInfo);
 					if(probInfo.getFirst().getDiagnosisInfo().getCurriculumId() == 2) // 주식 투자 비중
 						res.put(STOCK_RATIO_ANS, probInfo.getSecond());
 					else if(probInfo.getFirst().getDiagnosisInfo().getCurriculumId() == 3) // 보유 종목 수
 						res.put(STOCK_NUM_ANS, probInfo.getSecond());
 					break;
 				case "리스크":
-					riskProb.add(probInfo);
 					if(curriculum.getSubSection().equals("리스크 감내역량"))
-						riskPatienceProb.add(probInfo);
+						riskPatiProb.add(probInfo);
+					else
+						riskLevelProb.add(probInfo);
 					break;
 				case "투자원칙":
 					investRuleProb.add(probInfo);
@@ -91,35 +102,35 @@ public class RuleBaseScoreCalculator {
 			}
 		}
 		
-		if(riskPatienceProb.size() != 2) // 2문항
+		if(riskPatiProb.size() != 2) // 2문항
 		{
-			logger.info("probDivideAndCalculateScores riskPatienceProb size error : " + riskPatienceProb.size());
+			logger.info("probDivideAndCalculateScores riskPatienceProb size error : " + riskPatiProb.size());
 			res.put(RISK_ANSWER_1_KEY, 1);
 			res.put(RISK_ANSWER_2_KEY, 1);
 		}
 		else
 		{
-			int q1Idx = riskPatienceProb.get(0).getFirst().getProbID() < riskPatienceProb.get(1).getFirst().getProbID()?0:1;
+			int q1Idx = riskPatiProb.get(0).getFirst().getProbID() < riskPatiProb.get(1).getFirst().getProbID()?0:1;
 			int q2Idx = q1Idx==0?1:0;
 			
-			res.put(RISK_ANSWER_1_KEY, riskPatienceProb.get(q1Idx).getSecond());
-			res.put(RISK_ANSWER_2_KEY, riskPatienceProb.get(q2Idx).getSecond());
+			res.put(RISK_ANSWER_1_KEY, riskPatiProb.get(q1Idx).getSecond());
+			res.put(RISK_ANSWER_2_KEY, riskPatiProb.get(q2Idx).getSecond());
 		}
 		
-		res.putAll(calculateRiskFidelityScore(investCondProb, riskProb));
+		res.putAll(calculateRiskFidelityScore(riskTracingProb, riskPatiProb, riskLevelProb));
 		res.putAll(calculateDecisionMakingScore(investRuleProb, cogBiasProb));
 		res.put(INVEST_KNOWLEDGE_KEY, calculateInvestKnowledgeScore(investKnowledgeProb));
-		res.put(GI_SCORE_KEY, Double.valueOf(res.get(RISK_FIDELITY_SCORE_KEY) * 0.3
+		res.put(GI_SCORE_KEY, Double.valueOf(res.get(RISK_PROFILE_SCORE) * 0.3
 				+ res.get(DECISION_MAKING_SCORE_KEY) * 0.3
 				+ res.get(INVEST_KNOWLEDGE_KEY)* 0.4).intValue());
 		
 		logger.info("probDivideAndCalculateScores prob num : "
-				+ investCondProb.size() +" "
-				+ riskProb.size() +" "
+				+ riskTracingProb.size() +" "
+				+ riskLevelProb.size() +" "
 				+ investRuleProb.size() +" "
 				+ cogBiasProb.size() +" "
 				+ investKnowledgeProb.size() +" "
-				+ res.get(RISK_FIDELITY_SCORE_KEY) + " "
+				+ res.get(RISK_PROFILE_SCORE) + " "
 				+ res.get(DECISION_MAKING_SCORE_KEY) + " "
 				+ res.get(INVEST_KNOWLEDGE_KEY));
 		
@@ -128,18 +139,24 @@ public class RuleBaseScoreCalculator {
 
 	// result = [리스크점수, 투자현황점수, 위험적합도점수]
 	public Map<String, Integer> calculateRiskFidelityScore(
-			List<Pair<Problem, Integer>> investConditionProbList, 
-			List<Pair<Problem, Integer>> riskProbList) {
+			List<Pair<Problem, Integer>> riskTracingProbList, 
+			List<Pair<Problem, Integer>> riskCapaProbList, 
+			List<Pair<Problem, Integer>> riskLevelProbList) {
 		Map<String, Integer> res = new HashMap<>();
-		int investConditionScore = makeScore(investConditionProbList);
-		int riskScore = makeScore(riskProbList);
+		
+		int riskTracingScore = makeScore(riskTracingProbList);
+		int riskCapaScore = makeScore(riskCapaProbList);
+		int riskLevelScore = makeScore(riskLevelProbList);
+		int riskProfileScore = riskCapaScore + riskLevelScore;
 
-		float tempScore = Math.abs((investConditionScore - 4) * 100 / 12.f - (riskScore - 5) * 100 / 15.f);
-		int riskFidelityScore = Float.valueOf((100 - tempScore) * 0.6f).intValue() + 35;
+		float tempScore = Math.abs((riskTracingScore - 4) * 100 / 12.f - (riskProfileScore - 5) * 100 / 15.f);
+		int riskScore = Float.valueOf((100 - tempScore) * 0.6f).intValue() + 35;
 
-		res.put(RISK_SCORE_KEY, riskScore);
-		res.put(INVEST_COND_SCORE_KEY, investConditionScore);
-		res.put(RISK_FIDELITY_SCORE_KEY, riskFidelityScore);
+		res.put(RISK_SCORE, riskScore);
+		res.put(RISK_TRACING_SCORE, riskTracingScore);
+		res.put(RISK_PROFILE_SCORE, riskProfileScore);
+		res.put(RISK_PROFILE_CAPA, riskCapaScore);
+		res.put(RISK_PROFILE_LEVEL, riskProfileScore);
 
 		return res;
 	}
