@@ -203,14 +203,14 @@ public class SelfDiagnosisComment {
 		//(int riskFidelityScore, int investDecisionScore, int knowledgeScore)
 
 		int riskFidelScore = scoreMap.get(RuleBaseScoreCalculator.RISK_PROFILE_SCORE);
-		int decisionMakingScore = scoreMap.get(RuleBaseScoreCalculator.DECISION_MAKING_SCORE_KEY);
+		int decisionMakingScore = scoreMap.get(RuleBaseScoreCalculator.INVEST_SCORE);
 		int riskA1 = scoreMap.get(RuleBaseScoreCalculator.RISK_ANSWER_1_KEY);
 		int riskA2 = scoreMap.get(RuleBaseScoreCalculator.RISK_ANSWER_2_KEY);
 		int riskScore = scoreMap.get(RuleBaseScoreCalculator.RISK_SCORE);
 		int investCondScore = scoreMap.get(RuleBaseScoreCalculator.RISK_TRACING_SCORE);
-		int investKnowledgeScore = scoreMap.get(RuleBaseScoreCalculator.INVEST_KNOWLEDGE_KEY);
-		int investRuleScore = scoreMap.get(RuleBaseScoreCalculator.INVEST_RULE_SCORE_KEY);
-		int cogBiasScore = scoreMap.get(RuleBaseScoreCalculator.COGNITIVE_BIAS_SCORE_KEY);
+		int investKnowledgeScore = scoreMap.get(RuleBaseScoreCalculator.KNOWLEDGE_SCORE);
+		int investRuleScore = scoreMap.get(RuleBaseScoreCalculator.INVEST_TRACING);
+		int cogBiasScore = scoreMap.get(RuleBaseScoreCalculator.INVEST_PROFILE);
 		List<String> similarTypeList = makeSimilarTypeInfo(riskFidelScore, decisionMakingScore, investKnowledgeScore);
 		
 		res.put(TOTAL_RES_KEY, getFinalResultComment(riskFidelScore, decisionMakingScore, investKnowledgeScore));
