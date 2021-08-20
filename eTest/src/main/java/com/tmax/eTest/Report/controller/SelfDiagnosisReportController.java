@@ -7,10 +7,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.tmax.eTest.Report.dto.DiagnosisRecordDTO;
 import com.tmax.eTest.Report.dto.DiagnosisResultDTO;
 import com.tmax.eTest.Report.dto.PartUnderstandingDTO;
+import com.tmax.eTest.Report.service.DiagnosisRecordService;
 import com.tmax.eTest.Report.service.SelfDiagnosisReportService;
 import com.tmax.eTest.Report.util.LRSAPIManager;
 import com.tmax.eTest.Test.service.UserInfoService;
@@ -22,8 +25,13 @@ public class SelfDiagnosisReportController {
 	SelfDiagnosisReportService selfDiagnosisReportService;
 	
 	@Autowired
+	DiagnosisRecordService diagnosisRecordService;
+	
+	@Autowired
 	UserInfoService userService;
 	
+	
+	//legacy
 	@CrossOrigin("*")
 	@GetMapping(value="/report/diagnosisResult/{id}", produces = "application/json; charset=utf-8")
 	public DiagnosisResultDTO diagnosisResult(
@@ -38,8 +46,9 @@ public class SelfDiagnosisReportController {
 		return output;
 	}
 	
+	//legacy
 	@CrossOrigin("*")
-	@GetMapping(value="/report/diagnosisResult/{id}/{probSetId}", produces = "application/json; charset=utf-8")
+	@PutMapping(value="/report/diagnosis/result/{id}/{probSetId}", produces = "application/json; charset=utf-8")
 	public DiagnosisResultDTO diagnosisResult(
 			@PathVariable("id") String id,
 			@PathVariable("id") String probSetId) throws Exception{
@@ -49,6 +58,21 @@ public class SelfDiagnosisReportController {
 		// ------------------------------------------------
 		
 		DiagnosisResultDTO output = selfDiagnosisReportService.calculateDiagnosisResult(id, probSetId);
+		
+		return output;
+	}
+	
+	@CrossOrigin("*")
+	@GetMapping(value="/report/diagnosis/record/{id}/{probSetId}", produces = "application/json; charset=utf-8")
+	public DiagnosisRecordDTO diagnosisRecord(
+			@PathVariable("id") String id,
+			@PathVariable("id") String probSetId) throws Exception{
+		
+		// Saving user ID of not-logged-in users - by S.M.
+		//String queryResult = userService.updateUserInfo(id);
+		// ------------------------------------------------
+		
+		DiagnosisRecordDTO output = diagnosisRecordService.getDiagnosisRecord(id, probSetId);
 		
 		return output;
 	}

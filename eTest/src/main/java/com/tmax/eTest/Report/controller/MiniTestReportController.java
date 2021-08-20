@@ -56,6 +56,8 @@ public class MiniTestReportController {
 
 		return output;
 	}
+
+	
 	
 	@CrossOrigin("*")
 	@PutMapping(value="/report/miniTestResult/recommendVideoBookmark/{userId}/{videoId}/{isBookmarkOn}", produces = "application/json; charset=utf-8")
@@ -74,6 +76,8 @@ public class MiniTestReportController {
 			@PathVariable("userId") String userId) throws Exception{
 		
 		return miniTestVideoService.getRecommendVideo(userId);
+		
+		
 		
 	}
 	

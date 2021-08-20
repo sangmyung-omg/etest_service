@@ -89,8 +89,8 @@ public class SelfDiagnosisReportService {
 			
 		// 6. set Main Score Info (RISK_FIDELITY, DECISION_MAKING, INVESTMENT_KNOWLEDGE SCORE)
 		Map<String, Integer> mainScoreInfo = new HashMap<>();
-		mainScoreInfo.put(RuleBaseScoreCalculator.RISK_PROFILE_SCORE, 
-				scoreMap.get(RuleBaseScoreCalculator.RISK_PROFILE_SCORE));
+		mainScoreInfo.put(RuleBaseScoreCalculator.RISK_SCORE, 
+				scoreMap.get(RuleBaseScoreCalculator.RISK_SCORE));
 		mainScoreInfo.put(RuleBaseScoreCalculator.DECISION_MAKING_SCORE_KEY, 
 				scoreMap.get(RuleBaseScoreCalculator.DECISION_MAKING_SCORE_KEY));
 		mainScoreInfo.put(RuleBaseScoreCalculator.INVEST_KNOWLEDGE_KEY, 
@@ -135,14 +135,6 @@ public class SelfDiagnosisReportService {
 					int partScore = Integer.parseInt(partScoreInfo.get(2));
 					partAvgScore += partScore;
 					
-					if(i >= partScoreList.size() / 2)
-						result.pushStrongPartInfo(partScoreInfo.get(0), 
-							partScoreInfo.get(0) +" 영역에서 상대적으로 높은 이해도를 갖고 있습니다.", 
-							partScore);
-					else
-						result.pushWeakPartInfo(partScoreInfo.get(0), 
-								partScoreInfo.get(0) +"는 더 많은 이해가 필요해 보입니다. AI가 학습 컨텐츠를 추천해드립니다.", 
-								partScore);
 					
 				}
 				
@@ -154,7 +146,7 @@ public class SelfDiagnosisReportService {
 		
 
 		// Result Setting
-		result.setPartDiagnosisResult(mainScoreInfo);
+		result.setPartAiResult(mainScoreInfo);
 		result.setGiScore(scoreMap.get(RuleBaseScoreCalculator.GI_SCORE_KEY));
 		result.setGiPercentage(sndCalculator.calculateForSelfDiag(
 				scoreMap.get(RuleBaseScoreCalculator.GI_SCORE_KEY)));
@@ -162,7 +154,6 @@ public class SelfDiagnosisReportService {
 		result.setDecisionMaking(commentMap.get(SelfDiagnosisComment.DECISION_MAKING_KEY));
 		result.setInvestKnowledge(commentMap.get(SelfDiagnosisComment.INVEST_KNOWLEDGE_KEY));
 		result.setRiskFidelity(commentMap.get(SelfDiagnosisComment.RISK_FID_KEY));
-		result.setSimilarTypeInfo(commentMap.get(SelfDiagnosisComment.SIMILAR_TYPE_KEY));
 		result.setScoreMap(scoreMap);
 		
 		return result;
