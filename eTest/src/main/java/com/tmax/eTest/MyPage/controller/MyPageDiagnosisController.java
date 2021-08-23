@@ -18,20 +18,14 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/user")
 public class MyPageDiagnosisController {
+
     @Autowired
     MyPageDiagnosisService diagnosisService;
 
     @GetMapping("/myPage/getDiagnosisList")
     public CMRespDto<?> getDiagnosisList(@AuthenticationPrincipal PrincipalDetails principalDetails) {
-        List<DiagnosisReportHistoryDTO> diagnosisReport = diagnosisService.getDiagnosisList(principalDetails.getUserUuid());
-        return new CMRespDto<>(200, "test", diagnosisReport);
+        List<DiagnosisReport> diagnosisReport = diagnosisService.getDiagnosisList(principalDetails.getUserUuid());
+        List<DiagnosisReportHistoryDTO> diagnosisReportHistoryDTOList = DiagnosisReportHistoryDTO.toDtoList(diagnosisReport);
+        return new CMRespDto<>(200, "test", diagnosisReportHistoryDTOList);
     }
-
-    @PostMapping("/myPage/deleteDiagnosisList")
-    public CMRespDto<?> deleteDiagnosisList(@AuthenticationPrincipal PrincipalDetails principalDetails, DeleteDiagnosisReportDTO deleteDiagnosisReportDTO) {
-        return null;
-    }
-
-
-
 }

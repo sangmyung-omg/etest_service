@@ -13,5 +13,5 @@ import java.util.Optional;
 @Repository("MY-DiagnosisReportRepo")
 public interface DiagnosisReportRepo extends JpaRepository<DiagnosisReport, DiagnosisReportKey> {
     @Query(value = "SELECT * FROM Diagnosis_Report WHERE USER_UUID = :USER_UUID", nativeQuery = true)
-    List<DiagnosisReportHistoryDTO> findAllByUserUuid(@Param("USER_UUID") String UserUuid);
+    List<DiagnosisReport> findAllByUserUuid(@Param("USER_UUID") String UserUuid);
 }

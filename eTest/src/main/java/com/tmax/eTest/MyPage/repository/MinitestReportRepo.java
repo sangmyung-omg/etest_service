@@ -13,6 +13,8 @@ import java.util.List;
 @Repository("MY-MinitestReportRepo")
 public interface MinitestReportRepo extends JpaRepository<MinitestReport, Long> {
     @Query(value = "SELECT * FROM Minitest_Report WHERE USER_UUID = :USER_UUID", nativeQuery = true)
-    List<MiniTestReportHistoryDTO> findAllByUserUuid(@Param("USER_UUID") String userUuid);
+    List<MinitestReport> findAllByUserUuid(@Param("USER_UUID") String userUuid);
 
 }
+
+

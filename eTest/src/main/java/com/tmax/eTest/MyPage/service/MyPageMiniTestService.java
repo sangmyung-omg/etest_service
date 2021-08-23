@@ -24,8 +24,13 @@ public class MyPageMiniTestService {
     MinitestReportRepo minitestReportRepo;
 
     @Transactional(readOnly = true)
-    public List<MiniTestReportHistoryDTO> getMinitestReportList(String UserUuid) {
-        List<MiniTestReportHistoryDTO> minitestReports =  minitestReportRepo.findAllByUserUuid(UserUuid);
+    public List<MinitestReport> getMinitestReportList(String UserUuid) {
+
+        List<MinitestReport> minitestReports = minitestReportRepo.findAllByUserUuid(UserUuid);
+
+
+
+
         return minitestReports;
     }
 }

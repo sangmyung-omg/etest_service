@@ -19,7 +19,8 @@ public class MyPageMiniTestController {
 
     @GetMapping("/myPage/getMiniTestList")
     public CMRespDto<?> getMiniTestList(@AuthenticationPrincipal PrincipalDetails principalDetails) {
-        List<MiniTestReportHistoryDTO> minitestReports = myPageMiniTestService.getMinitestReportList(principalDetails.getUserUuid());
-        return new CMRespDto<>(200,"test",minitestReports);
+        List<MinitestReport> minitestReports = myPageMiniTestService.getMinitestReportList(principalDetails.getUserUuid());
+        List<MiniTestReportHistoryDTO> miniTestReportHistoryDTO = MiniTestReportHistoryDTO.toDtoList(minitestReports);
+        return new CMRespDto<>(200,"test",miniTestReportHistoryDTO);
     }
 }

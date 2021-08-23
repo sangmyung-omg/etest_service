@@ -17,8 +17,8 @@ public class MyPageDiagnosisService {
     @Autowired
     DiagnosisReportRepo diagnosisReportRepo;
 
-    public List<DiagnosisReportHistoryDTO> getDiagnosisList(String UserUuid) {
-       List<DiagnosisReportHistoryDTO> diagnosisReport_list = diagnosisReportRepo.findAllByUserUuid(UserUuid);
+    public List<DiagnosisReport> getDiagnosisList(String UserUuid) {
+       List<DiagnosisReport> diagnosisReport_list = diagnosisReportRepo.findAllByUserUuid(UserUuid);
         return diagnosisReport_list;
     }
 
