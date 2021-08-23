@@ -1,0 +1,13 @@
+apiVersion: tmax.io/v1
+kind: TemplateInstance
+metadata:
+  name: $NAME-instance
+  namespace: hyperstudy
+spec:
+  template:
+    metadata:
+      name: $NAME-template
+    parameters:
+      - description: name
+        name: name
+        value: $NAME

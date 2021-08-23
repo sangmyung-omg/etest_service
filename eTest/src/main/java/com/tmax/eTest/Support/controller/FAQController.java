@@ -2,7 +2,7 @@ package com.tmax.eTest.Support.controller;
 
 import com.tmax.eTest.Auth.dto.CMRespDto;
 import com.tmax.eTest.Common.model.support.FAQ;
-import com.tmax.eTest.Support.Dto.CreateFAQDto;
+import com.tmax.eTest.Support.dto.CreateFAQDto;
 import com.tmax.eTest.Support.repository.FAQRepository;
 import com.tmax.eTest.Support.service.FAQService;
 import org.springframework.beans.factory.annotation.Autowired;

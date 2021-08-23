@@ -1,37 +1,86 @@
-variables:
-  SPRING_PROFILES_ACTIVE: gitlab-ci
-  DOCKER_DRIVER: overlay2
-  SCRIPTS_DIR: ./config
-  CONTAINER_NAME: etest-backend
-
 stages:
   - build
-  - deploy
-  
-build-etest:
-  image: openjdk:8u111-jdk-alpine
+  - test
+  - package
+
+# Run before script
+before_script:
+  - export PATH=$PATH:/usr/bin:/etc/docker
+
+# gitlab-ci에서 사용될 변수 설정
+variables:
+  # 레지스트리에 푸시될 이미지 이름 설정
+  IMAGE_NAME: "etest-auth"
+  # 컨테이너 이름 설정 (ex. wapl-math-backend)
+  # ('${NAME}-dep', '${NAME}-service' 이름으로 디플로이먼트와 서비스 배포 예정)
+  NAME: "etest-auth"
+  # 레지스트리 호스트 입력
+  REGISTRY_HOST: "hs-registry.220.90.208.8.nip.io:443"
+
+# Spring 빌드 job
+gradle-build:
+  image: java:8-jdk
   stage: build
   only:
-    - master
+    - tags # 깃 테그될 때만 job 실행
+  
+  # Spring 빌드 스크립트
   script:
+    - export GRADLE_USER_HOME=pwd/eTest/.gradle
     - cd eTest
-    - ./gradlew build -x test
+    - chmod +x gradlew
+    - ./gradlew assemble
+  
+  # 빌드 후 생성 파일 첨부 경로
   artifacts:
     paths:
       - eTest/build/libs/*.jar
+    expire_in: 1 week
   tags:
-    - local-daehan
+    - docker # docker gitlab-runner 에서 실행
 
-deploy-etest:
-  image : docker:latest
-  services:
-      - docker:dind
-  stage: deploy
+# Spring 테스트 job
+unitTests:
+  stage: test
+  image: java:8-jdk
   only:
-    - master
+    - inactive
+
+  # Spring 테스트 스크립트
   script:
-    - docker rm --force $CONTAINER_NAME 2>/dev/null || true
-    - docker build -t etest-backend:latest .
-    - docker run -d --rm --name $CONTAINER_NAME -p 8080:8080 etest-backend:latest 
+    - export GRADLE_USER_HOME=pwd/.gradle
+    - cd eTest
+    - chmod +x gradlew
+    - ./gradlew assemble
+    - ./gradlew test
+  artifacts:
+    paths:
+      - eTest/build/libs/*.jar
+    expire_in: 1 week
   tags:
-    - local-daehan
+    - docker # docker gitlab-runner 에서 실행
+
+# 도커 이미지 패키징 -> 이미지 푸시 -> 배포 및 이미지 버전 업데이트    
+docker-build:
+  stage: package
+  only:
+    - tags
+  script:
+    # 도커 이미지 빌드 후 레지스트리에 푸시
+    - docker build -t ${REGISTRY_HOST}/${IMAGE_NAME}:${CI_COMMIT_TAG} .
+    - docker login -u hyperstudy -p hyperstudy123!@# ${REGISTRY_HOST}
+    - docker push ${REGISTRY_HOST}/${IMAGE_NAME}:${CI_COMMIT_TAG}
+
+    # 템플릿 yaml 파일에 이미지 이름과 이미지 버전 업데이트 후 하이퍼클라우드에 적용
+    - envsubst '${IMAGE_NAME} ${CI_COMMIT_TAG} ${NAME} ${REGISTRY_HOST}' <sample-template.yaml | kubectl apply -f -
+
+    # 템플릿 인스턴스 하이퍼클라우드에 적용(변경 있을 시만 적용)
+    - envsubst '${IMAGE_NAME} ${CI_COMMIT_TAG} ${NAME} ${REGISTRY_HOST}' <sample-instance.yaml | kubectl apply -f -
+
+    # 디플로이먼트의 이미지 버전 업데이트
+    - kubectl set image deployment ${NAME}-dep ${NAME}-dep=${REGISTRY_HOST}/${IMAGE_NAME}:${CI_COMMIT_TAG}
+  tags:
+    - shell # shell gitlab-runner 에서 실행
+
+after_script:
+  - echo "End CI"

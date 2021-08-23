@@ -1,0 +1,81 @@
+objectKinds:
+  - Deployment
+  - Service (LoadBalancer)
+parameters:
+  - description: name
+    name: name
+    valueType: string
+urlDescription: 'http://url.example.com'
+metadata:
+  name: $NAME-template
+  namespace: hyperstudy
+  labels:
+    handled: f
+provider: tmax
+objects:
+  - kind: PersistentVolumeClaim
+    apiVersion: v1
+    metadata:
+      name: ${name}-pvc
+      namespace: hyperstudy
+    spec:
+      accessModes:
+        - ReadWriteMany
+      resources:
+        requests:
+          storage: 10Gi
+      storageClassName: hdd-ceph-fs
+  - apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      labels:
+        app: '${name}-dep'
+      name: '${name}-dep'
+    spec:
+      selector:
+        matchLabels:
+          app: '${name}-dep'
+      template:
+        metadata:
+          labels:
+            app: '${name}-dep'
+        spec:
+          volumes:
+            - name: pvc
+              persistentVolumeClaim:
+                claimName: ${name}-pvc
+          containers:
+            - image: $REGISTRY_HOST/$IMAGE_NAME:$CI_COMMIT_TAG
+              name: '${name}-dep'
+              ports:
+                - containerPort: 8080
+                  protocol: TCP
+              resources:
+                limits:
+                  cpu: '2'
+                  memory: 4Gi
+                requests:
+                  cpu: 100m
+                  memory: 1Gi
+              volumeMounts:
+                - name: pvc
+                  mountPath: /workspace/etest/upload/
+          imagePullSecrets:
+            - name: hpcd-registry-hs-registry
+  - apiVersion: v1
+    kind: Service
+    metadata:
+      name: '${name}-service'
+      namespace: hyperstudy
+    spec:
+      ports:
+        - name: http
+          port: 8080
+          protocol: TCP
+          targetPort: 8080
+      selector:
+        app: '${name}-dep'
+imageUrl: example.com/example.gif
+kind: Template
+recommend: true
+apiVersion: tmax.io/v1

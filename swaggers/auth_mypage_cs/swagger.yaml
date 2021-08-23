@@ -1,0 +1,414 @@
+openapi: 3.0.2
+info:
+  title: KOFIA etest ae1-1 API
+  version: '0.1'
+servers:
+  - url: 'http://192.168.153.194:8080/'
+    description: example server address
+tags:
+
+  - name: 로그인
+    description: Everything about your Pets
+    externalDocs:
+      description: Find out more
+      url: 'http://swagger.io'
+  - name: 회원가입
+    description: Everything about your Pets
+    externalDocs:
+      description: Find out more
+      url: 'http://swagger.io'
+  - name: 공지사항
+    description: Access to Petstore orders
+  - name: 자주 묻는 질문
+    description: Access to Petstore orders
+  - name: 1대1문의
+    description: Access to Petstore orders
+  - name: 자가진단
+    description: Access to Petstore orders
+  - name: 미니테스트
+    description: Operations about user
+    externalDocs:
+      description: Find out more about our store
+      url: 'http://swagger.io'
+  - name: 계정
+    description: Operations about user
+    externalDocs:
+      description: Find out more about our store
+      url: 'http://swagger.io'
+paths:
+
+  /login:
+    post:
+      tags:
+        - 로그인
+      description: Oauth로 로그인 시도
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                providerId:
+                  description: 고유번호
+                  type: string
+                provider:
+                  description: Oauth 플랫폼
+                  type: string
+              required:
+                - status
+              example: {
+                            "providerId": "1234",
+                            "provider": "google",
+                            "email": "hong@tmax.co.kr"
+                        }
+      responses:
+        '200':
+          description: 회원가입이 이미 된 유저
+          content:
+            json:
+              schema:
+                type: object
+                example:
+                  code: 200
+                  message: success
+                  data: {
+                          "provider": "naver",
+                          "nickname": "sdgsd",
+                          "jwtToken": "sdfsfsfsdfdff",
+                          "email": "asdfads@naver.com"
+                        }
+        '201':
+          description: 회원가입이 안 된 유저
+          content:
+            json:
+              schema:
+                type: object
+                example:
+                  code: 201
+                  message: success
+                  data: null
+  /signup:
+    post:
+      tags:
+        - 회원가입
+      description: 회원가입
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                providerid:
+                  description: 고유 번호
+                  type: string
+                email:
+                  description: 이메일
+                  type: string
+                provider:
+                  description: Oauth 플랫폼
+                  type: string
+                gender:
+                  description: 성별
+                  type: string
+                birthday:
+                  description: 생일 (yyyy-mm-dd)
+                  type: string
+                event_sms_agreement:
+                  description: 이벤트 및 공지 알림 수신에 동의합니다
+                  type: string
+                account_active:
+                  description: 장기 미접속 시계정 활성 상태를 유지합니다
+                  type: string
+              example: {
+                          "providerId": "test",
+                          "gender": "male",
+                          "email": "test@naver.com",
+                          "birthday": "1995-04-25",
+                          "role": "USER",
+                          "password": "3245345",
+                          "provider": "naver",
+                          "event_sms_agreement": "false",
+                          "account_active": "false",
+                          "nickname": "minjoon"
+                      }
+      responses:
+        '200':
+          description: 회원 가입 성공
+          content:
+            json:
+              schema:
+                type: object
+                example:
+                  code: 200
+                  message: 회원가입 완료
+                  data: jwt토큰
+  /duplicateCheck:
+    post:
+      tags:
+        - 회원가입
+      description: 중복 회원 체크
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                email:
+                  description: 이메일
+                  type: string
+              example: {
+                            "email" : "test@naver.com",
+                            "nickname" : "test"
+                        }
+      responses:
+        '201':
+          description: 중복 회원 체크
+          content:
+            json:
+              schema:
+                type: object
+                example:
+                  code: 201
+                  message: 중복 회원 존재
+                  data: true
+        '200':
+          description: 중복 회원 체크
+          content:
+            json:
+              schema:
+                type: object
+                example:
+                  code: 200
+                  message: 회원가입 가능
+                  data: false
+  /notice:
+    get:
+      tags:
+        - 공지사항
+      description: 공지사항을 전부 가져옴
+      responses:
+        '200':
+          description: 공지사항을 전부 가져옴
+          content:
+            json:
+              schema:
+                type: object
+                example:
+                  code: 200
+                  message: 공지사항 가져오기 성공
+                  data: noticeList      
+              example: {
+                            "title": "투자 정보 콘텐츠가 개선됩니다.",
+                            "content": "진단 문제가 1000문제 업데이트 됩니다. 더 많은 문제 풀을 통해 더 정교하고 섬세한 진단 및 학습이 가능해졌습니다. 감사합니다 금융 투자 교육원 드림"
+                        }        
+  /faq:
+    get:
+      tags:
+        - 자주 묻는 질문
+      description: 자주 묻는 질문을 전부 가져옴
+      responses:
+        '200':
+          description: 자주 묻는 질문을 전부 가져옴
+          content:
+            json:
+              schema:
+                type: object
+                example:
+                  code: 200
+                  message: faqList 반환 성공
+                  data: faqList       
+
+
+
+  /user/inquiry/create:
+    post:
+      tags:
+        - 1대1문의
+      description: 1대1문의 만들기
+      parameters:
+        - name: Cookie
+          in: header
+          description: user JWTtoken
+          required: true
+          schema:
+            type: string
+            format: string      
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              properties:
+                title:
+                  description: 제목
+                  type: string      
+                type:
+                  description: 질문 유형
+                  type: string         
+                date:
+                  description: 날짜
+                  type: string
+                content:
+                  description: 내용
+                  type: string                     
+                inquiry_file:
+                  description: 첨부파일 json 리스트
+                  type: string
+              example: {   
+                          "status": "대기중",
+                          "title": "두번째 질문이 있습니다",
+                          "type": "error",
+                          "content": "페이지가 안보입니다",
+                          "fileList": ["제목없음.png","제목없음2.png"]
+                        }
+     
+      responses:
+        '200':
+          description: 해당 유저의 1대1 문의생성
+          content:
+            json:
+              schema:
+                type: object
+                example:
+                  code: 200
+                  message: 1대1 질문 생성 성공
+                  data: inquiryId            
+  /user/inquiry/list:
+    get:
+      tags:
+        - 1대1문의
+      description: 해당 유저의 1대1 문의 반환하기
+      parameters:
+        - name: Cookie
+          in: header
+          description: user JWTtoken
+          required: true
+          schema:
+            type: string
+            format: string        
+      responses:
+        '200':
+          description: 해당 유저의 모든 1대1 리스트 기록 반환
+          content:
+            json:
+              schema:
+                type: object
+                example:
+                  code: 200
+                  message: 1대1 질문 리스트 받아오기 성공
+                  data: inquiryList                      
+  /user/inquiry:
+    post:
+      tags:
+        - 1대1문의
+      description: 해당 유저의 특정 1대1문의 자세한 정보 반환
+      parameters:
+        - name: Cookie
+          in: header
+          description: user JWTtoken
+          required: true
+          schema:
+            type: string
+            format: string      
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                inquiryId:
+                  description: 질문 번호
+                  type: number      
+              example: {   
+                          "id": 1
+                        }
+  /user/inquiry/delete:
+    post:
+      tags:
+        - 1대1문의
+      description: 해당 유저의 1대1문의 지우기
+      parameters:
+        - name: Cookie
+          in: header
+          description: user JWTtoken
+          required: true
+          schema:
+            type: string
+            format: string      
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                inquiryId:
+                  description: 질문 번호
+                  type: number      
+              example: {   
+                          "inquiryId": 1
+                        }
+     
+      responses:
+        '200':
+          description: 해당 유저의 1대1 질문 삭제
+          content:
+            json:
+              schema:
+                type: object
+                example:
+                  code: 200
+                  message: 제거 성공
+                  data: userInquiryList                     
+        '400':
+          description: 해당 유저의 1대1 질문 삭제
+          content:
+            json:
+              schema:
+                type: object
+                example:
+                  code: 400
+                  message: 해당 질문은 유저가 만든 질문이 아닙니다
+                  data: fail     
+
+  /user/myPage/getMiniTestList:
+    get:
+      tags:
+        - 미니테스트
+      description: 해당 유저의 미니테스트 리스트 받아오기
+      parameters:
+        - name: Cookie
+          in: header
+          description: user JWTtoken
+          required: true
+          schema:
+            type: string
+            format: string      
+      responses:
+        '200':
+          description: 해당 유저의 모든 미니 테스트 리포트 반환
+          content:
+            json:
+              schema:
+                type: object
+                example:
+                  code: 200
+                  message: 성공
+                  data: 유저의 미니테스트 기록                     
+  /user/myPage/getDiagnosisList:
+    get:
+      tags:
+        - 자가진단
+      description: 해당 유저의 자가진단 리스트 받아오기
+      parameters:
+        - name: Cookie
+          in: header
+          description: user JWTtoken
+          required: true
+          schema:
+            type: string
+            format: string      
+      responses:
+        '200':
+          description: 해당 유저의 모든 미니 테스트 리포트 반환
+          content:
+            json:
+              schema:
+                type: object
+                example:
+                  code: 200
+                  message: 성공
+                  data: 유저의 미니테스트 기록                
