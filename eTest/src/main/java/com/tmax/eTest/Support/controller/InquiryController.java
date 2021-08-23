@@ -14,14 +14,28 @@ import com.tmax.eTest.Support.service.InquiryService;
 import io.swagger.models.auth.In;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
+import org.springframework.data.repository.query.Param;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 
 @RestController
 @RequestMapping("/user")
 public class InquiryController {
+    @Value("${file.path}")
+    private String path;
 
     @Autowired
     @Qualifier("SU-InquiryRepository")
@@ -59,7 +73,6 @@ public class InquiryController {
         return new CMRespDto<>(200, "1대1 질문 리스트 받아오기 성공", inquiryOptional.get());
     }
 
-
     @PostMapping("/inquiry/delete")
     public CMRespDto<?> deleteInquiry(@RequestBody DeleteInquiryDto deleteInquiryDto, @AuthenticationPrincipal PrincipalDetails principalDetails) {
         List<Long > userInquiryList = inquiryRepository.findAllIdByUserUuid(principalDetails.getUserUuid());
@@ -69,5 +82,21 @@ public class InquiryController {
             return new CMRespDto<>(200,"제거 성공",userInquiryList);
         }
         return new CMRespDto<>(400,"해당 질문은 유저가 만든 질문이 아닙니다","fail");
+    }
+
+    @GetMapping(value="/inquiry/display")
+    public ResponseEntity<Resource> display(@Param("filename") String filename){
+        String temp = path;
+        Path filePath = null;
+        filePath = Paths.get(temp+filename);
+        HttpHeaders header = new HttpHeaders();
+        System.out.println(filePath);
+        try {
+            header.add("Content-Type", Files.probeContentType(filePath));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        Resource resource = new FileSystemResource(filePath );
+        return new ResponseEntity<Resource>(resource,header, HttpStatus.OK);
     }
 }
