@@ -16,19 +16,24 @@ public class ControllerExceptionAdviceTs {
   @ExceptionHandler({ IOException.class })
   public ResponseEntity<GenericError__DTO> handleIOError(IOException exception) {
     log.error("INTERNAL_SERVER_ERROR: " + exception.getMessage());
-    return new ResponseEntity<>(new GenericError__DTO(exception.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
+    return new ResponseEntity<>(new GenericError__DTO(exception.getMessage(),HttpStatus.INTERNAL_SERVER_ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
   }
 
   @ExceptionHandler({ IllegalArgumentException.class })
   public ResponseEntity<GenericError__DTO> handleIllegalArgumentError(IllegalArgumentException exception) {
     log.error("BAD_REQUEST: " + exception.getMessage());
-    return new ResponseEntity<>(new GenericError__DTO(exception.getMessage()), HttpStatus.BAD_REQUEST);
+    return new ResponseEntity<>(new GenericError__DTO(exception.getMessage(),HttpStatus.BAD_REQUEST), HttpStatus.BAD_REQUEST);
   }
 
   @ExceptionHandler({ CustomExceptionTs.class })
   public ResponseEntity<ErrorResponseTs> handleCustomException(CustomExceptionTs exception) {
-    log.error( exception.getErrorCode().getHttpStatus() + ": " + exception.getErrorCode().getDetail());
-    return ErrorResponseTs.toResponseEntity(exception.getErrorCode());
-
+    log.error( exception.getErrorCodeEnum().getHttpStatus() + ": " + exception.getErrorCodeEnum().getDetail());
+    return ErrorResponseTs.toResponseEntity(exception.getErrorCodeEnum());
+  }
+  
+  @ExceptionHandler
+  public ResponseEntity<GenericError__DTO> basicExceptionProcess(Exception exception) {
+    log.error( exception.getMessage() );
+    return new ResponseEntity<>(new GenericError__DTO(exception.getMessage(),HttpStatus.INTERNAL_SERVER_ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
   }
 }

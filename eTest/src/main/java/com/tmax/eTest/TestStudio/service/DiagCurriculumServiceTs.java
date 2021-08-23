@@ -3,6 +3,7 @@ package com.tmax.eTest.TestStudio.service;
 
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -10,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.tmax.eTest.Common.model.problem.DiagnosisCurriculum;
 import com.tmax.eTest.Common.model.problem.DiagnosisProblem;
 import com.tmax.eTest.Common.model.problem.Problem;
+import com.tmax.eTest.TestStudio.controller.component.exception.NoDataExceptionTs;
 import com.tmax.eTest.TestStudio.dto.problems.base.BaseDiagCurriculumDTO;
 import com.tmax.eTest.TestStudio.dto.problems.base.BaseProblemDTO;
 import com.tmax.eTest.TestStudio.repository.DiagCurriculumRepositoryTs;
@@ -31,19 +33,27 @@ public class DiagCurriculumServiceTs {
 	 * 문제 조회
 	 */
 	//id 로 조회
-	public DiagnosisCurriculum findOne(Long curriculcumId) {
-		return diagCurriculumRepository.findById( curriculcumId.intValue() ).get();
+	public Optional<DiagnosisCurriculum>  findOne(Long curriculcumId) {
+		return diagCurriculumRepository.findById( curriculcumId.intValue() );
 	}
 	
 	/**
 	 * 문제 업데이트 
+	 * @throws Exception 
 	 */
 	
-	public String problemUpdate(String userId, BaseDiagCurriculumDTO requestInfo ) {
+	public String problemUpdate(String userId, BaseDiagCurriculumDTO requestInfo ) throws Exception {
 		  
 		//id not null 일경우면 update
 		if(requestInfo.getCurriculumID() ==null) return null;
-		DiagnosisCurriculum diagnosisCurriculum = diagCurriculumRepository.findById( Integer.parseInt( requestInfo.getCurriculumID() ) ).get();
+		
+		DiagnosisCurriculum diagnosisCurriculum = new DiagnosisCurriculum();
+		
+		if( diagCurriculumRepository.findById( Integer.parseInt( requestInfo.getCurriculumID() ) ).isPresent() ) {
+			diagnosisCurriculum = diagCurriculumRepository.findById( Integer.parseInt( requestInfo.getCurriculumID() ) ).get();
+		}else {
+			throw new NoDataExceptionTs( "DiagnosisCurriculum", requestInfo.getCurriculumID().toString() );
+		}
 		
 		if(requestInfo.getSubject()!=null)
 			diagnosisCurriculum.setSubject(requestInfo.getSubject());
@@ -62,11 +72,18 @@ public class DiagCurriculumServiceTs {
 		return "ok";
 	}
 	
-	public String currStatusChange(String curriculumId ) {
+	public String currStatusChange(String curriculumId ) throws Exception {
 		  
 		//id not null 일경우면 update
 		if(curriculumId == null) return null;
-		DiagnosisCurriculum diagnosisCurriculum = diagCurriculumRepository.findById( Integer.parseInt( curriculumId ) ).get();
+		
+		DiagnosisCurriculum diagnosisCurriculum = new DiagnosisCurriculum();
+		
+		if( diagCurriculumRepository.findById( Integer.parseInt( curriculumId ) ).isPresent() ) {
+			diagnosisCurriculum = diagCurriculumRepository.findById( Integer.parseInt( curriculumId ) ).get();
+		}else {
+			throw new NoDataExceptionTs("DiagnosisCurriculum", curriculumId.toString());
+		}
 		
 		if( pathUtilEtest.getStatusOn().equals( diagnosisCurriculum.getStatus() ) ) {
 			diagnosisCurriculum.setStatus(pathUtilEtest.getStatusOff());

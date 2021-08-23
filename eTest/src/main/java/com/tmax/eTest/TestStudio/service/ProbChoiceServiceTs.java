@@ -3,6 +3,7 @@ package com.tmax.eTest.TestStudio.service;
 import java.io.File;
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,6 +12,7 @@ import com.tmax.eTest.Common.model.problem.Problem;
 import com.tmax.eTest.Common.model.problem.ProblemChoice;
 import com.tmax.eTest.Common.model.problem.ProblemChoiceCompositeKey;
 import com.tmax.eTest.Common.model.uk.UkMaster;
+import com.tmax.eTest.TestStudio.controller.component.exception.NoDataExceptionTs;
 import com.tmax.eTest.TestStudio.dto.problems.base.BaseProbChoiceDTO;
 import com.tmax.eTest.TestStudio.dto.problems.base.BaseProblemDTO;
 import com.tmax.eTest.TestStudio.repository.ProbChoiceQRepositoryTs;
@@ -44,12 +46,17 @@ public class ProbChoiceServiceTs {
 		return probChoiceRepositoryETest.save( problemChoice );
 	}
 	
+	public List<ProblemChoice> probChoiceCreateAll(Set<ProblemChoice> problemChoices) {
+		return probChoiceRepositoryETest.saveAll( problemChoices );
+	}
+	
 	
 	/**
 	 * 문제 업데이트 
+	 * @throws Exception 
 	 */
 	
-	public String probChoiceUpdate(String userId, List<BaseProbChoiceDTO> requestInfos, Long LongProbId ) {
+	public String probChoiceUpdate(String userId, List<BaseProbChoiceDTO> requestInfos, Long LongProbId ) throws Exception {
 		//id not null 일경우면 update
 		if(requestInfos==null) return null;
 		
@@ -59,8 +66,12 @@ public class ProbChoiceServiceTs {
 			ProblemChoiceCompositeKey compositeKey = new ProblemChoiceCompositeKey();
 			compositeKey.setProbID( LongProbId );
 			compositeKey.setChoiceNum( Integer.parseInt( requestInfo.getChoiceNum() ) );
-			ProblemChoice problemChoice = probChoiceRepositoryETest.findById( compositeKey ).get();
-			
+			ProblemChoice problemChoice = new ProblemChoice();
+			if(probChoiceRepositoryETest.findById( compositeKey ).isPresent()) {
+				problemChoice = probChoiceRepositoryETest.findById( compositeKey ).get();
+			}else {
+				throw new NoDataExceptionTs("ProblemChoice","("+LongProbId.toString()+","+requestInfo.getChoiceNum()+")");
+			}
 //			if(requestInfo.getChoiceNum()!=null)
 //				problemChoice.setChoiceNum( Integer.parseInt( requestInfo.getChoiceNum() ) );
 			

@@ -3,6 +3,7 @@ package com.tmax.eTest.TestStudio.service;
 import java.io.File;
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,7 +29,7 @@ import lombok.RequiredArgsConstructor;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class UKServiceETest {
+public class UKServiceTs {
 
 	private final UKRepositoryTs ukRepositoryETest;
 
@@ -37,8 +38,8 @@ public class UKServiceETest {
 	 * 문제 조회
 	 */
 	//id 로 조회
-	public UkMaster findOneByUKId(Long ukId) {
-		return ukRepositoryETest.findById( ukId.intValue() ).get();
+	public Optional<UkMaster> findOneByUKId(Long ukId) {
+		return ukRepositoryETest.findById( ukId.intValue() );
 	}
 	
 

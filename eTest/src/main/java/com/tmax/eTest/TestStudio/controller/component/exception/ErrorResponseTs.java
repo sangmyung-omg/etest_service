@@ -13,19 +13,21 @@ import lombok.Getter;
 public class ErrorResponseTs {
   
   private final LocalDateTime timestamp = LocalDateTime.now();
-  private final int httpStatusValue;
+  private final int httpStatusCode;
   private final String httpStatusName;
-  private final String code;
+  private final String errorCode;
   private final String message;
+  private final String isSuccess;
 
-  public static ResponseEntity<ErrorResponseTs> toResponseEntity(ErrorCodeTs errorCode) {
+  public static ResponseEntity<ErrorResponseTs> toResponseEntity(ErrorCodeEnumTs errorCodeEnum) {
       return ResponseEntity
-              .status(errorCode.getHttpStatus())
+              .status(errorCodeEnum.getHttpStatus())
               .body(ErrorResponseTs.builder()
-                      .httpStatusValue(errorCode.getHttpStatus().value())
-                      .httpStatusName(errorCode.getHttpStatus().name())
-                      .code(errorCode.name())
-                      .message(errorCode.getDetail())
+                      .httpStatusCode(errorCodeEnum.getHttpStatus().value())
+                      .httpStatusName(errorCodeEnum.getHttpStatus().name())
+                      .errorCode(errorCodeEnum.name())
+                      .message(errorCodeEnum.getDetail())
+                      .isSuccess("fail")
                       .build()
               );
   }

@@ -60,5 +60,17 @@ public class TestProblemQRepositoryETest {
 		return problem;
 
 	}
+	public Integer searchLatestProblemIDTest() {
+		
+		QProblem qProblem = new QProblem("qProblem");
+		Integer probID = queryFactory.selectFrom(qProblem)
+										.orderBy(qProblem.probID.desc())
+										.fetchFirst().getProbID();
+	
+		System.out.println(probID);
+		return probID;
+
+	}
+	
 	
 }

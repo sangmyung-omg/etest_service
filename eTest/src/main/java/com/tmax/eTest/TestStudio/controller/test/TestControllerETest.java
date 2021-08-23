@@ -105,7 +105,22 @@ public class TestControllerETest {
 			return null;
 		}
 	}
-	
+	@GetMapping("/qdsl3")
+	public ResponseEntity<String> qdslTest3(
+//			@RequestBody CreateDiagProblemRequest request
+			) {
+		
+		try {
+			
+			String output = tempTestRepository.searchLatestProblemIDTest().toString();
+			
+			return new ResponseEntity<>(output, HttpStatus.OK);
+			
+		}catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
 	//problemchoice
 	@GetMapping("/pbCD")
 	public ResponseEntity<String> probChoiceDelTest(

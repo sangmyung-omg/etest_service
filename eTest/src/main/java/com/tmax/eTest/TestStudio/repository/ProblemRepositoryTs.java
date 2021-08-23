@@ -8,4 +8,5 @@ import com.tmax.eTest.Common.model.problem.Problem;
 public interface ProblemRepositoryTs extends JpaRepository<Problem, Integer> {
 	@EntityGraph(attributePaths = {"problemChoices"}, type = EntityGraph.EntityGraphType.FETCH)
 	Problem findPANDPCByProbID(Integer probID);
+	
 }

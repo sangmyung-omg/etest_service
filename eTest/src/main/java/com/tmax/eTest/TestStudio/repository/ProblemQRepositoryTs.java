@@ -31,5 +31,14 @@ public class ProblemQRepositoryTs {
 		return problem;
 
 	}
-
+	public Integer searchLatestProblemID() {
+		
+		QProblem qProblem = new QProblem("qProblem");
+		Integer probID = queryFactory.selectFrom(qProblem)
+										.orderBy(qProblem.probID.desc())
+										.fetchFirst().getProbID();
+	
+		System.out.println(probID);
+		return probID;
+	}
 }

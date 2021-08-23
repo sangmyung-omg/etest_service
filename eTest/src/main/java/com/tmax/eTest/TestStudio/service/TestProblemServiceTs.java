@@ -3,6 +3,7 @@ package com.tmax.eTest.TestStudio.service;
 
 
 import java.sql.Timestamp;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,6 +13,7 @@ import com.tmax.eTest.Common.model.problem.DiagnosisProblem;
 import com.tmax.eTest.Common.model.problem.Part;
 import com.tmax.eTest.Common.model.problem.Problem;
 import com.tmax.eTest.Common.model.problem.TestProblem;
+import com.tmax.eTest.TestStudio.controller.component.exception.NoDataExceptionTs;
 import com.tmax.eTest.TestStudio.dto.problems.base.BaseProblemDTO;
 import com.tmax.eTest.TestStudio.dto.problems.base.BaseTestProblemDTO;
 import com.tmax.eTest.TestStudio.repository.TestProblemRepositoryTs;
@@ -40,53 +42,65 @@ public class TestProblemServiceTs {
 	 */
 	//id 로 조회
 	
-	public TestProblem findOne(Long probID) {
+	public Optional<TestProblem> findOne(Long probID) {
 		
-		return testProblemRepositoryETest.findById(probID.intValue()).get();
+		return testProblemRepositoryETest.findById(probID.intValue());
 	}
 	
 	
 	/**
 	 * 문제 업데이트 
+	 * @throws Exception 
 	 */
 	
-	public String testProblemUpdate(String userId, BaseTestProblemDTO requestInfo ) {
+	public String testProblemUpdate(String userId, BaseTestProblemDTO requestInfo ) throws Exception {
 		  
 		//id not null 일경우면 update
 		if(requestInfo.getProbID() ==null) return null;
 				
-		TestProblem testProblem = testProblemRepositoryETest.findById( Integer.parseInt( requestInfo.getProbID() ) ).get();
-		Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-		
-		
-		if(requestInfo.getPartID()!=null)
-			testProblem.setPartID( Integer.parseInt( requestInfo.getPartID() ) );
-		
-		if(requestInfo.getSubject()!=null)
-			testProblem.setSubject(requestInfo.getSubject());
-		
-		if(requestInfo.getStatus()!=null)
-			if(pathUtilEtest.getStatusOn().equals(requestInfo.getStatus()) || pathUtilEtest.getStatusOff().equals(requestInfo.getStatus())) {
-				testProblem.setStatus(requestInfo.getStatus());
-			}
+		if(testProblemRepositoryETest.findById( Integer.parseInt( requestInfo.getProbID() ) ).isPresent()) {
+			
+			TestProblem testProblem = testProblemRepositoryETest.findById( Integer.parseInt( requestInfo.getProbID() ) ).get();
+			
+			if(requestInfo.getPartID()!=null)
+				testProblem.setPartID( Integer.parseInt( requestInfo.getPartID() ) );
+			
+			if(requestInfo.getSubject()!=null)
+				testProblem.setSubject(requestInfo.getSubject());
+			
+//			if(requestInfo.getStatus()!=null)
+//				if(pathUtilEtest.getStatusOn().equals(requestInfo.getStatus()) || pathUtilEtest.getStatusOff().equals(requestInfo.getStatus())) {
+//					testProblem.setStatus(requestInfo.getStatus());
+//				}
+			
+		}else {
+			throw new NoDataExceptionTs("TestProblem",requestInfo.getProbID());
+		}
 		
 		return "ok";
 	}
 	
-	public String testProbStatusChange(String probID ) {
+	public String testProbStatusChange(String probID ) throws Exception {
 		  
 		//id not null 일경우면 update
 		if(probID == null) return null;
-		TestProblem testProblem = testProblemRepositoryETest.findById( Integer.parseInt( probID ) ).get();
 		
-		if( pathUtilEtest.getStatusOn().equals( testProblem.getStatus() ) ) {
-			testProblem.setStatus(pathUtilEtest.getStatusOff());
-		}else if( pathUtilEtest.getStatusOff().equals( testProblem.getStatus() ) ) {
-			testProblem.setStatus(pathUtilEtest.getStatusOn());
+		if(testProblemRepositoryETest.findById( Integer.parseInt( probID ) ).isPresent()) {
+			
+			TestProblem testProblem = testProblemRepositoryETest.findById( Integer.parseInt( probID ) ).get();
+			
+			if( pathUtilEtest.getStatusOn().equals( testProblem.getStatus() ) ) {
+				testProblem.setStatus(pathUtilEtest.getStatusOff());
+			}else if( pathUtilEtest.getStatusOff().equals( testProblem.getStatus() ) ) {
+				testProblem.setStatus(pathUtilEtest.getStatusOn());
+			}else {
+				return "fail";
+			}
+			
 		}else {
-			return "fail";
+			throw new NoDataExceptionTs("TestProblem",probID);
 		}
-		
+	
 		return "ok";
 	}
 	

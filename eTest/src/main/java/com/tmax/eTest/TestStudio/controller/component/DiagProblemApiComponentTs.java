@@ -1,10 +1,13 @@
 package com.tmax.eTest.TestStudio.controller.component;
 
+import java.io.Console;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CrossOrigin;
 
 import com.tmax.eTest.Common.model.problem.DiagnosisProblem;
@@ -17,6 +20,7 @@ import com.tmax.eTest.TestStudio.dto.problems.base.BaseDiagProblemSetDTO;
 import com.tmax.eTest.TestStudio.dto.problems.base.BaseProbChoiceDTO;
 import com.tmax.eTest.TestStudio.dto.problems.base.BaseProbUKRelDTO;
 import com.tmax.eTest.TestStudio.dto.problems.base.BaseProblemDTO;
+import com.tmax.eTest.TestStudio.dto.problems.base.BaseProblemSetDTO;
 import com.tmax.eTest.TestStudio.dto.problems.in.PutDiagCurrStatusDTOIn;
 import com.tmax.eTest.TestStudio.dto.problems.in.PutDiagProblemDTOIn;
 import com.tmax.eTest.TestStudio.dto.problems.out.GetDiagProblemDTOOut;
@@ -25,12 +29,13 @@ import com.tmax.eTest.TestStudio.service.DiagProblemServiceTs;
 import com.tmax.eTest.TestStudio.service.ProbChoiceServiceTs;
 import com.tmax.eTest.TestStudio.service.ProbUKRelServiceTs;
 import com.tmax.eTest.TestStudio.service.ProblemServiceTs;
-import com.tmax.eTest.TestStudio.service.UKServiceETest;
+import com.tmax.eTest.TestStudio.service.UKServiceTs;
 import com.tmax.eTest.TestStudio.util.PathUtilTs;
 
 import lombok.RequiredArgsConstructor;
 
-@Controller
+@Service
+@Transactional(rollbackFor = Exception.class)
 @CrossOrigin(origins = "*")
 @RequiredArgsConstructor
 public class DiagProblemApiComponentTs {
@@ -38,11 +43,12 @@ public class DiagProblemApiComponentTs {
 	private final ProblemServiceTs problemServiceETest;
 	private final ProbChoiceServiceTs probChoiceServiceETest;
 	private final ProbUKRelServiceTs probUKRelServiceETest;
-	private final UKServiceETest ukServiceETest;
+	private final UKServiceTs ukServiceETest;
 	private final DiagProblemServiceTs diagProblemServiceETest;
 	private final DiagCurriculumServiceTs diagCurriculumServiceETest;
 	
 //	private final TestProblemApiComponentETest testProblemApiComponent;
+	private final	ProblemApiComponentTs problemApiComponentTs;
 	private final ImageFileServerApiComponentTs imageFileServerApiComponentETest;
 	private final PathUtilTs pathUtilEtest = new PathUtilTs();
 	
@@ -119,7 +125,8 @@ public class DiagProblemApiComponentTs {
 				}
 				
 //
-				List<ProblemUKRelation> problemUKRelations = probUKRelServiceETest.findAllWUKByProbId(probId);
+				List<ProblemUKRelation> problemUKRelations = findProblem.getProblemUKReleations(); 
+//				= probUKRelServiceETest.findAllWUKByProbId(probId);
 		
 				if(problemUKRelations != null) {
 					outputBase.setProbUKRels(new ArrayList<BaseProbUKRelDTO>());
@@ -160,83 +167,20 @@ public class DiagProblemApiComponentTs {
 		try {
 						
 			// 문제 n개 업데이트
-			Long idx = -1L;
+
 			if(request.getDiagProblems() != null)
 			for(BaseDiagProblemSetDTO requestInfo__ : request.getDiagProblems()) {
-				idx++;
-				Long LongProbId = Long.parseLong(requestInfo__.getProblem().getProbID());
-//				if( pathUtilEtest.getStatusOn().equals(requestInfo__.getDiagCurriculum().getStatus()) || pathUtilEtest.getStatusOff().equals(requestInfo__.getDiagCurriculum().getStatus())) {
-//					requestInfo__.getProblem().setValidatorID("T");
-//				}
-				//problem table
-				problemServiceETest.problemUpdate( request.getUserID() ,requestInfo__.getProblem());
-				//
-//				probChoiceServiceETest.probChoiceUpdate(request.getUserID(), requestInfo__.getProbChoices(), LongProbId);
-				if(requestInfo__.getProbChoices()!=null) {
-					if(!requestInfo__.getProbChoices().isEmpty()) {
-						probChoiceServiceETest.probChoiceDeleteAllByProbId(LongProbId);
-						for(BaseProbChoiceDTO PC : requestInfo__.getProbChoices()) {
-							ProblemChoice problemChoice = new ProblemChoice();
-//							Problem problemTemp = new Problem();
-//							problemTemp.setProbID(problem.getProbID());
-							problemChoice.setProbID(problemServiceETest.findOne(LongProbId));
-//							problemChoice.setProbID(problemTemp);
-							problemChoice.setChoiceNum( Long.parseLong( PC.getChoiceNum() ) );
-							UkMaster ukMasterTemp = new UkMaster();
-							ukMasterTemp.setUkId(Integer.parseInt( PC.getUkID() ) );
-//							problemChoice.setUkId(ukServiceETest.findOneByUKId( Long.parseLong(PC.getUkID()) ));
-							problemChoice.setUkId(ukMasterTemp);
-							if(PC.getChoiceScore()!=null) {
-								problemChoice.setChoiceScore( Integer.parseInt( PC.getChoiceScore() ) );
-							}
-							probChoiceServiceETest.probChoiceCreate(problemChoice);
-						}
-					}
-				}
-				//
-				if(requestInfo__.getProbUKRels()!=null) {
-					if(!requestInfo__.getProbUKRels().isEmpty()) {
-						probUKRelServiceETest.probUKRelDeleteAllByProbId(LongProbId);
-						for(BaseProbUKRelDTO PUR : requestInfo__.getProbUKRels()) {
-							ProblemUKRelation problemUKRelation = new ProblemUKRelation();
-							problemUKRelation.setProbID( problemServiceETest.findOne(LongProbId) );
-							UkMaster ukMasterTemp = new UkMaster();
-							ukMasterTemp.setUkId(Integer.parseInt( PUR.getUkID() ) );
-//							problemUKRelation.setUkId( ukServiceETest.findOneByUKId( Long.parseLong(PUR.getUkID()) ) );
-							problemUKRelation.setUkId(ukMasterTemp);							
 
-							probUKRelServiceETest.probUKRelCreate(problemUKRelation);
-						}
-					}
-				}
+				BaseProblemSetDTO baseProblemSetDTO = new BaseProblemSetDTO();
+				baseProblemSetDTO.setProblem( requestInfo__.getProblem() );
+				baseProblemSetDTO.setProbChoices( requestInfo__.getProbChoices() );
+				baseProblemSetDTO.setProbUKRels( requestInfo__.getProbUKRels() );
+				
+				problemApiComponentTs.updateBasicProblemcomponent(baseProblemSetDTO, request.getUserID());
 				//
 				if(requestInfo__.getDiagCurriculum()!=null)
 				diagCurriculumServiceETest.problemUpdate( request.getUserID() ,requestInfo__.getDiagCurriculum());
-				
-				// problem image
-				if(requestInfo__.getProblem().getImgSrcListIn()!=null
-						&& requestInfo__.getProblem().getImgToEditSrcListIn()!=null) {
-					
-					File folder = new File( pathUtilEtest.getDirPath()
-											+ File.separator + requestInfo__.getProblem().getProbID() );
-					
-					if( folder.exists() ){
-						List<String> willDelImgData = new ArrayList<String>();
-						for( String imgSrc__ : folder.list() ) {
-							willDelImgData.add(imgSrc__);
-						}
-						for(String src: requestInfo__.getProblem().getImgSrcListIn()) {
-							willDelImgData.remove(src);
-						}
-						imageFileServerApiComponentETest.deleteImgSrcsOfProbIDServiceComponent(LongProbId, willDelImgData );
-					}
-//					Boolean isSuccess = imageFileServerApiComponentETest
-//							.assignImgFileListServiceComponent(request.getUserID(), LongProbId, requestInfo__.getProblem().getImgSrcListIn());
-					Boolean isSuccess = imageFileServerApiComponentETest
-							.assignImgFileListServiceComponent(request.getUserID(), LongProbId, requestInfo__.getProblem().getImgToEditSrcListIn());
-				
-				}
-				
+			
 			}			
 			
 			imageFileServerApiComponentETest.deleteImgTempFolerOfUserIDServiceComponent(request.getUserID());
@@ -261,11 +205,13 @@ public class DiagProblemApiComponentTs {
 			if(request.getUserID() == null || request.getCurriculumID() ==null) return null;
 			
 			if( "ok".equals(diagCurriculumServiceETest.currStatusChange( request.getCurriculumID() ) ) ){
-				for( DiagnosisProblem diagnosisProblem 
-						: diagProblemServiceETest.findByIdOrderSorted( Long.parseLong( request.getCurriculumID() ) )
-					){
-					
-					problemServiceETest.problemValidate(request.getUserID(), diagnosisProblem.getProbId().toString());
+				if( null != diagProblemServiceETest.findByIdOrderSorted( Long.parseLong( request.getCurriculumID() ) ) ){
+					for( DiagnosisProblem diagnosisProblem 
+							: diagProblemServiceETest.findByIdOrderSorted( Long.parseLong( request.getCurriculumID() ) )
+						){
+						
+						problemServiceETest.problemValidate(request.getUserID(), diagnosisProblem.getProbId().toString());
+					}
 				}
 			}
 	

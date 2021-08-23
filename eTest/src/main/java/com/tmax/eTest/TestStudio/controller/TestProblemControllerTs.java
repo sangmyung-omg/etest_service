@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.tmax.eTest.TestStudio.controller.component.TestProblemApiComponentTs;
+import com.tmax.eTest.TestStudio.controller.component.exception.CustomExceptionTs;
+import com.tmax.eTest.TestStudio.controller.component.exception.ErrorCodeEnumTs;
 import com.tmax.eTest.TestStudio.dto.problems.in.DeleteProblemDTOIn;
 import com.tmax.eTest.TestStudio.dto.problems.in.GetProblemDTOIn;
 import com.tmax.eTest.TestStudio.dto.problems.in.PostTestProblemDTOIn;
@@ -32,13 +34,14 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @CrossOrigin(origins = "*")
 @RequiredArgsConstructor
-public class TestProblemControllerETest {
+public class TestProblemControllerTs {
 	
 	private final TestProblemApiComponentTs testProblemApiComponent;
 	
 	/**
 	 * 등록
 	 * new ResponseEntity<>(probGetResponse, HttpStatus.ACCEPTED);
+	 * @throws Exception 
 	 */
 	@PostMapping("/TestProblems")
 	public 
@@ -46,7 +49,7 @@ public class TestProblemControllerETest {
 //			ResponseEntity<String>
 			CreateProblem(
 			@RequestBody PostTestProblemDTOIn request
-			) {
+			) throws Exception {
 		
 		try {
 			
@@ -102,9 +105,7 @@ public class TestProblemControllerETest {
 			
 		}catch (Exception e) {
 			e.printStackTrace();
-			return new ResponseEntity<>( new PostTestProblemDTOOut( e.getMessage() ), HttpStatus.INTERNAL_SERVER_ERROR);
-//			GetProblemDTOOut res = new GetProblemDTOOut("500","fail: errMessage: "+e.getMessage());
-//			return new ResponseEntity<>(res, HttpStatus.INTERNAL_SERVER_ERROR);
+			throw e;
 		}
 	}
 	
@@ -116,30 +117,33 @@ public class TestProblemControllerETest {
 	 */
 	
 	@GetMapping("/TestProblems")
-	public ResponseEntity<GetTestProblemDTOOut> problems(
+	public ResponseEntity<GetTestProblemDTOOut> problems (
 			@RequestBody GetProblemDTOIn request
-			) {
+			) throws Exception {
 		
 		try {
-//			System.out.println(request.getProbID());
 			
+			if(request.getProbIDs().isEmpty()) {
+				throw new CustomExceptionTs(ErrorCodeEnumTs.INVALID_REQUEST_INPUT);
+			}
 			GetTestProblemDTOOut res = testProblemApiComponent.testProblemsGetComponent( request.getProbIDs() ) ;
 			
 			return new ResponseEntity<>( res, HttpStatus.OK );
 			
 		} catch(Exception e) {
 			e.printStackTrace();
-			return new ResponseEntity<>( HttpStatus.INTERNAL_SERVER_ERROR );
+			throw e;
+
 		}
 	}
 	
 	/**
-	 * 수정
+	 * 수정 
 	 * 
 	 */
 	@PutMapping("/TestProblems")
 	public ResponseEntity<String> updateProblems(
-			@RequestBody PutTestProblemDTOIn request) {
+			@RequestBody PutTestProblemDTOIn request) throws Exception {
 		
 		try {
 			String res = testProblemApiComponent.updateProblemcomponent(request);
@@ -149,7 +153,7 @@ public class TestProblemControllerETest {
 			
 		}catch(Exception e) {
 			 e.printStackTrace(); 
-			return new ResponseEntity<>( "fail", HttpStatus.INTERNAL_SERVER_ERROR );	
+			 throw e;	
 		}
 	}
 	
@@ -164,9 +168,8 @@ public class TestProblemControllerETest {
 
 			
 		}catch(Exception e) {
+			e.printStackTrace(); 
 			throw e;
-//			 e.printStackTrace(); 
-//			return new ResponseEntity<>( "fail"+", "+"errorMessage: "+e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR );	
 		}
 	}
 	
@@ -175,7 +178,7 @@ public class TestProblemControllerETest {
 	 * 
 	 */
 	@DeleteMapping("/TestProblems")
-	public ResponseEntity<String> delete(@RequestBody DeleteProblemDTOIn request) {
+	public ResponseEntity<String> delete(@RequestBody DeleteProblemDTOIn request) throws Exception {
 		
 		try {
 			String res = testProblemApiComponent.deleteProbComponent(request.getUserID(), request.getProbIDs() );
@@ -185,7 +188,7 @@ public class TestProblemControllerETest {
 			
 		}catch(Exception e) {
 			 e.printStackTrace(); 
-			return new ResponseEntity<>( "fail", HttpStatus.INTERNAL_SERVER_ERROR );	
+			 throw e;
 		}
 	}
 

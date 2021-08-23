@@ -4,10 +4,15 @@ import java.io.File;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.TimeZone;
 
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CrossOrigin;
 
 import com.tmax.eTest.Common.model.problem.DiagnosisProblem;
@@ -24,23 +29,26 @@ import com.tmax.eTest.TestStudio.dto.problems.in.PutTestProblemDTOIn;
 import com.tmax.eTest.TestStudio.dto.problems.out.GetDiagProblemDTOOut;
 import com.tmax.eTest.TestStudio.dto.problems.out.GetTestProblemDTOOut;
 import com.tmax.eTest.TestStudio.controller.component.exception.CustomExceptionTs;
-import com.tmax.eTest.TestStudio.controller.component.exception.ErrorCodeTs;
+import com.tmax.eTest.TestStudio.controller.component.exception.ErrorCodeEnumTs;
+import com.tmax.eTest.TestStudio.controller.component.exception.NoDataExceptionTs;
 import com.tmax.eTest.TestStudio.dto.problems.base.BaseDiagCurriculumDTO;
 import com.tmax.eTest.TestStudio.dto.problems.base.BaseProbChoiceDTO;
 import com.tmax.eTest.TestStudio.dto.problems.base.BaseProbUKRelDTO;
 import com.tmax.eTest.TestStudio.dto.problems.base.BaseProblemDTO;
+import com.tmax.eTest.TestStudio.dto.problems.base.BaseProblemSetDTO;
 import com.tmax.eTest.TestStudio.dto.problems.base.BaseTestProblemDTO;
 import com.tmax.eTest.TestStudio.dto.problems.base.BaseTestProblemSetDTO;
 import com.tmax.eTest.TestStudio.service.ProbChoiceServiceTs;
 import com.tmax.eTest.TestStudio.service.ProbUKRelServiceTs;
 import com.tmax.eTest.TestStudio.service.ProblemServiceTs;
 import com.tmax.eTest.TestStudio.service.TestProblemServiceTs;
-import com.tmax.eTest.TestStudio.service.UKServiceETest;
+import com.tmax.eTest.TestStudio.service.UKServiceTs;
 import com.tmax.eTest.TestStudio.util.PathUtilTs;
 
 import lombok.RequiredArgsConstructor;
 
-@Controller
+@Service
+@Transactional(rollbackFor = Exception.class)
 @CrossOrigin(origins = "*")
 @RequiredArgsConstructor
 public class TestProblemApiComponentTs {
@@ -48,9 +56,10 @@ public class TestProblemApiComponentTs {
 	private final ProblemServiceTs problemServiceETest;
 	private final ProbChoiceServiceTs probChoiceServiceETest;
 	private final ProbUKRelServiceTs probUKRelServiceETest;
-	private final UKServiceETest ukServiceETest;
+	private final UKServiceTs ukServiceETest;
 	private final TestProblemServiceTs testProblemServiceETest;
 	
+	private final ProblemApiComponentTs problemApiComponentTs;
 	private final ImageFileServerApiComponentTs imageFileServerApiComponentETest;
 	private final PathUtilTs pathUtilEtest = new PathUtilTs();
 	
@@ -121,75 +130,99 @@ public class TestProblemApiComponentTs {
 				 */
 				problemServiceETest.problemCreate(problem);
 //				System.out.println(problem.getProbID());
-				
 				//
-				if(requestInfo__.getProbChoices()!=null) {
-					if(!requestInfo__.getProbChoices().isEmpty()) {
-						for(BaseProbChoiceDTO PC : requestInfo__.getProbChoices()) {
-							ProblemChoice problemChoice = new ProblemChoice();
-//							Problem problemTemp = new Problem();
-//							problemTemp.setProbID(problem.getProbID());
-							problemChoice.setProbID(problemServiceETest.findOne(problem.getProbID().longValue()));
-//							problemChoice.setProbID(problemTemp);
-							problemChoice.setChoiceNum( Long.parseLong( PC.getChoiceNum() ) );
-							UkMaster ukMasterTemp = new UkMaster();
-							ukMasterTemp.setUkId(Integer.parseInt( PC.getUkID() ) );
-//							problemChoice.setUkId(ukServiceETest.findOneByUKId( Long.parseLong(PC.getUkID()) ));
-							problemChoice.setUkId(ukMasterTemp);
-							if(PC.getChoiceScore()!=null) {
-								problemChoice.setChoiceScore( Integer.parseInt( PC.getChoiceScore() ) );
+				if( problemServiceETest.findOne(problem.getProbID().longValue()).isPresent() ) {
+					
+					if(requestInfo__.getProbChoices()!=null) {
+						if(!requestInfo__.getProbChoices().isEmpty()) {
+							
+							Set<ProblemChoice> tsChunk = new HashSet<ProblemChoice>();
+							
+							for(BaseProbChoiceDTO PC : requestInfo__.getProbChoices()) {
+								ProblemChoice problemChoice = new ProblemChoice();
+//								Problem problemTemp = new Problem();
+//								problemTemp.setProbID(problem.getProbID());
+								problemChoice.setProbID(problemServiceETest.findOne(problem.getProbID().longValue()).get());
+//								problemChoice.setProbID(problemTemp);
+								problemChoice.setChoiceNum( Long.parseLong( PC.getChoiceNum() ) );
+								UkMaster ukMasterTemp = new UkMaster();
+								ukMasterTemp.setUkId(Integer.parseInt( PC.getUkID() ) );
+//								problemChoice.setUkId(ukServiceETest.findOneByUKId( Long.parseLong(PC.getUkID()) ));
+								problemChoice.setUkId(ukMasterTemp);
+								if(PC.getChoiceScore()!=null) {
+									problemChoice.setChoiceScore( Integer.parseInt( PC.getChoiceScore() ) );
+								}
+//								probChoiceServiceETest.probChoiceCreate(problemChoice);
+								tsChunk.add(problemChoice);
+								if(tsChunk.size() == 1000) {
+									probChoiceServiceETest.probChoiceCreateAll(tsChunk);
+									tsChunk.clear();
+								}	
 							}
-							probChoiceServiceETest.probChoiceCreate(problemChoice);
+							probChoiceServiceETest.probChoiceCreateAll(tsChunk);
+							tsChunk.clear();
 						}
 					}
-				}
-				//
-				if(requestInfo__.getProbUKRels()!=null) {
-					if(!requestInfo__.getProbUKRels().isEmpty()) {
-						for(BaseProbUKRelDTO PUR : requestInfo__.getProbUKRels()) {
-							ProblemUKRelation problemUKRelation = new ProblemUKRelation();
-							problemUKRelation.setProbID( problemServiceETest.findOne(problem.getProbID().longValue()) );
-							UkMaster ukMasterTemp = new UkMaster();
-							ukMasterTemp.setUkId(Integer.parseInt( PUR.getUkID() ) );
-//							problemUKRelation.setUkId( ukServiceETest.findOneByUKId( Long.parseLong(PUR.getUkID()) ) );
-							problemUKRelation.setUkId(ukMasterTemp);							
+					//
+					if(requestInfo__.getProbUKRels()!=null) {
+						if(!requestInfo__.getProbUKRels().isEmpty()) {
+							
+							Set<ProblemUKRelation> tsChunk = new HashSet<ProblemUKRelation>();
+							
+							for(BaseProbUKRelDTO PUR : requestInfo__.getProbUKRels()) {
+								ProblemUKRelation problemUKRelation = new ProblemUKRelation();
+								problemUKRelation.setProbID( problemServiceETest.findOne(problem.getProbID().longValue()).get() );
+								UkMaster ukMasterTemp = new UkMaster();
+								ukMasterTemp.setUkId(Integer.parseInt( PUR.getUkID() ) );
+//								problemUKRelation.setUkId( ukServiceETest.findOneByUKId( Long.parseLong(PUR.getUkID()) ) );
+								problemUKRelation.setUkId(ukMasterTemp);							
+//								probUKRelServiceETest.probUKRelCreate(problemUKRelation);
+								tsChunk.add(problemUKRelation);
+								if(tsChunk.size() == 1000) {
+									probUKRelServiceETest.probUKRelCreateAll(tsChunk);
+									tsChunk.clear();
+								}
+							}
+							probUKRelServiceETest.probUKRelCreateAll(tsChunk);
+							tsChunk.clear();
+						}
+					}
+		
+					//
+					TestProblem testProblem = new TestProblem();
+					testProblem.setProbID(problem.getProbID());
+					testProblem.setPartID(Integer.parseInt( requestInfo__.getTestProblem().getPartID() ));
+					testProblem.setSubject(requestInfo__.getTestProblem().getSubject());
+					if( pathUtilEtest.getStatusOn().equals(requestInfo__.getTestProblem().getStatus() ) ){
+						testProblem.setStatus(requestInfo__.getTestProblem().getStatus());
+					}else {
+						testProblem.setStatus( pathUtilEtest.getStatusOff() );
+					}
+					testProblemServiceETest.testProblemCreate(testProblem);
+					
+					/*
+					 * probImage table
+					 */
+					
+					if(requestInfo.getImgSrcListIn()!=null) {
+						if(!requestInfo.getImgSrcListIn().isEmpty()) {
 
-							probUKRelServiceETest.probUKRelCreate(problemUKRelation);
+							Problem problem__ = problemServiceETest.findOne(problem.getProbID().longValue()).get();
+							problem__.setImgSrc(pathUtilEtest.getDirPath() + File.separator + problem.getProbID());
+
+							imageFileServerApiComponentETest.deleteImgSrcFileOfProbIDServiceComponent( problem.getProbID().longValue() );
+							Boolean isSuccess = imageFileServerApiComponentETest
+									.assignImgFileListServiceComponent(
+																	   request.getUserID(), 
+																	   problem.getProbID().longValue(),
+																	   requestInfo.getImgSrcListIn()
+																	  );
+							if(!isSuccess) imgSuccess=false;
 						}
 					}
-				}
-	
-				//
-				TestProblem testProblem = new TestProblem();
-				testProblem.setProbID(problem.getProbID());
-				testProblem.setPartID(Integer.parseInt( requestInfo__.getTestProblem().getPartID() ));
-				testProblem.setSubject(requestInfo__.getTestProblem().getSubject());
-				if( pathUtilEtest.getStatusOn().equals(requestInfo__.getTestProblem().getStatus() ) ){
-					testProblem.setStatus(requestInfo__.getTestProblem().getStatus());
+					
 				}else {
-					testProblem.setStatus( pathUtilEtest.getStatusOff() );
-				}
-				testProblemServiceETest.testProblemCreate(testProblem);
-				
-				/*
-				 * probImage table
-				 */
-				
-				if(requestInfo.getImgSrcListIn()!=null) {
-					if(!requestInfo.getImgSrcListIn().isEmpty()) {
-
-						Problem problem__ = problemServiceETest.findOne(problem.getProbID().longValue());
-						problem__.setImgSrc(pathUtilEtest.getDirPath() + File.separator + problem.getProbID());
-
-						imageFileServerApiComponentETest.deleteImgSrcFileOfProbIDServiceComponent( problem.getProbID().longValue() );
-						Boolean isSuccess = imageFileServerApiComponentETest
-								.assignImgFileListServiceComponent(
-																   request.getUserID(), 
-																   problem.getProbID().longValue(),
-																   requestInfo.getImgSrcListIn()
-																  );
-						if(!isSuccess) imgSuccess=false;
-					}
+					throw new NoDataExceptionTs("Problem",problem.getProbID().toString());
 				}
 
 				probIdList.add(problem.getProbID().longValue());
@@ -205,7 +238,7 @@ public class TestProblemApiComponentTs {
 			result.add(probIdList);
 			result.add(null); //			result.add(skipIdxList);
 			result.add(imgFailProbIdList);
-
+			
 			return result;
 			
 		}catch (Exception e) {
@@ -333,61 +366,16 @@ public class TestProblemApiComponentTs {
 		try {
 					
 			// 문제 n개 업데이트
-			Long idx = -1L;
+
 			if(request.getTestProblems() != null)
 			for(BaseTestProblemSetDTO requestInfo__ : request.getTestProblems()) {
-				idx++;
-				Long LongProbId = Long.parseLong(requestInfo__.getProblem().getProbID());
-//				if( pathUtilEtest.getStatusOn().equals(requestInfo__.getTestProblem().getStatus()) || pathUtilEtest.getStatusOff().equals(requestInfo__.getTestProblem().getStatus())) {
-//					requestInfo__.getProblem().setValidatorID("T");
-//					if(requestInfo__.getProblem().getProbID()==null) {
-//						requestInfo__.getProblem().setProbID( requestInfo__.getTestProblem().getProbID() );
-//					}
-//				}
-				
-				//problem table
-				problemServiceETest.problemUpdate( request.getUserID() ,requestInfo__.getProblem());
-				
-				//
-				if(requestInfo__.getProbChoices()!=null) {
-					if(!requestInfo__.getProbChoices().isEmpty()) {
-						probChoiceServiceETest.probChoiceDeleteAllByProbId(LongProbId);
-						for(BaseProbChoiceDTO PC : requestInfo__.getProbChoices()) {
-							ProblemChoice problemChoice = new ProblemChoice();
-//							Problem problemTemp = new Problem();
-//							problemTemp.setProbID(problem.getProbID());
-							problemChoice.setProbID(problemServiceETest.findOne(LongProbId));
-//							problemChoice.setProbID(problemTemp);
-							problemChoice.setChoiceNum( Long.parseLong( PC.getChoiceNum() ) );
-							UkMaster ukMasterTemp = new UkMaster();
-							ukMasterTemp.setUkId(Integer.parseInt( PC.getUkID() ) );
-//							problemChoice.setUkId(ukServiceETest.findOneByUKId( Long.parseLong(PC.getUkID()) ));
-							problemChoice.setUkId(ukMasterTemp);
-							if(PC.getChoiceScore()!=null) {
-								problemChoice.setChoiceScore( Integer.parseInt( PC.getChoiceScore() ) );
-							}
-							probChoiceServiceETest.probChoiceCreate(problemChoice);
-						}
-					}
-				}
-				//
-				if(requestInfo__.getProbUKRels()!=null) {
-					if(!requestInfo__.getProbUKRels().isEmpty()) {
-						probUKRelServiceETest.probUKRelDeleteAllByProbId(LongProbId);
-						for(BaseProbUKRelDTO PUR : requestInfo__.getProbUKRels()) {
-							ProblemUKRelation problemUKRelation = new ProblemUKRelation();
-							problemUKRelation.setProbID( problemServiceETest.findOne(LongProbId) );
-							UkMaster ukMasterTemp = new UkMaster();
-							ukMasterTemp.setUkId(Integer.parseInt( PUR.getUkID() ) );
-//							problemUKRelation.setUkId( ukServiceETest.findOneByUKId( Long.parseLong(PUR.getUkID()) ) );
-							problemUKRelation.setUkId(ukMasterTemp);							
 
-							probUKRelServiceETest.probUKRelCreate(problemUKRelation);
-						}
-					}
-				}
+				BaseProblemSetDTO baseProblemSetDTO = new BaseProblemSetDTO();
+				baseProblemSetDTO.setProblem( requestInfo__.getProblem() );
+				baseProblemSetDTO.setProbChoices( requestInfo__.getProbChoices() );
+				baseProblemSetDTO.setProbUKRels( requestInfo__.getProbUKRels() );
 				
-				
+				problemApiComponentTs.updateBasicProblemcomponent(baseProblemSetDTO, request.getUserID());
 				//
 				if(requestInfo__.getTestProblem()!=null) {
 					if(requestInfo__.getProblem().getProbID() !=null) {
@@ -396,34 +384,9 @@ public class TestProblemApiComponentTs {
 					testProblemServiceETest.testProblemUpdate(request.getUserID(), requestInfo__.getTestProblem());
 				}
 				
-				// problem image			
-				if(requestInfo__.getProblem().getImgSrcListIn()!=null
-						&& requestInfo__.getProblem().getImgToEditSrcListIn()!=null) {	
-					
-					File folder = new File( pathUtilEtest.getDirPath()
-											+ File.separator + requestInfo__.getProblem().getProbID() );
-					
-					if( folder.exists() ){
-						List<String> willDelImgData = new ArrayList<String>();
-						for( String imgSrc__ : folder.list() ) {
-							willDelImgData.add(imgSrc__);
-						}
-						for(String src: requestInfo__.getProblem().getImgSrcListIn()) {
-							willDelImgData.remove(src);
-						}
-						imageFileServerApiComponentETest.deleteImgSrcsOfProbIDServiceComponent(LongProbId, willDelImgData );
-					}
-//					Boolean isSuccess = imageFileServerApiComponentETest
-//							.assignImgFileListServiceComponent(request.getUserID(), LongProbId, requestInfo__.getProblem().getImgSrcListIn());
-					Boolean isSuccess = imageFileServerApiComponentETest
-							.assignImgFileListServiceComponent(request.getUserID(), LongProbId, requestInfo__.getProblem().getImgToEditSrcListIn());
-				
-				}
-				
-				imageFileServerApiComponentETest.deleteImgTempFolerOfUserIDServiceComponent(request.getUserID());
-				
-			}
+			}			
 			
+			imageFileServerApiComponentETest.deleteImgTempFolerOfUserIDServiceComponent(request.getUserID());
 			
 			return "success";
 		}catch(Exception e) {
@@ -448,20 +411,22 @@ public class TestProblemApiComponentTs {
 					return "success";
 			}else {
 //				throw new Exception("the current status(at DB) is not "+pathUtilEtest.getStatusOn()+"or "+pathUtilEtest.getStatusOff());
-				throw new CustomExceptionTs(ErrorCodeTs.INVALID_STATUS_RESOURCE);
+				throw new CustomExceptionTs(ErrorCodeEnumTs.INVALID_STATUS_RESOURCE);
+
 			}
 	
 	}
 	
 	/**
 	 *  삭제
+	 * @throws Exception 
 	 *  
 	 */
 	public String deleteProbComponent(
 			String userId,
 //			List<Long> probIdList
 			List<String> strProbIdList
-			) {
+			) throws Exception {
 		
 		try {
 			

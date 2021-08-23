@@ -29,7 +29,7 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @CrossOrigin(origins = "*")
 @RequiredArgsConstructor
-public class DiagProblemControllerETest {
+public class DiagProblemControllerTs {
 	
 	private final DiagProblemApiComponentTs diagProblemApiComponent;
 	
@@ -41,7 +41,7 @@ public class DiagProblemControllerETest {
 	@GetMapping("/DiagProblems")
 	public ResponseEntity<GetDiagProblemDTOOut> problems(
 			@RequestBody GetProblemDTOIn request
-			) {
+			) throws Exception {
 		
 		try {
 //			System.out.println(request.getProbID());
@@ -52,18 +52,19 @@ public class DiagProblemControllerETest {
 			
 		} catch(Exception e) {
 			e.printStackTrace();
-			return new ResponseEntity<>( HttpStatus.INTERNAL_SERVER_ERROR );
+			throw e;
 		}
 	}
 	
 	
 	/**
 	 * 수정
+	 * @throws Exception 
 	 * 
 	 */
 	@PutMapping("/DiagProblems")
 	public ResponseEntity<String> updateProblems(
-			@RequestBody PutDiagProblemDTOIn request) {
+			@RequestBody PutDiagProblemDTOIn request) throws Exception {
 		
 		try {
 			String res = diagProblemApiComponent.updateProblemcomponent(request);
@@ -73,13 +74,13 @@ public class DiagProblemControllerETest {
 			
 		}catch(Exception e) {
 			 e.printStackTrace(); 
-			return new ResponseEntity<>( "fail", HttpStatus.INTERNAL_SERVER_ERROR );	
+			 throw e;
 		}
 	}
 	
 	@PutMapping("/DiagCurrStatus")
 	public ResponseEntity<String> updateDiagCurrStatus(
-			@RequestBody PutDiagCurrStatusDTOIn request) {
+			@RequestBody PutDiagCurrStatusDTOIn request) throws Exception {
 		
 		try {
 			String res = diagProblemApiComponent.updateDiagCurrStatus(request);
@@ -89,7 +90,7 @@ public class DiagProblemControllerETest {
 			
 		}catch(Exception e) {
 			 e.printStackTrace(); 
-			return new ResponseEntity<>( "fail", HttpStatus.INTERNAL_SERVER_ERROR );	
+			 throw e;	
 		}
 	}
 	

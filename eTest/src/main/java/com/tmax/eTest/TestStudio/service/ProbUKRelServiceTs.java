@@ -3,6 +3,7 @@ package com.tmax.eTest.TestStudio.service;
 import java.io.File;
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -50,7 +51,9 @@ public class ProbUKRelServiceTs {
 	public ProblemUKRelation probUKRelCreate(ProblemUKRelation problemUKRelation) {
 		return probUKRelRepositoryETest.save( problemUKRelation );
 	}
-	
+	public List<ProblemUKRelation> probUKRelCreateAll(Set<ProblemUKRelation> problemUKRelations) {
+		return probUKRelRepositoryETest.saveAll( problemUKRelations );
+	}
 	
 	/**
 	 *  삭제

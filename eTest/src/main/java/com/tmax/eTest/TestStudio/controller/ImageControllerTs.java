@@ -28,13 +28,14 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @CrossOrigin(origins = "*")
 @RequiredArgsConstructor
-public class ImageControllerETest {
+public class ImageControllerTs {
 	
 	private final ImageFileServerApiComponentTs imageFileServerApiComponentETest;
 	
 
 	/**
 	 * Image Post 
+	 * @throws Exception 
 	 * 
 	 */
 	
@@ -45,7 +46,7 @@ public class ImageControllerETest {
 			@RequestPart(value="img") List<MultipartFile> imgMFileList,
 			@RequestPart(value="userID") String userId,
 			@RequestPart(value="defaultDarkImg", required=false) String defaultDarkImg
-			) throws IllegalStateException, IOException {
+			) throws Exception {
 	
 		try {
 
@@ -54,8 +55,7 @@ public class ImageControllerETest {
 		} catch (Exception e) {
 			
 			e.printStackTrace(); 
-//			return new ResponseEntity<>( new ImagePostResponse("500","fail"), HttpStatus.INTERNAL_SERVER_ERROR );
-			return null;
+			throw e;
 			
 		}		
 	}	
@@ -63,7 +63,7 @@ public class ImageControllerETest {
 	@GetMapping("/ImageSrc")
 	public ResponseEntity<GetProblemImageDTOOut> ImageList(
 			@RequestBody GetProblemDTOIn request
-			) throws IllegalStateException, IOException {
+			) throws Exception {
 	
 		try {
 
@@ -72,9 +72,7 @@ public class ImageControllerETest {
 		} catch (Exception e) {
 			
 			e.printStackTrace(); 
-//			return new ResponseEntity<>( new ImagePostResponse("500","fail"), HttpStatus.INTERNAL_SERVER_ERROR );
-			return null;
-			
+			throw e;
 		}		
 	}	
 	

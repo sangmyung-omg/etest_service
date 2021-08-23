@@ -19,14 +19,14 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.google.gson.JsonObject;
+import com.tmax.eTest.TestStudio.controller.component.exception.CustomExceptionTs;
+import com.tmax.eTest.TestStudio.controller.component.exception.ErrorCodeEnumTs;
 import com.tmax.eTest.TestStudio.dto.problems.base.BaseProblemIDandImageSrcsDTO;
 import com.tmax.eTest.TestStudio.dto.problems.out.GetProblemImageDTOOut;
 import com.tmax.eTest.TestStudio.service.ProblemServiceTs;
 import com.tmax.eTest.TestStudio.util.PathUtilTs;
 
 import lombok.RequiredArgsConstructor;
-
-
 
 @Service
 @Transactional
@@ -209,16 +209,20 @@ public class ImageFileServerApiComponentTs {
 				Boolean isSuccess = true;
 				
 				if(srcList != null){
-					for( String src : srcList ){
-						if(src==null) {
-							continue;
-						}
-						Boolean assignResult = assignImgFileServiceComponent(userID, probID, src);
-						if(!assignResult){
-							System.out.println("파일 추가 안함: " + src);
-							isSuccess = false;
-						}else {
-							System.out.println("파일 추가: " + src);
+					if(srcList.size()>50) {
+						throw new CustomExceptionTs(ErrorCodeEnumTs.EXCEEDED_REQUEST_SIZE);
+					}else {
+						for( String src : srcList ){
+							if(src==null) {
+								continue;
+							}
+							Boolean assignResult = assignImgFileServiceComponent(userID, probID, src);
+							if(!assignResult){
+								System.out.println("파일 추가 안함: " + src);
+								isSuccess = false;
+							}else {
+								System.out.println("파일 추가: " + src);
+							}
 						}
 					}
 				}

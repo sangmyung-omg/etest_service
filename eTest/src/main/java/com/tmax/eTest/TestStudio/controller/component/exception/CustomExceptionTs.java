@@ -8,6 +8,6 @@ import lombok.Getter;
 @AllArgsConstructor
 public class CustomExceptionTs extends RuntimeException {
 
-  private final ErrorCodeTs errorCode;
+  private final ErrorCodeEnumTs errorCodeEnum;
   
 }
