@@ -23,9 +23,23 @@ public class DiagnosisReport {
 	private String diagnosisId;
 	private String userUuid;
 	private Float giScore;
+	
 	private Integer riskScore;
+	private Integer riskProfileScore;
+	private Integer riskTracingScore;
+	private Integer riskLevelScore;
+	private Integer riskCapaScore;
+	
 	private Integer investScore;
+	private Integer investProfileScore;
+	private Integer investTracingScore;
+	
 	private Integer knowledgeScore;
+	private Integer knowledgeCommonScore;
+	private Integer knowledgeTypeScore;
+	private Integer knowledgeChangeScore;
+	private Integer knowledgeSellScore;
+	
 	private Float avgUkMastery;
 	private String userMbti;
 	private Integer investItemNum;
