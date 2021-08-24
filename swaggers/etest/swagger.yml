@@ -4,7 +4,7 @@ info:
     version: "0.1"
     description: 문제 풀이 및 진단 리포트 페이지 관련 API
 servers:
-  - url: http://192.168.153.208:8888/
+  - url: http://192.168.153.208:8080/
     description: example server address
 tags:
 - name: Problem
@@ -17,7 +17,7 @@ tags:
   description: 유저 정보 CRUD
 
 paths:
-  /contents/v0/problems/{id}:
+  /contents/v0/problems/{probId}:
     get:
       tags:
         - Problem
@@ -53,7 +53,7 @@ paths:
                 example:
                   message: 'Failed: {id}에 해당하는 데이터가 없습니다'
                   data: {}
-  /contents/v1/problems/{id}/answer-check:
+  /contents/v1/problems/{probId}/answer-check:
     post:
       tags:
         - Problem
@@ -70,14 +70,15 @@ paths:
             json:
               schema:
                 $ref: "#/components/schemas/answerCheckResult"
-  /contents/v1/problems/{id}/solution:
+  /contents/v1/problems/{setId}/solution:
     get:
       tags:
         - Problem
       summary: 해설 받아오기
       description: 유저가 제출한 정답에 대한 채점결과를 0/1로 반환합니다.
       parameters:
-        - $ref: "#/components/parameters/probId"
+        # - $ref: "#/components/parameters/probIds"
+        - $ref: "#/components/parameters/setId"
       responses:
         200:
           description: OK
@@ -121,8 +122,6 @@ paths:
       summary: 자가진단 set (성향 18 문항 & 지식 12 문항 = 총 30문항) 요청
       description: 
         유저 ID를 활용해 자가진단 성향/지식 문제 각각 반환 (이어풀기 기능 삭제)
-      parameters:
-        - $ref: "#/components/parameters/userId"
       responses:
         '200':
           description: 성공
@@ -142,7 +141,7 @@ paths:
                     type: string
                     example: "Error: status code 500"
 
-  /test/v1/minitest:
+  /test/v1/minitest/{userId}:
     get:
       tags: [Test]
       operationId: MinitestProblemsGet
@@ -568,7 +567,7 @@ components:
           type: string
           example: "Successfully returned"
           description: "결과 메세지"
-        schema:
+        solutions:
           type: array
           items:
             $ref: "#/components/schemas/solutions"
@@ -592,13 +591,33 @@ components:
         type: string
         example: "00368989-7f56-478a-9d4f-e46c9baa6598"
     probId:
-        in: "path"
-        required: true
-        name: "id"
-        description: "문제 ID"
-        schema:
-          type: integer
-          example: 21
+      in: "path"
+      required: true
+      name: "probId"
+      description: "문제 ID"
+      schema:
+        type: integer
+        example: 21
+    probIds:
+      in: "path"
+      required: true
+      name: "probIds"
+      description: "문제 ID"
+      schema:
+        type: array
+        example: 
+        - 21
+        - 22
+        - 23
+        - 24
+    setId:
+      in: "path"
+      required: true
+      name: "setId"
+      description: "진단 세트 ID"
+      schema:
+        type: string
+        example: "0ca5189a-04a9-11ec-9a03-0242ac130003"
   requestBodies:
     LRSBody:
       description: "LRS에 저장할 statement 구성 정보"
