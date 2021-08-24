@@ -72,10 +72,13 @@ public class DiagnosisRecordService {
 	{
 		DiagnosisRecordDTO result = new DiagnosisRecordDTO();
 		
-		// 1. 해당 유저의 문제 푼 정보 수집.
-		List<StatementDTO> diagStatement = getDiagnosisProbInfo(userId, probSetId);
-		setProbInfoInRecordDTO(result, diagStatement);
+		List<StatementDTO> diagStatement = getDiagnosisProbInfo(userId, null);
+		lrsAPIManager.saveStatementList(diagStatement);
 		
+		// 1. 해당 유저의 문제 푼 정보 수집.
+		
+//		setProbInfoInRecordDTO(result, diagStatement);
+//		
 		result.initForDummy();
 		
 		return result;
@@ -84,9 +87,6 @@ public class DiagnosisRecordService {
 	// LRS에서 푼 문제 정보를 모아, 관련 정보 생성. (난이도별 문제 맞은 갯수, 해당 문제 정보 등)
 	private void setProbInfoInRecordDTO(DiagnosisRecordDTO output, List<StatementDTO> infos)
 	{
-		// 문제 난이도 상 중 하
-		int collectProbNum[] = {0,0,0};
-		int allProbNum[] = {0,0,0};
 		
 		// probId, isCorr
 		Map<Integer, Integer> probCorrInfo = new HashMap<>();
@@ -118,7 +118,8 @@ public class DiagnosisRecordService {
 		
 		GetStatementInfoDTO input = new GetStatementInfoDTO();
 		input.pushUserId(userId);
-		input.pushExtensionStr(probSetId);
+		if(probSetId != null)
+			input.pushExtensionStr(probSetId);
 		input.pushActionType("submit");
 		List<StatementDTO> result = lrsAPIManager.getStatementList(input);
 		
