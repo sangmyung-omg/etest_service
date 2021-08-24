@@ -54,6 +54,37 @@ public class LRSAPIManager {
 	private String HOST = "http://192.168.153.132:8080";
 //	private static final String HOST = System.getenv("LRS_HOST");
 
+	public List<Integer> saveStatementList(List<StatementDTO> input) throws ParseException {
+		//Create a http timeout handler
+		HttpClient httpClient = HttpClient.create()
+									.option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 5000)
+									.responseTimeout(Duration.ofMillis(5000))
+									.doOnConnected(conn ->
+										conn.addHandlerLast(new ReadTimeoutHandler(5000, TimeUnit.MILLISECONDS))
+											.addHandlerLast(new WriteTimeoutHandler(5000, TimeUnit.MILLISECONDS))
+									);
+
+		//Create header
+		WebClient webClient = WebClient.builder()
+							.baseUrl(HOST)
+							.defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+							.clientConnector(new ReactorClientHttpConnector(httpClient))
+							.build();
+		
+		logger.info(input.toString());
+		
+		List<Integer> info =  webClient.post()
+				  .uri("/SaveStatementList")
+				  .bodyValue(input)
+				  .retrieve()
+				  //.onStatus(HttpStatus::is4xxClientError, __ -> Mono.error(new GenericInternalException("ERR-LRS-400", "LRS 400 error")))
+				  //.onStatus(HttpStatus::is5xxServerError, __ -> Mono.error(new GenericInternalException("ERR-LRS-500", "LRS 500 error")))
+				  .bodyToFlux(Integer.class)
+				  .collectList()
+				  .block();
+		
+		return info;
+	}
 
 	public List<StatementDTO> getStatementList(GetStatementInfoDTO input) throws ParseException {
 		//Create a http timeout handler
