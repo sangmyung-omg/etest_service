@@ -37,7 +37,6 @@ public class DiagnosisRecordDTO {
 		List<String> probInfoDTO = new ArrayList<>();
 		
 		probInfoDTO.add(prob.getProbID().toString());
-<<<<<<< Upstream, based on origin/master
 		probInfoDTO.add(isCorr+"");
 		probInfoDTO.add(prob.getQuestion());
 		probInfoDTO.add(prob.getDifficulty());
@@ -93,43 +92,7 @@ public class DiagnosisRecordDTO {
 		problemCorrectInfo.put("high", probCorrAndAllNum[0]+"/"+probCorrAndAllNum[3]);
 		problemCorrectInfo.put("middle", probCorrAndAllNum[1]+"/"+probCorrAndAllNum[4]);
 		problemCorrectInfo.put("low", probCorrAndAllNum[2]+"/"+probCorrAndAllNum[5]);
-		
-=======
-		//probInfoDTO.add(isCorr);
-		probInfoDTO.add("문제 제목");
-		probInfoDTO.add("문제 내용");
-		probInfoDTO.add("난이도");
-		probInfoDTO.add("정답률");
-		probInfoDTO.add("출처");
-		
-		return probInfoDTO;
-	}
 	
-	// 문제 정보 삽입 함수.
-	public boolean pushProblemList(List<Problem> probs, Map<Integer, Integer> probCorrInfo)
-	{
-		//맞은 문제 난이도 상 중 하, 전체 문제 난이도 상 중 하
-		
-		int[] probCorrAndAllNum = {0,0,0,0,0,0};
-		for(Problem prob : probs)
-		{
-			int isCorr = probCorrInfo.get(prob.getProbID());
-			
-			
-			switch(prob.getDifficulty())
-			{
-			case "상":
-				break;
-			case "중":
-				break;
-			case "하":
-				break;
-			default:
-				break;
-			}
-		}
->>>>>>> da86963 [feat] 자가진단 report record 받아오는 api 구현중.
-		
 		return true;
 	}
 	
