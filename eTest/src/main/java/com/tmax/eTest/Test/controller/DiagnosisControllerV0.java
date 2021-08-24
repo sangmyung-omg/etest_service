@@ -1,10 +1,6 @@
 package com.tmax.eTest.Test.controller;
 
-import java.security.Principal;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -13,24 +9,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.jsonwebtoken.JwtException;
-
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.exceptions.JWTDecodeException;
-import com.auth0.jwt.interfaces.Claim;
-import com.auth0.jwt.interfaces.DecodedJWT;
-import com.tmax.eTest.Auth.dto.PrincipalDetails;
 import com.tmax.eTest.Test.config.TestPathConstant;
 import com.tmax.eTest.Test.service.ProblemServiceBase;
-import com.tmax.eTest.Test.service.ProblemServiceV1;
 
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
