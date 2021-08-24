@@ -74,6 +74,8 @@ public class SelfDiagnosisReportService {
 		// 1. Get Statement Info
 		List<StatementDTO> diagnosisProbStatements = getStatementDiagnosisProb(userId, probSetId);
 		
+		logger.info(diagnosisProbStatements.toString());
+		
 		// 2. get Problem List from Statement Info
 		List<Problem> probList = getProblemInfos(diagnosisProbStatements);
 		
@@ -297,10 +299,26 @@ public class SelfDiagnosisReportService {
 				? UUID.randomUUID().toString()
 				: probSetId);
 		report.setUserUuid(id);
+		
+		// score 관련 저장
 		report.setGiScore((float)scoreMap.get(RuleBaseScoreCalculator.GI_SCORE_KEY));
-		report.setRiskScore(scoreMap.get(RuleBaseScoreCalculator.RISK_PROFILE_SCORE));
+		
+		report.setRiskScore(scoreMap.get(RuleBaseScoreCalculator.RISK_SCORE));
+		report.setRiskProfileScore(scoreMap.get(RuleBaseScoreCalculator.RISK_PROFILE_SCORE));
+		report.setRiskTracingScore(scoreMap.get(RuleBaseScoreCalculator.RISK_TRACING_SCORE));
+		report.setRiskLevelScore(scoreMap.get(RuleBaseScoreCalculator.RISK_PROFILE_LEVEL));
+		report.setRiskCapaScore(scoreMap.get(RuleBaseScoreCalculator.RISK_PROFILE_CAPA));
+		
 		report.setInvestScore(scoreMap.get(RuleBaseScoreCalculator.INVEST_SCORE));
+		report.setInvestProfileScore(scoreMap.get(RuleBaseScoreCalculator.INVEST_PROFILE));
+		report.setInvestTracingScore(scoreMap.get(RuleBaseScoreCalculator.INVEST_TRACING));
+		
 		report.setKnowledgeScore(scoreMap.get(RuleBaseScoreCalculator.KNOWLEDGE_SCORE));
+		report.setKnowledgeCommonScore(scoreMap.get(RuleBaseScoreCalculator.KNOWLEDGE_COMMON));
+		report.setKnowledgeChangeScore(scoreMap.get(RuleBaseScoreCalculator.KNOWLEDGE_CHANGE));
+		report.setKnowledgeSellScore(scoreMap.get(RuleBaseScoreCalculator.KNOWLEDGE_SELL));
+		report.setKnowledgeTypeScore(scoreMap.get(RuleBaseScoreCalculator.KNOWLEDGE_TYPE));
+		
 		report.setAvgUkMastery(avgUkMastery);
 		report.setUserMbti("XXXX");
 		report.setInvestItemNum(investItemNum);

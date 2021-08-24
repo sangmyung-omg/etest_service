@@ -72,9 +72,57 @@ public class DiagnosisRecordService {
 	{
 		DiagnosisRecordDTO result = new DiagnosisRecordDTO();
 		
+		// 1. 해당 유저의 문제 푼 정보 수집.
+		List<StatementDTO> diagStatement = getDiagnosisProbInfo(userId, probSetId);
+		setProbInfoInRecordDTO(result, diagStatement);
+		
 		result.initForDummy();
 		
 		return result;
 	}
 	
+	// LRS에서 푼 문제 정보를 모아, 관련 정보 생성. (난이도별 문제 맞은 갯수, 해당 문제 정보 등)
+	private void setProbInfoInRecordDTO(DiagnosisRecordDTO output, List<StatementDTO> infos)
+	{
+		// 문제 난이도 상 중 하
+		int collectProbNum[] = {0,0,0};
+		int allProbNum[] = {0,0,0};
+		
+		// probId, isCorr
+		Map<Integer, Integer> probCorrInfo = new HashMap<>();
+		
+		for(StatementDTO info : infos)
+		{
+			if(info.getSourceType().equals("diagnosis"))
+			{
+				try
+				{
+					int probId = Integer.getInteger(info.getSourceId());
+					probCorrInfo.put(probId, info.getIsCorrect());
+					
+				}
+				catch(Exception e)
+				{
+					logger.info("Integer decode fail in setProbInfoInRecordDTO "+info.toString());
+				}
+			}
+		}
+		
+		List<Problem> diagProbs = problemRepo.findAllById(probCorrInfo.keySet());
+		output.pushProblemList(diagProbs, probCorrInfo);
+		
+	}
+	
+	private List<StatementDTO> getDiagnosisProbInfo(String userId, String probSetId) throws Exception
+	{
+		
+		GetStatementInfoDTO input = new GetStatementInfoDTO();
+		input.pushUserId(userId);
+		input.pushExtensionStr(probSetId);
+		input.pushActionType("submit");
+		List<StatementDTO> result = lrsAPIManager.getStatementList(input);
+		
+		return result;
+		
+	}
 }
