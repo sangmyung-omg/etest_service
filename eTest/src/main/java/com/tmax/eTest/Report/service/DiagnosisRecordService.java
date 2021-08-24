@@ -72,13 +72,10 @@ public class DiagnosisRecordService {
 	{
 		DiagnosisRecordDTO result = new DiagnosisRecordDTO();
 		
-		List<StatementDTO> diagStatement = getDiagnosisProbInfo(userId, null);
-		lrsAPIManager.saveStatementList(diagStatement);
-		
 		// 1. 해당 유저의 문제 푼 정보 수집.
+		List<StatementDTO> diagStatement = getDiagnosisProbInfo(userId, probSetId);
+		setProbInfoInRecordDTO(result, diagStatement);
 		
-//		setProbInfoInRecordDTO(result, diagStatement);
-//		
 		result.initForDummy();
 		
 		return result;
