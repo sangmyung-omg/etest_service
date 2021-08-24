@@ -55,11 +55,11 @@ public class AnswerControllerV1 {
 	@Value("${etest.recommend.lrs.port}")
 	private String LRS_PORT;
 	
-	@PostMapping(value="problems/{id}/answer-check", produces = "application/json; charset=utf-8")
-	public int checkAnswer(@PathVariable("id") Integer id, @RequestBody ArrayList<StatementDTO> lrsbody) throws Exception {
+	@PostMapping(value="problems/{probId}/answer-check", produces = "application/json; charset=utf-8")
+	public int checkAnswer(@PathVariable("probId") Integer probId, @RequestParam("setId") String setId, @RequestBody ArrayList<StatementDTO> lrsbody) throws Exception {
 		String userAnswer = lrsbody.get(0).getUserAnswer();
 		Map<String, Object> data = null;
-		data = answerServices.getProblemSolution(id);
+		data = answerServices.getProblemSolution(probId);
 		String inputString = data.get("solution").toString();
 		String bug = inputString.substring(0,inputString.indexOf(","));
 		String jd = bug.replaceAll("\\[", "");
@@ -107,12 +107,12 @@ public class AnswerControllerV1 {
 		}
 	}
 
-	@GetMapping(value="/problems/{id}/solution", produces = "application/json; charset=utf-8")
-	public Map<String, Object> problem(@PathVariable("id") Integer id) throws Exception{
+	@GetMapping(value="/problems/{probId}/solution", produces = "application/json; charset=utf-8")
+	public Map<String, Object> problem(@PathVariable("probId") Integer probId) throws Exception{
 		Map<String, Object> output = new HashMap<String, Object>();
 		Map<String, Object> data = null;
 		try {
-			data = answerServices.getSolutionMaterial(id);
+			data = answerServices.getSolutionMaterial(probId);
 			output.put("resultMessage", "success");
 			output.put("data", data);
 		}catch(NoDataException e) {
