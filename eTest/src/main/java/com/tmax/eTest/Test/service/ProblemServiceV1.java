@@ -21,6 +21,7 @@ import org.json.simple.parser.JSONParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
 import com.tmax.eTest.Common.model.problem.DiagnosisCurriculum;
@@ -35,8 +36,9 @@ import com.tmax.eTest.Report.dto.lrs.GetStatementInfoDTO;
 import com.tmax.eTest.Report.dto.lrs.StatementDTO;
 import com.tmax.eTest.Report.util.LRSAPIManager;
 
-@Service
-public class ProblemService {
+@Service("ProblemServiceV1")
+@Primary
+public class ProblemServiceV1 implements ProblemServiceBase {
 
 	private final Logger logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
 
@@ -148,7 +150,7 @@ public class ProblemService {
 		return map;
 	}
 
-	public Map<String, Object> getMinitestProblems(String userId) throws Exception {
+	public Map<String, Object> getMinitestProblems(String userId) {
 		final Integer TOTAL_PART_NUM = 5;
 		final Integer TOTAL_PROB_NUM = 20;
 
@@ -260,8 +262,9 @@ public class ProblemService {
 		MinitestInfo minitestInfo = new MinitestInfo();
 		minitestInfo = parseMinitestQueryResult(partProbIdMap, partNumOrderMap, minitestQueryResult);
 
-		partProbIdMap = minitestInfo.getProbMap();
-		partNumOrderMap = minitestInfo.getNumOrderMap();
+		// 쿼리 해온 미니테스트 문제 정보 - 파트 별 문제 ID map & 각 파트 별 순서 및 문제 개수 map
+		partProbIdMap = minitestInfo.getProbMap();					// {part1: [11, 12, 13, 14, ...], part2: [...], ... }
+		partNumOrderMap = minitestInfo.getNumOrderMap();			// {part1: [1, 4], part2: [2, 3], part3: [3, 5], ...}
 
 		// 함수화로 대체된 코드 (테스트 후 삭제 예정)
 		// for (TestProblem problem : minitestQueryResult) {
@@ -406,4 +409,10 @@ public class ProblemService {
 		minitestInfo.set(probMap, numOrderMap);
 		return minitestInfo;
 	}
+
+	// Not using it
+	public Map<String, Object> getMinitestProblemsV0(Integer userId){
+		return null;
+	}
+
 }
