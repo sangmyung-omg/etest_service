@@ -39,7 +39,7 @@ public class CurriculumController {
 					)).collect(Collectors.toList());
 			return new ResponseEntity<>(body, HttpStatus.OK);
 		}catch (Exception e) {
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 	}
 

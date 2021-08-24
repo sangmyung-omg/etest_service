@@ -10,12 +10,16 @@ import javax.persistence.Table;
 import com.tmax.eTest.Common.model.problem.Problem;
 
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 
-@Data
+//@Data
+@Getter
+@Setter
 @Entity
 @IdClass(ProbUKCompositeKey.class)
-@ToString(exclude = "probID")
+//@ToString(exclude = "probID")
 @Table(name="PROBLEM_UK_REL")
 public class ProblemUKRelation{
 	@Id

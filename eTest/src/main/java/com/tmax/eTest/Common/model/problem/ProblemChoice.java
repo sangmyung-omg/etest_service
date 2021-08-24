@@ -12,7 +12,11 @@ import javax.persistence.Table;
 import com.tmax.eTest.Common.model.uk.UkMaster;
 
 import lombok.Data;
-@Data
+import lombok.Getter;
+import lombok.Setter;
+//@Data
+@Getter
+@Setter
 @IdClass(ProblemChoiceCompositeKey.class)
 @Entity
 @Table(name="PROBLEM_CHOICE")
@@ -33,5 +37,11 @@ public class ProblemChoice {
 	
 	@Column(name="CHOICE_SCORE")
 	private Integer choiceScore;
+	
+	@Column(name="PROB_ID" , insertable = false, updatable = false)
+	private Integer probIDOnly;
+	
+	@Column(name="UK_ID" , insertable = false, updatable = false)
+	private Integer ukIDOnly;
 	
 }

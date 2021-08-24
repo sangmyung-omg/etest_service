@@ -15,10 +15,15 @@ import javax.persistence.Table;
 import com.tmax.eTest.Common.model.error_report.ErrorReport;
 
 import com.tmax.eTest.Common.model.uk.ProblemUKRelation;
+import com.tmax.eTest.Common.model.uk.UkMaster;
 
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+//@Data
+@Getter
+@Setter
 @Entity
 @Table(name="PROBLEM")
 public class Problem {
@@ -45,7 +50,7 @@ public class Problem {
 	private String imgSrc;
 	
 	@Column(name="TIME_RECOMMENDATION")
-	private String timeReco;
+	private Long timeReco;
 	
 	@Column(name="CREATOR_ID", length=32)
 	private String creatorId;
