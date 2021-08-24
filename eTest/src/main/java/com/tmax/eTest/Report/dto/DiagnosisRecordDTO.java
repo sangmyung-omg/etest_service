@@ -37,12 +37,11 @@ public class DiagnosisRecordDTO {
 		List<String> probInfoDTO = new ArrayList<>();
 		
 		probInfoDTO.add(prob.getProbID().toString());
-		//probInfoDTO.add(isCorr);
-		probInfoDTO.add("문제 제목");
-		probInfoDTO.add("문제 내용");
-		probInfoDTO.add("난이도");
+		probInfoDTO.add(isCorr+"");
+		probInfoDTO.add(prob.getQuestion());
+		probInfoDTO.add(prob.getDifficulty());
 		probInfoDTO.add("정답률");
-		probInfoDTO.add("출처");
+		probInfoDTO.add(prob.getSource());
 		
 		return probInfoDTO;
 	}
@@ -50,26 +49,50 @@ public class DiagnosisRecordDTO {
 	// 문제 정보 삽입 함수.
 	public boolean pushProblemList(List<Problem> probs, Map<Integer, Integer> probCorrInfo)
 	{
+		// initialize
+		problemCorrectInfo = new HashMap<>();
+		problemHighLevelInfo = new ArrayList<>();
+		problemMiddleLevelInfo = new ArrayList<>();
+		problemLowLevelInfo = new ArrayList<>();
+		
 		//맞은 문제 난이도 상 중 하, 전체 문제 난이도 상 중 하
 		
 		int[] probCorrAndAllNum = {0,0,0,0,0,0};
 		for(Problem prob : probs)
 		{
 			int isCorr = probCorrInfo.get(prob.getProbID());
-			
+			List<String> probDTO = convertProblemToProbDTOInfo(prob, isCorr);
 			
 			switch(prob.getDifficulty())
 			{
 			case "상":
+				problemHighLevelInfo.add(probDTO);
+				if(isCorr==1) probCorrAndAllNum[0]++;
+				probCorrAndAllNum[3]++;
 				break;
 			case "중":
+				problemMiddleLevelInfo.add(probDTO);
+				if(isCorr==1) probCorrAndAllNum[1]++;
+				probCorrAndAllNum[4]++;
 				break;
 			case "하":
+				problemLowLevelInfo.add(probDTO);
+				if(isCorr==1) probCorrAndAllNum[2]++;
+				probCorrAndAllNum[5]++;
 				break;
 			default:
 				break;
 			}
 		}
+		
+		int allCorr = probCorrAndAllNum[0] + probCorrAndAllNum[1] + probCorrAndAllNum[2];
+		
+		problemCorrectInfo.put("allCorr", allCorr);
+		problemCorrectInfo.put("allProb", probs.size());
+		problemCorrectInfo.put("high", probCorrAndAllNum[0]+"/"+probCorrAndAllNum[3]);
+		problemCorrectInfo.put("middle", probCorrAndAllNum[1]+"/"+probCorrAndAllNum[4]);
+		problemCorrectInfo.put("low", probCorrAndAllNum[2]+"/"+probCorrAndAllNum[5]);
+		
 		
 		return true;
 	}
@@ -136,7 +159,7 @@ public class DiagnosisRecordDTO {
 		detailCommentInfo.put("knowledge", knowledgeCommentInfo);
 		
 		problemCorrectInfo.put("allCorr", 9);
-		problemCorrectInfo.put("allWrong", 3);
+		problemCorrectInfo.put("allProb", 12);
 		problemCorrectInfo.put("high", "2/3");
 		problemCorrectInfo.put("middle", "5/7");
 		problemCorrectInfo.put("low", "2/2");
