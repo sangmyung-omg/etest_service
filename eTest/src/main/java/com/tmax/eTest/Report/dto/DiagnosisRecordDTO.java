@@ -92,7 +92,7 @@ public class DiagnosisRecordDTO {
 		problemCorrectInfo.put("high", probCorrAndAllNum[0]+"/"+probCorrAndAllNum[3]);
 		problemCorrectInfo.put("middle", probCorrAndAllNum[1]+"/"+probCorrAndAllNum[4]);
 		problemCorrectInfo.put("low", probCorrAndAllNum[2]+"/"+probCorrAndAllNum[5]);
-	
+
 		return true;
 	}
 	
