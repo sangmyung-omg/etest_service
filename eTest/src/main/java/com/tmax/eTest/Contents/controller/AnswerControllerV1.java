@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import com.tmax.eTest.Contents.exception.problem.NoDataException;
@@ -105,7 +106,7 @@ public class AnswerControllerV1 {
 			return 0;
 		}
 	}
-	
+
 	@GetMapping(value="/problems/{id}/solution", produces = "application/json; charset=utf-8")
 	public Map<String, Object> problem(@PathVariable("id") Integer id) throws Exception{
 		Map<String, Object> output = new HashMap<String, Object>();
