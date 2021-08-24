@@ -51,7 +51,7 @@ public class SelfDiagnosisReportController {
 	@PutMapping(value="/report/diagnosis/saveResult/{id}/{probSetId}", produces = "application/json; charset=utf-8")
 	public boolean diagnosisResult(
 			@PathVariable("id") String id,
-			@PathVariable("id") String probSetId) throws Exception{
+			@PathVariable("probSetId") String probSetId) throws Exception{
 		
 		// Saving user ID of not-logged-in users - by S.M.
 		//String queryResult = userService.updateUserInfo(id);
@@ -66,7 +66,7 @@ public class SelfDiagnosisReportController {
 	@GetMapping(value="/report/diagnosis/record/{id}/{probSetId}", produces = "application/json; charset=utf-8")
 	public DiagnosisRecordDTO diagnosisRecord(
 			@PathVariable("id") String id,
-			@PathVariable("id") String probSetId) throws Exception{
+			@PathVariable("probSetId") String probSetId) throws Exception{
 		
 		// Saving user ID of not-logged-in users - by S.M.
 		//String queryResult = userService.updateUserInfo(id);
