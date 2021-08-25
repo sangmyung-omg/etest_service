@@ -33,8 +33,8 @@ import com.tmax.eTest.Contents.exception.problem.NoDataException;
 import com.tmax.eTest.Contents.service.AnswerServicesBase;
 import com.tmax.eTest.Contents.service.AnswerServicesV1;
 import com.tmax.eTest.Contents.service.ProblemServices;
-import com.tmax.eTest.Report.dto.lrs.GetStatementInfoDTO;
-import com.tmax.eTest.Report.dto.lrs.StatementDTO;
+import com.tmax.eTest.LRS.dto.GetStatementInfoDTO;
+import com.tmax.eTest.LRS.dto.StatementDTO;
 import com.tmax.eTest.Report.util.LRSAPIManager;
 
 import reactor.core.publisher.Mono;

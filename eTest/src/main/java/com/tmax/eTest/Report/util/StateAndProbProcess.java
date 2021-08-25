@@ -10,9 +10,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Component;
 
-import com.tmax.eTest.Report.dto.lrs.StatementDTO;
 import com.tmax.eTest.Common.model.problem.Problem;
 import com.tmax.eTest.Common.model.uk.UkMaster;
+import com.tmax.eTest.LRS.dto.StatementDTO;
 import com.tmax.eTest.Common.model.uk.ProblemUKRelation;
 @Component
 // Statement(LRS 정보) 와 Problem 정보가 필요한 단순 작업 관련 Method들 집합.
