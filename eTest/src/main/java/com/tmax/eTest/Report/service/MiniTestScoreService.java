@@ -18,9 +18,9 @@ import org.springframework.stereotype.Service;
 
 import com.tmax.eTest.Common.model.problem.Problem;
 import com.tmax.eTest.Contents.repository.ProblemRepository;
+import com.tmax.eTest.LRS.dto.GetStatementInfoDTO;
+import com.tmax.eTest.LRS.dto.StatementDTO;
 import com.tmax.eTest.Report.dto.MiniTestResultDTO;
-import com.tmax.eTest.Report.dto.lrs.GetStatementInfoDTO;
-import com.tmax.eTest.Report.dto.lrs.StatementDTO;
 import com.tmax.eTest.Report.dto.triton.TritonDataDTO;
 import com.tmax.eTest.Report.dto.triton.TritonRequestDTO;
 import com.tmax.eTest.Report.dto.triton.TritonResponseDTO;

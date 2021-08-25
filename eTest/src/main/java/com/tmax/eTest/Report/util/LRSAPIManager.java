@@ -36,9 +36,9 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.tmax.eTest.LRS.dto.GetStatementInfoDTO;
+import com.tmax.eTest.LRS.dto.StatementDTO;
 import com.tmax.eTest.Report.dto.ProblemSolveListDTO;
-import com.tmax.eTest.Report.dto.lrs.GetStatementInfoDTO;
-import com.tmax.eTest.Report.dto.lrs.StatementDTO;
 
 /**
  * Call StatementList GET API from LRS Server
