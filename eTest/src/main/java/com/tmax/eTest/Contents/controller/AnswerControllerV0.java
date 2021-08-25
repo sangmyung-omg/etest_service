@@ -7,6 +7,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpHeaders;
@@ -20,7 +21,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import com.tmax.eTest.Contents.exception.problem.NoDataException;
-import com.tmax.eTest.Contents.service.AnswerServices;
+import com.tmax.eTest.Contents.service.AnswerServicesBase;
+import com.tmax.eTest.Contents.service.AnswerServicesV1;
 import com.tmax.eTest.Contents.service.ProblemServices;
 import reactor.core.publisher.Mono;
 import org.springframework.web.reactive.function.BodyInserters;
@@ -37,7 +39,8 @@ public class AnswerControllerV0 {
 	private final Logger logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
 
 	@Autowired
-	AnswerServices answerServices;
+	@Qualifier("AnswerServicesV0")
+	AnswerServicesBase answerServices;
 	
 	@Autowired
 	ProblemServices problemService;

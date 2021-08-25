@@ -75,7 +75,7 @@ paths:
       tags:
         - Problem
       summary: 해설 받아오기
-      description: 유저가 제출한 정답에 대한 채점결과를 0/1로 반환합니다.
+      description: 특정 진단 세트 ID 에 해당하는 풀이 이력을 조회해서, 문제 해설과 유저가 선택한 정답 정보 반환
       parameters:
         # - $ref: "#/components/parameters/probIds"
         - $ref: "#/components/parameters/setId"
@@ -617,7 +617,7 @@ components:
       description: "진단 세트 ID"
       schema:
         type: string
-        example: "0ca5189a-04a9-11ec-9a03-0242ac130003"
+        example: "301211121278486"
   requestBodies:
     LRSBody:
       description: "LRS에 저장할 statement 구성 정보"
