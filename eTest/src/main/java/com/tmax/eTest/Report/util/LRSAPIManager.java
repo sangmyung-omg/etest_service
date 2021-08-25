@@ -51,6 +51,7 @@ public class LRSAPIManager {
 
 	private final Logger logger = LoggerFactory.getLogger("LRSAPIManager");
 
+	//기본값. 초기화시 변경 됨.
 	private String HOST = "http://192.168.153.132:8080";
 //	private static final String HOST = System.getenv("LRS_HOST");
 
