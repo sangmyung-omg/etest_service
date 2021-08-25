@@ -163,7 +163,7 @@ public class ProblemServiceV1 implements ProblemServiceBase {
 		List<String> continueAnswers = new ArrayList<String>();
 		List<Integer> isCorrect = new ArrayList<Integer>();
 		Integer guessAlarm = 0;
-
+		
 		/*
 		*	LRS에서 문제 풀이 이력 참고해 중복 방지.
 		*/
