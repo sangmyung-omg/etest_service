@@ -20,12 +20,9 @@ import org.springframework.stereotype.Service;
 
 import com.tmax.eTest.Common.model.problem.Problem;
 import com.tmax.eTest.Contents.repository.ProblemRepository;
-<<<<<<< Upstream, based on origin/master
 import com.tmax.eTest.LRS.dto.GetStatementInfoDTO;
 import com.tmax.eTest.LRS.dto.StatementDTO;
 import com.tmax.eTest.LRS.util.LRSAPIManager;
-=======
->>>>>>> f27ccd7 [feat] 자가진단 더미 재구성. (Main 과 Detail의 분류)
 import com.tmax.eTest.Report.dto.DiagnosisRecordDetailDTO;
 import com.tmax.eTest.Report.dto.DiagnosisRecordMainDTO;
 import com.tmax.eTest.Report.dto.DiagnosisResultDTO;
@@ -72,11 +69,9 @@ public class DiagnosisRecordService {
 	SNDCalculator sndCalculator;
 
 	private final Logger logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
-<<<<<<< Upstream, based on origin/master
-	
+
 	private final List<String> partNameList = new ArrayList<>(Arrays.asList("risk", "invest", "knowledge"));
-=======
->>>>>>> f27ccd7 [feat] 자가진단 더미 재구성. (Main 과 Detail의 분류)
+
 
 	public DiagnosisRecordMainDTO getDiagnosisRecordMain(String userId, String probSetId) throws Exception {
 		DiagnosisRecordMainDTO result = new DiagnosisRecordMainDTO();
@@ -103,7 +98,6 @@ public class DiagnosisRecordService {
 			String probSetId,
 			String partName) throws Exception {
 		DiagnosisRecordDetailDTO result = new DiagnosisRecordDetailDTO();
-<<<<<<< Upstream, based on origin/master
 		
 		if(!partNameList.contains(partName))
 			throw new ReportBadRequestException("PartName unavailable. "+partName);
@@ -121,20 +115,6 @@ public class DiagnosisRecordService {
 //			throw new ReportBadRequestException("Problem Set Id is unavailable. "+probSetId);
 		
 		
-=======
-
-//		DiagnosisReportKey key = new DiagnosisReportKey();
-//		key.setDiagnosisId(probSetId);
-//		
-//		Optional<DiagnosisReport> report = diagnosisReportRepo.findById(key);
-//		
-//		if(report.isPresent())
-//		{
-//			
-//		}
-//		else
-//			throw new ReportBadRequestException("Problem Set Id is unavailable. "+probSetId);
->>>>>>> f27ccd7 [feat] 자가진단 더미 재구성. (Main 과 Detail의 분류)
 
 		result.initForDummy();
 
