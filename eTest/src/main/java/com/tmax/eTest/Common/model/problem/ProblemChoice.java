@@ -14,9 +14,7 @@ import com.tmax.eTest.Common.model.uk.UkMaster;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
-//@Data
-@Getter
-@Setter
+@Data
 @IdClass(ProblemChoiceCompositeKey.class)
 @Entity
 @Table(name="PROBLEM_CHOICE")

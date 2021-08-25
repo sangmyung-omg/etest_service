@@ -390,8 +390,7 @@ public class TestProblemApiComponentTs {
 			
 			return "success";
 		}catch(Exception e) {
-			 e.printStackTrace(); 
-			 return "fail";		
+			 throw e;
 		}
 	}
 	
