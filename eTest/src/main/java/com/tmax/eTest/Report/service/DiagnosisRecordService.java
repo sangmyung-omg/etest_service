@@ -3,6 +3,7 @@ package com.tmax.eTest.Report.service;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -68,6 +69,8 @@ public class DiagnosisRecordService {
 	SNDCalculator sndCalculator;
 
 	private final Logger logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
+	
+	private final List<String> partNameList = new ArrayList<>(Arrays.asList("risk", "invest", "knowledge"));
 
 	public DiagnosisRecordMainDTO getDiagnosisRecordMain(String userId, String probSetId) throws Exception {
 		DiagnosisRecordMainDTO result = new DiagnosisRecordMainDTO();
@@ -94,6 +97,9 @@ public class DiagnosisRecordService {
 			String probSetId,
 			String partName) throws Exception {
 		DiagnosisRecordDetailDTO result = new DiagnosisRecordDetailDTO();
+		
+		if(!partNameList.contains(partName))
+			throw new ReportBadRequestException("PartName unavailable. "+partName);
 
 //		DiagnosisReportKey key = new DiagnosisReportKey();
 //		key.setDiagnosisId(probSetId);
@@ -106,6 +112,8 @@ public class DiagnosisRecordService {
 //		}
 //		else
 //			throw new ReportBadRequestException("Problem Set Id is unavailable. "+probSetId);
+		
+		
 
 		result.initForDummy();
 
