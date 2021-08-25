@@ -14,9 +14,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-//@Data
-@Getter
-@Setter
+@Data
 @Entity
 @IdClass(ProbUKCompositeKey.class)
 //@ToString(exclude = "probID")
