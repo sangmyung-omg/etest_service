@@ -59,16 +59,9 @@ public class StatementService {
 		return results;
 	}
 
-	public List<StatementDTO> getStatementList(
-			GetStatementInfoDTO searchInfo, 
-			boolean isAscTimestamp, 
-			boolean checkIsNotDeleted) {
-		
-		List<Statement> dbRes = statementRepo.findAll(
-				StatementSpecs.searchStatement(searchInfo, isAscTimestamp, checkIsNotDeleted));
+	public List<StatementDTO> getStatementList(GetStatementInfoDTO searchInfo, boolean isAsc, boolean checkIsNotDeleted) {
+		List<Statement> dbRes = statementRepo.findAll(StatementSpecs.searchStatement(searchInfo, isAsc, checkIsNotDeleted));
 		List<StatementDTO> result = new ArrayList<StatementDTO>();
-		
-		logger.info(result.toString());
 
 		int recentNum = (searchInfo.getRecentStatementNum() != null)
 				?searchInfo.getRecentStatementNum()
@@ -82,12 +75,12 @@ public class StatementService {
 	}
 	
 	
-	public boolean setStatementDisable(String userIdToken)
+	public boolean setStatementDisable(String token)
 	{
 		String userID = null;
 		
 		try {
-			userID = JWTUtil.getJWTPayloadField(userIdToken, "userID");
+			userID = JWTUtil.getJWTPayloadField(token, "userID");
 			logger.info("setStatementDisable userID : "+userID);
 		}
 		catch(Exception e)
