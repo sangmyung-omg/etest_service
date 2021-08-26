@@ -34,6 +34,11 @@ public class ArticleService {
   @Autowired
   private LRSService lrsService;
 
+  public ArticleDTO getArticle(String userId, Long articleId) {
+    ArticleJoin article = articleRepositorySupport.findArticleByUserAndId(userId, articleId);
+    return convertArticleJoinToDTO(article);
+  }
+
   public ListDTO.Article getArticleList(String userId, String keyword) {
     List<ArticleJoin> articles = articleRepositorySupport.findArticlesByUser(userId, keyword);
     return convertArticleJoinToDTO(articles);
@@ -85,6 +90,14 @@ public class ArticleService {
   // articleUks.getUkMaster().getUkName()).collect(Collectors.toList())))
   // .collect(Collectors.toList()));
   // }
+
+  public ArticleDTO convertArticleJoinToDTO(ArticleJoin articleJoin) {
+    Article article = articleJoin.getArticle();
+    return new ArticleDTO(article.getArticleId(), article.getArticleUrl(), article.getTitle(),
+        article.getCreateDate().toString(), article.getCreatorId(), article.getDescription(), article.getImgSrc(),
+        article.getSource(), !CommonUtils.stringNullCheck(articleJoin.getUserUuid()), article.getArticleUks().stream()
+            .map(articleUks -> articleUks.getUkMaster().getUkName()).collect(Collectors.toList()));
+  }
 
   public ListDTO.Article convertArticleJoinToDTO(List<ArticleJoin> articleJoins) {
     return new ListDTO.Article(articleJoins.size(), articleJoins.stream().map(articleJoin -> {

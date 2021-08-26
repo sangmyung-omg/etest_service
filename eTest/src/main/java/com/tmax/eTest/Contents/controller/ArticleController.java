@@ -22,6 +22,13 @@ public class ArticleController {
   @Autowired
   private ArticleService articleService;
 
+  @GetMapping("/users/{user_id}/articles/{article_id}")
+  public ResponseEntity<Object> getArticle(@PathVariable("user_id") String userId,
+      @PathVariable("article_id") Long articleId) {
+    log.info("---getArticle---");
+    return new ResponseEntity<>(articleService.getArticle(userId, articleId), HttpStatus.OK);
+  }
+
   @GetMapping("/users/{user_id}/articles")
   public ResponseEntity<Object> getArticleList(@PathVariable("user_id") String userId,
       @RequestParam(value = "keyword", required = false) String keyword) {

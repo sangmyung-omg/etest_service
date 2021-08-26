@@ -58,6 +58,11 @@ public class VideoService {
     return convertVideoCurriculumToDTO(curriculums);
   }
 
+  public VideoDTO getVideo(String userId, Long videoId) {
+    VideoJoin video = videoRePositorySupport.findVideoByUserAndId(userId, videoId);
+    return convertVideoJoinToDTO(video);
+  }
+
   public ListDTO.Video getVideoList(String userId, Long curriculumId, SortType sort, String keyword) {
     List<VideoJoin> videos = videoRePositorySupport.findVideosByUserAndCurriculum(userId, curriculumId, sort, keyword);
     return convertVideoJoinToDTO(videos);
@@ -134,6 +139,19 @@ public class VideoService {
   // .collect(Collectors.toList())))
   // .collect(Collectors.toList()));
   // }
+
+  public VideoDTO convertVideoJoinToDTO(VideoJoin videoJoin) {
+    Video video = videoJoin.getVideo();
+    return new VideoDTO(video.getVideoId(), video.getVideoSrc(), video.getTitle(), video.getCreateDate().toString(),
+        video.getCreatorId(), video.getImgSrc(), video.getVideoCurriculum().getSubject(), video.getTotalTime(),
+        video.getVideoHit().getHit(), !CommonUtils.stringNullCheck(videoJoin.getUserUuid()),
+        !CommonUtils.stringNullCheck(video.getVideoSrc()) && video.getVideoSrc().contains(YOUTUBE_TYPE)
+            ? VideoType.YOUTUBE.toString()
+            : VideoType.SELF.toString(),
+        video.getVideoUks().stream().map(videoUks -> videoUks.getUkMaster().getUkName()).collect(Collectors.toList()),
+        video.getVideoHashtags().stream().map(videoHashtags -> videoHashtags.getHashtag().getName())
+            .collect(Collectors.toList()));
+  }
 
   public ListDTO.Video convertVideoJoinToDTO(List<VideoJoin> videoJoins) {
     return new ListDTO.Video(videoJoins.size(), videoJoins.stream().map(videoJoin -> {

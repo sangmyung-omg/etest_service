@@ -46,6 +46,66 @@ paths:
                           type: integer
                         subject:
                           type: string
+  /users/{user_id}/videos/{video_id}:
+    get:
+      tags:
+        - Video
+      summary : 유저의 영상 조회
+      description : 유저의 북마크 정보를 포함한 영상 조회
+      parameters:
+      - name: user_id
+        in: path
+        description: 사용자 아이디
+        required: true
+        schema:
+          type: string
+          format: string
+      - name: video_id
+        in: path
+        description: 영상 아이디
+        required: true
+        schema:
+          type: integer
+          format: integer
+      responses:
+        200:
+          description: OK
+          content:
+            json:
+              schema:
+                type: object
+                properties:
+                  videoId:
+                    type: integer
+                  videoSrc:
+                    type: string
+                  title: 
+                    type: string
+                  createDate:
+                    type: string
+                  creatorId: 
+                    type: string
+                  imgSrc: 
+                    type: string
+                  subject: 
+                    type: string
+                  totalTime: 
+                    type: number
+                  hit: 
+                    type: integer
+                  bookmark: 
+                    type: boolean
+                  videoType:
+                    type: string
+                    description: YOUTBUE(유튜브 영상)/SELF(자체 제작)
+                  uks:
+                    type: array
+                    items:
+                      type: string
+                  hashtags:
+                    type: array
+                    items:
+                      type: string
   /users/{user_id}/videos:
     get:
       tags:
@@ -229,8 +289,8 @@ paths:
         description: 영상 아이디
         required: true
         schema:
-          type: string
-          format: string
+          type: integer
+          format: integer
       responses:
         200:
           description: OK
@@ -258,8 +318,8 @@ paths:
         description: 영상 아이디
         required: true
         schema:
-          type: string
-          format: string
+          type: integer
+          format: integer
       responses:
         200:
           description: OK
@@ -298,7 +358,52 @@ paths:
               schema:
                 type: object
                 example:
-                  isSuccess: true   
+                  isSuccess: true
+  /users/{user_id}/books/{book_id}:
+    get:
+      tags:
+        - Book
+      summary : 유저의 교재 조회
+      description : 유저의 북마크 정보를 포함한 교재 조회
+      parameters:
+      - name: user_id
+        in: path
+        description: 사용자 아이디
+        required: true
+        schema:
+          type: string
+          format: string
+      - name: book_id
+        in: path
+        description: 교재 아이디
+        required: true
+        schema:
+          type: integer
+          format: integer
+      responses:
+        200:
+          description: OK
+          content:
+            json:
+              schema:
+                type: object
+                properties:
+                  bookId:
+                    type: integer
+                  bookSrc:
+                    type: string
+                  title: 
+                    type: string
+                  createDate: 
+                    type: string
+                  creatorId: 
+                    type: string
+                  imgSrc: 
+                    type: string
+                  description: 
+                    type: string
+                  bookmark: 
+                    type: boolean
   /users/{user_id}/books:
     get:
       tags:
@@ -422,8 +527,8 @@ paths:
         description: 교재 아이디
         required: true
         schema:
-          type: string
-          format: string
+          type: integer
+          format: integer
       responses:
         200:
           description: OK
@@ -491,7 +596,58 @@ paths:
               schema:
                 type: object
                 example:
-                  isSuccess: true   
+                  isSuccess: true
+  /users/{user_id}/wikis/{wiki_id}:
+    get:
+      tags:
+        - Wikipedia
+      summary : 유저의 백과사전 조회
+      description : 유저의 북마크 정보를 포함한 백과사전 조회
+      parameters:
+      - name: user_id
+        in: path
+        description: 사용자 아이디
+        required: true
+        schema:
+          type: string
+          format: string
+      - name: wiki_id
+        in: path
+        description: 백과사전 아이디
+        required: true
+        schema:
+          type: integer
+          format: integer
+      responses:
+        200:
+          description: OK
+          content:
+            json:
+              schema:
+                type: object
+                properties:
+                  wikiId:
+                    type: integer
+                  title: 
+                    type: string
+                  createDate: 
+                    type: string
+                  creatorId: 
+                    type: string
+                  imgSrc: 
+                    type: string
+                  description: 
+                    type: string
+                  summary: 
+                    type: string
+                  source: 
+                    type: string
+                  bookmark: 
+                    type: boolean
+                  uks:
+                    type: array
+                    items:
+                      type: string
   /users/{user_id}/wikis:
     get:
       tags:
@@ -712,7 +868,58 @@ paths:
               schema:
                 type: object
                 example:
-                  isSuccess: true   
+                  isSuccess: true
+  /users/{user_id}/articles/{article_id}:
+    get:
+      tags:
+        - Article
+      summary : 유저의 아티클 조회
+      description : 유저의 북마크 정보를 포함한 아티클 조회
+      parameters:
+      - name: user_id
+        in: path
+        description: 사용자 아이디
+        required: true
+        schema:
+          type: string
+          format: string
+      - name: article_id
+        in: path
+        description: 아티클 아이디
+        required: true
+        schema:
+          type: integer
+          format: integer
+      responses:
+        200:
+          description: OK
+          content:
+            json:
+              schema:
+                type: object
+                properties:
+                  articleId:
+                    type: integer
+                  articleUrl: 
+                    type: string
+                  title: 
+                    type: string
+                  createDate: 
+                    type: string
+                  creatorId: 
+                    type: string
+                  description: 
+                    type: string
+                  imgSrc: 
+                    type: string
+                  source: 
+                    type: string
+                  bookmark: 
+                    type: boolean
+                  uks:
+                    type: array
+                    items:
+                      type: string
   /users/{user_id}/articles:
     get:
       tags:

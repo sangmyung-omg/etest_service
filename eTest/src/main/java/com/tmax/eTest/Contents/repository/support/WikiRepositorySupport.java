@@ -27,6 +27,11 @@ public class WikiRepositorySupport extends QuerydslRepositorySupport {
     this.query = query;
   }
 
+  public WikiJoin findWikiByUserAndId(String userId, Long wikiId) {
+    return tupleToJoin(query.select(wiki, wikiBookmark.userUuid).from(wiki).leftJoin(wiki.wikiBookmarks, wikiBookmark)
+        .on(userEq(userId)).where(idEq(wikiId)).fetchOne());
+  }
+
   public List<WikiJoin> findWikisByUser(String userId, String keyword) {
     return tupleToJoin(query.select(wiki, wikiBookmark.userUuid).from(wiki).leftJoin(wiki.wikiBookmarks, wikiBookmark)
         .on(userEq(userId)).where(checkKeyword(keyword)).orderBy().fetch());
@@ -41,10 +46,18 @@ public class WikiRepositorySupport extends QuerydslRepositorySupport {
     return CommonUtils.stringNullCheck(userId) ? null : wikiBookmark.userUuid.eq(userId);
   }
 
+  private BooleanExpression idEq(Long wikiId) {
+    return CommonUtils.objectNullcheck(wikiId) ? null : wiki.wikiId.eq(wikiId);
+  }
+
   private BooleanExpression checkKeyword(String keyword) {
     return CommonUtils.stringNullCheck(keyword) ? null
         : wiki.title.contains(keyword).or(wiki.wikiUks.any().in(JPAExpressions.selectFrom(wikiUkRel)
             .where(wikiUkRel.wiki.eq(wiki), wikiUkRel.ukMaster.ukName.contains(keyword))));
+  }
+
+  private WikiJoin tupleToJoin(Tuple tuple) {
+    return new WikiJoin(tuple.get(wiki), tuple.get(wikiBookmark.userUuid));
   }
 
   private List<WikiJoin> tupleToJoin(List<Tuple> tuples) {

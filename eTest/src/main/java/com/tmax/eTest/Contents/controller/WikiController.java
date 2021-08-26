@@ -22,6 +22,12 @@ public class WikiController {
   @Autowired
   private WikiService wikiService;
 
+  @GetMapping("/users/{user_id}/wikis/{wiki_id}")
+  public ResponseEntity<Object> getWiki(@PathVariable("user_id") String userId, @PathVariable("wiki_id") Long wikiId) {
+    log.info("---getWiki---");
+    return new ResponseEntity<>(wikiService.getWiki(userId, wikiId), HttpStatus.OK);
+  }
+
   @GetMapping("/users/{user_id}/wikis")
   public ResponseEntity<Object> getWikiList(@PathVariable("user_id") String userId,
       @RequestParam(value = "keyword", required = false) String keyword) {

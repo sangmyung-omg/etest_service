@@ -29,6 +29,13 @@ public class VideoController {
     return new ResponseEntity<>(videoService.getVideoCurriculumList(), HttpStatus.OK);
   }
 
+  @GetMapping("/users/{user_id}/videos/{video_id}")
+  public ResponseEntity<Object> getVideo(@PathVariable("user_id") String userId,
+      @PathVariable("video_id") Long videoId) {
+    log.info("---getVideo---");
+    return new ResponseEntity<>(videoService.getVideo(userId, videoId), HttpStatus.OK);
+  }
+
   @GetMapping("/users/{user_id}/videos")
   public ResponseEntity<Object> getVideoList(@PathVariable("user_id") String userId,
       @RequestParam(value = "curriculumId", required = false) Long curriculumId,

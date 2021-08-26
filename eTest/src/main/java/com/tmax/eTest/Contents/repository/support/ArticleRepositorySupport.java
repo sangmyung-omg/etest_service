@@ -27,6 +27,11 @@ public class ArticleRepositorySupport extends QuerydslRepositorySupport {
     this.query = query;
   }
 
+  public ArticleJoin findArticleByUserAndId(String userId, Long articleId) {
+    return tupleToJoin(query.select(article, articleBookmark.userUuid).from(article)
+        .leftJoin(article.articleBookmarks, articleBookmark).on(userEq(userId)).where(idEq(articleId)).fetchOne());
+  }
+
   public List<ArticleJoin> findArticlesByUser(String userId, String keyword) {
     return tupleToJoin(query.select(article, articleBookmark.userUuid).from(article)
         .leftJoin(article.articleBookmarks, articleBookmark).on(userEq(userId)).where(checkKeyword(keyword)).orderBy()
@@ -43,10 +48,18 @@ public class ArticleRepositorySupport extends QuerydslRepositorySupport {
     return CommonUtils.stringNullCheck(userId) ? null : articleBookmark.userUuid.eq(userId);
   }
 
+  private BooleanExpression idEq(Long articleId) {
+    return CommonUtils.objectNullcheck(articleId) ? null : article.articleId.eq(articleId);
+  }
+
   private BooleanExpression checkKeyword(String keyword) {
     return CommonUtils.stringNullCheck(keyword) ? null
         : article.title.contains(keyword).or(article.articleUks.any().in(JPAExpressions.selectFrom(articleUkRel)
             .where(articleUkRel.article.eq(article), articleUkRel.ukMaster.ukName.contains(keyword))));
+  }
+
+  private ArticleJoin tupleToJoin(Tuple tuple) {
+    return new ArticleJoin(tuple.get(article), tuple.get(articleBookmark.userUuid));
   }
 
   private List<ArticleJoin> tupleToJoin(List<Tuple> tuples) {

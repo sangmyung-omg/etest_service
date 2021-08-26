@@ -1,7 +1,6 @@
 package com.tmax.eTest.Contents.util;
 
 import java.time.Duration;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
@@ -119,10 +118,8 @@ public class LRSService {
         .userIdList(userIdList).build();
   }
 
-  public LRSGetStatementDTO makeGetStatement() {
-    LocalDate date = LocalDate.now();
-    String dateFrom = date.toString();
-    String dateTo = date.plusDays(1).toString();
+  public LRSGetStatementDTO makeGetStatement(String dateFrom, String dateTo) {
+    log.info("DateFrom: " + dateFrom + " DateTo: " + dateTo);
     List<String> actionTypeList = Arrays.asList(ACTION_TYPE.enter.toString());
     List<String> sourceTypeList = Stream.of(SOURCE_TYPE.values()).map(Enum::name).collect(Collectors.toList());
     return LRSGetStatementDTO.builder().actionTypeList(actionTypeList).sourceTypeList(sourceTypeList).dateFrom(dateFrom)

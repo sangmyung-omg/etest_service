@@ -32,6 +32,11 @@ public class WikiService {
   @Autowired
   private LRSService lrsService;
 
+  public WikiDTO getWiki(String userId, Long wikiId) {
+    WikiJoin wiki = wikiRepositorySupport.findWikiByUserAndId(userId, wikiId);
+    return convertWikiJoinToDTO(wiki);
+  }
+
   public ListDTO.Wiki getWikiList(String userId, String keyword) {
     List<WikiJoin> wikis = wikiRepositorySupport.findWikisByUser(userId, keyword);
     return convertWikiJoinToDTO(wikis);
@@ -83,6 +88,14 @@ public class WikiService {
   // wikiUks.getUkMaster().getUkName()).collect(Collectors.toList())))
   // .collect(Collectors.toList()));
   // }
+
+  public WikiDTO convertWikiJoinToDTO(WikiJoin wikiJoin) {
+    Wiki wiki = wikiJoin.getWiki();
+    return new WikiDTO(wiki.getWikiId(), wiki.getTitle(), wiki.getCreateDate().toString(), wiki.getCreatorId(),
+        wiki.getDescription(), wiki.getSummary(), wiki.getSource(),
+        !CommonUtils.stringNullCheck(wikiJoin.getUserUuid()),
+        wiki.getWikiUks().stream().map(wikiUks -> wikiUks.getUkMaster().getUkName()).collect(Collectors.toList()));
+  }
 
   public ListDTO.Wiki convertWikiJoinToDTO(List<WikiJoin> wikiJoins) {
     return new ListDTO.Wiki(wikiJoins.size(), wikiJoins.stream().map(wikiJoin -> {

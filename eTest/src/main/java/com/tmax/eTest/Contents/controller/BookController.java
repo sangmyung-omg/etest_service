@@ -21,6 +21,12 @@ public class BookController {
   @Autowired
   private BookService bookService;
 
+  @GetMapping("/users/{user_id}/books/{book_id}")
+  public ResponseEntity<Object> getBook(@PathVariable("user_id") String userId, @PathVariable("book_id") Long bookId) {
+    log.info("---getBook---");
+    return new ResponseEntity<>(bookService.getBook(userId, bookId), HttpStatus.OK);
+  }
+
   @GetMapping("/users/{user_id}/books")
   public ResponseEntity<Object> getBookList(@PathVariable("user_id") String userId,
       @RequestParam(value = "keyword", required = false) String keyword) {

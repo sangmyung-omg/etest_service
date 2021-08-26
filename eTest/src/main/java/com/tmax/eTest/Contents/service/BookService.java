@@ -33,6 +33,11 @@ public class BookService {
   @Autowired
   private LRSService lrsService;
 
+  public BookDTO getBook(String userId, Long bookId) {
+    BookJoin book = bookRepositorySupport.findBookByUserAndId(userId, bookId);
+    return convertBookJoinToDTO(book);
+  }
+
   public ListDTO.Book getBookList(String userId, String keyword) {
     List<BookJoin> books = bookRepositorySupport.findBooksByUser(userId, keyword);
     return convertBookJoinToDTO(books);
@@ -81,6 +86,13 @@ public class BookService {
   // !CommonUtils.objectNullcheck(book.getBookBookmarks())))
   // .collect(Collectors.toList()));
   // }
+
+  public BookDTO convertBookJoinToDTO(BookJoin bookJoin) {
+    Book book = bookJoin.getBook();
+    return new BookDTO(book.getBookId(), book.getBookSrc(), book.getTitle(), book.getCreateDate().toString(),
+        book.getCreatorId(), book.getImgSrc(), book.getDescription(),
+        !CommonUtils.stringNullCheck(bookJoin.getUserUuid()));
+  }
 
   public ListDTO.Book convertBookJoinToDTO(List<BookJoin> bookJoins) {
     return new ListDTO.Book(bookJoins.size(), bookJoins.stream().map(bookJoin -> {

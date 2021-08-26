@@ -48,6 +48,11 @@ public class VideoRepositorySupport extends QuerydslRepositorySupport {
     }
   }
 
+  public VideoJoin findVideoByUserAndId(String userId, Long videoId) {
+    return tupleToJoin(query.select(video, videoBookmark.userUuid).from(video)
+        .leftJoin(video.videoBookmarks, videoBookmark).on(userEq(userId)).where(idEq(videoId)).fetchOne());
+  }
+
   public List<VideoJoin> findVideosByUserAndCurriculum(String userId, Long curriculumId, SortType sort,
       String keyword) {
     return tupleToJoin(query.select(video, videoBookmark.userUuid).from(video)
@@ -66,6 +71,10 @@ public class VideoRepositorySupport extends QuerydslRepositorySupport {
     return CommonUtils.stringNullCheck(userId) ? null : videoBookmark.userUuid.eq(userId);
   }
 
+  private BooleanExpression idEq(Long videoId) {
+    return CommonUtils.objectNullcheck(videoId) ? null : video.videoId.eq(videoId);
+  }
+
   private BooleanExpression curriculumEq(Long curriculumId) {
     return CommonUtils.objectNullcheck(curriculumId) ? null : video.curriculumId.eq(curriculumId);
   }
@@ -78,6 +87,11 @@ public class VideoRepositorySupport extends QuerydslRepositorySupport {
                     videoUkRel.ukMaster.ukName.contains(keyword))))
             .or(video.videoHashtags.any().in(JPAExpressions.selectFrom(videoHashtag).where(videoHashtag.video.eq(video),
                 videoHashtag.hashtag.name.contains(keyword))));
+  }
+
+  private VideoJoin tupleToJoin(Tuple tuple) {
+    log.info(tuple.toString());
+    return new VideoJoin(tuple.get(video), tuple.get(videoBookmark.userUuid));
   }
 
   private List<VideoJoin> tupleToJoin(List<Tuple> tuples) {
