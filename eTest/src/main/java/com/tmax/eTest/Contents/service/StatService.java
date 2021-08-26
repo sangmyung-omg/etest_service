@@ -69,6 +69,7 @@ public class StatService {
       BookMark bookMark = new BookMark(videoBookmarkRepository.countByUserUuid(userId),
           bookBookmarkRepository.countByUserUuid(userId), wikiBookmarkRepository.countByUserUuid(userId),
           articleBookmarkRepository.countByUserUuid(userId));
+
       Map<String, Long> counterMap = userMap.get(userId).stream()
           .collect(Collectors.groupingBy(e -> e.getSourceType(), Collectors.counting()));
       Hit hit = new Hit(CommonUtils.zeroIfNull(counterMap.get(LRSService.SOURCE_TYPE.video.name())),
@@ -90,17 +91,4 @@ public class StatService {
                 new Hit(hitStat.getVideoHit(), hitStat.getBookHit(), hitStat.getWikiHit(), hitStat.getArticleHit())))
             .collect(Collectors.toList()));
   }
-
-  // public ListDTO.Stat convertStatToDTO(List<HitStat> hitStats, List<Integer>
-  // videoHits, ) {
-  // return new ListDTO.Stat(hitStats.size(),
-  // hitStats.stream()
-  // .map(hitStat -> new StatDTO(hitStat.getStatDate(),
-  // new Hit(sum(hitStat.getVideoHit(), hitStat.getBookHit(),
-  // hitStat.getWikiHit(), hitStat.getArticleHit()),
-  // hitStat.getVideoHit(), hitStat.getBookHit(), hitStat.getWikiHit(),
-  // hitStat.getArticleHit())))
-  // .collect(Collectors.toList()));
-  // }
-
 }
