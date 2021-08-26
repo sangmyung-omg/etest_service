@@ -10,10 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-<<<<<<< Upstream, based on origin/master
 import com.tmax.eTest.LRS.util.LRSAPIManager;
-=======
->>>>>>> f27ccd7 [feat] 자가진단 더미 재구성. (Main 과 Detail의 분류)
 import com.tmax.eTest.Report.dto.DiagnosisRecordDetailDTO;
 import com.tmax.eTest.Report.dto.DiagnosisRecordMainDTO;
 import com.tmax.eTest.Report.dto.DiagnosisResultDTO;
