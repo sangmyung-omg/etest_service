@@ -18,14 +18,14 @@ import org.springframework.stereotype.Service;
 
 import com.tmax.eTest.Common.model.problem.Problem;
 import com.tmax.eTest.Contents.repository.ProblemRepository;
+import com.tmax.eTest.LRS.dto.GetStatementInfoDTO;
+import com.tmax.eTest.LRS.dto.StatementDTO;
+import com.tmax.eTest.LRS.util.LRSAPIManager;
 import com.tmax.eTest.Report.dto.DiagnosisResultDTO;
 import com.tmax.eTest.Report.dto.PartUnderstandingDTO;
-import com.tmax.eTest.Report.dto.lrs.GetStatementInfoDTO;
-import com.tmax.eTest.Report.dto.lrs.StatementDTO;
 import com.tmax.eTest.Report.dto.triton.TritonDataDTO;
 import com.tmax.eTest.Report.dto.triton.TritonResponseDTO;
 import com.tmax.eTest.Report.exception.ReportBadRequestException;
-import com.tmax.eTest.Report.util.LRSAPIManager;
 import com.tmax.eTest.Report.util.RuleBaseScoreCalculator;
 import com.tmax.eTest.Report.util.SNDCalculator;
 import com.tmax.eTest.Report.util.SelfDiagnosisComment;

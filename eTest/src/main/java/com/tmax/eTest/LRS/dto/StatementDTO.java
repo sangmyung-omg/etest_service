@@ -1,4 +1,6 @@
-package com.tmax.eTest.Report.dto.lrs;
+package com.tmax.eTest.LRS.dto;
+
+import com.tmax.eTest.LRS.model.Statement;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -88,4 +90,19 @@ public class StatementDTO {
 			value = "활동의 정답 여부. (0 : Fail, 1 : Success)")
     private Integer isCorrect;
 
+	
+	 public StatementDTO(Statement dao)
+    {
+        this.userId = dao.getUserId();
+        this.actionType = dao.getActionType();
+        this.sourceType = dao.getSourceType();
+        this.sourceId = dao.getSourceId();
+        this.timestamp = dao.getTimestamp();
+        this.platform = dao.getPlatform();
+        this.cursorTime = dao.getCursorTime();
+        this.userAnswer = dao.getUserAnswer();
+        this.duration = dao.getDuration();
+        this.extension = dao.getExtension();
+        this.isCorrect = dao.getIsCorrect();
+    }
 }

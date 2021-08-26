@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.tmax.eTest.Contents.dto.CustomizedSolutionDTO;
-import com.tmax.eTest.Report.dto.lrs.StatementDTO;
+import com.tmax.eTest.LRS.dto.StatementDTO;
 
 public interface AnswerServicesBase {
     public Integer evaluateIfCorrect(Integer probId, ArrayList<StatementDTO> lrsbody);
