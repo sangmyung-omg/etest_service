@@ -1,6 +1,7 @@
 package com.tmax.eTest.Contents.util;
 
 import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
@@ -50,8 +51,7 @@ public class LRSService {
 
   public LRSService(@Value("${etest.recommend.lrs.host}") String LRS_HOST,
       @Value("${etest.recommend.lrs.port}") String LRS_PORT) {
-    this.LRS_API_BASE = new StringBuilder(this.LRS_HTTP).append(LRS_HOST).append(this.COLON).append(LRS_PORT)
-        .toString();
+    this.LRS_API_BASE = new StringBuilder(LRS_HTTP).append(LRS_HOST).append(COLON).append(LRS_PORT).toString();
   }
 
   public void init(String suffix) {
@@ -117,5 +117,15 @@ public class LRSService {
     List<String> sourceTypeList = Stream.of(SOURCE_TYPE.values()).map(Enum::name).collect(Collectors.toList());
     return LRSGetStatementDTO.builder().actionTypeList(actionTypeList).sourceTypeList(sourceTypeList)
         .userIdList(userIdList).build();
+  }
+
+  public LRSGetStatementDTO makeGetStatement() {
+    LocalDate date = LocalDate.now();
+    String dateFrom = date.toString();
+    String dateTo = date.plusDays(1).toString();
+    List<String> actionTypeList = Arrays.asList(ACTION_TYPE.enter.toString());
+    List<String> sourceTypeList = Stream.of(SOURCE_TYPE.values()).map(Enum::name).collect(Collectors.toList());
+    return LRSGetStatementDTO.builder().actionTypeList(actionTypeList).sourceTypeList(sourceTypeList).dateFrom(dateFrom)
+        .dateTo(dateTo).build();
   }
 }

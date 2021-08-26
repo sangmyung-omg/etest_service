@@ -21,6 +21,7 @@ public class HitStat {
   @Id
   private Date statDate;
   @Id
+  // @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "HIT_STAT_SEQ")
   private Long hitStatId;
   private Long videoHit;
   private Long bookHit;

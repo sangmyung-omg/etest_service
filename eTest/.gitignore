@@ -39,4 +39,4 @@ out/
 
 ### log file ###
 log/test.log
-!**/src/main/resources/logback.xml
+src/main/resources/logback.xml
