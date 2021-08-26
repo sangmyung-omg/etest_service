@@ -36,6 +36,7 @@ import com.tmax.eTest.Contents.service.ProblemServices;
 import com.tmax.eTest.LRS.dto.GetStatementInfoDTO;
 import com.tmax.eTest.LRS.dto.StatementDTO;
 import com.tmax.eTest.LRS.util.LRSAPIManager;
+import com.tmax.eTest.LRS.dto.StatementDTO;
 
 import reactor.core.publisher.Mono;
 import org.springframework.web.reactive.function.BodyInserters;
