@@ -300,11 +300,6 @@ public class SelfDiagnosisReportService {
 		
 		// score 관련 저장
 		report.setGiScore((float)scoreMap.get(RuleBaseScoreCalculator.GI_SCORE_KEY));
-<<<<<<< HEAD
-
-=======
-		
->>>>>>> branch 'ae1-3/dev' of ssh://git@gitlab.tmax-work.shop:12224/kofia/kofia-backend.git
 		report.setRiskScore(scoreMap.get(RuleBaseScoreCalculator.RISK_SCORE));
 		report.setRiskProfileScore(scoreMap.get(RuleBaseScoreCalculator.RISK_PROFILE_SCORE));
 		report.setRiskTracingScore(scoreMap.get(RuleBaseScoreCalculator.RISK_TRACING_SCORE));
