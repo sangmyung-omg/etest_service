@@ -22,9 +22,9 @@ import com.tmax.eTest.Common.repository.video.VideoRepository;
 import com.tmax.eTest.Common.repository.video.VideoUkRelRepository;
 import com.tmax.eTest.LRS.dto.GetStatementInfoDTO;
 import com.tmax.eTest.LRS.dto.StatementDTO;
+import com.tmax.eTest.LRS.util.LRSAPIManager;
 import com.tmax.eTest.Report.dto.VideoResultDTO;
 import com.tmax.eTest.Report.exception.ReportBadRequestException;
-import com.tmax.eTest.Report.util.LRSAPIManager;
 
 @Service
 public class MiniTestVideoService {

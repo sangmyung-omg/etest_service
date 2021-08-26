@@ -34,7 +34,7 @@ import com.tmax.eTest.Contents.repository.ProblemRepository;
 import com.tmax.eTest.Contents.repository.TestProblemRepository;
 import com.tmax.eTest.LRS.dto.GetStatementInfoDTO;
 import com.tmax.eTest.LRS.dto.StatementDTO;
-import com.tmax.eTest.Report.util.LRSAPIManager;
+import com.tmax.eTest.LRS.util.LRSAPIManager;
 
 @Service("ProblemServiceV1")
 @Primary

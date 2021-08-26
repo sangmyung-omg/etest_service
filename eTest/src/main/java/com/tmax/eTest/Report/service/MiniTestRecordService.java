@@ -8,8 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.tmax.eTest.Contents.repository.ProblemRepository;
+import com.tmax.eTest.LRS.util.LRSAPIManager;
 import com.tmax.eTest.Report.dto.MiniTestRecordDTO;
-import com.tmax.eTest.Report.util.LRSAPIManager;
 import com.tmax.eTest.Report.util.RuleBaseScoreCalculator;
 import com.tmax.eTest.Report.util.SNDCalculator;
 import com.tmax.eTest.Report.util.SelfDiagnosisComment;
