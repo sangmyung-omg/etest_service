@@ -8,4 +8,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface VideoBookmarkRepository extends JpaRepository<VideoBookmark, VideoBookmarkId> {
+  long countByUserUuid(String userUuid);
 }

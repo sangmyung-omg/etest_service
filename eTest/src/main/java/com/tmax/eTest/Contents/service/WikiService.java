@@ -15,6 +15,7 @@ import com.tmax.eTest.Contents.exception.ContentsException;
 import com.tmax.eTest.Contents.exception.ErrorCode;
 import com.tmax.eTest.Contents.repository.support.WikiRepositorySupport;
 import com.tmax.eTest.Contents.util.CommonUtils;
+import com.tmax.eTest.Contents.util.LRSService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,6 +28,9 @@ public class WikiService {
 
   @Autowired
   private WikiRepositorySupport wikiRepositorySupport;
+
+  @Autowired
+  private LRSService lrsService;
 
   public ListDTO.Wiki getWikiList(String userId, String keyword) {
     List<WikiJoin> wikis = wikiRepositorySupport.findWikisByUser(userId, keyword);
@@ -56,6 +60,13 @@ public class WikiService {
     wikiBookmarkRepository.delete(wikiBookmarkRepository.findById(wikiBookmarkId).orElseThrow(
         () -> new ContentsException(ErrorCode.DB_ERROR, "WikiBookmark already exists in WikiBookmark Table")));
 
+    return new SuccessDTO(true);
+  }
+
+  public SuccessDTO updateWikiHit(String userId, Long wikiId) {
+    lrsService.init("/SaveStatement");
+    lrsService.saveStatement(lrsService.makeStatement(userId, Long.toString(wikiId), LRSService.ACTION_TYPE.enter,
+        LRSService.SOURCE_TYPE.wiki));
     return new SuccessDTO(true);
   }
 

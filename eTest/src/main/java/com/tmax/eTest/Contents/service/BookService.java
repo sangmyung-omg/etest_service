@@ -15,6 +15,7 @@ import com.tmax.eTest.Contents.exception.ContentsException;
 import com.tmax.eTest.Contents.exception.ErrorCode;
 import com.tmax.eTest.Contents.repository.support.BookRepositorySupport;
 import com.tmax.eTest.Contents.util.CommonUtils;
+import com.tmax.eTest.Contents.util.LRSService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,6 +29,9 @@ public class BookService {
 
   @Autowired
   private BookRepositorySupport bookRepositorySupport;
+
+  @Autowired
+  private LRSService lrsService;
 
   public ListDTO.Book getBookList(String userId, String keyword) {
     List<BookJoin> books = bookRepositorySupport.findBooksByUser(userId, keyword);
@@ -57,6 +61,13 @@ public class BookService {
     bookBookmarkRepository.delete(bookBookmarkRepository.findById(bookBookmarkId).orElseThrow(
         () -> new ContentsException(ErrorCode.DB_ERROR, "BookBookmark doesn't exist in BookBookmark Table")));
 
+    return new SuccessDTO(true);
+  }
+
+  public SuccessDTO updateBookHit(String userId, Long bookId) {
+    lrsService.init("/SaveStatement");
+    lrsService.saveStatement(lrsService.makeStatement(userId, Long.toString(bookId), LRSService.ACTION_TYPE.enter,
+        LRSService.SOURCE_TYPE.textbook));
     return new SuccessDTO(true);
   }
 

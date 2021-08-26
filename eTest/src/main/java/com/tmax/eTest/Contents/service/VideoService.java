@@ -20,6 +20,7 @@ import com.tmax.eTest.Contents.repository.support.VideoCurriculumRepositorySuppo
 import com.tmax.eTest.Contents.repository.support.VideoHitRepositorySupport;
 import com.tmax.eTest.Contents.repository.support.VideoRepositorySupport;
 import com.tmax.eTest.Contents.util.CommonUtils;
+import com.tmax.eTest.Contents.util.LRSService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -48,6 +49,9 @@ public class VideoService {
 
   @Autowired
   private VideoBookmarkRepository videoBookmarkRepository;
+
+  @Autowired
+  private LRSService lrsService;
 
   public ListDTO.Curriculum getVideoCurriculumList() {
     List<VideoCurriculum> curriculums = videoCurriculumRepositorySupport.findAll();
@@ -100,11 +104,14 @@ public class VideoService {
   }
 
   @Transactional
-  public SuccessDTO updateVideoHit(Long videoId) {
+  public SuccessDTO updateVideoHit(String userId, Long videoId) {
     if (videoHitRepositorySupport.notExistsById(videoId))
       throw new ContentsException(ErrorCode.DB_ERROR, "VideoId doesn't exist in VideoHit Table");
     videoHitRepositorySupport.updateVideoHit(videoId);
 
+    lrsService.init("/SaveStatement");
+    lrsService.saveStatement(lrsService.makeStatement(userId, Long.toString(videoId), LRSService.ACTION_TYPE.enter,
+        LRSService.SOURCE_TYPE.video));
     return new SuccessDTO(true);
   }
 
@@ -149,4 +156,5 @@ public class VideoService {
             .map(curriculum -> new VideoCurriculumDTO(curriculum.getCurriculumId(), curriculum.getSubject()))
             .collect(Collectors.toList()));
   }
+
 }

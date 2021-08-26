@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -47,5 +48,12 @@ public class WikiController {
       @PathVariable("wiki_id") Long wikiId) {
     log.info("---deleteBookmarkWiki---");
     return new ResponseEntity<>(wikiService.deleteBookmarkWiki(userId, wikiId), HttpStatus.OK);
+  }
+
+  @PostMapping("/users/{user_id}/wikis/{wiki_id}/hit")
+  public ResponseEntity<Object> updateWikiHit(@PathVariable("user_id") String userId,
+      @PathVariable("wiki_id") Long wikiId) {
+    log.info("---updateWikiHit---");
+    return new ResponseEntity<>(wikiService.updateWikiHit(userId, wikiId), HttpStatus.OK);
   }
 }

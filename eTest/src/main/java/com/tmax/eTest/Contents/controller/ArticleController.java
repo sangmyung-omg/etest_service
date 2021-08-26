@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -47,5 +48,12 @@ public class ArticleController {
       @PathVariable("article_id") Long articleId) {
     log.info("---deleteBookmarkArticle---");
     return new ResponseEntity<>(articleService.deleteBookmarkArticle(userId, articleId), HttpStatus.OK);
+  }
+
+  @PostMapping("/users/{user_id}/articles/{article_id}/hit")
+  public ResponseEntity<Object> updateArticleHit(@PathVariable("user_id") String userId,
+      @PathVariable("article_id") Long articleId) {
+    log.info("---updateArticleHit---");
+    return new ResponseEntity<>(articleService.updateArticleHit(userId, articleId), HttpStatus.OK);
   }
 }

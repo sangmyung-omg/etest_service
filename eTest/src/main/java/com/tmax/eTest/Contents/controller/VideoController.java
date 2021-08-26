@@ -61,10 +61,11 @@ public class VideoController {
     return new ResponseEntity<>(videoService.deleteBookmarkVideo(userId, videoId), HttpStatus.OK);
   }
 
-  @PostMapping("/videos/{id}/hit")
-  public ResponseEntity<Object> updateVideoHit(@PathVariable("id") Long videoId) {
+  @PostMapping("/users/{user_id}/videos/{id}/hit")
+  public ResponseEntity<Object> updateVideoHit(@PathVariable("user_id") String userId,
+      @PathVariable("id") Long videoId) {
     log.info("---updateVideoHit---");
-    return new ResponseEntity<>(videoService.updateVideoHit(videoId), HttpStatus.OK);
+    return new ResponseEntity<>(videoService.updateVideoHit(userId, videoId), HttpStatus.OK);
   }
 
 }

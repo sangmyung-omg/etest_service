@@ -8,5 +8,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface BookBookmarkRepository extends JpaRepository<BookBookmark, BookBookmarkId> {
-
+  long countByUserUuid(String userUuid);
 }

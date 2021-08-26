@@ -17,6 +17,7 @@ import com.tmax.eTest.Contents.exception.ContentsException;
 import com.tmax.eTest.Contents.exception.ErrorCode;
 import com.tmax.eTest.Contents.repository.support.ArticleRepositorySupport;
 import com.tmax.eTest.Contents.util.CommonUtils;
+import com.tmax.eTest.Contents.util.LRSService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,6 +30,9 @@ public class ArticleService {
 
   @Autowired
   private ArticleRepositorySupport articleRepositorySupport;
+
+  @Autowired
+  private LRSService lrsService;
 
   public ListDTO.Article getArticleList(String userId, String keyword) {
     List<ArticleJoin> articles = articleRepositorySupport.findArticlesByUser(userId, keyword);
@@ -58,6 +62,13 @@ public class ArticleService {
     articleBookmarkRepository.delete(articleBookmarkRepository.findById(articleBookmarkId).orElseThrow(
         () -> new ContentsException(ErrorCode.DB_ERROR, "ArticleBookmark already exists in ArticleBookmark Table")));
 
+    return new SuccessDTO(true);
+  }
+
+  public SuccessDTO updateArticleHit(String userId, Long articleId) {
+    lrsService.init("/SaveStatement");
+    lrsService.saveStatement(lrsService.makeStatement(userId, Long.toString(articleId), LRSService.ACTION_TYPE.enter,
+        LRSService.SOURCE_TYPE.article));
     return new SuccessDTO(true);
   }
 

@@ -41,4 +41,11 @@ public class ListDTO {
     private int size;
     private List<ArticleDTO> articles;
   }
+
+  @Data
+  @AllArgsConstructor
+  public static class Stat {
+    private int size;
+    private List<StatDTO> stats;
+  }
 }

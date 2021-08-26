@@ -8,5 +8,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface WikiBookmarkRepository extends JpaRepository<WikiBookmark, WikiBookmarkId> {
-
+  long countByUserUuid(String userUuid);
 }
