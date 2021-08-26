@@ -13,7 +13,7 @@ import com.tmax.eTest.Contents.exception.problem.NoDataException;
 import com.tmax.eTest.Common.model.problem.Problem;
 import com.tmax.eTest.Contents.repository.ProblemChoiceRepository;
 import com.tmax.eTest.Contents.repository.ProblemRepository;
-import com.tmax.eTest.Report.dto.lrs.StatementDTO;
+import com.tmax.eTest.LRS.dto.StatementDTO;
 
 @Service("AnswerServicesV0")
 public class AnswerServicesV0 implements AnswerServicesBase {

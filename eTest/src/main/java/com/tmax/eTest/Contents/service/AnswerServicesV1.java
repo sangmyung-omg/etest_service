@@ -19,7 +19,7 @@ import com.tmax.eTest.Contents.dto.CustomizedSolutionDTO;
 import com.tmax.eTest.Contents.exception.problem.NoDataException;
 import com.tmax.eTest.Contents.repository.ProblemChoiceRepository;
 import com.tmax.eTest.Contents.repository.ProblemRepository;
-import com.tmax.eTest.Report.dto.lrs.StatementDTO;
+import com.tmax.eTest.LRS.dto.StatementDTO;
 
 /**
  * Improve logics from CBT and Adjust to new API requirements
