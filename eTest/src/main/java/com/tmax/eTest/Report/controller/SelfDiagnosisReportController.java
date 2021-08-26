@@ -10,13 +10,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.tmax.eTest.LRS.util.LRSAPIManager;
 import com.tmax.eTest.Report.dto.DiagnosisRecordDetailDTO;
 import com.tmax.eTest.Report.dto.DiagnosisRecordMainDTO;
 import com.tmax.eTest.Report.dto.DiagnosisResultDTO;
 import com.tmax.eTest.Report.dto.PartUnderstandingDTO;
 import com.tmax.eTest.Report.service.DiagnosisRecordService;
 import com.tmax.eTest.Report.service.SelfDiagnosisReportService;
-import com.tmax.eTest.Report.util.LRSAPIManager;
 import com.tmax.eTest.Test.service.UserInfoService;
 
 @RestController
