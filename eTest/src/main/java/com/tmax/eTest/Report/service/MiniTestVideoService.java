@@ -16,16 +16,15 @@ import com.tmax.eTest.Common.model.user.UserKnowledge;
 import com.tmax.eTest.Common.model.video.Video;
 import com.tmax.eTest.Common.model.video.VideoBookmark;
 import com.tmax.eTest.Common.model.video.VideoBookmarkId;
-import com.tmax.eTest.Common.model.video.VideoUkRel;
 import com.tmax.eTest.Common.repository.user.UserKnowledgeRepo;
 import com.tmax.eTest.Common.repository.video.VideoBookmarkRepository;
 import com.tmax.eTest.Common.repository.video.VideoRepository;
 import com.tmax.eTest.Common.repository.video.VideoUkRelRepository;
+import com.tmax.eTest.LRS.dto.GetStatementInfoDTO;
+import com.tmax.eTest.LRS.dto.StatementDTO;
+import com.tmax.eTest.LRS.util.LRSAPIManager;
 import com.tmax.eTest.Report.dto.VideoResultDTO;
-import com.tmax.eTest.Report.dto.lrs.GetStatementInfoDTO;
-import com.tmax.eTest.Report.dto.lrs.StatementDTO;
 import com.tmax.eTest.Report.exception.ReportBadRequestException;
-import com.tmax.eTest.Report.util.LRSAPIManager;
 
 @Service
 public class MiniTestVideoService {

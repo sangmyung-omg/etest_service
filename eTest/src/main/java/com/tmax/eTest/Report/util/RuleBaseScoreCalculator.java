@@ -20,21 +20,28 @@ import com.tmax.eTest.Common.model.problem.ProblemChoice;
 @Component
 // Rule Base 점수, Triton 점수 관련 Method 집합 Class
 public class RuleBaseScoreCalculator {
+	
+
+//	final public static String RISK_TRACING_TRADE_PERIOD = "증권사거래기간";
+//	final public static String RISK_TRACING_STOCK_RATIO = "자산중주식비중";
+//	final public static String RISK_TRACING_STOCK_NUM = "보유주식수";
+//	final public static String RISK_TRACING_PORTFOLIO = "보유포트폴리오";
 	final public static String RISK_SCORE = "리스크점수";
-	final public static String RISK_TRACING_SCORE = "리스크트레이싱점수";
-	final public static String RISK_TRACING_TRADE_PERIOD = "증권사거래기간";
-	final public static String RISK_TRACING_STOCK_RATIO = "자산중주식비중";
-	final public static String RISK_TRACING_STOCK_NUM = "보유주식수";
-	final public static String RISK_TRACING_PORTFOLIO = "보유포트폴리오";
-	final public static String RISK_PROFILE_SCORE = "리스크프로파일점수";
+	final public static String RISK_TRACING_SCORE = "트레이싱점수";
+	final public static String RISK_PROFILE_SCORE = "프로파일점수";
 	final public static String RISK_PROFILE_CAPA = "리스크감내역량점수";
 	final public static String RISK_PROFILE_LEVEL = "리스크감내수준점수";
 	
+	final public static String INVEST_SCORE = "의사결정적합도점수";
+	final public static String INVEST_TRACING = "투자원칙점수";
+	final public static String INVEST_PROFILE = "인지편향점수";
 	
-	final public static String DECISION_MAKING_SCORE_KEY = "의사결정적합도점수";
-	final public static String INVEST_RULE_SCORE_KEY = "투자원칙점수";
-	final public static String COGNITIVE_BIAS_SCORE_KEY = "인지편향점수";
-	final public static String INVEST_KNOWLEDGE_KEY = "지식이해도";
+	final public static String KNOWLEDGE_SCORE = "지식이해도";
+	final public static String KNOWLEDGE_COMMON = "주식상식";
+	final public static String KNOWLEDGE_TYPE = "종목고르기";
+	final public static String KNOWLEDGE_CHANGE = "가격변동특징";
+	final public static String KNOWLEDGE_SELL = "매매방법";
+	
 	final public static String GI_SCORE_KEY = "GI점수";
 	final public static String RISK_ANSWER_1_KEY = "RiskA1";
 	final public static String RISK_ANSWER_2_KEY = "RiskA2";
@@ -45,6 +52,116 @@ public class RuleBaseScoreCalculator {
 	
 	private final Logger logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
 
+	public Map<String,Integer> probDivideAndCalculateScoresV2(List<Pair<Problem, Integer>> probInfos)
+	{
+		Map<String,Integer> res = new HashMap<>();
+
+		// 투자 의사 결정 적합도
+		List<Pair<Problem, Integer>> investTracingProb = new ArrayList<>(); // 투자원칙
+		List<Pair<Problem, Integer>> investProfileProb = new ArrayList<>(); // 인지편향
+		
+		// 리스크
+		List<Pair<Problem, Integer>> riskTracingProb = new ArrayList<>(); // 투자현황
+		List<Pair<Problem, Integer>> riskLevelProb = new ArrayList<>(); // 리스크 감내 수준
+		List<Pair<Problem, Integer>> riskPatiProb = new ArrayList<>();	//리스크 감내 역량
+		
+		// 투자 지식
+		List<Pair<Problem, Integer>> knowledgeCommonProb = new ArrayList<>(); // 주식상식
+		List<Pair<Problem, Integer>> knowledgeTypeProb = new ArrayList<>(); // 종목고르기
+		List<Pair<Problem, Integer>> knowledgeChangeProb = new ArrayList<>(); // 가격변동특징
+		List<Pair<Problem, Integer>> knowledgeSellProb = new ArrayList<>(); // 매매방법
+
+		for(Pair<Problem, Integer> probInfo : probInfos)
+		{
+			Problem prob = probInfo.getFirst();
+			
+			if(prob.getDiagnosisInfo() != null && prob.getDiagnosisInfo().getCurriculum() != null)
+			{
+				DiagnosisCurriculum curriculum = prob.getDiagnosisInfo().getCurriculum();
+				String section = curriculum.getSection();
+				
+				switch(section)
+				{
+				case "투자현황":
+					riskTracingProb.add(probInfo);
+					if(probInfo.getFirst().getDiagnosisInfo().getCurriculumId() == 2) // 주식 투자 비중
+						res.put(STOCK_RATIO_ANS, probInfo.getSecond());
+					else if(probInfo.getFirst().getDiagnosisInfo().getCurriculumId() == 3) // 보유 종목 수
+						res.put(STOCK_NUM_ANS, probInfo.getSecond());
+					break;
+				case "리스크":
+					if(curriculum.getSubSection().equals("리스크 감내역량"))
+						riskPatiProb.add(probInfo);
+					else
+						riskLevelProb.add(probInfo);
+					break;
+				case "투자원칙":
+					investTracingProb.add(probInfo);
+					break;
+				case "인지편향":
+					investProfileProb.add(probInfo);
+					break;
+				case "투자지식":
+					switch(curriculum.getSubSection())
+					{
+					case "투자 상식":
+						knowledgeCommonProb.add(probInfo);
+						break;
+					case "종목고르기":
+						knowledgeTypeProb.add(probInfo);
+						break;
+					case "가격변동 특징":
+						knowledgeChangeProb.add(probInfo);
+						break;
+					case "매매방법":
+						knowledgeSellProb.add(probInfo);
+						break;
+					default:
+						logger.info("probDivideAndCalculateScores section invalid : " + curriculum.getSubSection());
+						break;
+					}
+					break;
+				default:
+					logger.info("probDivideAndCalculateScores section invalid : " + section);
+					break;
+				}
+			}
+			else
+			{
+				logger.info("probDivideAndCalculateScores prob not have diagnosisInfo : " + prob.toString());
+			}
+		}
+		
+		if(riskPatiProb.size() != 2) // 2문항
+		{
+			logger.info("probDivideAndCalculateScores riskPatienceProb size error : " + riskPatiProb.size());
+			res.put(RISK_ANSWER_1_KEY, 1);
+			res.put(RISK_ANSWER_2_KEY, 1);
+		}
+		else
+		{
+			int q1Idx = riskPatiProb.get(0).getFirst().getProbID() < riskPatiProb.get(1).getFirst().getProbID()?0:1;
+			int q2Idx = q1Idx==0?1:0;
+			
+			res.put(RISK_ANSWER_1_KEY, riskPatiProb.get(q1Idx).getSecond());
+			res.put(RISK_ANSWER_2_KEY, riskPatiProb.get(q2Idx).getSecond());
+		}
+		
+		res.putAll(calculateRiskScore(riskTracingProb, riskPatiProb, riskLevelProb));
+		res.putAll(calculateDecisionMakingScore(investTracingProb, investProfileProb));
+		res.putAll(calculateInvestKnowledgeScoreV2(
+				knowledgeCommonProb, 
+				knowledgeTypeProb,
+				knowledgeChangeProb,
+				knowledgeSellProb));
+		res.put(GI_SCORE_KEY, Double.valueOf(res.get(RISK_SCORE) * 0.3
+				+ res.get(INVEST_SCORE) * 0.3
+				+ res.get(KNOWLEDGE_SCORE)* 0.4).intValue());
+	
+		
+		return res;
+	}
+	
 	public Map<String,Integer> probDivideAndCalculateScores(List<Pair<Problem, Integer>> probInfos)
 	{
 		Map<String,Integer> res = new HashMap<>();
@@ -117,12 +234,12 @@ public class RuleBaseScoreCalculator {
 			res.put(RISK_ANSWER_2_KEY, riskPatiProb.get(q2Idx).getSecond());
 		}
 		
-		res.putAll(calculateRiskFidelityScore(riskTracingProb, riskPatiProb, riskLevelProb));
+		res.putAll(calculateRiskScore(riskTracingProb, riskPatiProb, riskLevelProb));
 		res.putAll(calculateDecisionMakingScore(investRuleProb, cogBiasProb));
-		res.put(INVEST_KNOWLEDGE_KEY, calculateInvestKnowledgeScore(investKnowledgeProb));
+		res.put(KNOWLEDGE_SCORE, calculateInvestKnowledgeScore(investKnowledgeProb));
 		res.put(GI_SCORE_KEY, Double.valueOf(res.get(RISK_PROFILE_SCORE) * 0.3
-				+ res.get(DECISION_MAKING_SCORE_KEY) * 0.3
-				+ res.get(INVEST_KNOWLEDGE_KEY)* 0.4).intValue());
+				+ res.get(INVEST_SCORE) * 0.3
+				+ res.get(KNOWLEDGE_SCORE)* 0.4).intValue());
 		
 		logger.info("probDivideAndCalculateScores prob num : "
 				+ riskTracingProb.size() +" "
@@ -131,14 +248,14 @@ public class RuleBaseScoreCalculator {
 				+ cogBiasProb.size() +" "
 				+ investKnowledgeProb.size() +" "
 				+ res.get(RISK_PROFILE_SCORE) + " "
-				+ res.get(DECISION_MAKING_SCORE_KEY) + " "
-				+ res.get(INVEST_KNOWLEDGE_KEY));
+				+ res.get(INVEST_SCORE) + " "
+				+ res.get(KNOWLEDGE_SCORE));
 		
 		return res;
 	}
 
 	// result = [리스크점수, 투자현황점수, 위험적합도점수]
-	public Map<String, Integer> calculateRiskFidelityScore(
+	public Map<String, Integer> calculateRiskScore(
 			List<Pair<Problem, Integer>> riskTracingProbList, 
 			List<Pair<Problem, Integer>> riskCapaProbList, 
 			List<Pair<Problem, Integer>> riskLevelProbList) {
@@ -185,10 +302,70 @@ public class RuleBaseScoreCalculator {
 
 		int decisionMakingScore = investRuleScore + cognitiveBiasScore + addedScore;
 
-		res.put(INVEST_RULE_SCORE_KEY, investRuleScore);
-		res.put(COGNITIVE_BIAS_SCORE_KEY, cognitiveBiasScore);
-		res.put(DECISION_MAKING_SCORE_KEY, decisionMakingScore);
+		res.put(INVEST_TRACING, investRuleScore);
+		res.put(INVEST_PROFILE, cognitiveBiasScore);
+		res.put(INVEST_SCORE, decisionMakingScore);
 
+		return res;
+	}
+	
+	private int calculateKnowledgePartScore(List<Pair<Problem, Integer>> probList)
+	{
+		int result = 0;
+		int scoreMap[] = 
+			{8, 6, 4, // 정답
+			5, 3, 2}; // 오답
+		
+		for(Pair<Problem, Integer> probInfo : probList)
+		{
+			Problem prob = probInfo.getFirst();
+			int choice = probInfo.getSecond();
+			
+			JsonArray solution = JsonParser.parseString(prob.getSolution()).getAsJsonArray();
+			
+			for(int i = 0; i < solution.size(); i++)
+			{
+				JsonObject jo = solution.get(i).getAsJsonObject();
+				
+				if(jo.get("type") != null && jo.get("data") != null &&
+					jo.get("type").getAsString().equals("MULTIPLE_CHOICE_CORRECT_ANSWER"))
+				{
+					int answer = jo.get("data").getAsInt();
+					int idx = choice == answer ? 0 : 3;
+					idx += prob.getDifficulty().equals("상") ? 0 
+						: prob.getDifficulty().equals("중") ? 1 
+						: 2;					// 하
+					
+					result += scoreMap[idx];
+					
+					break;
+				}
+			}
+		}
+		
+		return result;
+	}
+	
+	private Map<String, Integer> calculateInvestKnowledgeScoreV2(
+			List<Pair<Problem, Integer>> common,
+			List<Pair<Problem, Integer>> type,
+			List<Pair<Problem, Integer>> change,
+			List<Pair<Problem, Integer>> sell)
+	{
+		Map<String, Integer> res = new HashMap<>();
+		
+		int commonScore = calculateKnowledgePartScore(common);
+		int typeScore = calculateKnowledgePartScore(type);
+		int sellScore = calculateKnowledgePartScore(sell);
+		int changeScore = calculateKnowledgePartScore(change);
+		int knowledgeScore = commonScore + typeScore + sellScore + changeScore;
+		
+		res.put(KNOWLEDGE_SCORE, knowledgeScore);
+		res.put(KNOWLEDGE_COMMON, commonScore);
+		res.put(KNOWLEDGE_TYPE, typeScore);
+		res.put(KNOWLEDGE_SELL, sellScore);
+		res.put(KNOWLEDGE_CHANGE, changeScore);
+		
 		return res;
 	}
 

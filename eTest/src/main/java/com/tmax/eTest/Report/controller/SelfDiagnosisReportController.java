@@ -10,12 +10,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.tmax.eTest.Report.dto.DiagnosisRecordDTO;
+import com.tmax.eTest.LRS.util.LRSAPIManager;
+import com.tmax.eTest.Report.dto.DiagnosisRecordDetailDTO;
+import com.tmax.eTest.Report.dto.DiagnosisRecordMainDTO;
 import com.tmax.eTest.Report.dto.DiagnosisResultDTO;
 import com.tmax.eTest.Report.dto.PartUnderstandingDTO;
 import com.tmax.eTest.Report.service.DiagnosisRecordService;
 import com.tmax.eTest.Report.service.SelfDiagnosisReportService;
-import com.tmax.eTest.Report.util.LRSAPIManager;
 import com.tmax.eTest.Test.service.UserInfoService;
 
 @RestController
@@ -48,34 +49,52 @@ public class SelfDiagnosisReportController {
 	
 	//legacy
 	@CrossOrigin("*")
-	@PutMapping(value="/report/diagnosis/result/{id}/{probSetId}", produces = "application/json; charset=utf-8")
-	public DiagnosisResultDTO diagnosisResult(
+	@PutMapping(value="/report/diagnosis/saveResult/{id}/{probSetId}", produces = "application/json; charset=utf-8")
+	public boolean diagnosisResult(
 			@PathVariable("id") String id,
-			@PathVariable("id") String probSetId) throws Exception{
+			@PathVariable("probSetId") String probSetId) throws Exception{
 		
 		// Saving user ID of not-logged-in users - by S.M.
 		//String queryResult = userService.updateUserInfo(id);
 		// ------------------------------------------------
 		
-		DiagnosisResultDTO output = selfDiagnosisReportService.calculateDiagnosisResult(id, probSetId);
+		boolean output = selfDiagnosisReportService.saveDiagnosisResult(id, probSetId);
 		
 		return output;
 	}
 	
 	@CrossOrigin("*")
 	@GetMapping(value="/report/diagnosis/record/{id}/{probSetId}", produces = "application/json; charset=utf-8")
-	public DiagnosisRecordDTO diagnosisRecord(
+	public DiagnosisRecordMainDTO diagnosisRecordMain(
 			@PathVariable("id") String id,
-			@PathVariable("id") String probSetId) throws Exception{
+			@PathVariable("probSetId") String probSetId) throws Exception{
 		
 		// Saving user ID of not-logged-in users - by S.M.
 		//String queryResult = userService.updateUserInfo(id);
 		// ------------------------------------------------
 		
-		DiagnosisRecordDTO output = diagnosisRecordService.getDiagnosisRecord(id, probSetId);
+		DiagnosisRecordMainDTO output = diagnosisRecordService.getDiagnosisRecordMain(id, probSetId);
 		
 		return output;
 	}
+	
+	@CrossOrigin("*")
+	@GetMapping(value="/report/diagnosis/record/{id}/{probSetId}/{partName}", produces = "application/json; charset=utf-8")
+	public DiagnosisRecordDetailDTO diagnosisRecordDetail(
+			@PathVariable("id") String id,
+			@PathVariable("probSetId") String probSetId,
+			@PathVariable("partName") String partName) throws Exception{
+		
+		// Saving user ID of not-logged-in users - by S.M.
+		//String queryResult = userService.updateUserInfo(id);
+		// ------------------------------------------------
+		
+		DiagnosisRecordDetailDTO output = diagnosisRecordService.getDiagnosisRecordDetail(id, probSetId, partName);
+		
+		return output;
+	}
+	
+	
 	
 	@CrossOrigin("*")
 	@GetMapping(value="/report/diagnosisPart/{id}/{part}", produces = "application/json; charset=utf-8")

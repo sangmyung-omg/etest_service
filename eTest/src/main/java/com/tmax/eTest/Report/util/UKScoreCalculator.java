@@ -128,7 +128,7 @@ public class UKScoreCalculator {
 
 					partInfo.put(partName, Pair.of(avg, partNum));
 
-				} else {
+				} else { // ukInfo 자체가 파트일 경우.
 					Pair<Float, Integer> scoreInfo = Pair.of(score, 1);
 					partInfo.put(partName, scoreInfo);
 				}

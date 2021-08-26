@@ -4,7 +4,7 @@ info:
     version: "0.1"
     description: 문제 풀이 및 진단 리포트 페이지 관련 API
 servers:
-  - url: http://192.168.153.212:8888/
+  - url: http://192.168.153.208:8080/
     description: example server address
 tags:
 - name: Problem
@@ -17,20 +17,14 @@ tags:
   description: 유저 정보 CRUD
 
 paths:
-  /problems/{id}:
+  /contents/v0/problems/{probId}:
     get:
       tags:
-      - Problem
+        - Problem
       summary: 문제 정보 받아오기
-      description: 미니테스트 문제 정보를 받아옵니다.
+      description: 문제 정보를 받아옵니다.
       parameters:
-      - name: id
-        in: path
-        description: 문제아이디
-        required: true
-        schema:
-          type: string
-          format: string
+        - $ref: "#/components/parameters/probId"
       responses:
         200:
           description: OK
@@ -59,63 +53,40 @@ paths:
                 example:
                   message: 'Failed: {id}에 해당하는 데이터가 없습니다'
                   data: {}
-  /problems/{id}/answer-check:
-    get:
+  /contents/v1/problems/{probId}/answer-check:
+    post:
       tags:
-      - Problem
+        - Problem
       summary: 정답 체크하기
       description: 유저가 제출한 정답에 대한 채점결과를 true/false로 반환합니다.
       parameters:
-      - name: id
-        in: path
-        description: 문제아이디
-        required: true
-        schema:
-          type: string
-          format: string
-      - name: answer
-        in: query
-        description: 유저가 입력한 정답
-        required: true
-        schema:
-          type: string
-          format: string
+        - $ref: "#/components/parameters/probId"
+      requestBody:
+        $ref: "#/components/requestBodies/LRSBody"
       responses:
         200:
           description: OK
           content:
             json:
               schema:
-                type: boolean
-  /problems/{id}/solution:
+                $ref: "#/components/schemas/answerCheckResult"
+  /contents/v1/problems/{setId}/solution:
     get:
       tags:
-      - Problem
+        - Problem
       summary: 해설 받아오기
-      description: 유저가 제출한 정답에 대한 채점결과를 true/false로 반환합니다.
+      description: 특정 진단 세트 ID 에 해당하는 풀이 이력을 조회해서, 문제 해설과 유저가 선택한 정답 정보 반환
       parameters:
-      - name: id
-        in: path
-        description: 문제아이디
-        required: true
-        schema:
-          type: string
-          format: string
+        # - $ref: "#/components/parameters/probIds"
+        - $ref: "#/components/parameters/setId"
       responses:
         200:
           description: OK
           content:
             json:
               schema:
-                type: object
-                example:
-                  answer:
-                  - 정답1
-                  - 정답2
-                  - ..
-                  solution: 해설 텍스트
-                  material: 참고자료(교재 정보)
-  /problems/error/report:
+                $ref: "#/components/schemas/solutionResult"
+  /contents/v0/problems/error/report:
     post:
       tags:
         - Problem
@@ -144,15 +115,13 @@ paths:
                 example:
                   message: success
 
-  /diagnosis:
+  /test/v1/diagnosis:
     get:
       tags: [Test]
       operationId: DiagnosisTendencyProblemsGet
       summary: 자가진단 set (성향 18 문항 & 지식 12 문항 = 총 30문항) 요청
       description: 
-        유저 ID를 활용해 자가진단 성향/지식 문제 각각 반환 & 과거 중단한 이력 있으면 풀었던 문제 및 선택한 답, 그리고 찍기 알람 횟수 각각 반환 (첫 진입이면 null)
-      parameters:
-        - $ref: "#/components/parameters/userId"
+        유저 ID를 활용해 자가진단 성향/지식 문제 각각 반환 (이어풀기 기능 삭제)
       responses:
         '200':
           description: 성공
@@ -172,7 +141,7 @@ paths:
                     type: string
                     example: "Error: status code 500"
 
-  /minitest:
+  /test/v1/minitest/{userId}:
     get:
       tags: [Test]
       operationId: MinitestProblemsGet
@@ -507,20 +476,156 @@ components:
         isCorrect:
           type: array
           example:
-            - 1
-            - 1
+            - 0
             - 1
             - 0
             - 0
+            - 1
         guessAlarm:
           type: integer
           example: 0
+    lrsBody:
+      type: object
+      required:
+      - actionType
+      - sourceType
+      - timestamp
+      - userId
+      properties:
+        actionType:
+          type: string
+          example: submit
+          description: 해당 활동의 동사
+        cursorTime:
+          type: integer
+          format: int32
+          example: 0
+          description: 비디오, 오디오와 같은 활동에서 사용되는 커서 시간. (Ednet 참고. ex) A 비디오 10초(10000ms) 지점을 클릭 했다.)
+        duration:
+          type: integer
+          example: 0
+          description: 활동의 지속 시간( ex) 비디오 보기를 30초(30000ms) 동안 지속했다.)
+        extension:
+          type: string
+          example: "{diagProbSetId : '3ed64290-0183-11ec-9a03-0242ac130003', guessAlarm : 2}"
+          description: 추가 메타 데이터 (Json 형태의 String)
+        isCorrect:
+          type: integer
+          format: int32
+          example: 0
+          description: '활동의 정답 여부. (0 : Fail, 1 : Success)'
+        platform:
+          type: string
+          example: 금융투자협회
+          description: 해당 활동이 일어난 Platform 이름
+        sourceId:
+          type: string
+          example: 108
+          description: 해당 활동의 Source의 ID. ( ex) 유저가 푼 문제의 ID, 100)
+        sourceType:
+          type: string
+          example: mini_test_question
+          description: 해당 활동의 목적어(Source) 타입.
+        timestamp:
+          type: string
+          example: '2021-07-14T10:25:56.192Z'
+          description: 해당 활동이 일어난 시간. ISO 8601 Format.
+        userAnswer:
+          type: string
+          example: '1'
+          description: 유저가 해당 활동에서 작성한 답안. ( ex) 문제 A에 3, 5번을 선택하여 제출했다.)
+        userId:
+          type: string
+          example: af1ed17a-8e55-4ec6-a552-f3d7d8e0276d
+          description: 유저의 ID(JWT or 일반 String 값)
+    solutions:
+      type: object
+      properties:
+        probId:
+          type: integer
+          example: 21
+          description: 문제 ID
+        userAnswer:
+          type: array
+          example:
+            - "2"
+          description: 정답 (복수 정답 가능성 O)
+        solution:
+          type: string
+          example:
+            "[{\"data\": 2, \"type\": \"MULTIPLE_CHOICE_CORRECT_ANSWER\"}, {\"data\": \"투자에서 발생하는 수익률은 다음과 같이 계산한다. 먼저 주식과 채권과 같은 투자 자산을 매도한 가격에서 이를 매입할 때 들어간 금액을 뺀 시세 차익과 채권 이자와 주식 배당처럼 투자 자산에서 발생한 현금흐름을 더한다. 그리로 수수료 등 비용을 차감한다. 이렇게 계산한 금액을 매입 금액으로 나눈 다음 100을 곱해 퍼센트(%)로 환산하면 수익률을 계산할 수 있다. \\n\\n수익률=(매도 금액-매입 금액±보유 기간 중 현금흐름-비용)/(매입 금액)  ×100\\n          =  (120만원-100만원+10만원-5만원)/100만원  ×100 = 25% \", \"type\": \"SOLUTION_TEXT\"}]"
+          description: 정답 및 해설에 필요한 정보들 json string 형태
+        material:
+          type: string
+          example:
+            "참고자료(교재 정보)"
+          description: 참고한 참고자료나 교재 정보
+    solutionResult:
+      type: object
+      properties:
+        resultmessage:
+          type: string
+          example: "Successfully returned"
+          description: "결과 메세지"
+        solutions:
+          type: array
+          items:
+            $ref: "#/components/schemas/solutions"
+    answerCheckResult:
+      type: object
+      properties:
+        resultMessage:
+          type: string
+          example: "Successfully returned"
+        isCorrect:
+          type: integer
+          example: 1
+          description: 정답 여부 = 맞으면 1, 틀리면 0
   parameters:
     userId:
       in: "path"
       name: "userId"
+      required: true
       description: "유저 ID"
       schema:
         type: string
-        example: "mkkang"
-      required: true 
+        example: "00368989-7f56-478a-9d4f-e46c9baa6598"
+    probId:
+      in: "path"
+      required: true
+      name: "probId"
+      description: "문제 ID"
+      schema:
+        type: integer
+        example: 21
+    probIds:
+      in: "path"
+      required: true
+      name: "probIds"
+      description: "문제 ID"
+      schema:
+        type: array
+        example: 
+        - 21
+        - 22
+        - 23
+        - 24
+    setId:
+      in: "path"
+      required: true
+      name: "setId"
+      description: "진단 세트 ID"
+      schema:
+        type: string
+        example: "301211121278486"
+  requestBodies:
+    LRSBody:
+      description: "LRS에 저장할 statement 구성 정보"
+      required: true
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: "#/components/schemas/lrsBody"
+
