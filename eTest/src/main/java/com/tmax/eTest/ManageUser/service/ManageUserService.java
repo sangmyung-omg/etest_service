@@ -1,12 +1,15 @@
 package com.tmax.eTest.ManageUser.service;
 
 import com.tmax.eTest.Common.model.report.DiagnosisReport;
+import com.tmax.eTest.Common.model.report.MinitestReport;
 import com.tmax.eTest.Common.model.user.UserMaster;
 import com.tmax.eTest.Common.repository.user.UserMasterRepo;
 import com.tmax.eTest.ManageUser.model.dto.UserInfoDTO;
 import com.tmax.eTest.ManageUser.model.dto.UserPopupDTO;
 import com.tmax.eTest.ManageUser.repository.DiagnosisReportRepository;
+import com.tmax.eTest.ManageUser.repository.MIniTestReportRepository;
 import com.tmax.eTest.ManageUser.repository.UserRepository;
+import com.tmax.eTest.TestStudio.repository.MiniRepository;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +32,9 @@ public class ManageUserService {
 
     @Autowired
     DiagnosisReportRepository diagnosisReportRepository;
+
+    @Autowired
+    MIniTestReportRepository miniTestReportRepository;
 
     public UserPopupDTO getUserPopupData(String user_uuid){
         UserMaster user = userRepository.findByUserUuid(user_uuid)
@@ -88,6 +94,7 @@ public class ManageUserService {
         return UserInfoDTO.builder()
                 .userInfo(getUserInfo(user_uuid))
                 .diagnosisInfo(getUserDiagnosisInfo(user_uuid))
+                .minitestInfo(getUserMinitestInfo(user_uuid))
                 .build();
     }
 
@@ -115,6 +122,23 @@ public class ManageUserService {
         Integer score = averageScore.isPresent() ? (int) averageScore.getAsDouble() : null;
 
         return UserInfoDTO.DiagnosisInfo.builder()
+                .count(count)
+                .averageScore(score)
+                .build();
+    }
+
+    public UserInfoDTO.MinitestInfo getUserMinitestInfo(String user_uuid){
+
+        List<MinitestReport> minitestReports = miniTestReportRepository.findByUserUuid(user_uuid);
+
+        Integer count = minitestReports.size();
+        OptionalDouble averageScore = minitestReports.stream()
+                .mapToDouble((selectedReport) -> selectedReport.getAvgUkMastery())
+                .average();
+
+        Integer score = averageScore.isPresent() ? (int) averageScore.getAsDouble() : null;
+
+        return UserInfoDTO.MinitestInfo.builder()
                 .count(count)
                 .averageScore(score)
                 .build();

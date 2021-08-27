@@ -35,7 +35,8 @@ public class UserInfoDTO {
     }
 
     @Data
-    public class MinitestInfo{
+    @Builder
+    public static class MinitestInfo{
         Integer count;
         Integer averageScore;
     }
