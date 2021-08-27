@@ -11,6 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.HashMap;
+
 @Service
 public class ManageUserService {
 
@@ -32,6 +34,12 @@ public class ManageUserService {
                 .build();
 
         return userPopupDTO;
+    }
+
+    public void deleteUserById(String user_uuid){
+        UserMaster user = userRepository.findByUserUuid(user_uuid)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No User Found With Provided UUID"));
+        userRepository.delete(user);
     }
 
 }

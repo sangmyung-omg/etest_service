@@ -31,7 +31,7 @@ public class ManageUserController {
     // TODO
     @RequestMapping(value = "/user/resasonForDownload", method = RequestMethod.POST)
     public ResponseEntity<?> saveUserReasonForDownload() {
-        return ResponseEntity.accepted().body("reasonForDownload");
+        return ResponseEntity.ok().body("reasonForDownload");
     }
 
     // TODO
@@ -43,8 +43,11 @@ public class ManageUserController {
 
     // TODO
     @RequestMapping(value = "/user/delete", method = RequestMethod.DELETE)
-    public ResponseEntity<?> deleteUser() {
-        return ResponseEntity.accepted().body("deleteUser");
+    public ResponseEntity<?> deleteUser(@RequestParam(value="user_uuid") String user_uuid) {
+
+        manageUserService.deleteUserById(user_uuid);
+        return ResponseEntity.ok().body("success delete user");
+
     }
 
     // TODO
