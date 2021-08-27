@@ -13,7 +13,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @Configuration
@@ -30,39 +29,19 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private UserRepository userRepository;
     @Autowired
     private CorsConfig corsConfig;
+
     @Bean
     public BCryptPasswordEncoder encodePWD() {
         return new BCryptPasswordEncoder();
     }
 
-
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-<<<<<<< HEAD
-    http
-        .addFilter(corsConfig.corsFilter())
-        .csrf().disable() //csrf 토큰
-        .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-    .and()
-        .formLogin().disable()
-        .httpBasic().disable()
-        .addFilter(new JwtCommonAuthorizationFilter(authenticationManager(),userRepository))
-        .authorizeRequests()
-                .antMatchers("/user/**").access("hasRole('ROLE_USER')")
-                .antMatchers("/admin/**").access("hasRole('ROLE_ADMIN')")
-                .anyRequest().permitAll();
-=======
-        http.csrf().disable(); // csrf 토큰
-        http.cors();
-        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-        http.formLogin().disable();
-        http.httpBasic().disable();
-        http.addFilter(new JwtCommonAuthorizationFilter(authenticationManager(), userRepository));
-
-        http.authorizeRequests()
-
-                .antMatchers("/user/**").access("hasRole('ROLE_USER')").antMatchers("/admin/**")
+        http.addFilter(corsConfig.corsFilter()).csrf().disable() // csrf 토큰
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and().formLogin().disable()
+                .httpBasic().disable()
+                .addFilter(new JwtCommonAuthorizationFilter(authenticationManager(), userRepository))
+                .authorizeRequests().antMatchers("/user/**").access("hasRole('ROLE_USER')").antMatchers("/admin/**")
                 .access("hasRole('ROLE_ADMIN')").anyRequest().permitAll();
->>>>>>> [fix] merge ae1-2/dev
     }
 }

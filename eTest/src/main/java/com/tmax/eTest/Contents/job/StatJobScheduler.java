@@ -26,7 +26,7 @@ public class StatJobScheduler {
   @Autowired
   private StatJobConfiguration statJobConfiguration;
 
-  @Scheduled(cron = "0 0/1 * * * *")
+  @Scheduled(cron = "0 0/30 * * * *")
   public void runJob() {
 
     Map<String, JobParameter> confMap = new HashMap<String, JobParameter>();
