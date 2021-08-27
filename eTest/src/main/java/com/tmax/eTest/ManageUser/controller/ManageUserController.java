@@ -1,5 +1,6 @@
 package com.tmax.eTest.ManageUser.controller;
 
+import com.tmax.eTest.Common.model.report.DiagnosisReport;
 import com.tmax.eTest.ManageUser.model.dto.UserPopupDTO;
 import com.tmax.eTest.ManageUser.service.ManageUserService;
 import org.apache.commons.logging.Log;
@@ -11,6 +12,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -34,14 +36,12 @@ public class ManageUserController {
         return ResponseEntity.ok().body("reasonForDownload");
     }
 
-    // TODO
     @RequestMapping(value = "/user/profilePopup", method = RequestMethod.GET)
     public ResponseEntity<?> getUserProfilePopupData(@RequestParam(value="user_uuid") String user_uuid) {
         UserPopupDTO userPopupDTO = manageUserService.getUserPopupData(user_uuid);
         return ResponseEntity.accepted().body(userPopupDTO);
     }
 
-    // TODO
     @RequestMapping(value = "/user/delete", method = RequestMethod.DELETE)
     public ResponseEntity<?> deleteUser(@RequestParam(value="user_uuid") String user_uuid) {
 
@@ -50,10 +50,11 @@ public class ManageUserController {
 
     }
 
-    // TODO
     @RequestMapping(value = "/user/reportPopup", method = RequestMethod.GET)
-    public ResponseEntity<?> getUserReportPopupData() {
-        return ResponseEntity.accepted().body("reportPopup");
+    public ResponseEntity<?> getUserReportPopupData(@RequestParam(value="user_uuid") String user_uuid) {
+
+        List<DiagnosisReport> diagnosisReports = manageUserService.getUserDiagnosisReports(user_uuid);
+        return ResponseEntity.accepted().body(diagnosisReports);
     }
 
     // TODO
