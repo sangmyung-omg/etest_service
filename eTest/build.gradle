@@ -1,8 +1,8 @@
 plugins {
 	id 'org.springframework.boot' version '2.5.3'
 	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+	id 'com.ewerk.gradle.plugins.querydsl' version '1.0.10'
 	id 'java'
-	id "com.ewerk.gradle.plugins.querydsl" version "1.0.10"
 }
 
 group = 'com.tmax'
@@ -50,33 +50,32 @@ dependencies {
 	// https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-oauth2-client
 	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-oauth2-client'
 	implementation 'com.querydsl:querydsl-jpa'
-	implementation 'com.querydsl:querydsl-apt'
+	// compile 'net.logstash.logback:logstash-logback-encoder:6.3' // elk setting
+	compile('org.springframework.boot:spring-boot-starter-batch')
 }
 
 test {
 	useJUnitPlatform()
 }
 
-def querydslSrcDir = 'src/main/generated'
+
+//querydsl 추가 시작
+def querydslDir = "$buildDir/generated/querydsl"
 
 querydsl {
-    library = "com.querydsl:querydsl-apt"
     jpa = true
-    querydslSourcesDir = querydslSrcDir
+    querydslSourcesDir = querydslDir
 }
 
-compileQuerydsl{
-    options.annotationProcessorPath = configurations.querydsl
+sourceSets {
+    main.java.srcDir querydslDir
 }
 
 configurations {
     querydsl.extendsFrom compileClasspath
 }
 
-sourceSets {
-    main {
-        java {
-            srcDirs = ['src/main/java', querydslSrcDir]
-        }
-    }
+compileQuerydsl {
+    options.annotationProcessorPath = configurations.querydsl
 }
+//querydsl 추가 끝

@@ -1,16 +1,28 @@
 package com.tmax.eTest.Common.model.support;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.PrePersist;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.tmax.eTest.Common.model.user.UserMaster;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.time.LocalDateTime;
-import java.util.List;
-import javax.persistence.*;
-import java.time.LocalDate;
 
 @Entity
 @Data
@@ -26,16 +38,16 @@ public class Inquiry {
     @Column(name = "INQUIRY_ID")
     private Long id;
 
-    @JsonIgnoreProperties({"inquiry"})
+    @JsonIgnoreProperties({ "inquiry" })
     @JoinColumn(name = "USER_UUID")
     @ManyToOne
     private UserMaster userMaster;
 
-    @JsonIgnoreProperties({"inquiry"})
+    @JsonIgnoreProperties({ "inquiry" })
     @OneToMany(mappedBy = "inquiry", fetch = FetchType.LAZY)
     private List<Inquiry_file> inquiry_file;
 
-    @Column(name="INQUIRY_STATUS")
+    @Column(name = "INQUIRY_STATUS")
     private String status;
 
     @Column(name = "INQUIRY_TITLE")
@@ -58,5 +70,3 @@ public class Inquiry {
         this.createDate = LocalDateTime.now();
     }
 }
-
-

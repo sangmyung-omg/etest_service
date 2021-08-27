@@ -15,10 +15,12 @@ import com.tmax.eTest.Contents.util.CommonUtils;
 import org.springframework.data.domain.Persistable;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
@@ -29,14 +31,14 @@ public class VideoBookmark implements Persistable<VideoBookmarkId> {
   @Id
   private Long videoId;
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "videoId", insertable = false, updatable = false, nullable = true)
-  private Video video;
-
   public VideoBookmark(String userUuid, Long videoId) {
     this.userUuid = userUuid;
     this.videoId = videoId;
   }
+
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "videoId", insertable = false, updatable = false, nullable = true)
+  private Video video;
 
   @Transient
   private boolean isNew = true;

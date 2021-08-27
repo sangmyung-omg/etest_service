@@ -13,9 +13,15 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
-import lombok.Data;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
 public class Video {
   @Id
@@ -37,10 +43,12 @@ public class Video {
   @JoinColumn(name = "videoId")
   private VideoHit videoHit;
 
-  @OneToMany(fetch = FetchType.LAZY, mappedBy = "ukMaster", cascade = CascadeType.ALL, orphanRemoval = true)
-  // @JoinColumn(name = "videoId")
+  @OneToMany(fetch = FetchType.LAZY, mappedBy = "video", cascade = CascadeType.ALL, orphanRemoval = true)
   private Set<VideoUkRel> videoUks = new LinkedHashSet<VideoUkRel>();
 
   @OneToMany(fetch = FetchType.LAZY, mappedBy = "video", cascade = CascadeType.ALL, orphanRemoval = true)
   private Set<VideoBookmark> videoBookmarks = new LinkedHashSet<VideoBookmark>();
+
+  @OneToMany(fetch = FetchType.LAZY, mappedBy = "video", cascade = CascadeType.ALL, orphanRemoval = true)
+  private Set<VideoHashtag> videoHashtags = new LinkedHashSet<VideoHashtag>();
 }

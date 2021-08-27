@@ -1,5 +1,5 @@
 {
-    "configurations": [
+    "configurations": [    
         {
             "type": "java",
             "name": "Spring Boot-ETestApplication<eTest>",
@@ -8,7 +8,7 @@
             "console": "internalConsole",
             "mainClass": "com.tmax.eTest.ETestApplication",
             "projectName": "eTest",
-            "args": ""
+            "args": "version=2"
         }
     ]
 }
