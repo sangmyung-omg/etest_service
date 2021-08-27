@@ -1,6 +1,7 @@
 package com.tmax.eTest.ManageUser.controller;
 
 import com.tmax.eTest.Common.model.report.DiagnosisReport;
+import com.tmax.eTest.ManageUser.model.dto.UserInfoDTO;
 import com.tmax.eTest.ManageUser.model.dto.UserPopupDTO;
 import com.tmax.eTest.ManageUser.service.ManageUserService;
 import org.apache.commons.logging.Log;
@@ -27,7 +28,9 @@ public class ManageUserController {
     // TODO
     @RequestMapping(value = "/users", method = RequestMethod.GET)
     public ResponseEntity<?> listUsers() {
-        return ResponseEntity.accepted().body("list");
+
+        List<UserInfoDTO> listUserInfo = manageUserService.listUserInfo();
+        return ResponseEntity.accepted().body(listUserInfo);
     }
 
     // TODO

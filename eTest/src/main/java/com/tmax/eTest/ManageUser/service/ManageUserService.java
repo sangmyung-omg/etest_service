@@ -3,6 +3,7 @@ package com.tmax.eTest.ManageUser.service;
 import com.tmax.eTest.Common.model.report.DiagnosisReport;
 import com.tmax.eTest.Common.model.user.UserMaster;
 import com.tmax.eTest.Common.repository.user.UserMasterRepo;
+import com.tmax.eTest.ManageUser.model.dto.UserInfoDTO;
 import com.tmax.eTest.ManageUser.model.dto.UserPopupDTO;
 import com.tmax.eTest.ManageUser.repository.DiagnosisReportRepository;
 import com.tmax.eTest.ManageUser.repository.UserRepository;
@@ -15,6 +16,8 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.OptionalDouble;
+import java.util.stream.Collectors;
 
 @Service
 public class ManageUserService {
@@ -31,7 +34,7 @@ public class ManageUserService {
         UserMaster user = userRepository.findByUserUuid(user_uuid)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No User Found With Provided UUID"));
 
-        UserPopupDTO userPopupDTO = UserPopupDTO.builder()
+        return UserPopupDTO.builder()
                 .user_uuid(user.getUserUuid())
                 .nick_name(user.getNickname())
                 .gender(user.getGender())
@@ -39,7 +42,6 @@ public class ManageUserService {
                 .birthday(user.getBirthday())
                 .build();
 
-        return userPopupDTO;
     }
 
     public void deleteUserById(String user_uuid){
@@ -60,6 +62,62 @@ public class ManageUserService {
 
         LOGGER.info(diagnosisReports);
         return diagnosisReports;
+    }
+
+    public List<UserMaster> findAllUser(){
+        List<UserMaster> userList = userRepository.findAll();
+
+        if (userList.isEmpty()){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No User in DB");
+        }
+        return userList;
+    }
+
+    public List<UserInfoDTO> listUserInfo(){
+
+        List<UserMaster> userList = findAllUser();
+
+        return userList.stream()
+                .map((user) -> buildUserInfoDTO(user.getUserUuid()))
+                .collect(Collectors.toList());
+
+    }
+
+    public UserInfoDTO buildUserInfoDTO(String user_uuid){
+
+        return UserInfoDTO.builder()
+                .userInfo(getUserInfo(user_uuid))
+                .diagnosisInfo(getUserDiagnosisInfo(user_uuid))
+                .build();
+    }
+
+    public UserInfoDTO.UserInfo getUserInfo(String user_uuid){
+        UserMaster user = userRepository.findByUserUuid(user_uuid)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No User Found With Provided UUID" + user_uuid));
+
+        return UserInfoDTO.UserInfo.builder()
+                .userUuid(user.getUserUuid())
+                .nickname(user.getNickname())
+                .provider(user.getProvider())
+                .event_sms_agreement(user.getEvent_sms_agreement())
+                .build();
+    }
+
+    public UserInfoDTO.DiagnosisInfo getUserDiagnosisInfo(String user_uuid){
+
+        List<DiagnosisReport> diagnosisReports = diagnosisReportRepository.findByUserUuid(user_uuid);
+
+        Integer count = diagnosisReports.size();
+        OptionalDouble averageScore = diagnosisReports.stream()
+                .mapToDouble((selectedReport) -> selectedReport.getGiScore())
+                .average();
+
+        Integer score = averageScore.isPresent() ? (int) averageScore.getAsDouble() : null;
+
+        return UserInfoDTO.DiagnosisInfo.builder()
+                .count(count)
+                .averageScore(score)
+                .build();
     }
 
 }
