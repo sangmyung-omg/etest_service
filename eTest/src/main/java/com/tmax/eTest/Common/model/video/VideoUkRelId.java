@@ -6,6 +6,6 @@ import lombok.Data;
 
 @Data
 public class VideoUkRelId implements Serializable {
-  private Long ukId;
   private Long videoId;
+  private Long ukId;
 }

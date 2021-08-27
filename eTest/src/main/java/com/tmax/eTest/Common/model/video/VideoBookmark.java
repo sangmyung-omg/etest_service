@@ -15,10 +15,12 @@ import com.tmax.eTest.Contents.util.CommonUtils;
 import org.springframework.data.domain.Persistable;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity

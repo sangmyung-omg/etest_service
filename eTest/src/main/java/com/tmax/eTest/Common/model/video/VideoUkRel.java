@@ -9,9 +9,11 @@ import javax.persistence.ManyToOne;
 
 import com.tmax.eTest.Common.model.uk.UkMaster;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 @Entity
 @IdClass(VideoUkRelId.class)
 public class VideoUkRel {
@@ -19,6 +21,10 @@ public class VideoUkRel {
   private Long videoId;
   @Id
   private Long ukId;
+
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "videoId", insertable = false, updatable = false, nullable = true)
+  private Video video;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "ukId", insertable = false, updatable = false, nullable = true)

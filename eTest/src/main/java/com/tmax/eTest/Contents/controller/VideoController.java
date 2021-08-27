@@ -1,5 +1,6 @@
 package com.tmax.eTest.Contents.controller;
 
+import com.tmax.eTest.Contents.dto.SortType;
 import com.tmax.eTest.Contents.service.VideoService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +32,7 @@ public class VideoController {
   @GetMapping("/users/{user_id}/videos")
   public ResponseEntity<Object> getVideoList(@PathVariable("user_id") String userId,
       @RequestParam(value = "curriculumId", required = false, defaultValue = "0") Long curriculumId,
-      @RequestParam(value = "sort", required = false, defaultValue = "date") String sort) {
+      @RequestParam(value = "sort", required = false, defaultValue = "date") SortType sort) {
     log.info("---getVideoList---");
     return new ResponseEntity<>(videoService.getVideoList(userId, curriculumId, sort), HttpStatus.OK);
   }
@@ -39,7 +40,7 @@ public class VideoController {
   @GetMapping("/users/{user_id}/videos/bookmark")
   public ResponseEntity<Object> getBookmarkVideoList(@PathVariable("user_id") String userId,
       @RequestParam(value = "curriculumId", required = false, defaultValue = "0") Long curriculumId,
-      @RequestParam(value = "sort", required = false, defaultValue = "date") String sort) {
+      @RequestParam(value = "sort", required = false, defaultValue = "date") SortType sort) {
     log.info("---getBookmarkVideoList---");
     return new ResponseEntity<>(videoService.getBookmarkVideoList(userId, curriculumId, sort), HttpStatus.OK);
   }
