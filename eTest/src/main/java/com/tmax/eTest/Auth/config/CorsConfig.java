@@ -1,4 +1,4 @@
-// package com.tmax.eTest.Auth.config;
+package com.tmax.eTest.Auth.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

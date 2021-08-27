@@ -22,6 +22,7 @@ import org.springframework.batch.core.configuration.annotation.DefaultBatchConfi
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
+import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.repository.support.JobRepositoryFactoryBean;
 import org.springframework.batch.repeat.RepeatStatus;
@@ -74,9 +75,22 @@ public class StatJobConfiguration extends DefaultBatchConfigurer {
   @Autowired
   private HitStatRepository hitStatRepository;
 
+  // @Scheduled(cron = "*/5 * * * * *")
+  // public void perform() throws Exception {
+
+  // Map<String, JobParameter> confMap = new HashMap<String, JobParameter>();
+  // confMap.put("nowDate", new JobParameter(LocalDate.now().toString()));
+  // confMap.put("jobId", new
+  // JobParameter(String.valueOf(System.currentTimeMillis())));
+  // JobParameters jobParameters = new JobParameters(confMap);
+  // JobExecution jobExecution = jobLauncher.run(, jobParameters);
+  // log.info("JobExecution's info: Id = " + jobExecution.getId() + " ,status = "
+  // + jobExecution.getExitStatus());
+  // }
+
   @Bean
   public Job statJob() {
-    return jobBuilderFactory.get("statJob").start(statStep()).build();
+    return jobBuilderFactory.get("statJob").incrementer(new RunIdIncrementer()).start(statStep()).build();
   }
 
   @Bean
