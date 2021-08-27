@@ -4,8 +4,15 @@ import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
 
+<<<<<<< HEAD:eTest/src/main/java/com/tmax/eTest/Contents/controller/AnswerControllerV0.java
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+=======
+import com.tmax.eTest.Contents.exception.problem.NoDataException;
+import com.tmax.eTest.Contents.service.AnswerServices;
+import com.tmax.eTest.Contents.service.ProblemServices;
+
+>>>>>>> [fix] rebase:eTest/src/main/java/com/tmax/eTest/Contents/controller/AnswerController.java
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,19 +27,23 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+<<<<<<< HEAD:eTest/src/main/java/com/tmax/eTest/Contents/controller/AnswerControllerV0.java
 import com.tmax.eTest.Contents.exception.problem.NoDataException;
 import com.tmax.eTest.Contents.service.AnswerServicesBase;
 import com.tmax.eTest.Contents.service.AnswerServicesV1;
 import com.tmax.eTest.Contents.service.ProblemServices;
 import reactor.core.publisher.Mono;
+=======
+>>>>>>> [fix] rebase:eTest/src/main/java/com/tmax/eTest/Contents/controller/AnswerController.java
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import reactor.core.publisher.Mono;
 
-
-@CrossOrigin(origins="*")
+@CrossOrigin(origins = "*")
 @PropertySource("classpath:application.properties")
 @RestController
+<<<<<<< HEAD:eTest/src/main/java/com/tmax/eTest/Contents/controller/AnswerControllerV0.java
 @RequestMapping(path = "/contents" + "/v0")
 public class AnswerControllerV0 {
 	
@@ -42,43 +53,48 @@ public class AnswerControllerV0 {
 	@Qualifier("AnswerServicesV0")
 	AnswerServicesBase answerServices;
 	
+=======
+public class AnswerController {
+
+	@Autowired
+	AnswerServices answerServices;
+
+>>>>>>> [fix] rebase:eTest/src/main/java/com/tmax/eTest/Contents/controller/AnswerController.java
 	@Autowired
 	ProblemServices problemService;
 
 	@Value("${etest.recommend.lrs.host}")
 	private String LRS_HOST;
-	
+
 	@Value("${etest.recommend.lrs.port}")
 	private String LRS_PORT;
-	
-	@PostMapping(value="problems/{id}/answer-check", produces = "application/json; charset=utf-8")
-	public int checkAnswer(@PathVariable("id") Integer id, @RequestParam String answer, @RequestBody String lrsbody) throws Exception {
+
+	@PostMapping(value = "problems/{id}/answer-check", produces = "application/json; charset=utf-8")
+	public int checkAnswer(@PathVariable("id") Integer id, @RequestParam String answer, @RequestBody String lrsbody)
+			throws Exception {
 		Map<String, Object> data = null;
 		data = answerServices.getProblemSolution(id);
 		String inputString = data.get("solution").toString();
-		String bug = inputString.substring(0,inputString.indexOf(","));
+		String bug = inputString.substring(0, inputString.indexOf(","));
 		String jd = bug.replaceAll("\\[", "");
-		String temp = jd.substring(jd.length()-2).replaceAll("\\]", "");
+		String temp = jd.substring(jd.length() - 2).replaceAll("\\]", "");
 		temp = temp.replace(" ", "");
-		
-//		final String LRSServerURI = "http://192.168.153.132:8080";		
+
+		// final String LRSServerURI = "http://192.168.153.132:8080";
 		final String LRSServerURI = "http://" + LRS_HOST + ":" + LRS_PORT;
-		
+
 		Charset utf8 = Charset.forName("UTF-8");
 		MediaType mediaType = new MediaType("application", "json", utf8);
-		WebClient client = WebClient
-				.builder()
-					.baseUrl(LRSServerURI + "/SaveStatementList")
-					.defaultHeader(HttpHeaders.CONTENT_TYPE, mediaType.toString())
-				.build();
-		
-		if(temp.equals(answer)) {
+		WebClient client = WebClient.builder().baseUrl(LRSServerURI + "/SaveStatementList")
+				.defaultHeader(HttpHeaders.CONTENT_TYPE, mediaType.toString()).build();
+
+		if (temp.equals(answer)) {
 			String body = lrsbody;
-			int end=0;
-			int start = body.lastIndexOf("isCorrect")+8;
-			while(true) {
+			int end = 0;
+			int start = body.lastIndexOf("isCorrect") + 8;
+			while (true) {
 				String buf = Character.toString(body.charAt(start));
-				if(buf.equals(",")) {
+				if (buf.equals(",")) {
 					end = start;
 					break;
 				}
@@ -86,11 +102,17 @@ public class AnswerControllerV0 {
 			}
 
 			StringBuilder changebody = new StringBuilder(body);
+<<<<<<< HEAD:eTest/src/main/java/com/tmax/eTest/Contents/controller/AnswerControllerV0.java
 			changebody.setCharAt(end-1, '1');
 
 			logger.info(changebody.toString());
 
 			Mono<String> response = client.post().body(BodyInserters.fromValue(changebody.toString())).retrieve().bodyToMono(String.class);
+=======
+			changebody.setCharAt(end - 1, '1');
+			Mono<String> response = client.post().body(BodyInserters.fromValue(changebody.toString())).retrieve()
+					.bodyToMono(String.class);
+>>>>>>> [fix] rebase:eTest/src/main/java/com/tmax/eTest/Contents/controller/AnswerController.java
 			response.subscribe();
 			return 1;
 		} else {
@@ -100,19 +122,19 @@ public class AnswerControllerV0 {
 			return 0;
 		}
 	}
-	
-	@GetMapping(value="/problems/{id}/solution", produces = "application/json; charset=utf-8")
-	public Map<String, Object> problem(@PathVariable("id") Integer id) throws Exception{
+
+	@GetMapping(value = "/problems/{id}/solution", produces = "application/json; charset=utf-8")
+	public Map<String, Object> problem(@PathVariable("id") Integer id) throws Exception {
 		Map<String, Object> output = new HashMap<String, Object>();
 		Map<String, Object> data = null;
 		try {
 			data = answerServices.getSolutionMaterial(id);
 			output.put("resultMessage", "success");
 			output.put("data", data);
-		}catch(NoDataException e) {
-			output.put("resultMessage", "Failed: "+e.getMessage());
+		} catch (NoDataException e) {
+			output.put("resultMessage", "Failed: " + e.getMessage());
 		}
-		
+
 		return output;
 	}
 

@@ -9,7 +9,10 @@ import com.tmax.eTest.LRS.dto.StatementDTO;
 
 public interface AnswerServicesBase {
     public Integer evaluateIfCorrect(Integer probId, ArrayList<StatementDTO> lrsbody);
+
     public Map<String, Object> getProblemSolution(Integer problemID) throws Exception;
+
     public Map<String, Object> getSolutionMaterial(Integer problemID) throws Exception;
+
     public Map<Integer, CustomizedSolutionDTO> getMultipleSolutions(List<Integer> probIdList);
 }
