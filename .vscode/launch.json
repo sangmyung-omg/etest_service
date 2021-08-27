@@ -8,7 +8,7 @@
             "console": "internalConsole",
             "mainClass": "com.tmax.eTest.ETestApplication",
             "projectName": "eTest",
-            "args": "version=1"
+            "args": "version=2"
         }
     ]
 }
