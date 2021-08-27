@@ -1,8 +1,5 @@
 package com.tmax.eTest.TestStudio.dto.problems.base;
 
-import java.sql.Timestamp;
-import java.util.Date;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,7 +8,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class BaseDiagCurriculumDTO {
-	//Long
+	// Long
 	private String curriculumID;
 	//
 	private String chapter;
@@ -20,5 +17,5 @@ public class BaseDiagCurriculumDTO {
 	private String subject;
 	private String setType;
 	private String status;
-	
+
 }

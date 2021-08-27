@@ -12,34 +12,33 @@ import javax.persistence.Table;
 import com.tmax.eTest.Common.model.uk.UkMaster;
 
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
+
 @Data
 @IdClass(ProblemChoiceCompositeKey.class)
 @Entity
-@Table(name="PROBLEM_CHOICE")
+@Table(name = "PROBLEM_CHOICE")
 public class ProblemChoice {
-	
+
 	@Id
 	@ManyToOne
-	@JoinColumn(name="PROB_ID")
+	@JoinColumn(name = "PROB_ID")
 	private Problem probID;
-	
+
 	@Id
-	@Column(name="CHOICE_NUM")
+	@Column(name = "CHOICE_NUM")
 	private long choiceNum;
-	
-	@ManyToOne(fetch=FetchType.LAZY)
-	@JoinColumn(name="UK_ID")
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "UK_ID")
 	private UkMaster ukId;
-	
-	@Column(name="CHOICE_SCORE")
+
+	@Column(name = "CHOICE_SCORE")
 	private Integer choiceScore;
-	
-	@Column(name="PROB_ID" , insertable = false, updatable = false)
+
+	@Column(name = "PROB_ID", insertable = false, updatable = false)
 	private Integer probIDOnly;
-	
-	@Column(name="UK_ID" , insertable = false, updatable = false)
+
+	@Column(name = "UK_ID", insertable = false, updatable = false)
 	private Integer ukIDOnly;
-	
+
 }

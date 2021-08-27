@@ -22,12 +22,7 @@ import lombok.Data;
 @Table(name = "UK_MASTER")
 public class UkMaster {
 	@Id
-<<<<<<< HEAD
 	private Integer ukId;
-=======
-	private String ukId;
-
->>>>>>> [feat] apply querydsl
 	private String ukName;
 	private String ukDescription;
 	private String trainUnseen;
@@ -39,10 +34,6 @@ public class UkMaster {
 	@OneToMany(mappedBy = "ukId")
 	private List<ProblemUKRelation> problemUkRels = new ArrayList<ProblemUKRelation>();
 
-<<<<<<< HEAD
-}
-=======
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "ukMaster", cascade = CascadeType.ALL, orphanRemoval = true)
 	private Set<VideoUkRel> videoUks = new LinkedHashSet<VideoUkRel>();
 }
->>>>>>> [feat] apply querydsl
