@@ -42,6 +42,32 @@ paths:
               $ref: '#/definitions/CurriculumList'
         400:
           description: bad input parameter
+  /curriculum/{id}:
+    patch:
+      tags:
+      - teststudio
+      summary: update status of curriculum
+      description: |
+        커리큘럼의 상태를 수정합니다.
+      produces:
+      - application/json
+      parameters:
+      - in: path
+        name: id
+        description: part id
+        required: true
+        type: integer
+      - in: body
+        name: body
+        description: part
+        required: true
+        schema:
+          $ref: '#/definitions/CurriculumPost'
+      responses:
+        200:
+          description: success
+        400:
+          description: bad input parameter
   /part:
     get:
       tags:
@@ -316,6 +342,14 @@ definitions:
       count:
         type: integer
         example: 4
+  CurriculumPost:
+    type: object
+    required:
+    - status
+    properties:
+      status:
+        type: string
+        example: "출제 가능"
   SelfProblemIdList:
     type: object
     required:

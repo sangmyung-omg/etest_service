@@ -34,4 +34,8 @@ public class DiagnosisCurriculum {
     @Column(name="STATUS")
 	private String status;
 
+	public void updateCurriculum(String status) {
+		this.status = status;
+	}
+    
 }
