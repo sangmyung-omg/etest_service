@@ -8,11 +8,13 @@ import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
-@Data
+@Getter
 @Entity
 @Table(name="PART")
+@NoArgsConstructor
 @SequenceGenerator(
 		  name = "PART_SEQ_GENERATOR", 
 		  sequenceName = "PART_SEQ",
@@ -32,4 +34,16 @@ public class Part {
 	
 	@Column(name="PROBLEM_COUNT")
 	private Integer problemCount;
+	
+	public Part(String partName, Integer orderNum, Integer problemCount) {
+		this.partName = partName;
+		this.orderNum = orderNum;
+		this.problemCount = problemCount;
+	}
+	
+	public void updatePart(String partName, Integer orderNum, Integer problemCount) {
+		this.partName = partName;
+		this.orderNum = orderNum;
+		this.problemCount = problemCount;
+	}
 }
