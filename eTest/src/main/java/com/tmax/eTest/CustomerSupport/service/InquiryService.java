@@ -7,7 +7,9 @@ import com.tmax.eTest.CustomerSupport.repository.InquiryRepository;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -35,5 +37,13 @@ public class InquiryService {
                     .status(i.getStatus())
                     .build())
                 .collect(Collectors.toList());
+    }
+
+    public Inquiry getInquiryDetails(Long id){
+
+        Inquiry inquiry = inquiryRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No Inquiry with Given Id"));
+
+        return inquiry;
     }
 }

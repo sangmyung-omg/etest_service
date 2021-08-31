@@ -42,7 +42,7 @@ public class ManageUserController {
     @RequestMapping(value = "/user/profilePopup", method = RequestMethod.GET)
     public ResponseEntity<?> getUserProfilePopupData(@RequestParam(value="user_uuid") String user_uuid) {
         UserPopupDTO userPopupDTO = manageUserService.getUserPopupData(user_uuid);
-        return ResponseEntity.accepted().body(userPopupDTO);
+        return ResponseEntity.ok().body(userPopupDTO);
     }
 
     @RequestMapping(value = "/user/delete", method = RequestMethod.DELETE)
@@ -57,7 +57,7 @@ public class ManageUserController {
     public ResponseEntity<?> getUserReportPopupData(@RequestParam(value="user_uuid") String user_uuid) {
 
         List<DiagnosisReport> diagnosisReports = manageUserService.getUserDiagnosisReports(user_uuid);
-        return ResponseEntity.accepted().body(diagnosisReports);
+        return ResponseEntity.ok().body(diagnosisReports);
     }
 
     // TODO

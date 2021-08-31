@@ -1,6 +1,7 @@
 package com.tmax.eTest.CustomerSupport.controller;
 
 
+import com.tmax.eTest.Common.model.support.Inquiry;
 import com.tmax.eTest.CustomerSupport.model.dto.InquiryDTO;
 import com.tmax.eTest.CustomerSupport.service.InquiryService;
 import com.tmax.eTest.ManageUser.model.dto.UserInfoDTO;
@@ -11,6 +12,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -27,7 +29,15 @@ public class InquiryController {
     public ResponseEntity<?> getInquiryList() {
 
         List<InquiryDTO> inquiryList = inquiryService.getInquiryList();
-        return ResponseEntity.accepted().body(inquiryList);
+        return ResponseEntity.ok().body(inquiryList);
     }
+
+    @RequestMapping(value="/inquiry", method = RequestMethod.GET)
+    public ResponseEntity<?> getInquiryDetail(@RequestParam(value="inquiry_id") Long id) {
+
+        Inquiry inquiry = inquiryService.getInquiryDetails(id);
+        return ResponseEntity.ok().body(inquiry);
+    }
+
 
 }
