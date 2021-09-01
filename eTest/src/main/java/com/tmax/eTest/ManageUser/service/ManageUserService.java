@@ -9,7 +9,6 @@ import com.tmax.eTest.ManageUser.model.dto.UserPopupDTO;
 import com.tmax.eTest.ManageUser.repository.DiagnosisReportRepository;
 import com.tmax.eTest.ManageUser.repository.MIniTestReportRepository;
 import com.tmax.eTest.ManageUser.repository.UserRepository;
-import com.tmax.eTest.TestStudio.repository.MiniRepository;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -26,15 +26,18 @@ public class InquiryService {
 
         List<Inquiry> inquiryList= inquiryRepository.findAll();
 
+        //TODO adminnickname fix
         return inquiryList.stream()
                 .map(i ->
                     InquiryDTO.builder()
-                    .userUuid(i.getUserMaster().getUserUuid())
+                    .inquiryId(i.getId())
+                    .userNickname(i.getUserMaster().getNickname())
                     .type(i.getType())
                     .title(i.getTitle())
-                    .nick_name(i.getUserMaster().getNickname())
                     .lastUpdated(i.getCreateDate())
                     .status(i.getStatus())
+                    .answerDate(i.getAnswer_time())
+                    .adminNickname(i.getAdminUuid())
                     .build())
                 .collect(Collectors.toList());
     }

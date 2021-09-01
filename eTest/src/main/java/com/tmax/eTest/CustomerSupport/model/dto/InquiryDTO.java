@@ -13,17 +13,12 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class InquiryDTO {
 
-    String userUuid;
+    Long inquiryId;
     String type;
+    String userNickname;
     String title;
-    String nick_name;
     LocalDateTime lastUpdated;
     String status;
     LocalDateTime answerDate;
-    String adminUuid;
-
-    public void setDate(){
-        this.lastUpdated = LocalDateTime.now();
-    }
-
+    String adminNickname;
 }

@@ -69,6 +69,9 @@ public class Inquiry {
     @Column(name = "CREATE_DATE")
     private LocalDateTime createDate;
 
+    @Column(name = "ADMIN_UUID")
+    private String adminUuid;
+
     @PrePersist // 디비에 INSERT 되기 직전에 실행
     public void createDate() {
         this.createDate = LocalDateTime.now();

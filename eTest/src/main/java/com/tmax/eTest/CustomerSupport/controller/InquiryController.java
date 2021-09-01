@@ -33,7 +33,7 @@ public class InquiryController {
     }
 
     @RequestMapping(value="/inquiry", method = RequestMethod.GET)
-    public ResponseEntity<?> getInquiryDetail(@RequestParam(value="inquiry_id") Long id) {
+    public ResponseEntity<?> getInquiryDetail(@RequestParam(value="inquiryId") Long id) {
 
         Inquiry inquiry = inquiryService.getInquiryDetails(id);
         return ResponseEntity.ok().body(inquiry);
