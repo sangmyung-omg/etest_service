@@ -4,6 +4,8 @@ import com.tmax.eTest.Common.model.report.DiagnosisReport;
 import com.tmax.eTest.Common.model.report.MinitestReport;
 import com.tmax.eTest.Common.model.user.UserMaster;
 import com.tmax.eTest.Common.repository.user.UserMasterRepo;
+import com.tmax.eTest.Contents.dto.ListDTO;
+import com.tmax.eTest.Contents.service.ContentsService;
 import com.tmax.eTest.ManageUser.model.dto.UserInfoDTO;
 import com.tmax.eTest.ManageUser.model.dto.UserPopupDTO;
 import com.tmax.eTest.ManageUser.repository.DiagnosisReportRepository;
@@ -34,6 +36,9 @@ public class ManageUserService {
 
     @Autowired
     MIniTestReportRepository miniTestReportRepository;
+
+    @Autowired
+    ContentsService contentsService;
 
     public UserPopupDTO getUserPopupData(String user_uuid){
         UserMaster user = userRepository.findByUserUuid(user_uuid)
@@ -85,7 +90,6 @@ public class ManageUserService {
         return userList.stream()
                 .map((user) -> buildUserInfoDTO(user.getUserUuid()))
                 .collect(Collectors.toList());
-
     }
 
     public UserInfoDTO buildUserInfoDTO(String user_uuid){
@@ -94,6 +98,7 @@ public class ManageUserService {
                 .userInfo(getUserInfo(user_uuid))
                 .diagnosisInfo(getUserDiagnosisInfo(user_uuid))
                 .minitestInfo(getUserMinitestInfo(user_uuid))
+                .contentsInfo(getUserContentsInfo(user_uuid))
                 .build();
     }
 
@@ -141,6 +146,18 @@ public class ManageUserService {
                 .count(count)
                 .averageScore(score)
                 .build();
+    }
+
+    public UserInfoDTO.ContentsInfo getUserContentsInfo(String user_uuid){
+
+        ListDTO userBookmarks = contentsService.getBookmarkList(user_uuid);
+
+        return UserInfoDTO.ContentsInfo.builder()
+                .videoViews(userBookmarks.getVideo().getSize())
+                .bookViews(userBookmarks.getBook().getSize())
+                .wikiViews(userBookmarks.getWiki().getSize())
+                .articleViews(userBookmarks.getArticle().getSize())
+                .build().setTotalBookmarkCount();
     }
 
 }

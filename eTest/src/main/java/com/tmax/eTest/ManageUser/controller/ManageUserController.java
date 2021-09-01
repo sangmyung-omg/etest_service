@@ -30,7 +30,7 @@ public class ManageUserController {
     public ResponseEntity<?> listUsers() {
 
         List<UserInfoDTO> listUserInfo = manageUserService.listUserInfo();
-        return ResponseEntity.accepted().body(listUserInfo);
+        return ResponseEntity.ok().body(listUserInfo);
     }
 
     // TODO

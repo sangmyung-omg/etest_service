@@ -42,12 +42,17 @@ public class UserInfoDTO {
     }
 
     @Data
-    public class ContentsInfo{
+    @Builder
+    public static class ContentsInfo{
         Integer videoViews;
         Integer bookViews;
         Integer wikiViews;
         Integer articleViews;
-        Integer bookmarkCount;
+        Integer totalBookmarkCount;
+        public ContentsInfo setTotalBookmarkCount(){
+            this.totalBookmarkCount = this.videoViews + this.bookViews + this.wikiViews + this.articleViews;
+            return this;
+        }
     }
 
     //TODO LRSinfo
@@ -55,5 +60,5 @@ public class UserInfoDTO {
     UserInfo userInfo;
     DiagnosisInfo diagnosisInfo;
     MinitestInfo minitestInfo;
-    ContentsInfo ContentsInfo;
+    ContentsInfo contentsInfo;
 }
