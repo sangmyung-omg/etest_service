@@ -12,7 +12,7 @@ import com.tmax.eTest.LRS.util.LRSAPIManager;
 import com.tmax.eTest.Report.dto.MiniTestRecordDTO;
 import com.tmax.eTest.Report.util.RuleBaseScoreCalculator;
 import com.tmax.eTest.Report.util.SNDCalculator;
-import com.tmax.eTest.Report.util.SelfDiagnosisComment;
+import com.tmax.eTest.Report.util.DiagnosisComment;
 import com.tmax.eTest.Report.util.StateAndProbProcess;
 import com.tmax.eTest.Report.util.TritonAPIManager;
 import com.tmax.eTest.Report.util.UKScoreCalculator;
@@ -41,7 +41,7 @@ public class MiniTestRecordService {
 	@Autowired
 	UKScoreCalculator ukScoreCalculator;
 	@Autowired
-	SelfDiagnosisComment commentGenerator;
+	DiagnosisComment commentGenerator;
 	@Autowired
 	SNDCalculator sndCalculator;
 	

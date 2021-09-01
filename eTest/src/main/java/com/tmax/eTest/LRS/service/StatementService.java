@@ -81,6 +81,25 @@ public class StatementService {
 		return result;
 	}
 	
+	public boolean updateUserID(
+			String recentUserID,
+			String changeUserID)
+	{
+		boolean result = true;
+		
+		GetStatementInfoDTO searchInfo = new GetStatementInfoDTO();
+		searchInfo.pushUserId(recentUserID);
+		
+		List<Statement> dbRes = statementRepo.findAll(
+				StatementSpecs.searchStatement(searchInfo, false, false));
+		
+		for(Statement state : dbRes)
+			state.setUserId(changeUserID);
+		
+		statementRepo.saveAll(dbRes);
+		
+		return result;
+	}
 	
 	public boolean setStatementDisable(String userIdToken)
 	{

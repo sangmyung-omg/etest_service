@@ -13,17 +13,16 @@ import org.springframework.web.bind.annotation.RestController;
 import com.tmax.eTest.LRS.util.LRSAPIManager;
 import com.tmax.eTest.Report.dto.DiagnosisRecordDetailDTO;
 import com.tmax.eTest.Report.dto.DiagnosisRecordMainDTO;
-import com.tmax.eTest.Report.dto.DiagnosisResultDTO;
 import com.tmax.eTest.Report.dto.PartUnderstandingDTO;
 import com.tmax.eTest.Report.service.DiagnosisRecordService;
-import com.tmax.eTest.Report.service.SelfDiagnosisReportService;
+import com.tmax.eTest.Report.service.DiagnosisReportService;
 import com.tmax.eTest.Test.service.UserInfoService;
 
 @RestController
-public class SelfDiagnosisReportController {
+public class DiagnosisReportController {
 	
 	@Autowired
-	SelfDiagnosisReportService selfDiagnosisReportService;
+	DiagnosisReportService selfDiagnosisReportService;
 	
 	@Autowired
 	DiagnosisRecordService diagnosisRecordService;
@@ -31,23 +30,7 @@ public class SelfDiagnosisReportController {
 	@Autowired
 	UserInfoService userService;
 	
-	
-	//legacy
-	@CrossOrigin("*")
-	@GetMapping(value="/report/diagnosisResult/{id}", produces = "application/json; charset=utf-8")
-	public DiagnosisResultDTO diagnosisResult(
-			@PathVariable("id") String id) throws Exception{
-		
-		// Saving user ID of not-logged-in users - by S.M.
-		//String queryResult = userService.updateUserInfo(id);
-		// ------------------------------------------------
-		
-		DiagnosisResultDTO output = selfDiagnosisReportService.calculateDiagnosisResult(id, null);
-		
-		return output;
-	}
-	
-	//legacy
+
 	@CrossOrigin("*")
 	@PutMapping(value="/report/diagnosis/saveResult/{id}/{probSetId}", produces = "application/json; charset=utf-8")
 	public boolean diagnosisResult(

@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class DiagnosisReportHistoryDTO {
     private String diagnosisId;
-    private Float giScore;
+    private Integer giScore;
     private Timestamp diagnosisDate;
     public static DiagnosisReportHistoryDTO toDto(DiagnosisReport diagnosisReport) {
         return DiagnosisReportHistoryDTO.builder()

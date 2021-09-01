@@ -7,11 +7,15 @@ import java.util.Map;
 
 import com.tmax.eTest.Common.model.problem.Problem;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class DiagnosisRecordDetailDTO {
 
 	int score = 0;
@@ -19,7 +23,7 @@ public class DiagnosisRecordDetailDTO {
 	
 	// Comment 관련
 	Map<String, String> mainCommentInfo = new HashMap<>();
-	Map<String, Object> detailCommentInfo = new HashMap<>();
+	List<Object> detailCommentInfo = new ArrayList<>();
 	
 	// 문제 정보
 	Map<String, Object> problemCorrectInfo = new HashMap<>();
@@ -39,17 +43,19 @@ public class DiagnosisRecordDetailDTO {
 		Map<String, Object> riskCommentInfo = new HashMap<>();
 		Map<String, Object> investInfo = new HashMap<>();
 		
+		riskCommentInfo.put("name", "투자위험 태도");
 		riskCommentInfo.put("main", "너무 큰 위험도 너무 작은 위험도 추구하지 않는, 중립형 투자자");
 		riskCommentInfo.put("detail", "당신은 리스크 중립형으로 위험을 적당하게 수용하고 인내하는 투자자입니다.");
 		riskCommentInfo.put("score", 40);
 		
+		investInfo.put("name", "투자 방법");
 		investInfo.put("main", "집중할 때는 집중, 분산할 때는 분산! 중간형 투자자");
 		investInfo.put("detail", "당신은 집중할때는 집중하고 분산할때는 분산하기도 하지만, "
 				+ "남들과 비슷한 수준의 분산 투자를 하는 경향이 있습니다");
 		investInfo.put("score", 42);
 		
-		detailCommentInfo.put("투자위험 태도", riskCommentInfo);
-		detailCommentInfo.put("투자 방법", investInfo);
+		detailCommentInfo.add(riskCommentInfo);
+		detailCommentInfo.add(investInfo);
 		
 		problemCorrectInfo.put("allCorr", 3);
 		problemCorrectInfo.put("allProb", 6);
@@ -58,13 +64,11 @@ public class DiagnosisRecordDetailDTO {
 		problemCorrectInfo.put("low", "1/2");
 
 		List<String> probInfo = new ArrayList<>();
-		probInfo.add("문제 UUID");
+		probInfo.add("문제 Index");
+		probInfo.add("21");//문제 UUID
 		probInfo.add("정오답 여부(true or false)");
-		probInfo.add("문제 제목");
 		probInfo.add("문제 내용");
 		probInfo.add("난이도");
-		probInfo.add("정답률");
-		probInfo.add("출처");
 		
 		problemHighLevelInfo.add(probInfo);
 		problemHighLevelInfo.add(probInfo);
@@ -78,12 +82,11 @@ public class DiagnosisRecordDetailDTO {
 	{
 		List<String> probInfoDTO = new ArrayList<>();
 		
+		probInfoDTO.add("문제 Index");
 		probInfoDTO.add(prob.getProbID().toString());
 		probInfoDTO.add(isCorr+"");
 		probInfoDTO.add(prob.getQuestion());
 		probInfoDTO.add(prob.getDifficulty());
-		probInfoDTO.add("정답률");
-		probInfoDTO.add(prob.getSource());
 		
 		return probInfoDTO;
 	}

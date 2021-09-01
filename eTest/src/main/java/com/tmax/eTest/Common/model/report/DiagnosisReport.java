@@ -12,17 +12,23 @@ import javax.persistence.Table;
 
 import com.tmax.eTest.Common.model.user.UserMaster;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @Entity
 @Table(name="DIAGNOSIS_REPORT")
 @IdClass(DiagnosisReportKey.class)
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class DiagnosisReport {
 	@Id
 	private String diagnosisId;
 	private String userUuid;
-	private Float giScore;
+	private Integer giScore;
 	
 	private Integer riskScore;
 	private Integer riskProfileScore;
@@ -45,6 +51,10 @@ public class DiagnosisReport {
 	private Integer investItemNum;
 	private Integer stockRatio;
 	private Timestamp diagnosisDate;
+	
+	private String recommendBasicList;
+	private String recommendTypeList;
+	private String recommendAdvancedList;
 	
 // error 및 미사용
 //	@ManyToOne(fetch = FetchType.LAZY)

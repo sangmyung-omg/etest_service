@@ -17,9 +17,26 @@ public class SNDCalculator {
 	final double MINI_TEST_MIN = 0;
 	final double MINI_TEST_MAX = 100;
 	
+	// 자가진단 CBT 분석 기초자료_20210813_v1.0.xlsx 에서 발췌
+	final double[] MEAN_LIST = {71.0793, 81.1149, 65.6091, 67.6552}; // GI 지수, risk, invest, knowledge
+	final double[] SD_LIST = {7.7330, 8.5672, 10.6003, 14.0570}; // GI 지수, risk, invest, knowledge
+	
+	public final int GI_IDX = 0;
+	public final int RISK_IDX = 1;
+	public final int INVEST_IDX = 2;
+	public final int KNOWLEDGE_IDX = 3;
+	
+	
 	
 
 	private final Logger logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
+	
+	public int calculateForDiagnosis(int typeIndex, int score)
+	{
+		return (int) Math.round( new NormalDistribution(
+				MEAN_LIST[typeIndex],
+				SD_LIST[typeIndex]).cumulativeProbability(score) * 100);
+	}
 	
 	public int calculateForSelfDiag(double giScore)
 	{

@@ -17,6 +17,9 @@ import com.tmax.eTest.Common.model.problem.DiagnosisCurriculum;
 import com.tmax.eTest.Common.model.problem.Problem;
 import com.tmax.eTest.Common.model.problem.ProblemChoice;
 
+import lombok.extern.log4j.Log4j2;
+
+@Log4j2
 @Component
 // Rule Base 점수, Triton 점수 관련 Method 집합 Class
 public class RuleBaseScoreCalculator {
@@ -47,10 +50,7 @@ public class RuleBaseScoreCalculator {
 	final public static String RISK_ANSWER_2_KEY = "RiskA2";
 	final public static String STOCK_RATIO_ANS = "주식비중답변";
 	final public static String STOCK_NUM_ANS = "주식종목수답변";
-	
 
-	
-	private final Logger logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
 
 	public Map<String,Integer> probDivideAndCalculateScoresV2(List<Pair<Problem, Integer>> probInfos)
 	{
@@ -117,24 +117,24 @@ public class RuleBaseScoreCalculator {
 						knowledgeSellProb.add(probInfo);
 						break;
 					default:
-						logger.info("probDivideAndCalculateScores section invalid : " + curriculum.getSubSection());
+						log.info("probDivideAndCalculateScores section invalid : " + curriculum.getSubSection());
 						break;
 					}
 					break;
 				default:
-					logger.info("probDivideAndCalculateScores section invalid : " + section);
+					log.info("probDivideAndCalculateScores section invalid : " + section);
 					break;
 				}
 			}
 			else
 			{
-				logger.info("probDivideAndCalculateScores prob not have diagnosisInfo : " + prob.toString());
+				log.info("probDivideAndCalculateScores prob not have diagnosisInfo : " + prob.toString());
 			}
 		}
 		
 		if(riskPatiProb.size() != 2) // 2문항
 		{
-			logger.info("probDivideAndCalculateScores riskPatienceProb size error : " + riskPatiProb.size());
+			log.info("probDivideAndCalculateScores riskPatienceProb size error : " + riskPatiProb.size());
 			res.put(RISK_ANSWER_1_KEY, 1);
 			res.put(RISK_ANSWER_2_KEY, 1);
 		}
@@ -158,98 +158,6 @@ public class RuleBaseScoreCalculator {
 				+ res.get(INVEST_SCORE) * 0.3
 				+ res.get(KNOWLEDGE_SCORE)* 0.4).intValue());
 	
-		
-		return res;
-	}
-	
-	public Map<String,Integer> probDivideAndCalculateScores(List<Pair<Problem, Integer>> probInfos)
-	{
-		Map<String,Integer> res = new HashMap<>();
-
-		List<Pair<Problem, Integer>> riskTracingProb = new ArrayList<>(); // 투자현황
-		List<Pair<Problem, Integer>> investRuleProb = new ArrayList<>(); // 투자원칙
-		List<Pair<Problem, Integer>> cogBiasProb = new ArrayList<>(); // 인지편향
-		List<Pair<Problem, Integer>> investKnowledgeProb = new ArrayList<>(); // 투자지식
-		
-		// 리스크
-		List<Pair<Problem, Integer>> riskLevelProb = new ArrayList<>(); // 리스크 감내 수준
-		List<Pair<Problem, Integer>> riskPatiProb = new ArrayList<>();	//리스크 감내 역량
-
-		for(Pair<Problem, Integer> probInfo : probInfos)
-		{
-			Problem prob = probInfo.getFirst();
-			
-			if(prob.getDiagnosisInfo() != null && prob.getDiagnosisInfo().getCurriculum() != null)
-			{
-				DiagnosisCurriculum curriculum = prob.getDiagnosisInfo().getCurriculum();
-				String section = curriculum.getSection();
-				
-				switch(section)
-				{
-				case "투자현황":
-					riskTracingProb.add(probInfo);
-					if(probInfo.getFirst().getDiagnosisInfo().getCurriculumId() == 2) // 주식 투자 비중
-						res.put(STOCK_RATIO_ANS, probInfo.getSecond());
-					else if(probInfo.getFirst().getDiagnosisInfo().getCurriculumId() == 3) // 보유 종목 수
-						res.put(STOCK_NUM_ANS, probInfo.getSecond());
-					break;
-				case "리스크":
-					if(curriculum.getSubSection().equals("리스크 감내역량"))
-						riskPatiProb.add(probInfo);
-					else
-						riskLevelProb.add(probInfo);
-					break;
-				case "투자원칙":
-					investRuleProb.add(probInfo);
-					break;
-				case "인지편향":
-					cogBiasProb.add(probInfo);
-					break;
-				case "투자지식":
-					investKnowledgeProb.add(probInfo); 
-					break;
-				default:
-					logger.info("probDivideAndCalculateScores section invalid : " + section);
-					break;
-				}
-			}
-			else
-			{
-				logger.info("probDivideAndCalculateScores prob not have diagnosisInfo : " + prob.toString());
-			}
-		}
-		
-		if(riskPatiProb.size() != 2) // 2문항
-		{
-			logger.info("probDivideAndCalculateScores riskPatienceProb size error : " + riskPatiProb.size());
-			res.put(RISK_ANSWER_1_KEY, 1);
-			res.put(RISK_ANSWER_2_KEY, 1);
-		}
-		else
-		{
-			int q1Idx = riskPatiProb.get(0).getFirst().getProbID() < riskPatiProb.get(1).getFirst().getProbID()?0:1;
-			int q2Idx = q1Idx==0?1:0;
-			
-			res.put(RISK_ANSWER_1_KEY, riskPatiProb.get(q1Idx).getSecond());
-			res.put(RISK_ANSWER_2_KEY, riskPatiProb.get(q2Idx).getSecond());
-		}
-		
-		res.putAll(calculateRiskScore(riskTracingProb, riskPatiProb, riskLevelProb));
-		res.putAll(calculateDecisionMakingScore(investRuleProb, cogBiasProb));
-		res.put(KNOWLEDGE_SCORE, calculateInvestKnowledgeScore(investKnowledgeProb));
-		res.put(GI_SCORE_KEY, Double.valueOf(res.get(RISK_PROFILE_SCORE) * 0.3
-				+ res.get(INVEST_SCORE) * 0.3
-				+ res.get(KNOWLEDGE_SCORE)* 0.4).intValue());
-		
-		logger.info("probDivideAndCalculateScores prob num : "
-				+ riskTracingProb.size() +" "
-				+ riskLevelProb.size() +" "
-				+ investRuleProb.size() +" "
-				+ cogBiasProb.size() +" "
-				+ investKnowledgeProb.size() +" "
-				+ res.get(RISK_PROFILE_SCORE) + " "
-				+ res.get(INVEST_SCORE) + " "
-				+ res.get(KNOWLEDGE_SCORE));
 		
 		return res;
 	}
@@ -280,31 +188,24 @@ public class RuleBaseScoreCalculator {
 
 	// result = [투자원칙점수, 인지편향점수, 의사결정적합도점수]
 	public Map<String, Integer> calculateDecisionMakingScore(
-			List<Pair<Problem,Integer>> investRuleProbList,
-			List<Pair<Problem,Integer>> cognitiveBiasProbList) {
-		final int INVEST_RULE_CRITERIA = 26;
-		final int COGNITIVE_BIAS_CRITERIA = 35;
-		final int ADDED_SCORE_LIST[] = { 10, 8, 4, 1 };
+			List<Pair<Problem,Integer>> investTracingList,
+			List<Pair<Problem,Integer>> investProfileList) {
+		final int ADDED_SCORE_LIST[] = { 15, 12, 10, 7, 5 };
 
 		Map<String, Integer> res = new HashMap<>();
-		int investRuleScore = makeScore(investRuleProbList);
-		int cognitiveBiasScore = makeScore(cognitiveBiasProbList);
-		int addedScore = 0;
+		int tracingScore = makeScore(investTracingList);
+		int profileScore = makeScore(investProfileList);
+		int addedScoreIdx = (tracingScore >= 40) ? 0 
+				: (tracingScore >= 33) ? 1 
+				: (tracingScore >= 26) ? 2 
+				: (tracingScore >= 19) ? 3
+				: 4;
 
-		if (investRuleScore >= INVEST_RULE_CRITERIA && cognitiveBiasScore >= COGNITIVE_BIAS_CRITERIA)
-			addedScore = ADDED_SCORE_LIST[0];
-		else if (investRuleScore >= INVEST_RULE_CRITERIA && cognitiveBiasScore < COGNITIVE_BIAS_CRITERIA)
-			addedScore = ADDED_SCORE_LIST[1];
-		else if (investRuleScore < INVEST_RULE_CRITERIA && cognitiveBiasScore >= COGNITIVE_BIAS_CRITERIA)
-			addedScore = ADDED_SCORE_LIST[2];
-		else
-			addedScore = ADDED_SCORE_LIST[3];
+		tracingScore += ADDED_SCORE_LIST[addedScoreIdx];
 
-		int decisionMakingScore = investRuleScore + cognitiveBiasScore + addedScore;
-
-		res.put(INVEST_TRACING, investRuleScore);
-		res.put(INVEST_PROFILE, cognitiveBiasScore);
-		res.put(INVEST_SCORE, decisionMakingScore);
+		res.put(INVEST_TRACING, tracingScore);
+		res.put(INVEST_PROFILE, profileScore);
+		res.put(INVEST_SCORE, tracingScore + profileScore);
 
 		return res;
 	}
@@ -368,44 +269,6 @@ public class RuleBaseScoreCalculator {
 		
 		return res;
 	}
-
-	private int calculateInvestKnowledgeScore(List<Pair<Problem, Integer>> investKnowledgeProbList)
-	{
-		int res = 0;
-		int scoreMap[] = 
-			{8, 6, 4, // 정답
-			5, 3, 2}; // 오답
-		
-		for(Pair<Problem, Integer> probInfo : investKnowledgeProbList)
-		{
-			Problem prob = probInfo.getFirst();
-			int choice = probInfo.getSecond();
-			
-			JsonArray solution = JsonParser.parseString(prob.getSolution()).getAsJsonArray();
-			
-			for(int i = 0; i < solution.size(); i++)
-			{
-				JsonObject jo = solution.get(i).getAsJsonObject();
-				
-				if(jo.get("type") != null && jo.get("data") != null &&
-					jo.get("type").getAsString().equals("MULTIPLE_CHOICE_CORRECT_ANSWER"))
-				{
-					int answer = jo.get("data").getAsInt();
-					int idx = choice == answer ? 0 : 3;
-					idx += prob.getDifficulty().equals("상") ? 0 
-						: prob.getDifficulty().equals("중") ? 1 
-						: 2;					// 하
-					
-					res += scoreMap[idx];
-					
-					break;
-				}
-			}
-		}
-		
-		return res;
-	}
-
 	
 	private int makeScore(List<Pair<Problem, Integer>> probList)
 	{

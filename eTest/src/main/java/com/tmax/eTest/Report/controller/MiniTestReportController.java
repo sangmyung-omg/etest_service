@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.tmax.eTest.Report.dto.MiniTestRecordDTO;
-import com.tmax.eTest.Report.dto.MiniTestResultDTO;
 import com.tmax.eTest.Report.dto.VideoResultDTO;
 import com.tmax.eTest.Report.service.MiniTestRecordService;
 import com.tmax.eTest.Report.service.MiniTestScoreService;
@@ -32,23 +31,11 @@ public class MiniTestReportController {
 	@Autowired
 	UserInfoService userService;
 	
-	@CrossOrigin("*")
-	@GetMapping(value="/report/miniTestResult/{id}", produces = "application/json; charset=utf-8")
-	public MiniTestResultDTO miniTestResult(@PathVariable("id") String id) throws Exception{
-		
-		// Saving user ID of not-logged-in users - by S.M.
-		//String updateResult = userService.updateUserInfo(id);
-		// ------------------------------------------------
-		
-		MiniTestResultDTO output = miniTestScoreService.getMiniTestResult(id, null);
 
-		return output;
-	}
-	
 
 	@CrossOrigin("*")
-	@GetMapping(value="/report/miniTestResult/{id}/{probSetId}", produces = "application/json; charset=utf-8")
-	public MiniTestResultDTO miniTestResult(
+	@PutMapping(value="/report/miniTest/saveResult/{id}/{probSetId}", produces = "application/json; charset=utf-8")
+	public boolean saveMiniTestResult(
 			@PathVariable("id") String id,
 			@PathVariable("probSetId") String probSetId) throws Exception{
 		
@@ -56,7 +43,7 @@ public class MiniTestReportController {
 		//String updateResult = userService.updateUserInfo(id);
 		// ------------------------------------------------
 		
-		MiniTestResultDTO output = miniTestScoreService.getMiniTestResult(id, probSetId);
+		boolean output = miniTestScoreService.saveMiniTestResult(id, probSetId);
 
 		return output;
 	}

@@ -4,13 +4,13 @@ import java.sql.Timestamp;
 import java.text.ParseException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
+import org.json.simple.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,9 +21,7 @@ import com.tmax.eTest.Contents.repository.ProblemRepository;
 import com.tmax.eTest.LRS.dto.GetStatementInfoDTO;
 import com.tmax.eTest.LRS.dto.StatementDTO;
 import com.tmax.eTest.LRS.util.LRSAPIManager;
-import com.tmax.eTest.Report.dto.MiniTestResultDTO;
 import com.tmax.eTest.Report.dto.triton.TritonDataDTO;
-import com.tmax.eTest.Report.dto.triton.TritonRequestDTO;
 import com.tmax.eTest.Report.dto.triton.TritonResponseDTO;
 import com.tmax.eTest.Report.util.SNDCalculator;
 import com.tmax.eTest.Report.util.StateAndProbProcess;
@@ -33,7 +31,7 @@ import com.tmax.eTest.Common.model.report.MinitestReport;
 import com.tmax.eTest.Common.model.uk.UkMaster;
 import com.tmax.eTest.Common.model.user.UserEmbedding;
 import com.tmax.eTest.Common.model.user.UserKnowledge;
-import com.tmax.eTest.Test.repository.MinitestReportRepo;
+import com.tmax.eTest.Common.repository.report.MinitestReportRepo;
 import com.tmax.eTest.Test.repository.UserEmbeddingRepository;
 import com.tmax.eTest.Test.repository.UserKnowledgeRepository;
 
@@ -63,22 +61,18 @@ public class MiniTestScoreService {
 
 	private final Logger logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
 
-	public MiniTestResultDTO getMiniTestResult(String userId, String probSetId) {
-		MiniTestResultDTO result = new MiniTestResultDTO();
-		result.initForDummy();
+	public boolean saveMiniTestResult(String userId, String probSetId) {
+		boolean result = true;
 
 		// Mini Test 관련 문제 풀이 정보 획득.
 		List<StatementDTO> miniTestRes = getMiniTestResultInLRS(userId, probSetId);
 		List<Problem> probInfos = getProblemInfos(miniTestRes);
 		Map<String, List<Object>> probInfoForTriton = stateAndProbProcess.makeInfoForTriton(miniTestRes, probInfos);
 		TritonResponseDTO tritonResponse = tritonAPIManager.getUnderstandingScoreInTriton(probInfoForTriton);
-
 		TritonDataDTO embeddingData = null;
 		TritonDataDTO masteryData = null;
 		
 		List<List<String>> diagQuestionInfo = stateAndProbProcess.calculateDiagQuestionInfo(miniTestRes);
-		result.setDiagnosisQuestionInfo(diagQuestionInfo);
-
 		if(tritonResponse != null)
 		{
 			for (TritonDataDTO dto : tritonResponse.getOutputs()) {
@@ -88,29 +82,21 @@ public class MiniTestScoreService {
 					masteryData = dto;
 				}
 			}
-	
+			
 			if (embeddingData != null && masteryData != null) {
 				Map<Integer, UkMaster> usedUkMap =stateAndProbProcess.makeUsedUkMap(probInfos);
 				Map<Integer, Float> ukScoreMap = scoreCalculator.makeUKScoreMap(masteryData);
 				float ukModiRatio = 1.5f, ukModiDif = 0.1f;
-				
 				ukScoreMap.forEach((ukUuid, score) -> {
 					float modScore = score*ukModiRatio - ukModiDif;
 					modScore = (modScore > 1)? 1.f : (modScore <= 0.05) ? 0.05f : modScore;
 					ukScoreMap.put(ukUuid, modScore);
 				});
-				
 				List<List<String>> partScoreList = scoreCalculator.makePartScore(usedUkMap, ukScoreMap);
 				Map<String, List<List<String>>> partUkDetail = scoreCalculator.makePartUkDetail(usedUkMap, ukScoreMap, partScoreList);
 				int setNum = 0;
-				
 				if(probInfos.size() > 0)
 					setNum = 1;//probInfos.get(0).getTestInfo().getSetNum(); jinhyung edit
-				
-				result.setPartUnderstanding(partScoreList);
-				result.setPartUkDetail(partUkDetail);
-				//result.setWeakPartDetail(weakPartDetail);
-	
 				float avg = 0;
 				for (List<String> part : partScoreList) {
 					avg += Float.parseFloat(part.get(2));
@@ -120,13 +106,9 @@ public class MiniTestScoreService {
 				
 				if(partScoreList.size() > 0)
 					ukAvgScore = Math.round(avg / partScoreList.size());
-	
-				result.setScore(ukAvgScore);
-				result.setPercentage(sndCalculator.calculateForMiniTest(ukAvgScore));
-	
+				// 오래걸림. (거의 5.3초 중 5초 차지
 				saveUserUKInfo(userId, ukScoreMap);
-				saveMinitestReport(userId, ukAvgScore, diagQuestionInfo, setNum);
-				
+				saveMinitestReport(userId, probSetId, ukAvgScore, diagQuestionInfo, setNum, partUkDetail);
 			}
 		}
 		
@@ -136,20 +118,24 @@ public class MiniTestScoreService {
 	
 	private void saveMinitestReport(
 			String id, 
+			String probSetId,
 			float ukAvgScore, 
 			List<List<String>> diagQuestionInfo,
-			int setNum)
+			int setNum,
+			Map<String, List<List<String>>> partUkDetail)
 	{
-		MinitestReport miniReport = new MinitestReport();
-		
-		miniReport.setMinitestId(UUID.randomUUID().toString());
-		miniReport.setUserUuid(id);
-		miniReport.setAvgUkMastery((float) ukAvgScore);
-		miniReport.setCorrectNum(diagQuestionInfo.get(0).size());
-		miniReport.setWrongNum(diagQuestionInfo.get(1).size());
-		miniReport.setDunnoNum(diagQuestionInfo.get(2).size());
-		miniReport.setSetNum(setNum);
-		miniReport.setMinitestDate(Timestamp.valueOf(LocalDateTime.now()));
+		JSONObject partUkJson = new JSONObject(partUkDetail);
+		MinitestReport miniReport = MinitestReport.builder()
+			.minitestId(probSetId)
+			.userUuid(id)
+			.avgUkMastery((float) ukAvgScore)
+			.correctNum(diagQuestionInfo.get(0).size())
+			.wrongNum(diagQuestionInfo.get(1).size())
+			.dunnoNum(diagQuestionInfo.get(2).size())
+			.setNum(setNum)
+			.minitestDate(Timestamp.valueOf(LocalDateTime.now()))
+			.minitestUkMastery(partUkJson.toJSONString())
+			.build();
 		
 		minitestReportRepo.save(miniReport);
 	}
@@ -223,8 +209,7 @@ public class MiniTestScoreService {
 		UserEmbedding updateEmbedding = new UserEmbedding();
 		updateEmbedding.setUserUuid(userId);
 		updateEmbedding.setUserEmbedding(userEmbedding);
-		updateEmbedding.setUpdateDate(Timestamp.valueOf(LocalDateTime.now()));
-		logger.info(updateEmbedding.toString());
+
 		
 		try {
 			userEmbeddingRepo.save(updateEmbedding);

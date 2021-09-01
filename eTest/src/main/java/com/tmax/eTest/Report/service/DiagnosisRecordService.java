@@ -25,14 +25,13 @@ import com.tmax.eTest.LRS.dto.StatementDTO;
 import com.tmax.eTest.LRS.util.LRSAPIManager;
 import com.tmax.eTest.Report.dto.DiagnosisRecordDetailDTO;
 import com.tmax.eTest.Report.dto.DiagnosisRecordMainDTO;
-import com.tmax.eTest.Report.dto.DiagnosisResultDTO;
 import com.tmax.eTest.Report.dto.PartUnderstandingDTO;
 import com.tmax.eTest.Report.dto.triton.TritonDataDTO;
 import com.tmax.eTest.Report.dto.triton.TritonResponseDTO;
 import com.tmax.eTest.Report.exception.ReportBadRequestException;
 import com.tmax.eTest.Report.util.RuleBaseScoreCalculator;
 import com.tmax.eTest.Report.util.SNDCalculator;
-import com.tmax.eTest.Report.util.SelfDiagnosisComment;
+import com.tmax.eTest.Report.util.DiagnosisComment;
 import com.tmax.eTest.Report.util.StateAndProbProcess;
 import com.tmax.eTest.Report.util.TritonAPIManager;
 import com.tmax.eTest.Report.util.UKScoreCalculator;
@@ -47,24 +46,14 @@ public class DiagnosisRecordService {
 
 	@Autowired
 	LRSAPIManager lrsAPIManager;
-	@Autowired
-	TritonAPIManager tritonAPIManager;
 
 	@Autowired
 	ProblemRepository problemRepo;
 	@Autowired
-	UserKnowledgeRepository userKnowledgeRepo;
-	@Autowired
 	DiagnosisReportRepo diagnosisReportRepo;
 
 	@Autowired
-	StateAndProbProcess stateAndProbProcess;
-	@Autowired
-	RuleBaseScoreCalculator ruleBaseScoreCalculator;
-	@Autowired
-	UKScoreCalculator ukScoreCalculator;
-	@Autowired
-	SelfDiagnosisComment commentGenerator;
+	DiagnosisComment commentGenerator;
 	@Autowired
 	SNDCalculator sndCalculator;
 
@@ -73,22 +62,48 @@ public class DiagnosisRecordService {
 	private final List<String> partNameList = new ArrayList<>(Arrays.asList("risk", "invest", "knowledge"));
 
 
-	public DiagnosisRecordMainDTO getDiagnosisRecordMain(String userId, String probSetId) throws Exception {
+	public DiagnosisRecordMainDTO getDiagnosisRecordMain(
+			String userId, 
+			String probSetId) throws Exception {
+		
 		DiagnosisRecordMainDTO result = new DiagnosisRecordMainDTO();
 
-//		DiagnosisReportKey key = new DiagnosisReportKey();
-//		key.setDiagnosisId(probSetId);
-//		
-//		Optional<DiagnosisReport> report = diagnosisReportRepo.findById(key);
-//		
-//		if(report.isPresent())
-//		{
-//			
-//		}
-//		else
-//			throw new ReportBadRequestException("Problem Set Id is unavailable. "+probSetId);
-
-		result.initForDummy();
+		if(probSetId.equals("dummy"))
+			result.initForDummy();
+		else
+		{
+			DiagnosisReportKey key = new DiagnosisReportKey();
+			key.setDiagnosisId(probSetId);
+			
+			Optional<DiagnosisReport> reportOpt = diagnosisReportRepo.findById(key);
+			
+			if(reportOpt.isPresent())
+			{
+				DiagnosisReport report = reportOpt.get();
+				
+				Map<String, Integer> percentList = new HashMap<>();
+				percentList.put("gi", 
+					sndCalculator.calculateForDiagnosis(sndCalculator.GI_IDX ,report.getGiScore()));
+				percentList.put("risk",
+					sndCalculator.calculateForDiagnosis(sndCalculator.RISK_IDX, report.getRiskScore()));
+				percentList.put("invest", 
+					sndCalculator.calculateForDiagnosis(sndCalculator.INVEST_IDX, report.getInvestScore()));
+				percentList.put("knowledge", 
+					sndCalculator.calculateForDiagnosis(sndCalculator.KNOWLEDGE_IDX, report.getKnowledgeScore()));
+				
+				List<String> similarTypeInfo = commentGenerator.makeSimilarTypeInfo(
+						report.getRiskScore(), 
+						report.getInvestScore(), 
+						report.getKnowledgeScore());
+				
+				result.pushInfoByReport(
+						report, 
+						percentList, 
+						similarTypeInfo);
+			}
+			else
+				throw new ReportBadRequestException("Problem Set Id is unavailable. "+probSetId);
+		}
 
 		return result;
 	}
@@ -101,23 +116,97 @@ public class DiagnosisRecordService {
 		
 		if(!partNameList.contains(partName))
 			throw new ReportBadRequestException("PartName unavailable. "+partName);
-
-//		DiagnosisReportKey key = new DiagnosisReportKey();
-//		key.setDiagnosisId(probSetId);
-//		
-//		Optional<DiagnosisReport> report = diagnosisReportRepo.findById(key);
-//		
-//		if(report.isPresent())
-//		{
-//			
-//		}
-//		else
-//			throw new ReportBadRequestException("Problem Set Id is unavailable. "+probSetId);
 		
+		if(probSetId.equals("dummy"))
+			result.initForDummy();
+		else
+		{
+			DiagnosisReportKey key = new DiagnosisReportKey();
+			key.setDiagnosisId(probSetId);
+			
+			Optional<DiagnosisReport> reportOpt = diagnosisReportRepo.findById(key);
+			
+			if(reportOpt.isPresent())
+			{
+				DiagnosisReport report = reportOpt.get();
+				
+				switch(partName)
+				{
+				case "risk":
+					result = makeRiskRecordDetail(report);
+					break;
+				case "invest":
+					result = makeInvestRecordDetail(report);
+					break;
+				case "knowledge":
+					result = makeKnowledgeRecordDetail(report);
+					break;
+				default: // 해당 경우 없음.
+					throw new ReportBadRequestException("PartName unavailable. "+partName);
+				}
+			}
+			else
+				throw new ReportBadRequestException("Problem Set Id is unavailable. "+probSetId);
+		}
+
+		return result;
+	}
+	
+	private DiagnosisRecordDetailDTO makeKnowledgeRecordDetail(
+			DiagnosisReport report)
+	{
+		DiagnosisRecordDetailDTO result = DiagnosisRecordDetailDTO.builder()
+				.score(report.getKnowledgeScore())
+				.percentage(sndCalculator.calculateForDiagnosis(
+						sndCalculator.KNOWLEDGE_IDX, 
+						report.getKnowledgeScore()))
+				.mainCommentInfo(commentGenerator.makeKnowledgeMainComment(
+						report.getKnowledgeScore()))
+				.detailCommentInfo(commentGenerator.makeKnowledgeDetailComment(
+						report.getKnowledgeCommonScore(), 
+						report.getKnowledgeTypeScore(), 
+						report.getKnowledgeChangeScore(), 
+						report.getKnowledgeSellScore()))
+				.build();
 		
-
-		result.initForDummy();
-
+		return result;
+	}
+	
+	private DiagnosisRecordDetailDTO makeRiskRecordDetail(
+			DiagnosisReport report)
+	{
+		DiagnosisRecordDetailDTO result = DiagnosisRecordDetailDTO.builder()
+				.score(report.getRiskScore())
+				.percentage(sndCalculator.calculateForDiagnosis(
+						sndCalculator.RISK_IDX, 
+						report.getRiskScore()))
+				.mainCommentInfo(commentGenerator.makeRiskMainComment(
+						report.getRiskProfileScore(), 
+						report.getRiskTracingScore()))
+				.detailCommentInfo(commentGenerator.makeRiskDetailComment(
+						report.getRiskProfileScore(), 
+						report.getRiskTracingScore()))
+				.build();
+		
+		return result;
+	}
+	
+	private DiagnosisRecordDetailDTO makeInvestRecordDetail(
+			DiagnosisReport report)
+	{
+		DiagnosisRecordDetailDTO result = DiagnosisRecordDetailDTO.builder()
+				.score(report.getInvestScore())
+				.percentage(sndCalculator.calculateForDiagnosis(
+						sndCalculator.INVEST_IDX, 
+						report.getInvestScore()))
+				.mainCommentInfo(commentGenerator.makeInvestMainComment(
+						report.getInvestProfileScore(), 
+						report.getInvestTracingScore()))
+				.detailCommentInfo(commentGenerator.makeInvestDetailComment(
+						report.getInvestProfileScore(), 
+						report.getInvestTracingScore()))
+				.build();
+		
 		return result;
 	}
 	

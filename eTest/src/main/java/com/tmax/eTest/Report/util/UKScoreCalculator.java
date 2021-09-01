@@ -46,11 +46,9 @@ public class UKScoreCalculator {
 				// example
 				List<String> partUK = new ArrayList<>();
 
+				partUK.add(ukId+"");
 				partUK.add(recentUK.getUkName());
-				//partUK.add(ukScore.get(ukId).toString());
-				partUK.add(calculateUKScoreString(ukScore.get(ukId)));
-				partUK.add("C");
-				partUK.add(recentUK.getUkDescription());
+				partUK.add(Float.toString(ukScore.get(ukId) * 100));
 
 				if(result.get(recentUK.getPart()) == null)
 				{
@@ -69,48 +67,7 @@ public class UKScoreCalculator {
 		return result;
 	}
 
-	// partScore example ["partname", "C", "50"]
-	public List<List<String>> makeWeakPartDetail(
-			Map<Integer, UkMaster> ukMap, 
-			Map<Integer, Float> ukScore, 
-			List<List<String>> partScore) {
-		
-		List<List<String>> result = new ArrayList<>();
-		Pair<String, Integer> lowestScorePart = Pair.of("NULL", 100);
-
-		// check lowest score
-		for (List<String> part : partScore) {
-			String partName = part.get(0);
-			int score = Integer.parseInt(part.get(2));
-
-			if (lowestScorePart.getSecond() > score)
-				lowestScorePart = Pair.of(partName, score);
-		}
-
-		// 파트 구불법 필요.
-		String lowScorePartName = lowestScorePart.getFirst();
-		ukScore.forEach((ukId, score) -> {
-			UkMaster recentUK = ukMap.get(ukId);
-			if (recentUK != null 
-				&& lowScorePartName.equals(recentUK.getPart())) {
-				// example
-				List<String> partUK = new ArrayList<>();
-
-				partUK.add(recentUK.getUkName());
-				//partUK.add(ukScore.get(ukId).toString());
-				partUK.add(calculateUKScoreString(ukScore.get(ukId)));
-				partUK.add("C");
-
-				result.add(partUK);
-			}
-
-		});
-
-		return result;
-	}
-
 	
-	//[파트이름, 스코어 등급(A~F), 스코어 점수]
 	public List<List<String>> makePartScore(Map<Integer, UkMaster> ukMap, Map<Integer, Float> ukScore) {
 		List<List<String>> result = new ArrayList<>();
 		Map<String, Pair<Float, Integer>> partInfo = new HashMap<>();

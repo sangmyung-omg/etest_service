@@ -15,7 +15,9 @@ import lombok.NoArgsConstructor;
 public class MiniTestRecordDTO {
 	
 	// 최종 점수
-	int totalScore, totalPercentage;
+	int totalScore=0, totalPercentage=0;
+	
+	String userName = "이름";
 
 	// 점수 관련
 	Map<String, Object> partInfo = new HashMap<>();
@@ -29,6 +31,7 @@ public class MiniTestRecordDTO {
 	public boolean initForDummy() {
 		totalScore = 85;
 		totalPercentage = 22;
+		userName = "홍길동";
 		
 		Map<String, Object> part1Info = new HashMap<>();
 		List<List<String>> part1UKInfo = new ArrayList<>();
@@ -41,12 +44,9 @@ public class MiniTestRecordDTO {
 		part1UKInfo.add(ukInfo);
 		
 		part1Info.put("score", 71);
-		part1Info.put("scoreUpper10", 89);
-		part1Info.put("scoreAvg", 65);
 		part1Info.put("percentage", 20);
 		part1Info.put("ukInfo", part1UKInfo);
 
-		
 		partInfo.put("part1", part1Info);
 		partInfo.put("part2", part1Info);
 		partInfo.put("part3", part1Info);
@@ -54,32 +54,21 @@ public class MiniTestRecordDTO {
 		partInfo.put("part5", part1Info);
 		partInfo.put("part6", part1Info);
 		
-		
-		
-		problemCorrectInfo.put("allCorr", 9);
-		problemCorrectInfo.put("allWrong", 3);
-		problemCorrectInfo.put("high", "2/3");
-		problemCorrectInfo.put("middle", "5/7");
-		problemCorrectInfo.put("low", "2/2");
+		problemCorrectInfo.put("allCorr", 3);
+		problemCorrectInfo.put("allProb", 6);
+		problemCorrectInfo.put("high", "1/2");
+		problemCorrectInfo.put("middle", "1/2");
+		problemCorrectInfo.put("low", "1/2");
 
 		List<String> probInfo = new ArrayList<>();
-		probInfo.add("문제 UUID");
+		probInfo.add("문제 Index");
+		probInfo.add("1");//문제 UUID
 		probInfo.add("정오답 여부(true or false)");
-		probInfo.add("문제 제목");
 		probInfo.add("문제 내용");
 		probInfo.add("난이도");
-		probInfo.add("정답률");
-		probInfo.add("출처");
 		
 		problemHighLevelInfo.add(probInfo);
 		problemHighLevelInfo.add(probInfo);
-		problemHighLevelInfo.add(probInfo);
-		problemMiddleLevelInfo.add(probInfo);
-		problemMiddleLevelInfo.add(probInfo);
-		problemMiddleLevelInfo.add(probInfo);
-		problemMiddleLevelInfo.add(probInfo);
-		problemMiddleLevelInfo.add(probInfo);
-		problemMiddleLevelInfo.add(probInfo);
 		problemMiddleLevelInfo.add(probInfo);
 		problemMiddleLevelInfo.add(probInfo);
 		problemLowLevelInfo.add(probInfo);
