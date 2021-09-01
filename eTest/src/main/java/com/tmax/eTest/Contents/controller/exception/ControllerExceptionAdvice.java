@@ -1,6 +1,7 @@
 package com.tmax.eTest.Contents.controller.exception;
 
 import java.io.IOException;
+import java.text.ParseException;
 
 import com.tmax.eTest.Contents.dto.GenericErrorDTO;
 import com.tmax.eTest.Contents.exception.ContentsException;
@@ -22,6 +23,12 @@ public class ControllerExceptionAdvice {
     return new ResponseEntity<>(new GenericErrorDTO(exception.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
   }
 
+  @ExceptionHandler({ ParseException.class })
+  public ResponseEntity<GenericErrorDTO> handleContentsError(ParseException exception) {
+    log.error("PARSE_EXCEPTION: " + exception.getMessage());
+    return new ResponseEntity<>(new GenericErrorDTO(exception.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
+  }
+
   @ExceptionHandler({ IllegalArgumentException.class })
   public ResponseEntity<GenericErrorDTO> handleIllegalArgumentError(IllegalArgumentException exception) {
     log.error("BAD_REQUEST: " + exception.getMessage());
@@ -34,4 +41,5 @@ public class ControllerExceptionAdvice {
     return new ResponseEntity<>(new GenericErrorDTO(exception.getErrorCode(), exception.getMessage()),
         exception.getStatus());
   }
+
 }

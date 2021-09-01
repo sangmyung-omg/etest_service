@@ -1,5 +1,7 @@
 package com.tmax.eTest.Contents.service;
 
+import java.text.ParseException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -15,7 +17,8 @@ import com.tmax.eTest.Contents.exception.ContentsException;
 import com.tmax.eTest.Contents.exception.ErrorCode;
 import com.tmax.eTest.Contents.repository.support.BookRepositorySupport;
 import com.tmax.eTest.Contents.util.CommonUtils;
-import com.tmax.eTest.Contents.util.LRSService;
+import com.tmax.eTest.Contents.util.LRSUtils;
+import com.tmax.eTest.LRS.util.LRSAPIManager;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,7 +34,10 @@ public class BookService {
   private BookRepositorySupport bookRepositorySupport;
 
   @Autowired
-  private LRSService lrsService;
+  private LRSUtils lrsUtils;
+
+  @Autowired
+  private LRSAPIManager lrsapiManager;
 
   public BookDTO getBook(String userId, Long bookId) {
     BookJoin book = bookRepositorySupport.findBookByUserAndId(userId, bookId);
@@ -69,10 +75,19 @@ public class BookService {
     return new SuccessDTO(true);
   }
 
-  public SuccessDTO updateBookHit(String userId, Long bookId) {
-    lrsService.init("/SaveStatement");
-    lrsService.saveStatement(lrsService.makeStatement(userId, Long.toString(bookId), LRSService.ACTION_TYPE.enter,
-        LRSService.SOURCE_TYPE.textbook));
+  public SuccessDTO updateBookHit(String userId, Long bookId) throws ParseException {
+    // lrsService.init("/SaveStatement");
+    // lrsService.saveStatement(lrsService.makeStatement(userId,
+    // Long.toString(bookId), LRSService.ACTION_TYPE.enter,
+    // LRSService.SOURCE_TYPE.textbook));
+    lrsapiManager.saveStatementList(Arrays.asList(lrsUtils.makeStatement(userId, Long.toString(bookId),
+        LRSUtils.ACTION_TYPE.enter, LRSUtils.SOURCE_TYPE.textbook)));
+    return new SuccessDTO(true);
+  }
+
+  public SuccessDTO quitBook(String userId, Long bookId, Integer duration) throws ParseException {
+    lrsapiManager.saveStatementList(Arrays.asList(lrsUtils.makeStatement(userId, Long.toString(bookId),
+        LRSUtils.ACTION_TYPE.quit, LRSUtils.SOURCE_TYPE.textbook, duration)));
     return new SuccessDTO(true);
   }
 

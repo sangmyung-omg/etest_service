@@ -1,6 +1,6 @@
 package com.tmax.eTest.Common.model.video;
 
-import java.sql.Timestamp;
+import java.sql.Date;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -29,11 +29,16 @@ public class Video {
   private String videoSrc;
   private String originalFileSrc;
   private String title;
-  private Timestamp createDate;
-  private String creatorId;
   private String imgSrc;
-  private Float totalTime;
   private Long curriculumId;
+  private Float totalTime;
+  private Float startTime;
+  private Float endTime;
+  private Date createDate;
+  private Date registerDate;
+  private Date endDate;
+  private Integer sequence;
+  private String codeSet;
 
   @ManyToOne(fetch = FetchType.EAGER)
   @JoinColumn(name = "curriculumId", insertable = false, updatable = false)

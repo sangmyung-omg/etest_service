@@ -41,7 +41,7 @@ public class LRSService {
   private static final String PLATFORM = "Kofia";
 
   public static enum ACTION_TYPE {
-    enter;
+    enter, quit;
   }
 
   public static enum SOURCE_TYPE {

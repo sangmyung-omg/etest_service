@@ -1,5 +1,7 @@
 package com.tmax.eTest.Contents.service;
 
+import java.text.ParseException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -17,7 +19,8 @@ import com.tmax.eTest.Contents.exception.ContentsException;
 import com.tmax.eTest.Contents.exception.ErrorCode;
 import com.tmax.eTest.Contents.repository.support.ArticleRepositorySupport;
 import com.tmax.eTest.Contents.util.CommonUtils;
-import com.tmax.eTest.Contents.util.LRSService;
+import com.tmax.eTest.Contents.util.LRSUtils;
+import com.tmax.eTest.LRS.util.LRSAPIManager;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,7 +35,10 @@ public class ArticleService {
   private ArticleRepositorySupport articleRepositorySupport;
 
   @Autowired
-  private LRSService lrsService;
+  private LRSUtils lrsUtils;
+
+  @Autowired
+  private LRSAPIManager lrsapiManager;
 
   public ArticleDTO getArticle(String userId, Long articleId) {
     ArticleJoin article = articleRepositorySupport.findArticleByUserAndId(userId, articleId);
@@ -70,10 +76,19 @@ public class ArticleService {
     return new SuccessDTO(true);
   }
 
-  public SuccessDTO updateArticleHit(String userId, Long articleId) {
-    lrsService.init("/SaveStatement");
-    lrsService.saveStatement(lrsService.makeStatement(userId, Long.toString(articleId), LRSService.ACTION_TYPE.enter,
-        LRSService.SOURCE_TYPE.article));
+  public SuccessDTO updateArticleHit(String userId, Long articleId) throws ParseException {
+    // lrsService.init("/SaveStatement");
+    // lrsService.saveStatement(lrsService.makeStatement(userId,
+    // Long.toString(articleId), LRSService.ACTION_TYPE.enter,
+    // LRSService.SOURCE_TYPE.article));
+    lrsapiManager.saveStatementList(Arrays.asList(lrsUtils.makeStatement(userId, Long.toString(articleId),
+        LRSUtils.ACTION_TYPE.enter, LRSUtils.SOURCE_TYPE.article)));
+    return new SuccessDTO(true);
+  }
+
+  public SuccessDTO quitArticle(String userId, Long articleId, Integer duration) throws ParseException {
+    lrsapiManager.saveStatementList(Arrays.asList(lrsUtils.makeStatement(userId, Long.toString(articleId),
+        LRSUtils.ACTION_TYPE.quit, LRSUtils.SOURCE_TYPE.article, duration)));
     return new SuccessDTO(true);
   }
 

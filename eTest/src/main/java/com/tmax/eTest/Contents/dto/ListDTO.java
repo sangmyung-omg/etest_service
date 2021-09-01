@@ -3,9 +3,17 @@ package com.tmax.eTest.Contents.dto;
 import java.util.List;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 
+@Data
+@Builder
 public class ListDTO {
+
+  private Video video;
+  private Book book;
+  private Wiki wiki;
+  private Article article;
 
   @Data
   @AllArgsConstructor

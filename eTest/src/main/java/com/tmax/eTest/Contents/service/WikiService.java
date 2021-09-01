@@ -1,5 +1,7 @@
 package com.tmax.eTest.Contents.service;
 
+import java.text.ParseException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -15,7 +17,8 @@ import com.tmax.eTest.Contents.exception.ContentsException;
 import com.tmax.eTest.Contents.exception.ErrorCode;
 import com.tmax.eTest.Contents.repository.support.WikiRepositorySupport;
 import com.tmax.eTest.Contents.util.CommonUtils;
-import com.tmax.eTest.Contents.util.LRSService;
+import com.tmax.eTest.Contents.util.LRSUtils;
+import com.tmax.eTest.LRS.util.LRSAPIManager;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,7 +33,10 @@ public class WikiService {
   private WikiRepositorySupport wikiRepositorySupport;
 
   @Autowired
-  private LRSService lrsService;
+  private LRSUtils lrsUtils;
+
+  @Autowired
+  private LRSAPIManager lrsapiManager;
 
   public WikiDTO getWiki(String userId, Long wikiId) {
     WikiJoin wiki = wikiRepositorySupport.findWikiByUserAndId(userId, wikiId);
@@ -68,10 +74,19 @@ public class WikiService {
     return new SuccessDTO(true);
   }
 
-  public SuccessDTO updateWikiHit(String userId, Long wikiId) {
-    lrsService.init("/SaveStatement");
-    lrsService.saveStatement(lrsService.makeStatement(userId, Long.toString(wikiId), LRSService.ACTION_TYPE.enter,
-        LRSService.SOURCE_TYPE.wiki));
+  public SuccessDTO updateWikiHit(String userId, Long wikiId) throws ParseException {
+    // lrsService.init("/SaveStatement");
+    // lrsService.saveStatement(lrsService.makeStatement(userId,
+    // Long.toString(wikiId), LRSService.ACTION_TYPE.enter,
+    // LRSService.SOURCE_TYPE.wiki));
+    lrsapiManager.saveStatementList(Arrays.asList(
+        lrsUtils.makeStatement(userId, Long.toString(wikiId), LRSUtils.ACTION_TYPE.enter, LRSUtils.SOURCE_TYPE.wiki)));
+    return new SuccessDTO(true);
+  }
+
+  public SuccessDTO quitWiki(String userId, Long wikiId, Integer duration) throws ParseException {
+    lrsapiManager.saveStatementList(Arrays.asList(lrsUtils.makeStatement(userId, Long.toString(wikiId),
+        LRSUtils.ACTION_TYPE.quit, LRSUtils.SOURCE_TYPE.wiki, duration)));
     return new SuccessDTO(true);
   }
 

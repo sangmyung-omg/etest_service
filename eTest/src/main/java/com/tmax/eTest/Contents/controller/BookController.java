@@ -1,5 +1,7 @@
 package com.tmax.eTest.Contents.controller;
 
+import java.text.ParseException;
+
 import com.tmax.eTest.Contents.service.BookService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RestController
 public class BookController {
+
   @Autowired
   private BookService bookService;
 
@@ -57,8 +60,15 @@ public class BookController {
 
   @PostMapping("/users/{user_id}/books/{book_id}/hit")
   public ResponseEntity<Object> updateBookHit(@PathVariable("user_id") String userId,
-      @PathVariable("book_id") Long bookId) {
+      @PathVariable("book_id") Long bookId) throws ParseException {
     log.info("---updateBookHit---");
     return new ResponseEntity<>(bookService.updateBookHit(userId, bookId), HttpStatus.OK);
+  }
+
+  @PostMapping("/users/{user_id}/books/{book_id}/quit")
+  public ResponseEntity<Object> quitBook(@PathVariable("user_id") String userId, @PathVariable("book_id") Long bookId,
+      @RequestParam(value = "duration", required = true) Integer duration) throws ParseException {
+    log.info("---quitBook---");
+    return new ResponseEntity<>(bookService.quitBook(userId, bookId, duration), HttpStatus.OK);
   }
 }

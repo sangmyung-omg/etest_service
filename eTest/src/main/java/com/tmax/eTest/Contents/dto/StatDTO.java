@@ -25,6 +25,7 @@ public class StatDTO {
 
   @Data
   @AllArgsConstructor
+  @NoArgsConstructor
   public static class Hit {
     private long total;
     private long video;

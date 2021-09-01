@@ -1,14 +1,14 @@
 {
-    "configurations": [    
-        {
-            "type": "java",
-            "name": "Spring Boot-ETestApplication<eTest>",
-            "request": "launch",
-            "cwd": "${workspaceFolder}",
-            "console": "internalConsole",
-            "mainClass": "com.tmax.eTest.ETestApplication",
-            "projectName": "eTest",
-            "args": "version=2"
-        }
-    ]
+  "configurations": [
+    {
+      "type": "java",
+      "name": "Spring Boot-ETestApplication<eTest>",
+      "request": "launch",
+      "cwd": "${workspaceFolder}",
+      "console": "internalConsole",
+      "mainClass": "com.tmax.eTest.ETestApplication",
+      "projectName": "eTest",
+      "args": ""
+    }
+  ]
 }

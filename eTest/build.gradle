@@ -50,6 +50,7 @@ dependencies {
 	// https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-oauth2-client
 	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-oauth2-client'
 	implementation 'com.querydsl:querydsl-jpa'
+	implementation 'com.querydsl:querydsl-apt'
 	// compile 'net.logstash.logback:logstash-logback-encoder:6.3' // elk setting
 	compile('org.springframework.boot:spring-boot-starter-batch')
 }
@@ -63,19 +64,20 @@ test {
 def querydslDir = "$buildDir/generated/querydsl"
 
 querydsl {
-    jpa = true
-    querydslSourcesDir = querydslDir
+	library = "com.querydsl:querydsl-apt"
+	jpa = true
+	querydslSourcesDir = querydslDir
 }
 
 sourceSets {
-    main.java.srcDir querydslDir
+	main.java.srcDir querydslDir
 }
 
 configurations {
-    querydsl.extendsFrom compileClasspath
+	querydsl.extendsFrom compileClasspath
 }
 
 compileQuerydsl {
-    options.annotationProcessorPath = configurations.querydsl
+	options.annotationProcessorPath = configurations.querydsl
 }
 //querydsl 추가 끝

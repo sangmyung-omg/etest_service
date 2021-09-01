@@ -1,5 +1,7 @@
 package com.tmax.eTest.Contents.controller;
 
+import java.text.ParseException;
+
 import com.tmax.eTest.Contents.service.ArticleService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,8 +61,17 @@ public class ArticleController {
 
   @PostMapping("/users/{user_id}/articles/{article_id}/hit")
   public ResponseEntity<Object> updateArticleHit(@PathVariable("user_id") String userId,
-      @PathVariable("article_id") Long articleId) {
+      @PathVariable("article_id") Long articleId) throws ParseException {
     log.info("---updateArticleHit---");
     return new ResponseEntity<>(articleService.updateArticleHit(userId, articleId), HttpStatus.OK);
   }
+
+  @PostMapping("/users/{user_id}/articles/{article_id}/quit")
+  public ResponseEntity<Object> quitArticle(@PathVariable("user_id") String userId,
+      @PathVariable("article_id") Long articleId, @RequestParam(value = "duration", required = true) Integer duration)
+      throws ParseException {
+    log.info("---quitArticle---");
+    return new ResponseEntity<>(articleService.quitArticle(userId, articleId, duration), HttpStatus.OK);
+  }
+
 }

@@ -1,5 +1,7 @@
 package com.tmax.eTest.Contents.controller;
 
+import java.text.ParseException;
+
 import com.tmax.eTest.Contents.service.WikiService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,8 +60,15 @@ public class WikiController {
 
   @PostMapping("/users/{user_id}/wikis/{wiki_id}/hit")
   public ResponseEntity<Object> updateWikiHit(@PathVariable("user_id") String userId,
-      @PathVariable("wiki_id") Long wikiId) {
+      @PathVariable("wiki_id") Long wikiId) throws ParseException {
     log.info("---updateWikiHit---");
     return new ResponseEntity<>(wikiService.updateWikiHit(userId, wikiId), HttpStatus.OK);
+  }
+
+  @PostMapping("/users/{user_id}/wikis/{wiki_id}/quit")
+  public ResponseEntity<Object> quitWiki(@PathVariable("user_id") String userId, @PathVariable("wiki_id") Long wikiId,
+      @RequestParam(value = "duration", required = true) Integer duration) throws ParseException {
+    log.info("---quitWiki---");
+    return new ResponseEntity<>(wikiService.quitWiki(userId, wikiId, duration), HttpStatus.OK);
   }
 }

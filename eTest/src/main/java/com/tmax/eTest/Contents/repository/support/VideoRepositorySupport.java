@@ -38,11 +38,13 @@ public class VideoRepositorySupport extends QuerydslRepositorySupport {
   }
 
   public OrderSpecifier<?> getVideoSortedColumn(SortType sort) {
-    switch (sort.toString()) {
+    switch (sort.name()) {
       case "DATE":
         return QuerydslUtils.getSortedColumn(Order.ASC, video, "createDate");
       case "HIT":
-        return QuerydslUtils.getSortedColumn(Order.ASC, video.videoHit, "hit");
+        return QuerydslUtils.getSortedColumn(Order.DESC, video.videoHit, "hit");
+      case "SEQUENCE":
+        return QuerydslUtils.getSortedColumn(Order.ASC, video, "sequence");
       default:
         throw new ContentsException(ErrorCode.TYPE_ERROR, "Sort should be 'date' or 'hit' !!!");
     }
@@ -51,6 +53,11 @@ public class VideoRepositorySupport extends QuerydslRepositorySupport {
   public VideoJoin findVideoByUserAndId(String userId, Long videoId) {
     return tupleToJoin(query.select(video, videoBookmark.userUuid).from(video)
         .leftJoin(video.videoBookmarks, videoBookmark).on(userEq(userId)).where(idEq(videoId)).fetchOne());
+  }
+
+  public List<Video> findVideosByCurriculum(Long curriculumId, SortType sort, String keyword) {
+    return query.selectFrom(video).where(curriculumEq(curriculumId)).where(checkKeyword(keyword))
+        .orderBy(getVideoSortedColumn(sort)).fetch();
   }
 
   public List<VideoJoin> findVideosByUserAndCurriculum(String userId, Long curriculumId, SortType sort,
@@ -90,7 +97,6 @@ public class VideoRepositorySupport extends QuerydslRepositorySupport {
   }
 
   private VideoJoin tupleToJoin(Tuple tuple) {
-    log.info(tuple.toString());
     return new VideoJoin(tuple.get(video), tuple.get(videoBookmark.userUuid));
   }
 
@@ -98,5 +104,4 @@ public class VideoRepositorySupport extends QuerydslRepositorySupport {
     return tuples.stream().map(tuple -> new VideoJoin(tuple.get(video), tuple.get(videoBookmark.userUuid)))
         .collect(Collectors.toList());
   }
-
 }
