@@ -1,17 +1,20 @@
 package com.tmax.eTest.Auth.service;
 
 import com.tmax.eTest.Auth.dto.CMRespDto;
+import com.tmax.eTest.Auth.dto.PrincipalDetails;
 import com.tmax.eTest.Auth.dto.SignUpRequestDto;
 import com.tmax.eTest.Auth.dto.Role;
 import com.tmax.eTest.Auth.repository.UserRepository;
 import com.tmax.eTest.Common.model.user.UserMaster;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.ParseException;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -26,7 +29,6 @@ public class AuthService {
 
     @Transactional
     public UserMaster singUp(SignUpRequestDto signUpRequestDto) {
-        System.out.println("signup 진입 : " + emailDuplicateCheck(signUpRequestDto.getEmail()) + nickNameDuplicateCheck(signUpRequestDto.getNickname()) +(!emailDuplicateCheck(signUpRequestDto.getEmail()) && !nickNameDuplicateCheck(signUpRequestDto.getNickname())) );
             if (!emailDuplicateCheck(signUpRequestDto.getEmail()) && !nickNameDuplicateCheck(signUpRequestDto.getNickname())) {
                 UserMaster userMaster = UserMaster.builder()
                         .nickname(signUpRequestDto.getNickname())
@@ -60,6 +62,11 @@ public class AuthService {
         return userRepository.existsByNickname(nickname);
     }
 
-
+    @Transactional
+    public String deleteUser(String userUuid) {
+        Optional<UserMaster> userMasterOptional = userRepository.findByUserUuid(userUuid);
+        userRepository.delete(userMasterOptional.get());
+        return "True";
+    }
 
 }

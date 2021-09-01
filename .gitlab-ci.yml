@@ -28,6 +28,8 @@ gradle-build:
   script:
     - export GRADLE_USER_HOME=pwd/eTest/.gradle
     - cd eTest
+    - ./gradlew clean
+    - ./gradlew compileQuerydsl
     - chmod +x gradlew
     - ./gradlew assemble
   

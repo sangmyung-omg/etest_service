@@ -27,14 +27,8 @@ tags:
     description: Access to Petstore orders
   - name: 미니테스트
     description: Operations about user
-    externalDocs:
-      description: Find out more about our store
-      url: 'http://swagger.io'
-  - name: 계정
-    description: Operations about user
-    externalDocs:
-      description: Find out more about our store
-      url: 'http://swagger.io'
+
+
 paths:
 
   /login:
@@ -268,7 +262,8 @@ paths:
                 example:
                   code: 200
                   message: 1대1 질문 생성 성공
-                  data: inquiryId            
+                  data: inquiryId   
+
   /user/inquiry/list:
     get:
       tags:
@@ -292,7 +287,37 @@ paths:
                 example:
                   code: 200
                   message: 1대1 질문 리스트 받아오기 성공
-                  data: inquiryList                      
+                  data: inquiryList    
+  /inquiry/attachment:
+    get:
+      tags:
+        - 1대1문의
+      description: 해당 유저의 1대1 문의 첨부파일 반환하기
+      parameters:
+        - name: Cookie
+          in: header
+          description: user JWTtoken
+          required: true
+          schema:
+            type: string
+            format: string   
+        - name: filename
+          in: query
+          schema:
+            type: string
+            format: string   
+      responses:
+        '200':
+          description: 해당 유저의 모든 1대1 리스트 기록 반환
+          content:
+            image/png:
+              schema:
+                type: object
+                example:
+                  code: 200
+                  message: 1대1 질문 리스트 받아오기 성공
+                  data: inquiryList      
+
   /user/inquiry:
     post:
       tags:
@@ -317,6 +342,17 @@ paths:
               example: {   
                           "id": 1
                         }
+      responses:
+        '200':
+          description: 1대1 질문 받아오기 성공
+          content:
+            json:
+              schema:
+                type: object
+                example:
+                  code: 200
+                  message: 제거 성공
+                  data: inquiry   
   /user/inquiry/delete:
     post:
       tags:
@@ -412,3 +448,87 @@ paths:
                   code: 200
                   message: 성공
                   data: 유저의 미니테스트 기록                
+  /user/delete:
+    get:
+      tags:
+        - 회원가입
+      description: 회원 탈퇴
+      parameters:
+        - name: Cookie
+          in: header
+          description: user JWTtoken
+          required: true
+          schema:
+            type: string
+            format: string      
+      responses:
+        '200':
+          description: 회원 탈퇴
+          content:
+            json:
+              schema:
+                type: object
+                example:
+                  code: 200
+                  message: 성공
+                  data: True
+
+
+
+  /user/inquiry/modify:
+    post:
+      tags:
+        - 1대1문의
+      description: 해당 유저의 1대1문의 수정
+      parameters:
+        - name: Cookie
+          in: header
+          description: user JWTtoken
+          required: true
+          schema:
+            type: string
+            format: string      
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                id:
+                  description: 질문 번호
+                  type: number
+                title:
+                  description: 제목
+                type:
+                  description: 질문 타입
+                content:
+                  description: 내용
+                fileList:
+                  description: 첨부파일
+              example: {   
+                          "status": "대기중",
+                          "title": "두번째 질문이 있습니다",
+                          "type": "error",
+                          "content": "페이지가 안보입니다",
+                          "fileList": ["제목없음.png","제목없음2.png"]
+                        }
+      responses:
+        '200':
+          description: 해당 유저의 1대1 수정
+          content:
+            json:
+              schema:
+                type: object
+                example:
+                  code: 200
+                  message: 성공
+                  data: result   
+        '400':
+          description: 수정 실패
+          content:
+            json:
+              schema:
+                type: object
+                example:
+                  code: 400
+                  message: 유저가 생성한 질문이 아닙니다
+                  data: 유저가 생성한 질문이 아닙니다    

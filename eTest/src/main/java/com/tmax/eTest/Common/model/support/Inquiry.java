@@ -18,11 +18,11 @@ import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.tmax.eTest.Common.model.user.UserMaster;
+import lombok.*;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import java.time.LocalDateTime;
+import java.util.List;
+import javax.persistence.*;
 
 @Entity
 @Data
@@ -30,6 +30,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "CS_INQUIRY")
+@ToString(exclude = "inquiry_file")
 public class Inquiry {
 
     @Id
@@ -43,8 +44,8 @@ public class Inquiry {
     @ManyToOne
     private UserMaster userMaster;
 
-    @JsonIgnoreProperties({ "inquiry" })
-    @OneToMany(mappedBy = "inquiry", fetch = FetchType.LAZY)
+    @JsonIgnoreProperties({"inquiry"})
+    @OneToMany(mappedBy = "inquiry", cascade = {CascadeType.REMOVE}, fetch = FetchType.LAZY)
     private List<Inquiry_file> inquiry_file;
 
     @Column(name = "INQUIRY_STATUS")
@@ -61,6 +62,9 @@ public class Inquiry {
 
     @Column(name = "INQUIRY_ANSWER")
     private String answer;
+
+    @Column(name = "INQUIRY_ANSWER_TIME")
+    private LocalDateTime answer_time;
 
     @Column(name = "CREATE_DATE")
     private LocalDateTime createDate;

@@ -15,10 +15,7 @@ import java.util.Optional;
 public interface InquiryRepository extends JpaRepository<Inquiry,Long> {
 
       @Query(value = "SELECT * FROM cs_inquiry WHERE Inquiry_ID = :Inquiry_ID", nativeQuery = true)
-      Optional<Inquiry> findByUserUuid(@Param("Inquiry_ID") Long Inquiry_ID);
-
-//      @Query(value = "SELECT * FROM cs_inquiry WHERE USER_UUID = :USER_UUID and Inquiry_ID = :Inquiry_ID", nativeQuery = true)
-//      Optional<Inquiry> findByUserUuid(@Param("USER_UUID") String userUuid,@Param("Inquiry_ID") Long Inquiry_ID);
+      Optional<Inquiry> findByInquiryId(@Param("Inquiry_ID") Long Inquiry_ID);
 
       @Query(value = "SELECT INQUIRY_ID FROM CS_INQUIRY WHERE USER_UUID = :USER_UUID", nativeQuery = true)
       List<Long> findAllIdByUserUuid(@Param("USER_UUID") String userUuid);

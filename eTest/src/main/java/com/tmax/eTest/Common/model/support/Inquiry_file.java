@@ -35,6 +35,12 @@ public class Inquiry_file {
     @Column(name = "INQUIRY_FILE_TYPE")
     private String type;
 
+    @Column(name = "INQUIRY_FILE_NAME")
+    private String name;
+
+    @Column(name = "INQUIRY_FILE_SIZE")
+    private Long size;
+
     @ManyToOne
     @JoinColumn(name = "INQUIRY_ID")
     @JsonIgnoreProperties({"inquiry_file"})

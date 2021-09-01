@@ -5,6 +5,7 @@ import com.tmax.eTest.Auth.exception.ResourceNotFoundExceptionDto;
 import com.tmax.eTest.Auth.repository.UserRepository;
 import com.tmax.eTest.Common.model.user.UserMaster;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
 
     @Autowired
+    @Qualifier("AU-UserRepository")
     private UserRepository userRepository;
 
     @GetMapping("/")

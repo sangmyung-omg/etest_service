@@ -1,26 +1,34 @@
 package com.tmax.eTest.Support.service;
 
 import com.tmax.eTest.Auth.dto.PrincipalDetails;
+import com.tmax.eTest.Auth.exception.ResourceNotFoundExceptionDto;
 import com.tmax.eTest.Auth.repository.UserRepository;
 import com.tmax.eTest.Common.model.support.Inquiry;
 import com.tmax.eTest.Common.model.support.Inquiry_file;
 import com.tmax.eTest.Common.model.user.UserMaster;
 import com.tmax.eTest.Support.dto.CreateInquiryDto;
+import com.tmax.eTest.Support.dto.ModifyInquiryDto;
 import com.tmax.eTest.Support.repository.InquiryFileRepository;
 import com.tmax.eTest.Support.repository.InquiryRepository;
+
+import java.io.IOException;
+import java.nio.file.Files;
+
+import org.apache.tika.Tika;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.BeanWrapper;
+import org.springframework.beans.BeanWrapperImpl;
+import org.springframework.beans.FatalBeanException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.nio.file.*;
+import java.util.*;
 
 @Service
 public class InquiryService {
@@ -41,10 +49,8 @@ public class InquiryService {
 
     @Transactional
     public Inquiry createInquiry(CreateInquiryDto createInquiryDto, PrincipalDetails principalDetails) {
-        List<MultipartFile> fileList = createInquiryDto.getFileList();
-        Optional<UserMaster> userMaster_temp = userRepository.findByEmail(principalDetails.getEmail());
-
-        UserMaster userMasterEntity= userMaster_temp.get();
+        Optional<UserMaster> userMasterOptional = userRepository.findByEmail(principalDetails.getEmail());
+        UserMaster userMasterEntity= userMasterOptional.get();
         Inquiry inquiry =
                 Inquiry.builder()
                         .userMaster(userMasterEntity)
@@ -55,22 +61,98 @@ public class InquiryService {
                         .build();
         inquiryRepository.save(inquiry);
 
-        for(int i=0; i<createInquiryDto.getFileList().size(); i++){
-            String fileName = UUID.randomUUID().toString() + "_" + createInquiryDto.getFileList().get(i).getOriginalFilename();
+        if (!(createInquiryDto.getFileList()== null)) {
+            for(int i=0; i<createInquiryDto.getFileList().size(); i++){
+                String fileName = UUID.randomUUID().toString() + "_" + createInquiryDto.getFileList().get(i).getOriginalFilename();
+                Path imageFilePath = Paths.get(uploadFolder + fileName);
+                Inquiry_file inquiry_file = Inquiry_file.builder()
+                        .name(createInquiryDto.getFileList().get(i).getOriginalFilename().replaceFirst("[.][^.]+$", "")) // 확장자 지우기
+                        .size(createInquiryDto.getFileList().get(i).getSize())
+                        .url(fileName)
+                        .type(createInquiryDto.getFileList().get(i).getContentType())
+                        .inquiry(inquiry)
+                        .build();
+                try {
+                    Files.write(imageFilePath, createInquiryDto.getFileList().get(i).getBytes());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                inquiryFileRepository.save(inquiry_file);
+            }
+        }
+        return inquiry;
+    }
+
+
+    @Transactional
+    public String modify(@AuthenticationPrincipal PrincipalDetails principalDetails, ModifyInquiryDto modifyInquiryDto ) {
+
+        List<Long> inquiryIdList = inquiryRepository.findAllIdByUserUuid(principalDetails.getUserUuid());
+        if (!inquiryIdList.contains(modifyInquiryDto.getId())) {
+            return "유저가 생성한 질문이 아닙니다.";
+        }
+
+        Optional<UserMaster> userMasterOptional = userRepository.findByUserUuid(principalDetails.getUserUuid());
+        UserMaster userMaster = userMasterOptional.get();
+        Optional<Inquiry> inquiryOptional = inquiryRepository.findByInquiryId(modifyInquiryDto.getId());
+        Inquiry inquiry = inquiryOptional.get();
+        inquiry.setUserMaster(userMaster);
+        inquiry.setContent(modifyInquiryDto.getContent());
+        inquiry.setTitle(modifyInquiryDto.getTitle());
+        inquiry.setType(modifyInquiryDto.getType());
+
+        /***
+         * inquiry file은 db/storage 전부 지웠다가 새로 만들고
+         * inquiry는 update
+         */
+        // 기존의 파일 스토리지에서 delete
+        for(int i =0; i < inquiry.getInquiry_file().size(); i++) {
+            String url = inquiry.getInquiry_file().get(i).getUrl();
+            Path filePath = Paths.get(uploadFolder + url);
+            try {
+                Files.delete(filePath);
+            } catch (NoSuchFileException e) {
+                System.out.println("삭제하려는 파일이 없습니다");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        // 기존의 파일 db에서 delete
+        List<Long> inquiryFileNumberList = new ArrayList<>();
+        for(int i =0; i < inquiry.getInquiry_file().size(); i++) {
+            inquiryFileNumberList.add(inquiry.getInquiry_file().get(i).getId());
+        }
+        System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+        System.out.println(inquiryFileNumberList);
+        for (int i = 0; i < inquiryFileNumberList.size(); i++) {
+            Long id = inquiryFileNumberList.get(i);
+            inquiryFileRepository.deleteById(id);
+        }
+
+
+
+        // 새로 만들기
+        for(int i=0; i<modifyInquiryDto.getFileList().size(); i++){
+            String fileName = UUID.randomUUID().toString() + "_" + modifyInquiryDto.getFileList().get(i).getOriginalFilename();
             Path imageFilePath = Paths.get(uploadFolder + fileName);
+
             Inquiry_file inquiry_file = Inquiry_file.builder()
+                    .name(modifyInquiryDto.getFileList().get(i).getOriginalFilename().replaceFirst("[.][^.]+$", ""))
+                    .size(modifyInquiryDto.getFileList().get(i).getSize())
                     .url(fileName)
-                    .type(createInquiryDto.getFileList().get(i).getContentType())
+                    .type(modifyInquiryDto.getFileList().get(i).getContentType())
                     .inquiry(inquiry)
                     .build();
             try {
-                Files.write(imageFilePath, createInquiryDto.getFileList().get(i).getBytes());
+                Files.write(imageFilePath, modifyInquiryDto.getFileList().get(i).getBytes());
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
             inquiryFileRepository.save(inquiry_file);
         }
-        return inquiry;
+        return "True";
     }
+
 
 }

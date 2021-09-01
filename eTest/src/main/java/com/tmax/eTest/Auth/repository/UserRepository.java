@@ -27,5 +27,6 @@ public interface UserRepository extends JpaRepository<UserMaster, Long> {
 
 
 
+
 }
 

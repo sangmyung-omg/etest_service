@@ -1,8 +1,9 @@
 plugins {
 	id 'org.springframework.boot' version '2.5.3'
 	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
-	id 'com.ewerk.gradle.plugins.querydsl' version '1.0.10'
 	id 'java'
+	id "com.ewerk.gradle.plugins.querydsl" version "1.0.10"
+	id "com.github.spotbugs" version "4.7.3"
 }
 
 group = 'com.tmax'
@@ -34,10 +35,10 @@ dependencies {
 	testImplementation 'org.junit.platform:junit-platform-launcher'
 	implementation 'org.apache.httpcomponents:httpclient'
 	compile 'org.springframework.boot:spring-boot-starter-webflux'
-    compile 'org.projectreactor:reactor-spring:1.0.1.RELEASE'
+	compile 'org.projectreactor:reactor-spring:1.0.1.RELEASE'
 	implementation 'com.google.code.gson:gson'
 	compile 'org.springframework.boot:spring-boot-starter-webflux'
-    compile 'org.projectreactor:reactor-spring:1.0.1.RELEASE'
+	compile 'org.projectreactor:reactor-spring:1.0.1.RELEASE'
 	compile 'ch.qos.logback:logback-classic'
 	compile 'org.apache.commons:commons-math3:3.6.1'
 	compile files("libs/tibero/tibero6-jdbc.zip")
@@ -53,6 +54,10 @@ dependencies {
 	implementation 'com.querydsl:querydsl-apt'
 	// compile 'net.logstash.logback:logstash-logback-encoder:6.3' // elk setting
 	compile('org.springframework.boot:spring-boot-starter-batch')
+	implementation 'com.querydsl:querydsl-apt'
+	implementation group: 'org.apache.tika', name: 'tika-core', version: '2.0.0'
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis:2.5.3'
+
 }
 
 test {

@@ -1,6 +1,8 @@
 package com.tmax.eTest.Auth.config;
 
+import com.tmax.eTest.Auth.jwt.JwtAuthenticationEntryPoint;
 import com.tmax.eTest.Auth.jwt.JwtCommonAuthorizationFilter;
+import com.tmax.eTest.Auth.jwt.JwtTokenUtil;
 import com.tmax.eTest.Auth.repository.UserRepository;
 import com.tmax.eTest.Auth.service.PrincipalDetailsService;
 
@@ -23,6 +25,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private PrincipalDetailsService principalDetailsService;
+    @Autowired
+    private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 
     @Autowired
     @Qualifier("AU-UserRepository")
@@ -35,13 +39,24 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return new BCryptPasswordEncoder();
     }
 
+    @Autowired
+    JwtTokenUtil jwtTokenUtil;
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.addFilter(corsConfig.corsFilter()).csrf().disable() // csrf 토큰
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and().formLogin().disable()
-                .httpBasic().disable()
-                .addFilter(new JwtCommonAuthorizationFilter(authenticationManager(), userRepository))
-                .authorizeRequests().antMatchers("/user/**").access("hasRole('ROLE_USER')").antMatchers("/admin/**")
-                .access("hasRole('ROLE_ADMIN')").anyRequest().permitAll();
+    http
+        .addFilter(corsConfig.corsFilter())
+        .csrf().disable() //csrf 토큰
+        .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+    .and()
+        .formLogin().disable()
+        .httpBasic().disable()
+            .exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint)
+            .and()
+            .addFilter(new JwtCommonAuthorizationFilter(authenticationManager(),userRepository,jwtTokenUtil))
+            .authorizeRequests()
+                .antMatchers("/user/**").access("hasRole('ROLE_USER')")
+                .antMatchers("/admin/**").access("hasRole('ROLE_ADMIN')")
+                .anyRequest().permitAll();
     }
 }
