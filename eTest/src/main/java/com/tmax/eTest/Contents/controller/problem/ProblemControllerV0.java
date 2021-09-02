@@ -11,8 +11,6 @@ import com.tmax.eTest.Contents.exception.problem.NoDataException;
 import com.tmax.eTest.Contents.exception.problem.UnavailableTypeException;
 import com.tmax.eTest.Contents.service.ProblemServicesBase;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpHeaders;
@@ -27,11 +25,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @CrossOrigin(origins = "*")
 @RestController
 @RequestMapping(path = "/contents" + "/v0")
 public class ProblemControllerV0 {
-	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	@Autowired
 	@Qualifier("ProblemServicesV0")
@@ -39,7 +39,7 @@ public class ProblemControllerV0 {
 	
 	@GetMapping(value="/problems/{id}")
 	public ResponseEntity<ProblemDTO> problem(@PathVariable("id") Integer id) throws Exception{
-		logger.info("> problem info logic start! : " + Integer.toString(id));
+		log.info("> problem info logic start! : " + Integer.toString(id));
 		HttpHeaders headers= new HttpHeaders();
         headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
         ResponseEntity<ProblemDTO> output;

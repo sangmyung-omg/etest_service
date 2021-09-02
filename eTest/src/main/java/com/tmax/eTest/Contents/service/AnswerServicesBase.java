@@ -8,7 +8,7 @@ import com.tmax.eTest.Contents.dto.CustomizedSolutionDTO;
 import com.tmax.eTest.LRS.dto.StatementDTO;
 
 public interface AnswerServicesBase {
-    public Integer evaluateIfCorrect(Integer probId, ArrayList<StatementDTO> lrsbody) throws Exception;
+    public Integer evaluateIfCorrect(Integer probId, List<StatementDTO> lrsbody) throws Exception;
     
     public Map<String, Object> getProblemSolution(Integer problemID) throws Exception;
 

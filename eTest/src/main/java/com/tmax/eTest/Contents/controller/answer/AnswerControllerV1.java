@@ -55,30 +55,58 @@ public class AnswerControllerV1 {
 	@PostMapping(value="problems/{probId}/answer-check", produces = "application/json; charset=utf-8")
 	public ResponseEntity<Object> checkAnswer(HttpServletRequest request,
 											  @PathVariable("probId") Integer probId,
-											  @RequestBody ArrayList<StatementDTO> lrsbody) throws Exception {
+											  @RequestBody AnswerInputDTO inputDto) throws Exception {
 											//   @RequestBody AnswerInputDTO inputDto) throws Exception {
 		log.info("> answer-check logic start!");
 		Map<String, Object> result = new HashMap<String, Object>();
 		String userId = "";
+		List<StatementDTO> lrsbody = new ArrayList<StatementDTO>();						
+		// input body check
+		if (inputDto != null) {
+			log.info(inputDto.toString());
+			if (inputDto.getLrsbody() != null)
+				lrsbody = inputDto.getLrsbody();
+			else {
+				log.info("lrsbody is null!");
+				result.put("resultMessage", "lrsbody is null!");
+				return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+			}
+
+		} else {
+			log.info("request body is null!");
+			result.put("error", "request body is null");
+			return new ResponseEntity<>(result, HttpStatus.NO_CONTENT);
+		}
 		
 		// 회원, 비회원 판별
 		String header = request.getHeader("Authorization");
+		String logText = "";
 		if (header == null) {																// 비회원일 때 토큰 null
-			log.info("header.Authorization is null. No token given.");
-			result.put("resultMessage", "header.Authorization is null. No token given.");
-			return new ResponseEntity<>(result, HttpStatus.UNAUTHORIZED);
+			log.info("header.Authorization is null. Unregistered user.");
+			if (inputDto.getNrUuid() != null) {
+				userId = inputDto.getNrUuid();
+				logText += "header.Authorization is null. Unregistered user. / NR-UUID = " + userId;
+			}
+			else {																			// 비회원용 UUID도 없으면 유저 정보가 없어서 LRS 저장 불가.
+				log.info("NR-UUID also null. No user info.");
+				result.put("error", "header.Authorization is null. And NR-UUID also null. No user info.");
+				return new ResponseEntity<>(result, HttpStatus.NO_CONTENT);
+			}
 		} else {																			// 회원이면 토큰 파싱하여 유저 아이디 꺼냄
 			String token = request.getHeader("Authorization").replace("Bearer ","");
 			try {
 				Map<String, Object> parseInfo = jwtTokenUtil.getUserParseInfo(token);
 				userId = parseInfo.get("userUuid").toString();
-				log.info("User UUID from header token : " + userId);
-			} catch (Exception e) {
+				logText += "Token exists. Registered user. / user UUID = " + userId;
+			} catch (Exception e) {															// 토큰 파싱 에러
 				log.info("error : cannot parse jwt token, " + e.getMessage());
 				result.put("error", e.getMessage());
-				return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+				return new ResponseEntity<>(result, HttpStatus.INTERNAL_SERVER_ERROR);
 			}
 		}
+		// Inform user identification status
+		log.info(logText);
+		
 		// lrsbody의 유저가 입력한 답 꺼내서 정답과 비교해 정답여부 반환. 1 - 정답 / 0 - 오답 / -1 - 정답 없는 문제
 		int isCorrect = answerServices.evaluateIfCorrect(probId, lrsbody);
 		for (Integer i=0; i < lrsbody.size(); i++) {
