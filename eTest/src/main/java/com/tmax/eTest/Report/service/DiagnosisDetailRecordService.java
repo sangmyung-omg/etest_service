@@ -10,9 +10,11 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.tmax.eTest.Common.model.problem.Problem;
 import com.tmax.eTest.Common.model.report.DiagnosisReport;
-import com.tmax.eTest.Common.model.report.DiagnosisReportKey;
 import com.tmax.eTest.Common.repository.report.DiagnosisReportRepo;
 import com.tmax.eTest.Contents.repository.ProblemRepository;
 import com.tmax.eTest.LRS.dto.GetStatementInfoDTO;
@@ -46,7 +48,7 @@ public class DiagnosisDetailRecordService {
 	private final List<String> partNameList = new ArrayList<>(Arrays.asList("risk", "invest", "knowledge"));
 
 	public DiagnosisRecordDetailDTO getDiagnosisRecordDetail(
-			String userId, 
+			String id, 
 			String probSetId,
 			String partName) throws Exception {
 		DiagnosisRecordDetailDTO result = new DiagnosisRecordDetailDTO();
@@ -58,13 +60,9 @@ public class DiagnosisDetailRecordService {
 			result.initForDummy();
 		else
 		{
-			DiagnosisReportKey key = new DiagnosisReportKey();
-			key.setDiagnosisId(probSetId);
+			Optional<DiagnosisReport> reportOpt = diagnosisReportRepo.findById(probSetId);
 			
-			Optional<DiagnosisReport> reportOpt = diagnosisReportRepo.findById(key);
-			
-			List<StatementDTO> knowledgeProbStatement = getDiagnosisKnowledgeProbInfo(userId, probSetId);
-			
+			List<StatementDTO> knowledgeProbStatement = getDiagnosisKnowledgeProbInfo(probSetId);
 			
 			if(reportOpt.isPresent())
 			{
@@ -219,10 +217,35 @@ public class DiagnosisDetailRecordService {
 			
 			List<String> probInfo = new ArrayList<>();
 			
+			String probContent = prob.getQuestion();
+			
+			probContent.replaceAll("\\\"", "\"");
+			
+			log.info(probContent);
+			
+			try {
+				JsonArray jsonArr = JsonParser.parseString(probContent).getAsJsonArray();
+				
+				for(int i = 0; i < jsonArr.size(); i++)
+				{
+					JsonObject obj = jsonArr.get(i).getAsJsonObject();
+					if(obj.get("type").getAsString().equals("QUESTION_TEXT"))
+					{
+						probContent = obj.get("data").getAsString();
+						break;
+					}
+				}
+			}
+			catch(Exception e)
+			{
+				log.info("Json parse fail in setProbInfoInRecordDTO. "+probContent +" "+e.toString());
+			}
+					
+			
 			probInfo.add(String.valueOf(problemIdx));
 			probInfo.add(String.valueOf(prob.getProbID()));
 			probInfo.add((isCorr==1)?"true":"false");
-			probInfo.add(prob.getQuestion());
+			probInfo.add(probContent);
 			probInfo.add(prob.getDifficulty());
 			
 			switch(diffIdx)
@@ -260,11 +283,12 @@ public class DiagnosisDetailRecordService {
 		
 	}
 
-	private List<StatementDTO> getDiagnosisKnowledgeProbInfo(String userId, String probSetId) 
+	private List<StatementDTO> getDiagnosisKnowledgeProbInfo(String probSetId) 
 			throws Exception {
 
 		GetStatementInfoDTO input = new GetStatementInfoDTO();
-		input.pushUserId(userId);
+		
+
 		if (probSetId != null)
 			input.pushExtensionStr(probSetId);
 		input.pushActionType("submit");

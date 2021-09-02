@@ -20,7 +20,7 @@ import lombok.NoArgsConstructor;
 @Data
 @Entity
 @Table(name="DIAGNOSIS_REPORT")
-@IdClass(DiagnosisReportKey.class)
+//@IdClass(DiagnosisReportKey.class)
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor

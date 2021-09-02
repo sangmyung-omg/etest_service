@@ -5,6 +5,6 @@ import com.tmax.eTest.Common.model.report.DiagnosisReportKey;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface DiagnosisReportRepo extends JpaRepository<DiagnosisReport, DiagnosisReportKey>{
+public interface DiagnosisReportRepo extends JpaRepository<DiagnosisReport, String>{
     
 }
