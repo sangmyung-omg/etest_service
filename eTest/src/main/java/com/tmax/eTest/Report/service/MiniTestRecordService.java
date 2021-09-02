@@ -8,14 +8,14 @@ import lombok.extern.slf4j.Slf4j;
 import com.tmax.eTest.Contents.repository.ProblemRepository;
 import com.tmax.eTest.LRS.util.LRSAPIManager;
 import com.tmax.eTest.Report.dto.MiniTestRecordDTO;
-import com.tmax.eTest.Report.util.RuleBaseScoreCalculator;
 import com.tmax.eTest.Report.util.SNDCalculator;
-import com.tmax.eTest.Report.util.DiagnosisComment;
-import com.tmax.eTest.Report.util.StateAndProbProcess;
-import com.tmax.eTest.Report.util.TritonAPIManager;
-import com.tmax.eTest.Report.util.UKScoreCalculator;
-import com.tmax.eTest.Common.repository.report.DiagnosisReportRepo;
-import com.tmax.eTest.Test.repository.UserKnowledgeRepository;
+// import com.tmax.eTest.Report.util.RuleBaseScoreCalculator;
+// import com.tmax.eTest.Report.util.DiagnosisComment;
+// import com.tmax.eTest.Report.util.StateAndProbProcess;
+// import com.tmax.eTest.Report.util.TritonAPIManager;
+// import com.tmax.eTest.Report.util.UKScoreCalculator;
+// import com.tmax.eTest.Common.repository.report.DiagnosisReportRepo;
+// import com.tmax.eTest.Test.repository.UserKnowledgeRepository;
 
 import com.tmax.eTest.Common.repository.report.MinitestReportRepo;
 
@@ -33,7 +33,7 @@ import java.util.HashMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.List;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.Set;
 import java.util.Collections;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -57,21 +57,25 @@ import com.tmax.eTest.Common.model.problem.Problem;
 public class MiniTestRecordService {
 
 	@Autowired private LRSAPIManager lrsAPIManager;
-	@Autowired private TritonAPIManager tritonAPIManager;
+	// @Autowired private TritonAPIManager tritonAPIManager;
 	
 	@Autowired private ProblemRepository problemRepo;
-	@Autowired private UserKnowledgeRepository userKnowledgeRepo;
-	@Autowired private DiagnosisReportRepo diagnosisReportRepo;
+	// @Autowired private UserKnowledgeRepository userKnowledgeRepo;
+	// @Autowired private DiagnosisReportRepo diagnosisReportRepo;
 	
-	@Autowired private StateAndProbProcess stateAndProbProcess;
-	@Autowired private RuleBaseScoreCalculator ruleBaseScoreCalculator;
-	@Autowired private UKScoreCalculator ukScoreCalculator;
-	@Autowired private DiagnosisComment commentGenerator;
+	// @Autowired private StateAndProbProcess stateAndProbProcess;
+	// @Autowired private RuleBaseScoreCalculator ruleBaseScoreCalculator;
+	// @Autowired private UKScoreCalculator ukScoreCalculator;
+	// @Autowired private DiagnosisComment commentGenerator;
 	@Autowired private SNDCalculator sndCalculator;
 
 	@Autowired private MinitestReportRepo reportRepo;
 
 	@Autowired private UkMasterRepo ukMasterRepo;
+
+
+
+	private static final int PICK_ALARM_CNT_THRESHOLD = 3;
 
 	private PartDataDTO buildPartData(JsonArray mastery){
 		//Parse raw data
@@ -110,8 +114,8 @@ public class MiniTestRecordService {
 													if(uk == null)
 														return Stream.empty();
 													
-													//build info (name, score, desc)	
-													return Stream.of(Arrays.asList(uk.getUkName(), data.get(2), uk.getUkDescription()));
+													//build info (name, score, desc, link)	
+													return Stream.of( Arrays.asList(uk.getUkName(), data.get(2), uk.getUkDescription(), "https://www.google.com") );
 											  }).collect(Collectors.toList());
 
 		long score = (long)Math.floor(totalScore / ukDataList.size());
@@ -122,22 +126,11 @@ public class MiniTestRecordService {
 							.build();
 	}
 
-	private List<List<String>> createProblemInfo(String userId){
-		//Get LRS Record
-		List<StatementDTO> statementList = null;
-		try{
-			statementList = lrsAPIManager.getStatementList(GetStatementInfoDTO.builder()
-														  .userIdList(Arrays.asList(userId))
-														  .sourceTypeList(Arrays.asList("mini_test_question"))
-														  .build());
-		}
-		catch(Exception e){e.printStackTrace(); return null;}
-		if(statementList.size() == 0) return null;
-
+	private List<List<String>> createProblemInfo(List<StatementDTO> statementList, String userId){
 		//Order lrs by time
 		try{
-			Collections.sort(statementList, (a,b)->LocalDateTime.parse(a.getTimestamp())
-												.compareTo(LocalDateTime.parse(b.getTimestamp())) );
+			Collections.sort(statementList, (a,b)->ZonedDateTime.parse(a.getTimestamp())
+												.compareTo(ZonedDateTime.parse(b.getTimestamp())) );
 		}
 		catch(Exception e){log.error("Timestamp sort failed. will use unsorted lrs list");}
 
@@ -229,8 +222,19 @@ public class MiniTestRecordService {
 			catch(Exception e){e.printStackTrace(); log.error("uk mastery parse error. {}. {}. {}",userId, probSetId, minitestMastery);}			
 		}
 
+		//Get LRS Record
+		List<StatementDTO> statementList = null;
+		try{
+			statementList = lrsAPIManager.getStatementList(GetStatementInfoDTO.builder()
+														  .userIdList(Arrays.asList(userId))
+														  .sourceTypeList(Arrays.asList("mini_test_question"))
+														  .build());
+		}
+		catch(Exception e){e.printStackTrace(); return null;}
+		if(statementList.size() == 0) return null;
+
 		//Problem info build
-		List<List<String>> problemInfoTotal = createProblemInfo(userId);
+		List<List<String>> problemInfoTotal = createProblemInfo(statementList, userId);
 
 		List<List<String>> lowInfo = problemInfoTotal.stream().filter(info -> info.get(info.size()-1).equals("하")).collect(Collectors.toList());
 		List<List<String>> midInfo = problemInfoTotal.stream().filter(info -> info.get(info.size()-1).equals("중")).collect(Collectors.toList());
@@ -250,6 +254,22 @@ public class MiniTestRecordService {
 		problemCorrectInfo.put("mid", midCorr + "/" + problemInfoTotal.size());
 		problemCorrectInfo.put("high", highCorr + "/" + problemInfoTotal.size());
 
+
+		//Try alarm get for lrs statements
+		int alarmcnt = statementList.stream().parallel()
+								.mapToInt(statement -> {
+									JsonObject extension = null;
+									try{extension = JsonParser.parseString(statement.getExtension()).getAsJsonObject();}
+									catch(Exception e){log.warn("extension can't be parsed. {}", statement.getExtension()); return 0;}
+
+									int isGuess = 0;
+									try{isGuess = extension.get("guessAlarm").getAsInt();}
+									catch(Exception e){log.error("guessAlarm is not a valid int type"); return 0;}
+
+									return (isGuess > 0) ? 1 : 0;
+								})
+								.reduce(0, Integer::sum);
+
 		
 		MiniTestRecordDTO result =  MiniTestRecordDTO.builder()
 								 .userName(report.getUser().getNickname())
@@ -261,6 +281,8 @@ public class MiniTestRecordService {
 								 .problemMiddleLevelInfo(midInfo)
 								 .problemHighLevelInfo(highInfo)
 								 .problemCorrectInfo(problemCorrectInfo)
+								 .totalComment("")
+								 .alarm(alarmcnt >= PICK_ALARM_CNT_THRESHOLD)
 								 .build();
 
 
