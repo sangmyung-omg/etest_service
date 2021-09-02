@@ -6,22 +6,12 @@ import lombok.Builder;
 import lombok.NoArgsConstructor;
 
 import java.util.Map;
-import java.util.HashMap;
 
-//temp part mapper
-class PartMapper {
-    public static Map<String, Integer> map = new HashMap<>();
-    
-    static {
-        map.put("가치변화의 요인", 1);
-        map.put("금융투자상품 관리", 2);
-        map.put("금융투자상품의 매매", 3);
-        map.put("생애주기", 4);
-        map.put("필요자금 마련방법", 5);
-        map.put("행동편향", 6);
-    }
-}
+import com.tmax.eTest.Report.util.minitest.PartMapper;
 
+// import org.springframework.stereotype.Component;
+
+// import java.util.HashMap;
 
 @Data
 @Builder
@@ -53,5 +43,7 @@ public class PartInfoDTO {
             default:
                 break;
         }
+
+        
     }
 }

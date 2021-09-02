@@ -16,7 +16,7 @@ import com.tmax.eTest.Report.util.SNDCalculator;
 // import com.tmax.eTest.Report.util.UKScoreCalculator;
 // import com.tmax.eTest.Common.repository.report.DiagnosisReportRepo;
 // import com.tmax.eTest.Test.repository.UserKnowledgeRepository;
-
+import com.tmax.eTest.Report.util.minitest.PartMapper;
 import com.tmax.eTest.Common.repository.report.MinitestReportRepo;
 
 import com.tmax.eTest.Common.model.report.MinitestReport;
@@ -107,6 +107,9 @@ public class MiniTestRecordService {
 	@Autowired private MinitestReportRepo reportRepo;
 
 	@Autowired private UkMasterRepo ukMasterRepo;
+
+
+	@Autowired private PartMapper partMapper;
 
 
 
@@ -307,11 +310,11 @@ public class MiniTestRecordService {
 
 
 		//TEMP comment template
-		String[] commentTemplate = {"미니진단을 통해 분석된 지식점수에요. 진단자 평균대비 높은 점수를 받으셨네요.","이제 상세 분야별로 나의 지식 점수를 확인해보세요. 우선적으로 학습해야하는 분야를 알 수 있습니다."};
+		String commentTemplate = "미니진단을 통해 분석된 지식점수에요. 진단자 평균대비 높은 점수를 받으셨네요.\n이제 상세 분야별로 나의 지식 점수를 확인해보세요. 우선적으로 학습해야하는 분야를 알 수 있습니다.";
 
 		
 		MiniTestRecordDTO result =  MiniTestRecordDTO.builder()
-								 .userName(report.getUser().getNickname())
+								 .userName(report.getUser() != null ? report.getUser().getNickname() : null)
 								 .totalScore(report.getAvgUkMastery().intValue())
 								 .totalPercentage(sndCalculator.calculateForMiniTest((double)report.getAvgUkMastery().intValue()))
 								 .partInfo(partInfo)
@@ -320,11 +323,9 @@ public class MiniTestRecordService {
 								 .problemMiddleLevelInfo(midInfo)
 								 .problemHighLevelInfo(highInfo)
 								 .problemCorrectInfo(problemCorrectInfo)
-								 .totalComment("")
+								 .totalComment(commentTemplate)
 								 .alarm(alarmcnt >= PICK_ALARM_CNT_THRESHOLD)
 								 .build();
-
-
 
 		return result;
 	}

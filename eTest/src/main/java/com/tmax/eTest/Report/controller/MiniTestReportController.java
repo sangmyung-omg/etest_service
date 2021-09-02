@@ -1,12 +1,18 @@
 package com.tmax.eTest.Report.controller;
 
 
+import javax.servlet.http.HttpServletRequest;
+
+// import com.tmax.eTest.Auth.jwt.JwtTokenUtil;
+// import com.tmax.eTest.LRS.util.JWTUtil;
+
 // import java.util.List;
 
 import com.tmax.eTest.Report.dto.MiniTestRecordDTO;
 // import com.tmax.eTest.Report.dto.RecommendVideoDTO;
 import com.tmax.eTest.Report.service.MiniTestRecordService;
 import com.tmax.eTest.Report.service.MiniTestScoreService;
+import com.tmax.eTest.Report.util.UserIdFetchTool;
 import com.tmax.eTest.Test.service.UserInfoService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +23,9 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+// import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -31,6 +39,9 @@ public class MiniTestReportController {
 
 	@Autowired
 	UserInfoService userService;
+
+	@Autowired private UserIdFetchTool userIdFetchTool;
+
 
 	@CrossOrigin("*")
 	@PutMapping(value = "/report/miniTest/saveResult/{id}/{probSetId}", produces = "application/json; charset=utf-8")
@@ -68,12 +79,34 @@ public class MiniTestReportController {
 
 		return ResponseEntity.ok().body(output);
 	}
+	//Secure API 
 
 	@CrossOrigin("*")
-	@GetMapping(value="/report/miniTest/record/set/{probSetId}", produces = "application/json; charset=utf-8")
-	public ResponseEntity<?> miniTestRecord2(@PathVariable("probSetId") String probSetId) throws Exception{
+	@PutMapping(value = "/report/minitest", produces = "application/json; charset=utf-8")
+	public ResponseEntity<?> updateMiniTestResult(HttpServletRequest request, @RequestParam("probSetId") String probSetId) throws Exception {
 		//Extract id from auth
-		String id = "";
+		String id = userIdFetchTool.getID(request);
+
+		if(id == null){
+			return ResponseEntity.internalServerError().body("Cannot get uuid from token info");
+		}
+		
+		miniTestScoreService.saveMiniTestResult(id, probSetId);
+		MiniTestRecordDTO output = miniTestRecordService.getMiniTestRecord(id, probSetId);
+		
+		return ResponseEntity.ok().body(output);
+	}
+
+
+	@CrossOrigin("*")
+	@GetMapping(value="/report/minitest", produces = "application/json; charset=utf-8")
+	public ResponseEntity<?> readMiniTestRecord(HttpServletRequest request, @RequestParam("probSetId") String probSetId) throws Exception{
+		//Extract id from auth
+		String id = userIdFetchTool.getID(request);
+
+		if(id == null){
+			return ResponseEntity.internalServerError().body("Cannot get uuid from token info");
+		}
 		
 		MiniTestRecordDTO output = miniTestRecordService.getMiniTestRecord(id, probSetId);
 
