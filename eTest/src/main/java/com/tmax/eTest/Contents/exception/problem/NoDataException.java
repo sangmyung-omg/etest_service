@@ -5,10 +5,10 @@ public class NoDataException extends Exception{
 		super();
 	}
 	public NoDataException(long id){
-		super(Long.toString(id)+"there is no data");
+		super("No data for ID = " + Long.toString(id));
 	}
 	public NoDataException(String input) {
-		super(input+" = there is no data");
+		super("No data for the condition : " + input);
 	}
 	
 }

@@ -6,17 +6,21 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import org.json.simple.parser.JSONParser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+
 import com.tmax.eTest.Common.model.problem.Problem;
 import com.tmax.eTest.Contents.dto.CustomizedSolutionDTO;
 import com.tmax.eTest.Contents.exception.problem.NoDataException;
 import com.tmax.eTest.Contents.repository.ProblemChoiceRepository;
 import com.tmax.eTest.Contents.repository.ProblemRepository;
 import com.tmax.eTest.LRS.dto.StatementDTO;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 /**
  * Improve logics from CBT and Adjust to new API requirements
@@ -34,11 +38,11 @@ public class AnswerServicesV1 implements AnswerServicesBase {
 
 	@Autowired
 	ProblemChoiceRepository probChoiceRepo;
-
-	public Integer evaluateIfCorrect(Integer probId, ArrayList<StatementDTO> lrsbody) {
+	
+	public Integer evaluateIfCorrect(Integer probId, ArrayList<StatementDTO> lrsbody) throws Exception {
 		String userAnswer = lrsbody.get(0).getUserAnswer();
-		logger.info(Integer.toString(probId) + ", " + userAnswer);
-		logger.info(lrsbody.toString());
+		logger.info("Problem ID : " + Integer.toString(probId) + ", user answer : " + userAnswer);
+		logger.info("Inserted LRS body : " + lrsbody.toString());
 
 		Map<String, Object> data = new HashMap<String, Object>();
 
@@ -49,18 +53,35 @@ public class AnswerServicesV1 implements AnswerServicesBase {
 			return 0;
 		}
 		String inputString = data.get("solution").toString();
-		logger.info("Total solution string : " + inputString);
-		logger.info("Total solution string : " + inputString);
-		String bug = inputString.substring(0, inputString.indexOf(","));
-		String jd = bug.replaceAll("\\[", "");
-		String temp = jd.substring(jd.length() - 2).replaceAll("\\]", "");
-		temp = temp.replace(" ", "");
-		logger.info("Correct Answer is... " + temp);
-		if (temp.equalsIgnoreCase(userAnswer))
-			return 1;
-		else
-			return 0;
+		JSONParser parser = new JSONParser();
+		JSONArray jsonArray = (JSONArray) parser.parse(inputString);
+		logger.info("json : " + jsonArray.toJSONString() + ", " + Integer.toString(probId));
 
+		String correctAnswer = "";
+		for (int i = 0; i < jsonArray.size(); i++) {
+			logger.info("Item #" + Integer.toString(i) + " of jsonArray : " + jsonArray.get(i).toString());
+			JSONObject json = (JSONObject) jsonArray.get(i);
+			String type = json.get("type").toString();
+			if (type.contains("CORRECT_ANSWER")) {
+				correctAnswer = json.get("data").toString();
+				if (correctAnswer.equals("[]")) {
+					logger.info("A tendency problem has no answer.");
+					return -1;
+				}
+				if (correctAnswer.contains("[")){
+					correctAnswer = correctAnswer.replaceAll("\\[", "");
+				}
+				if (correctAnswer.contains("]")) {
+					correctAnswer = correctAnswer.replaceAll("\\]", "");
+				}
+				logger.info("correctAnswer : " + correctAnswer);
+			}
+			logger.info("type : " + type);
+		}
+		logger.info("Total solution string : " + inputString);
+		logger.info("Correct Answer is... " + correctAnswer);
+		if (correctAnswer.equalsIgnoreCase(userAnswer)) return 1;
+		else return 0;
 	}
 
 	public Map<String, Object> getProblemSolution(Integer problemID) throws Exception {
@@ -80,8 +101,6 @@ public class AnswerServicesV1 implements AnswerServicesBase {
 	}
 
 	public Map<Integer, CustomizedSolutionDTO> getMultipleSolutions(List<Integer> probIdList) {
-		Map<Integer, CustomizedSolutionDTO> output = new HashMap<Integer, CustomizedSolutionDTO>();
-
 		logger.info("Getting multiple solution infos......");
 		List<Problem> probList = problemRepo.findByProbIDIn(probIdList);
 		logger.info(probList.get(0).getQuestion());

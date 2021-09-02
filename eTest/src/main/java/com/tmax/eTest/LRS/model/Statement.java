@@ -11,6 +11,11 @@ import com.tmax.eTest.LRS.util.JWTUtil;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Locale;
 import java.util.UUID;
 
 @Data
@@ -49,7 +54,26 @@ public class Statement {
     private Integer isCorrect;
     
     private Integer isDeleted;
+    
+	private Timestamp statementDate;
 
+	
+	
+	private Timestamp timeStringToTimestampObj(String timestampStr)
+	{
+		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.KOREA);
+		Timestamp timestampObj = null;
+		
+		try {
+			timestampObj = new Timestamp(dateFormat.parse(timestampStr).getTime());
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return timestampObj;
+	}
+	
     public Statement(String userId, String actionType, String sourceType, String timestamp)
     {
         super();
@@ -58,6 +82,8 @@ public class Statement {
         this.actionType = actionType;
         this.sourceType = sourceType;
         this.timestamp = timestamp;
+        
+        this.statementDate = timeStringToTimestampObj(timestamp);
     }
 
     public Statement(StatementDTO dto)
@@ -67,6 +93,8 @@ public class Statement {
         this.actionType = dto.getActionType();
         this.sourceType = dto.getSourceType();
         this.timestamp = dto.getTimestamp();
+        
+        this.statementDate = timeStringToTimestampObj(this.timestamp);
         
         String jwtRes = null;
         try {

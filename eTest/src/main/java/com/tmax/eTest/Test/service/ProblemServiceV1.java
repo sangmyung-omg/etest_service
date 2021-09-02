@@ -8,6 +8,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -178,6 +179,7 @@ public class ProblemServiceV1 implements ProblemServiceBase {
 			// Ordering? --> Order by Timestamp ASC
 			statementQuery = lrsAPIManager.getStatementList(statementInput);
 			logger.info("length of the statement query result : " + Integer.toString(statementQuery.size()));
+			Collections.reverse(statementQuery);		// 최근 부터 set id 탐색해야 하므로, reverse
 		} catch (ParseException e) {
 			logger.info(e.getMessage());
 			map.put("error", e.getMessage());
@@ -186,8 +188,8 @@ public class ProblemServiceV1 implements ProblemServiceBase {
 
 		if (statementQuery.size() == 0) {
 			logger.info("Result of LRS statement query for ID " + userId +" is empty");
-			map.put("error", "Result of LRS statement query for ID " + userId +" is empty");
-			return map;
+			// map.put("error", "Result of LRS statement query for ID " + userId +" is empty");
+			// return map;
 		}
 
 		/*
@@ -202,11 +204,11 @@ public class ProblemServiceV1 implements ProblemServiceBase {
 		JSONParser parser = new JSONParser();
 		JSONObject json = new JSONObject();
 
+		if (statementQuery.size() > 0) logger.info("first row of query result : " + statementQuery.get(0).toString());
 		for (StatementDTO query : statementQuery) {
-			logger.info(query.toString());
 			String extension = query.getExtension();
 			if (isLatest < 2 && extension != null) {											// 최근 푼 문제 세트 범위이면서, extension이 null 이 아니라면
-				if (extension.contains("{") && extension.contains("}")) {						// json 포맷이 맞다면
+				if (extension.startsWith("{") && extension.endsWith("}")) {						// json 포맷이 맞다면
 					try {
 						json = (JSONObject) parser.parse(extension);
 						if (json.containsKey("diagProbSetId")) {
@@ -214,6 +216,7 @@ public class ProblemServiceV1 implements ProblemServiceBase {
 							if (isLatest == 0) {
 								if (!json.get("diagProbSetId").toString().equalsIgnoreCase("")) {
 									continueProbSetId = json.get("diagProbSetId").toString();
+									logger.info("Latest set id : " + continueProbSetId);
 									isLatest++;
 								}
 							}
@@ -232,10 +235,17 @@ public class ProblemServiceV1 implements ProblemServiceBase {
 						} else {
 							logger.info("The key 'diagProbSetId' does not exist in extension json : " + json.toString());
 						}
+
+						// cumulate guessAlarm value
+						if (json.containsKey("guessAlarm")) {
+							if (json.get("guessAlarm").toString().equalsIgnoreCase("1")) {
+								guessAlarm++;
+							}
+						}
 					} catch (Exception e) {
 						logger.info("Extension Parsing Error with String Value : " + extension.toString() + ", error message : " + e.toString());
 					}
-				} else logger.info("No json format, which is surrounded by '{' and '}', not found in extension : " + query.getExtension().toString());
+				} else logger.info("Json format, which is surrounded by '{' and '}', NOT found in extension : " + query.getExtension().toString());
 			}
 
 			// 중복 방지 용 푼 문제 ID 수집
@@ -246,6 +256,11 @@ public class ProblemServiceV1 implements ProblemServiceBase {
 			continueProblems.clear();
 			isCorrect.clear();
 			continueAnswers.clear();
+			guessAlarm = 0;
+		} else {
+			Collections.reverse(continueProblems);
+			Collections.reverse(isCorrect);
+			Collections.reverse(continueAnswers);
 		}
 
 		/*
@@ -253,8 +268,18 @@ public class ProblemServiceV1 implements ProblemServiceBase {
 		*/
 		logger.info("Getting minitest problem infos......");
 		List<TestProblem> minitestQueryResult = minitestRepo.findAllByProbIDNotIn(solvedProbList);
-		logger.info(Integer.toString(minitestQueryResult.get(0).getProbID()));
-		logger.info(Integer.toString(minitestQueryResult.size()));
+
+		// 1. LRS에 기록이 없으면 solvedProbList가 empty. 위 쿼리 결과 size() = 0
+		// 2. 모든 문제 다 풀었으면 solvedProbList가 DB의 모든 probId 리스트와 동일. 역시 위 쿼리 결과 size() = 0
+		// 두 경우 모두 모든 풀에서 문제 출제해야 함.
+
+		/* 8/27
+		 * 문제를 다 풀어본 수준이 아니라, 그 이후에도 계속해서 꾸준히 문제를 반복해서 푸는 유저의 경우 : 문제 풀이 frequency 고려해줘야 함. -> 추후 개발 요건.
+		*/
+		if (minitestQueryResult.size() == 0) {
+			minitestQueryResult = minitestRepo.findAll();
+		}
+		if (minitestQueryResult.size() > 0) logger.info(Integer.toString(minitestQueryResult.get(0).getProbID()));
 
 		Map<Integer, List<Integer>> partProbIdMap = new HashMap<Integer, List<Integer>>();		// 각 파트 별로 문제 ID 수집
 		Map<Integer, List<Integer>> partNumOrderMap = new HashMap<Integer, List<Integer>>();	// 각 파트의 [순서, 출제 문제 개수] 정보 저장.
@@ -265,26 +290,6 @@ public class ProblemServiceV1 implements ProblemServiceBase {
 		// 쿼리 해온 미니테스트 문제 정보 - 파트 별 문제 ID map & 각 파트 별 순서 및 문제 개수 map
 		partProbIdMap = minitestInfo.getProbMap();					// {part1: [11, 12, 13, 14, ...], part2: [...], ... }
 		partNumOrderMap = minitestInfo.getNumOrderMap();			// {part1: [1, 4], part2: [2, 3], part3: [3, 5], ...}
-
-		// 함수화로 대체된 코드 (테스트 후 삭제 예정)
-		// for (TestProblem problem : minitestQueryResult) {
-		// 	// logger.info(Integer.toString(problem.getProbID()) + ", " + problem.getProblem().getCategory() + ", " + problem.getProblem().getDifficulty() + ", " + problem.getStatus());
-		// 	if (problem.getPart() == null) {
-		// 		logger.info("No part mapping info for probId : " + Integer.toString(problem.getProbID()) + ", DB data issue.\nPlease check if data is filled in 'PART' table");
-		// 		continue;
-		// 	}
-		// 	// 파트 별 문제 수집
-		// 	if (!partProbIdMap.containsKey(problem.getPart().getPartID())) {
-		// 		partProbIdMap.put(problem.getPart().getPartID(), Arrays.asList(problem.getProbID()));
-		// 	} else {
-		// 		partProbIdMap.get(problem.getPart().getPartID()).add(problem.getProbID());
-		// 	}
-
-		// 	// 파트 별 [파트 순서, 출제 문제 개수] 수집
-		// 	if (!partNumOrderMap.containsKey(problem.getPart().getPartID())){
-		// 		partNumOrderMap.put(problem.getPart().getPartID(), Arrays.asList(problem.getPart().getOrderNum(), problem.getPart().getProblemCount()));
-		// 	}
-		// }
 
 		/*
 		* 8/6 추가 개발 필요 사항. : 사용자가 많이 풀어서 DB에 더 이상 중복 배제 남은 문제 없을 경우.
@@ -297,54 +302,63 @@ public class ProblemServiceV1 implements ProblemServiceBase {
 		*/
 		List<Integer> partIdAlready = new ArrayList<Integer>();
 		List<Integer> probIdAlready = new ArrayList<Integer>();
+		Map<Integer, List<Integer>> unsatisfiedPartProbMap = new HashMap<Integer, List<Integer>>();
 		for (Integer partId : partProbIdMap.keySet()) {
 			if (partProbIdMap.get(partId).size() < partNumOrderMap.get(partId).get(1)){
 				for (Integer probId : partProbIdMap.get(partId)) {
 					probIdAlready.add(probId);
 				}
+				unsatisfiedPartProbMap.put(partId, partProbIdMap.get(partId));
 			} else if (!partIdAlready.contains(partId)) partIdAlready.add(partId);
 		}
 
 		// 이미 푼 문제 제외하고 조회했는데 필요한 개수 충족 X. --> 현재 가져와놓은 문제 외에는 모두 풀어봤단 의미이므로, 가져온 문제 제외하고 그냥 전체에서 랜덤 출제.
 		// 전체 한 번 이상 다 푼 사람은 추후에.
+		Map<Integer, List<Integer>> additionalProbMap;
+		List<TestProblem> queryList = new ArrayList<TestProblem>();
 		if (partIdAlready.size() < TOTAL_PART_NUM){
 			logger.info("Only " + Integer.toString(partIdAlready.size()) + " parts are satisfied : " + partIdAlready.toString() + ", " + probIdAlready.toString());
-			logger.info("Getting supplementary minitest problem infos......");
-			Map<Integer, List<Integer>> additionalProbMap = new HashMap<Integer, List<Integer>>();
 			
 			// 쿼리 결과를 각 파트 별로 문제 분리. 새로 조회된 파트는 파트 순서 & 문제 수 정보도 수집.
-			minitestInfo = parseMinitestQueryResult(additionalProbMap, partNumOrderMap, minitestRepo.findAllByPartPartIDNotInAndProbIDNotIn(partIdAlready, probIdAlready));
+			// 문제가 하나도 없을 수는 없음. (다 풀어봤으면 )
+			logger.info("Getting supplementary minitest problem infos......");
+			queryList = minitestRepo.findAllByPartPartIDNotInAndProbIDNotIn(partIdAlready, probIdAlready);
+			if (queryList.size() == 0) {
+				logger.info("No minitest query result for parts not in : " + partIdAlready.toString() + ", and probs not in : " + probIdAlready.toString() + ". So, get all probs in insufficient part");
+				
+				queryList = minitestRepo.findAllByPartPartIDNotIn(partIdAlready);
+			}
+		} else {		// 파트는 다 있긴 한데, 특정 파트의 문제 개수가 부족할 경우.
+			List<Integer> satisfiedPartList = new ArrayList<Integer>(partProbIdMap.keySet());
+			for (Integer key : satisfiedPartList){
+				if (partProbIdMap.get(key).size() < partNumOrderMap.get(key).get(1)){
+					satisfiedPartList.remove(key);
+				}
+			}
+			logger.info("Out of total parts : " + partProbIdMap.keySet().toString() + ", Only " + Integer.toString(satisfiedPartList.size()) + " parts are satisfied with prob # : " + satisfiedPartList.toString());
 
+			if (satisfiedPartList.size() < partProbIdMap.keySet().size()) {
+				queryList = minitestRepo.findAllByPartPartIDNotIn(partIdAlready);
+			}
+		}
+		
+		// 부족하다고 판단돼서 더 가져왔다면,
+		if (queryList != null) {
+			additionalProbMap = new HashMap<Integer, List<Integer>>();
+			minitestInfo = parseMinitestQueryResult(additionalProbMap, partNumOrderMap, queryList);
 			additionalProbMap = minitestInfo.getProbMap();
 			partNumOrderMap = minitestInfo.getNumOrderMap();
-
-			// 함수화로 대체된 코드 (테스트 후 삭제 예정)
-			// for (TestProblem probInfo : minitestRepo.findAllByPartPartIDNotInAndProbIDNotIn(partIdAlready, probIdAlready)) {
-			// 	// 파트 정보 없을 경우.
-			// 	if (probInfo.getPart() == null) {
-			// 		logger.info("No part mapping info for probId : " + Integer.toString(probInfo.getProbID()) + ", DB data issue.\nPlease check if data is filled in 'PART' table");
-			// 		continue;
-			// 	}
-
-			// 	// 파트 별 문제 수집
-			// 	if (!additionalProbMap.containsKey(probInfo.getPart().getPartID())) {
-			// 		additionalProbMap.put(probInfo.getPart().getPartID(), Arrays.asList(probInfo.getProbID()));
-			// 	} else {
-			// 		additionalProbMap.get(probInfo.getPart().getPartID()).add(probInfo.getProbID());
-			// 	}
-
-			// 	// 파트 별 [파트 순서, 출제 문제 개수] 없었던 정보 있으면 추가해줌.
-			// 	if (!partNumOrderMap.containsKey(probInfo.getPart().getPartID())){
-			// 		partNumOrderMap.put(probInfo.getPart().getPartID(), Arrays.asList(probInfo.getPart().getOrderNum(), probInfo.getPart().getProblemCount()));
-			// 	}
-			// }
-
+			// logger.info("New query results : " + additionalProbMap.toString() + ", " + partNumOrderMap.toString());
+	
 			// 추가로 조회해온 문제들로 부족한 파트의 문제 수 보충.
 			for (Integer partId : additionalProbMap.keySet()) {
 				if (partProbIdMap.keySet().contains(partId)) {			// 해당 파트에 문제가 일부 있는 상태라면, 해당 파트에 모자라는 수 만큼 문제 넣어줌.
 					if (partProbIdMap.get(partId).size() < partNumOrderMap.get(partId).get(1)) {
+						Integer threshold = partNumOrderMap.get(partId).get(1);
+						Integer count = partProbIdMap.get(partId).size();
 						Collections.shuffle(additionalProbMap.get(partId));
-						for (int i=0; i < partNumOrderMap.get(partId).get(1) - partProbIdMap.get(partId).size(); i++) {
+						// logger.info("Check : " + Integer.toString(threshold - count));
+						for (int i=0; i < threshold - count; i++) {
 							partProbIdMap.get(partId).add(additionalProbMap.get(partId).get(i));
 						}
 					}
@@ -356,28 +370,84 @@ public class ProblemServiceV1 implements ProblemServiceBase {
 					}
 				}
 			}
-		}
+		}		
 
 		// 파트 순서로 정렬
-		List<Map.Entry<Integer, List<Integer>>> orderList = new ArrayList<Map.Entry<Integer, List<Integer>>>(partNumOrderMap.entrySet());
-		Collections.sort(orderList, new Comparator<HashMap.Entry<Integer, List<Integer>>>(){
+		List<Map.Entry<Integer, List<Integer>>> orderedList = new ArrayList<Map.Entry<Integer, List<Integer>>>(partNumOrderMap.entrySet());
+		Collections.sort(orderedList, new Comparator<HashMap.Entry<Integer, List<Integer>>>(){
 			@Override
 			public int compare(HashMap.Entry<Integer, List<Integer>> o1, HashMap.Entry<Integer, List<Integer>> o2) {
 				return o1.getValue().get(0).compareTo(o2.getValue().get(0));
 			}
 		});
 
-		// 순서대로 각 파트 별 문제 리스트에서 설정된 개수 만큼 랜덤으로 선택하여 수집
-		for (Map.Entry<Integer, List<Integer>> part : orderList) {
+		// 순서대로 각 파트 별 문제 리스트에서 설정된 개수 만큼 랜덤으로 선택하여 수집 (minitestProblems : 새 미니진단 문제들)
+		Integer delimiter = 0;		// 이어풀기 용
+		Integer idx = 0;
+		Integer lastPartOrder = -1;
+		Integer deficitNum = 0;
+		for (Map.Entry<Integer, List<Integer>> part : orderedList) {
 			List<Integer> probIdList = partProbIdMap.get(part.getKey());
-			Collections.sort(probIdList);
+			Collections.shuffle(probIdList);
 			for (int i=0 ; i<part.getValue().get(1) ; i++) {
-				minitestProblems.add(probIdList.get(i));
+				if (probIdList.size() > i) {
+					minitestProblems.add(probIdList.get(i));
+				}
+				// else {
+				// 	logger.info("part, probIdList : " + part + ", " + probIdList);
+				// 	logger.info("part info : " + part.getValue().toString());
+				// }
+			}
+
+			// 이어풀기 문제가 존재할 경우에도 추가. (이어풀기도 푼문제에 포함돼서 배제되었으므로, 혹은 남은 문제 없으면 전체 pool에서 가져왔음)
+			// logger.info(Integer.toString(continueProblems.size()) + ", " + Integer.toString(delimiter));
+			if (continueProblems.size() > delimiter) {
+				for (int j=0; j < part.getValue().get(1); j++) {							// 각 파트 별 문제 수 넘어가면 안 됨.
+					// minitestProblems.add(continueProblems.get(j + delimiter));
+					if (j + delimiter + 1 >= continueProblems.size()) {						// continueProblems 끝나면 종료.
+						deficitNum = part.getValue().get(1) - (j+1);
+						// logger.info("deficitNum : " + Integer.toString(deficitNum));
+						lastPartOrder = idx;
+						break;
+					}				
+				}
+			}
+			idx++;
+			delimiter += part.getValue().get(1);
+		}
+
+		if (lastPartOrder == -1) {
+			lastPartOrder = 4;
+		}
+
+		for (int order = lastPartOrder; order <= partProbIdMap.size() - 1; order++) {
+			// logger.info(Integer.toString(lastPartOrder) + ", " + Integer.toString(order) + ", " + Integer.toString(partProbIdMap.size()));
+			int thres = orderedList.get(order).getValue().get(1);
+			if (order == lastPartOrder) {
+				if (deficitNum == 0)
+					continue;
+				else
+					thres = deficitNum;
+			}
+			List<Integer> probIdList = partProbIdMap.get(orderedList.get(order).getKey());
+			Collections.shuffle(probIdList);
+			int count = 0;
+			int index = 0;
+			while (count < thres) {
+				if (!continueProblems.contains(probIdList.get(index))) {
+					continueProblems.add(probIdList.get(index));
+					count++;
+				}
+				else index++;
 			}
 		}
+
+		logger.info("> minitest logic end! : " + Integer.toString(minitestProblems.size()) + ", " + minitestProblems.toString() + " / " + Integer.toString(continueProblems.size()) + ", " + continueProblems.toString());
 		map.put("newProbSetId", newProbSetId);
 		map.put("minitestProblems", minitestProblems);
-		map.put("continueProbSetId", continueProbSetId);
+		if (continueProblems.size() > 0) {
+			map.put("continueProbSetId", continueProbSetId);
+		}
 		map.put("continueProblems", continueProblems);
 		map.put("continueAnswers", continueAnswers);
 		map.put("isCorrect", isCorrect);
@@ -395,9 +465,9 @@ public class ProblemServiceV1 implements ProblemServiceBase {
 			}
 			// 파트 별 문제 수집
 			if (!probMap.containsKey(problem.getPart().getPartID())) {
-				probMap.put(problem.getPart().getPartID(), Arrays.asList(problem.getProbID()));
+				probMap.put(problem.getPart().getPartID(), new ArrayList<Integer>(Arrays.asList(problem.getProbID())));
 			} else {
-				probMap.get(problem.getPart().getPartID()).add(problem.getProbID());
+				probMap.get(problem.getPartID()).add(problem.getProbID());
 			}
 
 			// 파트 별 [파트 순서, 출제 문제 개수] 수집

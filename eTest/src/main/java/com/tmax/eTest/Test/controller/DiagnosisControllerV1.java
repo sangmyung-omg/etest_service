@@ -34,8 +34,19 @@ public class DiagnosisControllerV1 {
 	ProblemServiceBase problemService;
 	
 	@GetMapping(value = "/diagnosis", produces = "application/json; charset=utf-8")
-	public ResponseEntity<Object> getDiagnosisProblems(@AuthenticationPrincipal PrincipalDetails principalDetails,
-																@RequestParam String userId) throws Exception {
+	public ResponseEntity<Object> getDiagnosisProblems(@AuthenticationPrincipal PrincipalDetails principalDetails) throws Exception {
+		logger.info("> diagnosis logic start!");
+		// logger.info(principalDetails);
+		String userUuid = "";
+		try {
+			userUuid = principalDetails.getUserUuid();
+			logger.info("userUuid : " + userUuid);
+			
+		} catch (Exception e) {
+			userUuid = "NR-" + UUID.randomUUID().toString();
+			logger.info("userUuid is " + e.getMessage() + " : Unregistered user / So random unregistered UUID is generated : " + userUuid);
+		}
+		// logger.info(userUuid.toString());
 		Map<String, Object> res = new HashMap<String, Object>();
 
 		// 성향 문제 조회
@@ -76,29 +87,26 @@ public class DiagnosisControllerV1 {
 	@GetMapping(value = "/minitest", produces = "application/json; charset=utf-8")
 	public ResponseEntity<Object> getMinitestProblems(@AuthenticationPrincipal PrincipalDetails principalDetails,			
 													 @RequestParam String userId) throws Exception {
-		Map<String, Object> map = new HashMap<String, Object>();
-		// logger.info("User UUID from token : " + principalDetails.getUserUuid());
+		logger.info("> minitest logic start!");
 
 		// // search minitest with setnum
-		// Map<String, Object> re = problemService.getMinitestProblems(userId);
-		// if (re.containsKey("error")) {
-		// 	map.put("resultMessage", re.get("error"));
-		// 	return new ResponseEntity<>(map, HttpStatus.INTERNAL_SERVER_ERROR);
-		// } else {
-		// 	map.put("minitestProblems", re.get("minitestProblems"));
-		// }
+		Map<String, Object> re = problemService.getMinitestProblems(userId);
+		if (re.containsKey("error")) {
+			return new ResponseEntity<>(re, HttpStatus.INTERNAL_SERVER_ERROR);
+		} else {
+			re.put("resultMessage", "Successfully returned");
+			return new ResponseEntity<>(re, HttpStatus.OK);
+		}
 		
-		// map.put("resultMessage", "Successfully returned");
-		// return new ResponseEntity<>(map, HttpStatus.OK);
 
-		map.put("resultMessage", "Successfully returned");
-		map.put("newProbSetId", "2fc89ea8-fb4b-11eb-9a03-0242ac130003");
-		map.put("minitestProblems", Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20));
-		map.put("contiueProbSetId", "429589d8-fbe1-11eb-9a03-0242ac130003");
-		map.put("continueProblems", Arrays.asList(88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107));
-		map.put("continueAnswers", Arrays.asList(1, 4, 3, 5, 2));
-		map.put("isCorrect", Arrays.asList(0, 1, 0, 0, 1));
-		map.put("guessAlarm", 1);
-		return new ResponseEntity<>(map, HttpStatus.OK);
+		// map.put("resultMessage", "Successfully returned");
+		// map.put("newProbSetId", "2fc89ea8-fb4b-11eb-9a03-0242ac130003");
+		// map.put("minitestProblems", Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20));
+		// map.put("contiueProbSetId", "429589d8-fbe1-11eb-9a03-0242ac130003");
+		// map.put("continueProblems", Arrays.asList(88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107));
+		// map.put("continueAnswers", Arrays.asList(1, 4, 3, 5, 2));
+		// map.put("isCorrect", Arrays.asList(0, 1, 0, 0, 1));
+		// map.put("guessAlarm", 1);
+		// return new ResponseEntity<>(map, HttpStatus.OK);
 	}
 }

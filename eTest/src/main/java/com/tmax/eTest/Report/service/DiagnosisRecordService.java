@@ -1,21 +1,13 @@
 package com.tmax.eTest.Report.service;
 
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.UUID;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 
 import com.tmax.eTest.Common.model.problem.Problem;
@@ -25,23 +17,17 @@ import com.tmax.eTest.LRS.dto.StatementDTO;
 import com.tmax.eTest.LRS.util.LRSAPIManager;
 import com.tmax.eTest.Report.dto.DiagnosisRecordDetailDTO;
 import com.tmax.eTest.Report.dto.DiagnosisRecordMainDTO;
-import com.tmax.eTest.Report.dto.PartUnderstandingDTO;
-import com.tmax.eTest.Report.dto.triton.TritonDataDTO;
-import com.tmax.eTest.Report.dto.triton.TritonResponseDTO;
 import com.tmax.eTest.Report.exception.ReportBadRequestException;
-import com.tmax.eTest.Report.util.RuleBaseScoreCalculator;
 import com.tmax.eTest.Report.util.SNDCalculator;
 import com.tmax.eTest.Report.util.DiagnosisComment;
-import com.tmax.eTest.Report.util.StateAndProbProcess;
-import com.tmax.eTest.Report.util.TritonAPIManager;
-import com.tmax.eTest.Report.util.UKScoreCalculator;
 import com.tmax.eTest.Common.model.report.DiagnosisReport;
 import com.tmax.eTest.Common.model.report.DiagnosisReportKey;
-import com.tmax.eTest.Common.model.uk.UkMaster;
 import com.tmax.eTest.Common.repository.report.DiagnosisReportRepo;
-import com.tmax.eTest.Test.repository.UserKnowledgeRepository;
+
+import lombok.extern.log4j.Log4j2;
 
 @Service
+@Log4j2
 public class DiagnosisRecordService {
 
 	@Autowired
@@ -56,8 +42,6 @@ public class DiagnosisRecordService {
 	DiagnosisComment commentGenerator;
 	@Autowired
 	SNDCalculator sndCalculator;
-
-	private final Logger logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
 
 	private final List<String> partNameList = new ArrayList<>(Arrays.asList("risk", "invest", "knowledge"));
 
@@ -126,6 +110,9 @@ public class DiagnosisRecordService {
 			
 			Optional<DiagnosisReport> reportOpt = diagnosisReportRepo.findById(key);
 			
+			List<StatementDTO> knowledgeProbStatement = getDiagnosisKnowledgeProbInfo(userId, probSetId);
+			
+			
 			if(reportOpt.isPresent())
 			{
 				DiagnosisReport report = reportOpt.get();
@@ -139,7 +126,7 @@ public class DiagnosisRecordService {
 					result = makeInvestRecordDetail(report);
 					break;
 				case "knowledge":
-					result = makeKnowledgeRecordDetail(report);
+					result = makeKnowledgeRecordDetail(report, knowledgeProbStatement);
 					break;
 				default: // 해당 경우 없음.
 					throw new ReportBadRequestException("PartName unavailable. "+partName);
@@ -152,9 +139,19 @@ public class DiagnosisRecordService {
 		return result;
 	}
 	
+	@SuppressWarnings("unchecked")
 	private DiagnosisRecordDetailDTO makeKnowledgeRecordDetail(
-			DiagnosisReport report)
+			DiagnosisReport report,
+			List<StatementDTO> knowledgeProbStatement) throws Exception
 	{
+		
+		Map<String, Object> probInfos = setProbInfoInRecordDTO(knowledgeProbStatement);
+		
+		Map<String, Object> problemCorrectInfo = (Map<String, Object>) probInfos.get("problemCorrectInfo");
+		List<List<String>> problemHighLevelInfo = (List<List<String>>) probInfos.get("problemHighLevelInfo");
+		List<List<String>> problemMiddleLevelInfo = (List<List<String>>) probInfos.get("problemMiddleLevelInfo");
+		List<List<String>> problemLowLevelInfo = (List<List<String>>) probInfos.get("problemLowLevelInfo");
+		
 		DiagnosisRecordDetailDTO result = DiagnosisRecordDetailDTO.builder()
 				.score(report.getKnowledgeScore())
 				.percentage(sndCalculator.calculateForDiagnosis(
@@ -167,6 +164,10 @@ public class DiagnosisRecordService {
 						report.getKnowledgeTypeScore(), 
 						report.getKnowledgeChangeScore(), 
 						report.getKnowledgeSellScore()))
+				.problemCorrectInfo(problemCorrectInfo)
+				.problemHighLevelInfo(problemHighLevelInfo)
+				.problemMiddleLevelInfo(problemMiddleLevelInfo)
+				.problemLowLevelInfo(problemLowLevelInfo)
 				.build();
 		
 		return result;
@@ -212,40 +213,149 @@ public class DiagnosisRecordService {
 	
 
 	// LRS에서 푼 문제 정보를 모아, 관련 정보 생성. (난이도별 문제 맞은 갯수, 해당 문제 정보 등)
-//	private void setProbInfoInRecordDTO(DiagnosisRecordMainDTO output, List<StatementDTO> infos) {
-//
-//		// probId, isCorr
-//		Map<Integer, Integer> probCorrInfo = new HashMap<>();
-//		List<Integer> probIds = new ArrayList<>();
-//
-//		for (StatementDTO info : infos) {
-//			if (info.getSourceType().equals("diagnosis")) {
-//				try {
-//					int probId = Integer.parseInt(info.getSourceId());
-//					probCorrInfo.put(probId, info.getIsCorrect());
-//				} catch (Exception e) {
-//					logger.info("Integer decode fail in setProbInfoInRecordDTO " + info.getSourceId());
-//				}
-//			}
-//		}
-//
-//		// 왜 안되냐 ㅡㅡ;;
-//		List<Problem> diagProbs = problemRepo.findAllById(probCorrInfo.keySet());
-//		logger.info(diagProbs.size() + " "+probCorrInfo.keySet().toString());
-//		for (Problem prob : diagProbs)
-//			logger.info(prob.getProbID() + "");
-//		//output.pushProblemList(diagProbs, probCorrInfo);
-//		logger.info(probIds.toString());
-//	}
+	private Map<String, Object> setProbInfoInRecordDTO(List<StatementDTO> infos) throws Exception
+	{
 
-	private List<StatementDTO> getDiagnosisProbInfo(String userId, String probSetId) throws Exception {
+		Map<String, Object> result = new HashMap<>();
+		List<List<String>> probHighLevelInfo = new ArrayList<>();
+		List<List<String>> probMidLevelInfo = new ArrayList<>();
+		List<List<String>> probLowLevelInfo = new ArrayList<>();
+		Map<String, Object> problemCorrectInfo = new HashMap<>();
+		
+		// probId, isCorr
+		Map<Integer, Integer> probCorrInfo = new HashMap<>();
+		List<Integer> probIds = new ArrayList<>();
+
+		for (StatementDTO info : infos) {
+			if (info.getSourceType().equals("diagnosis")) {
+				try {
+					int probId = Integer.parseInt(info.getSourceId());
+					probCorrInfo.put(probId, info.getIsCorrect());
+				} catch (Exception e) {
+					log.info("Integer decode fail in setProbInfoInRecordDTO " + info.getSourceId());
+				}
+			}
+		}
+
+		// 왜 안되냐 ㅡㅡ;;
+		List<Problem> diagProbs = problemRepo.findAllById(probCorrInfo.keySet());
+		int[] diffCorr = {0, 0, 0};
+		int[] diffAll = {0, 0, 0};
+		int problemIdx = 1;
+		
+		for(Problem prob : diagProbs)
+		{
+			String[] diffList = {"상", "중", "하"};
+			int diffIdx = -1;
+			int isCorr = probCorrInfo.get(prob.getProbID());
+			
+			for(int i = 0; i < diffList.length; i ++)
+				if(prob.getDifficulty().equals(diffList[i]))
+					diffIdx = i;
+			
+			if(diffIdx < 0 || diffIdx >= diffAll.length)
+			{
+				log.error("Prob Diffcult error in setProbInfoInRecordDTO. probID : "
+						+prob.getProbID()+" "+prob.getDifficulty());
+				continue;
+			}
+			
+			if(isCorr == 1)
+				diffCorr[diffIdx]++;
+			diffAll[diffIdx]++;
+			
+			List<String> probInfo = new ArrayList<>();
+			
+			probInfo.add(String.valueOf(problemIdx));
+			probInfo.add(String.valueOf(prob.getProbID()));
+			probInfo.add((isCorr==1)?"true":"false");
+			probInfo.add(prob.getQuestion());
+			probInfo.add(prob.getDifficulty());
+			
+			switch(diffIdx)
+			{
+			case 0:
+				probHighLevelInfo.add(probInfo);
+				break;
+			case 1:
+				probMidLevelInfo.add(probInfo);
+				break;
+			case 2:
+				probLowLevelInfo.add(probInfo);
+				break;
+			default:
+				log.error("Prob Diffcult error in setProbInfoInRecordDTO. probID : "
+						+prob.getProbID()+" "+prob.getDifficulty());
+				break;
+			}
+			
+			problemIdx++;
+		}
+		
+		problemCorrectInfo.put("allCorr", diffCorr[0]+diffCorr[1]+diffCorr[2]);
+		problemCorrectInfo.put("allProb", diffAll[0]+diffAll[1]+diffAll[2]);
+		problemCorrectInfo.put("high", diffCorr[0]+"/"+diffAll[0]);
+		problemCorrectInfo.put("middle", diffCorr[1]+"/"+diffAll[1]);
+		problemCorrectInfo.put("low", diffCorr[2]+"/"+diffAll[2]);
+		
+		result.put("problemCorrectInfo", problemCorrectInfo);
+		result.put("problemHighLevelInfo", probHighLevelInfo);
+		result.put("problemMiddleLevelInfo", probMidLevelInfo);
+		result.put("problemLowLevelInfo", probLowLevelInfo);
+		
+		return result;
+		
+	}
+
+	private List<StatementDTO> getDiagnosisKnowledgeProbInfo(String userId, String probSetId) 
+			throws Exception {
 
 		GetStatementInfoDTO input = new GetStatementInfoDTO();
 		input.pushUserId(userId);
 		if (probSetId != null)
 			input.pushExtensionStr(probSetId);
 		input.pushActionType("submit");
-		List<StatementDTO> result = lrsAPIManager.getStatementList(input);
+		input.pushSourceType("diagnosis");
+		
+		List<StatementDTO> result = new ArrayList<>();
+		List<StatementDTO> stateResult;
+		Map<String, Integer> isIDExist = new HashMap<>();
+		
+		try
+		{
+			stateResult = lrsAPIManager.getStatementList(input);
+		}
+		catch(Exception e)
+		{
+			throw new ReportBadRequestException("Exception in Diagnosis Report, get statement part.", e);
+		}
+		
+
+		for(StatementDTO state : stateResult)
+		{
+			String sourceID = state.getSourceId();
+			
+			if(isIDExist.get(sourceID) != null)
+			{
+				StatementDTO beforeState = result.get(isIDExist.get(sourceID));
+				String beforeTimestamp = beforeState.getTimestamp();
+				String recentTimestamp = state.getTimestamp();
+				
+				// 최신 것을 기준으로.
+				if(beforeTimestamp.compareTo(recentTimestamp) < 0)
+				{
+					result.set(isIDExist.get(sourceID), state);
+				}
+			}
+			else
+			{
+				result.add(state);
+				isIDExist.put(sourceID, result.size()-1);
+			}
+		}
+		
+		log.info(result.size()+"    "+result.toString());
+		
 
 		return result;
 

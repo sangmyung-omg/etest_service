@@ -1,49 +1,34 @@
-package com.tmax.eTest.Contents.controller;
+package com.tmax.eTest.Contents.controller.answer;
 
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.PropertySource;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.tmax.eTest.Auth.dto.PrincipalDetails;
 import com.tmax.eTest.Contents.dto.CustomizedSolutionDTO;
-import com.tmax.eTest.Contents.exception.problem.NoDataException;
 import com.tmax.eTest.Contents.service.AnswerServicesBase;
-import com.tmax.eTest.Contents.service.AnswerServicesV1;
-import com.tmax.eTest.Contents.service.ProblemServices;
 import com.tmax.eTest.LRS.dto.GetStatementInfoDTO;
 import com.tmax.eTest.LRS.dto.StatementDTO;
 import com.tmax.eTest.LRS.util.LRSAPIManager;
-import com.tmax.eTest.LRS.dto.StatementDTO;
-
-import reactor.core.publisher.Mono;
-import org.springframework.web.reactive.function.BodyInserters;
-import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.reactive.function.server.EntityResponse;
-
-import io.netty.handler.codec.http.HttpResponseStatus;
 
 /**
  * Improve logics from CBT and Adjust to new API requirements
@@ -61,39 +46,48 @@ public class AnswerControllerV1 {
 	@Autowired
 	@Qualifier("AnswerServicesV1")
 	AnswerServicesBase answerServices;
-	
-	@Autowired
-	ProblemServices problemService;
-	
-	@Value("${etest.recommend.lrs.host}")
-	private String LRS_HOST;
-	
-	@Value("${etest.recommend.lrs.port}")
-	private String LRS_PORT;
-
-	final String LRSServerURI = "http://192.168.153.132:8080";
-	// private final String LRSServerURI = "http://" + LRS_HOST + ":" + LRS_PORT;
 
 	@Autowired
 	LRSAPIManager lrsApiManager;
 	
 	@PostMapping(value="problems/{probId}/answer-check", produces = "application/json; charset=utf-8")
-	public ResponseEntity<Object> checkAnswer(@PathVariable("probId") Integer probId, @RequestBody ArrayList<StatementDTO> lrsbody) throws Exception {
-		
+	public ResponseEntity<Object> checkAnswer(@AuthenticationPrincipal PrincipalDetails principalDetails,
+											  @PathVariable("probId") Integer probId,
+											  @RequestBody ArrayList<StatementDTO> lrsbody) throws Exception {
+		logger.info("> answer-check logic start!");
 		Map<String, Object> res = new HashMap<String, Object>();
+		String userId = "";
 		
+		try {
+			userId = principalDetails.getUserUuid();	
+		} catch (Exception e) {
+			logger.info("userUuid : " + e.getMessage());
+		}
+		// lrsbody의 유저가 입력한 답 꺼내서 정답과 비교해 정답여부 반환. 1 - 정답 / 0 - 오답 / -1 - 정답 없는 문제
 		int isCorrect = answerServices.evaluateIfCorrect(probId, lrsbody);
-		if (isCorrect == 1) {
-			lrsbody.get(0).setIsCorrect(1);
-		} else {
-			lrsbody.get(0).setIsCorrect(0);
+		for (Integer i=0; i < lrsbody.size(); i ++) {
+			StatementDTO dto = lrsbody.get(i);
+			if (dto.getActionType().equalsIgnoreCase("submit")) {
+				if (isCorrect == 0) {
+					lrsbody.get(i).setIsCorrect(0);
+				} else if (isCorrect == 1) {
+					lrsbody.get(i).setIsCorrect(1);
+				} else if (isCorrect == -1) {
+					lrsbody.get(i).setIsCorrect(null);
+				}
+			}
+			if (dto.getUserId().equalsIgnoreCase("")) {			// 비회원 자가진단이라면, 유저의 아이디가 없이 넘어옴. 근데, 나중 가입 고려해서 임의의 uuid 세팅.
+				lrsbody.get(i).setUserId(userId);
+			}
 		}
 
+		// LRS에 statement 저장
 		List<Integer> queryResult = lrsApiManager.saveStatementList(lrsbody);
-		logger.info(queryResult.toString());
 
+		// 결과 반환
 		if (queryResult.size() == 0) {
-			res.put("resultMessage", "LRS successfully updated & isCorrect successfully returned");
+			if (isCorrect == -1) res.put("resultMessage", "LRS successfully updated & the value '-1' returned for isCorrect since there's no correct answer for tendency problems");
+			else res.put("resultMessage", "LRS successfully updated & isCorrect successfully returned");
 			res.put("isCorrect", isCorrect);
 			return new ResponseEntity<>(res, HttpStatus.OK);
 		} else {
@@ -104,10 +98,11 @@ public class AnswerControllerV1 {
 
 	@GetMapping(value="/problems/{setId}/solution", produces = "application/json; charset=utf-8")
 	public Map<String, Object> problem(@PathVariable("setId") String setId) throws Exception{
+		logger.info("> solution logic start!");
 		Map<String, Object> output = new HashMap<String, Object>();
-		logger.info(setId);
+		logger.info("Set ID : " + setId);
 
-		// prepare for LRS GET input
+		// prepare for LRS GETStatement input
 		GetStatementInfoDTO input = new GetStatementInfoDTO();
 		input.setContainExtension(Arrays.asList(setId));
 

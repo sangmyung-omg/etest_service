@@ -21,5 +21,7 @@ public interface TestProblemRepository extends  JpaRepository<TestProblem, Integ
 
     List<TestProblem> findAllByProbIDNotIn(List<Integer> solvedProbId);
 
+	List<TestProblem> findAllByPartPartIDNotIn(List<Integer> solvedPartId);
+
 	List<TestProblem> findAllByPartPartIDNotInAndProbIDNotIn(List<Integer> partId, List<Integer> probId);
 }

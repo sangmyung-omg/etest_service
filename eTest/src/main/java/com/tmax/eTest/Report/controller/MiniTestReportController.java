@@ -17,6 +17,10 @@ import com.tmax.eTest.Report.service.MiniTestScoreService;
 import com.tmax.eTest.Report.service.MiniTestVideoService;
 import com.tmax.eTest.Test.service.UserInfoService;
 
+import org.springframework.http.ResponseEntity;
+
+import com.google.gson.Gson;
+
 @RestController
 public class MiniTestReportController {
 	
@@ -50,7 +54,7 @@ public class MiniTestReportController {
 
 	@CrossOrigin("*")
 	@GetMapping(value="/report/miniTest/record/{id}/{probSetId}", produces = "application/json; charset=utf-8")
-	public MiniTestRecordDTO miniTestRecord(
+	public ResponseEntity<?> miniTestRecord(
 			@PathVariable("id") String id,
 			@PathVariable("probSetId") String probSetId) throws Exception{
 		
@@ -60,7 +64,7 @@ public class MiniTestReportController {
 		
 		MiniTestRecordDTO output = miniTestRecordService.getMiniTestRecord(id, probSetId);
 
-		return output;
+		return ResponseEntity.ok().body(output);
 	}
 
 	

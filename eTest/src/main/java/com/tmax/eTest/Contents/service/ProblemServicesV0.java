@@ -10,14 +10,13 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import com.tmax.eTest.Common.model.problem.DiagnosisProblem;
 import com.tmax.eTest.Common.model.error_report.ErrorReport;
 import com.tmax.eTest.Common.model.problem.Problem;
 import com.tmax.eTest.Common.model.problem.ProblemChoice;
-import com.tmax.eTest.Common.model.problem.TestProblem;
 import com.tmax.eTest.Contents.dto.problem.ProblemDTO;
+import com.tmax.eTest.Contents.dto.problem.Temp0ProblemOutputDTO;
+import com.tmax.eTest.Contents.dto.problem.Temp1ProblemOutputDTO;
 import com.tmax.eTest.Contents.exception.problem.NoDataException;
 import com.tmax.eTest.Contents.exception.problem.UnavailableTypeException;
 import com.tmax.eTest.Contents.repository.DiagnosisProblemRepository;
@@ -31,10 +30,9 @@ import com.tmax.eTest.Test.repository.UkRepository;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.json.simple.JSONArray;
 
-@Service
-public class ProblemServices {
+@Service("ProblemServicesV0")
+public class ProblemServicesV0 implements ProblemServicesBase {
 	@Autowired
 	DiagnosisProblemRepository diagProbRepo;
 	
@@ -60,6 +58,7 @@ public class ProblemServices {
 	
 	public ProblemDTO getProblem(Integer problemID) throws Exception{
 		ProblemDTO output;
+		logger.info("Getting problem info......");
 		Optional<Problem> problemOpt = problemRepo.findById(problemID);
 		
 		if(problemOpt.isPresent()) {
@@ -142,6 +141,14 @@ public class ProblemServices {
 			throw e;
 		}
 		return "success";
+	}
+
+	public Temp1ProblemOutputDTO getProblemInfo(Integer probId) throws Exception {
+		return null;
+	}
+
+	public Temp0ProblemOutputDTO getParsedProblemInfo(Integer probId) throws Exception {
+		return null;
 	}
 }
 

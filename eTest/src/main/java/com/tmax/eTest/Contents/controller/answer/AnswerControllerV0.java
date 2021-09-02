@@ -1,4 +1,4 @@
-package com.tmax.eTest.Contents.controller;
+package com.tmax.eTest.Contents.controller.answer;
 
 import java.nio.charset.Charset;
 import java.util.HashMap;
@@ -6,7 +6,6 @@ import java.util.Map;
 
 import com.tmax.eTest.Contents.exception.problem.NoDataException;
 import com.tmax.eTest.Contents.service.AnswerServicesBase;
-import com.tmax.eTest.Contents.service.ProblemServices;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +15,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,6 +24,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import com.tmax.eTest.Contents.exception.problem.NoDataException;
+import com.tmax.eTest.Contents.service.AnswerServicesBase;
+import com.tmax.eTest.Contents.service.ProblemServicesV0;
+import reactor.core.publisher.Mono;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -42,7 +46,7 @@ public class AnswerControllerV0 {
 	AnswerServicesBase answerServices;
 
 	@Autowired
-	ProblemServices problemService;
+	ProblemServicesV0 problemService;
 
 	@Value("${etest.recommend.lrs.host}")
 	private String LRS_HOST;
@@ -50,9 +54,8 @@ public class AnswerControllerV0 {
 	@Value("${etest.recommend.lrs.port}")
 	private String LRS_PORT;
 
-	@PostMapping(value = "problems/{id}/answer-check", produces = "application/json; charset=utf-8")
-	public int checkAnswer(@PathVariable("id") Integer id, @RequestParam String answer, @RequestBody String lrsbody)
-			throws Exception {
+	@PostMapping(value="problems/{id}/answer-check", produces = "application/json; charset=utf-8")
+	public int checkAnswer(@PathVariable("id") Integer id, @RequestParam String answer, @RequestBody String lrsbody) throws Exception {
 		Map<String, Object> data = null;
 		data = answerServices.getProblemSolution(id);
 		String inputString = data.get("solution").toString();
