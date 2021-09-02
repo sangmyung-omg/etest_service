@@ -19,12 +19,12 @@ public class VideoHitRepositorySupport extends QuerydslRepositorySupport {
   }
 
   // 애매한뎅
-  public Boolean notExistsById(Long videoId) {
+  public Boolean notExistsById(String videoId) {
     return CommonUtils
         .objectNullcheck(query.selectOne().from(videoHit).where(videoHit.videoId.eq(videoId)).fetchFirst());
   }
 
-  public Long updateVideoHit(Long videoId) {
+  public Long updateVideoHit(String videoId) {
     return query.update(videoHit).set(videoHit.hit, videoHit.hit.add(1)).where(videoHit.videoId.eq(videoId)).execute();
   }
 }

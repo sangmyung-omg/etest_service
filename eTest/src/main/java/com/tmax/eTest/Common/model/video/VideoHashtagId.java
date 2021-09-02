@@ -6,6 +6,6 @@ import lombok.Data;
 
 @Data
 public class VideoHashtagId implements Serializable {
-  private Long videoId;
+  private String videoId;
   private Long hashtagId;
 }

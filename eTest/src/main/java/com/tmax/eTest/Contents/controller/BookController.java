@@ -24,6 +24,18 @@ public class BookController {
   @Autowired
   private BookService bookService;
 
+  @GetMapping("/books")
+  public ResponseEntity<Object> getBookList(@RequestParam(value = "keyword", required = false) String keyword) {
+    log.info("---getBookList---");
+    return new ResponseEntity<>(bookService.getBookList(keyword), HttpStatus.OK);
+  }
+
+  @PostMapping("/books/{book_id}/hit")
+  public ResponseEntity<Object> updateBookHit(@PathVariable("book_id") Long bookId) throws ParseException {
+    log.info("---updateBookHit---");
+    return new ResponseEntity<>(bookService.updateBookHit(bookId), HttpStatus.OK);
+  }
+
   @GetMapping("/users/{user_id}/books/{book_id}")
   public ResponseEntity<Object> getBook(@PathVariable("user_id") String userId, @PathVariable("book_id") Long bookId) {
     log.info("---getBook---");

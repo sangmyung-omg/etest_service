@@ -29,9 +29,9 @@ public class VideoBookmark implements Persistable<VideoBookmarkId> {
   @Id
   private String userUuid;
   @Id
-  private Long videoId;
+  private String videoId;
 
-  public VideoBookmark(String userUuid, Long videoId) {
+  public VideoBookmark(String userUuid, String videoId) {
     this.userUuid = userUuid;
     this.videoId = videoId;
   }

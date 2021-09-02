@@ -25,7 +25,7 @@ import lombok.Setter;
 @Entity
 public class Video {
   @Id
-  private Long videoId;
+  private String videoId;
   private String videoSrc;
   private String originalFileSrc;
   private String title;
@@ -37,7 +37,7 @@ public class Video {
   private Date createDate;
   private Date registerDate;
   private Date endDate;
-  private Integer sequence;
+  private Long sequence;
   private String codeSet;
 
   @ManyToOne(fetch = FetchType.EAGER)

@@ -11,7 +11,7 @@ import lombok.Data;
 @AllArgsConstructor
 public class VideoDTO {
 
-  private Long videoId;
+  private String videoId;
   private String videoSrc;
   private String title;
   private String imgSrc;

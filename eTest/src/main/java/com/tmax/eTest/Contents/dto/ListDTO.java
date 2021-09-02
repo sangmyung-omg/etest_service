@@ -18,6 +18,7 @@ public class ListDTO {
   @Data
   @AllArgsConstructor
   public static class Video {
+    private Boolean recommended;
     private int size;
     private List<VideoDTO> videos;
   }

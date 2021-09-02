@@ -18,7 +18,7 @@ import lombok.Setter;
 @IdClass(VideoUkRelId.class)
 public class VideoUkRel {
   @Id
-  private Long videoId;
+  private String videoId;
   @Id
   private Long ukId;
 

@@ -25,6 +25,10 @@ public class BookRepositorySupport extends QuerydslRepositorySupport {
     this.query = query;
   }
 
+  public List<Book> findBooks(String keyword) {
+    return query.selectFrom(book).where(checkKeyword(keyword)).orderBy().fetch();
+  }
+
   public BookJoin findBookByUserAndId(String userId, Long bookId) {
     return tupleToJoin(query.select(book, bookBookmark.userUuid).from(book).leftJoin(book.bookBookmarks, bookBookmark)
         .on(userEq(userId)).where(idEq(bookId)).fetchOne());

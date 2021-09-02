@@ -81,7 +81,30 @@ paths:
           content:
             json:
               schema:
-                $ref: '#/components/schemas/VideoListModel'
+                $ref: '#/components/schemas/VideoListModel'                               
+  /videos/{video_id}/hit:
+    post:
+      tags:
+      - Video
+      summary: 영상 조회수 업데이트
+      description: 해당 영상의 조회수를 증가시키고 LRS 저장
+      parameters:
+      - name: video_id
+        in: path
+        description: 유저아이디
+        required: true
+        schema:
+          type: integer
+          format: integer
+      responses:
+        200:
+          description: OK
+          content:
+            json:
+              schema:
+                type: object
+                example:
+                  isSuccess: true                 
   /users/{user_id}/videos/{video_id}:
     get:
       tags:
@@ -133,12 +156,12 @@ paths:
           format: integer
       - name: sort
         in: query
-        description: DATE(날짜순)/HIT(조회순)
+        description: DATE(날짜순)/HIT(조회순)/RECOMMEND(추천순)
         required: false
         schema:
           type: string
           format: string
-          default: DATE
+          default: RECOMMEND
       - name: keyword
         in: query
         description: 검색 키워드
@@ -153,46 +176,6 @@ paths:
             json:
               schema:
                 $ref: '#/components/schemas/VideoListModel'
-  /users/{user_id}/videos/recommend:
-    get:
-      tags:
-        - Video
-      summary: 유저의 추천 영상 조회
-      description: 유저의 추천 받은 영상 조회
-      parameters:
-      - name: user_id
-        in: path
-        description: 사용자 아이디
-        required: true
-        schema:
-          type: string
-          format: string
-      - name: curriculumId
-        in: query
-        description: 영상 주제
-        required: false
-        schema:
-          type: integer
-          format: integer
-      - name: keyword
-        in: query
-        description: 검색 키워드
-        required: false
-        schema:
-          type: string
-          format: string
-      responses:
-        200:
-          description: OK
-          content:
-            json:
-              schema:
-                type: object
-                properties:
-                  recommended:
-                    type: boolean
-                  recommends:
-                    $ref: '#/components/schemas/VideoListModel'
   /users/{user_id}/videos/bookmark:
     get:
       tags:
@@ -294,30 +277,7 @@ paths:
               schema:
                 type: object
                 example:
-                  isSuccess: true                               
-  /videos/{video_id}/hit:
-    post:
-      tags:
-      - Video
-      summary: 영상 조회수 업데이트
-      description: 해당 영상의 조회수를 증가시키고 LRS 저장
-      parameters:
-      - name: video_id
-        in: path
-        description: 유저아이디
-        required: true
-        schema:
-          type: integer
-          format: integer
-      responses:
-        200:
-          description: OK
-          content:
-            json:
-              schema:
-                type: object
-                example:
-                  isSuccess: true                            
+                  isSuccess: true           
   /users/{user_id}/videos/{video_id}/hit:
     post:
       tags:
@@ -385,6 +345,34 @@ paths:
                 type: object
                 example:
                   isSuccess: true
+  /books:
+    get:
+      tags:
+        - Book
+      summary : 비회원 유저의 교재 리스트 조회
+      description : 비회원 유저의 교재 리스트 조회수
+      responses:
+        200:
+          description: OK
+          content:
+            json:
+              schema:
+                $ref: '#/components/schemas/BookListModel'
+  /books/{book_id}/hit:
+    post:
+      tags:
+        - Book
+      summary : 교재 조회수 업데이트
+      description : 교재 조회수 업데이트
+      responses:
+        200:
+          description: OK
+          content:
+            json:
+              schema:
+                type: object
+                example:
+                  isSuccess: true        
   /users/{user_id}/books/{book_id}:
     get:
       tags:
@@ -412,24 +400,7 @@ paths:
           content:
             json:
               schema:
-                type: object
-                properties:
-                  bookId:
-                    type: integer
-                  bookSrc:
-                    type: string
-                  title: 
-                    type: string
-                  createDate: 
-                    type: string
-                  creatorId: 
-                    type: string
-                  imgSrc: 
-                    type: string
-                  description: 
-                    type: string
-                  bookmark: 
-                    type: boolean
+                $ref: '#/components/schemas/BookModel'
   /users/{user_id}/books:
     get:
       tags:
@@ -457,31 +428,7 @@ paths:
           content:
             json:
               schema:
-                type: object
-                properties:
-                  size:
-                    type: integer
-                  books:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        bookId:
-                          type: integer
-                        bookSrc:
-                          type: string
-                        title: 
-                          type: string
-                        createDate: 
-                          type: string
-                        creatorId: 
-                          type: string
-                        imgSrc: 
-                          type: string
-                        description: 
-                          type: string
-                        bookmark: 
-                          type: boolean
+                $ref: '#/components/schemas/BookListModel'
   /users/{user_id}/books/bookmark:
     get:
       tags:
@@ -509,31 +456,7 @@ paths:
           content:
             json:
               schema:
-                type: object
-                properties:
-                  size:
-                    type: integer
-                  books:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        bookId:
-                          type: integer
-                        bookSrc:
-                          type: string
-                        title: 
-                          type: string
-                        createDate: 
-                          type: string
-                        creatorId: 
-                          type: string
-                        imgSrc: 
-                          type: string
-                        description: 
-                          type: string
-                        bookmark: 
-                          type: boolean
+                $ref: '#/components/schemas/BookListModel'
   /users/{user_id}/books/{book_id}/bookmark:
     put:
       tags:
@@ -1443,8 +1366,39 @@ components:
     VideoListModel:    
       type: object
       properties:
+        recommended:
+          type: boolean
         size: 
           type: integer
         videos:
           allOf:
           - $ref: '#/components/schemas/VideoModel'
+    BookModel:
+      type: object
+      properties:
+        bookId:
+          type: integer
+        bookSrc:
+          type: string
+        title: 
+          type: string
+        createDate: 
+          type: string
+        creatorId:
+          type: string
+        imgSrc: 
+          type: string
+        description: 
+          type: string
+        hit:
+          type: integer
+        bookmark: 
+          type: boolean
+    BookListModel:
+      type: object
+      properties:
+        size:
+          type: integer
+        videos:
+          allOf:
+          - $ref: '#/components/schemas/BookModel'

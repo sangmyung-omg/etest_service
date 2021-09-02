@@ -1,5 +1,6 @@
 package com.tmax.eTest.Contents.controller;
 
+import java.io.IOException;
 import java.text.ParseException;
 
 import com.tmax.eTest.Contents.dto.SortType;
@@ -39,9 +40,15 @@ public class VideoController {
     return new ResponseEntity<>(videoService.getVideoList(curriculumId, sort, keyword), HttpStatus.OK);
   }
 
+  @PostMapping("/videos/{id}/hit")
+  public ResponseEntity<Object> updateVideoHit(@PathVariable("id") String videoId) {
+    log.info("---updateVideoHit---");
+    return new ResponseEntity<>(videoService.updateVideoHit(videoId), HttpStatus.OK);
+  }
+
   @GetMapping("/users/{user_id}/videos/{video_id}")
   public ResponseEntity<Object> getVideo(@PathVariable("user_id") String userId,
-      @PathVariable("video_id") Long videoId) {
+      @PathVariable("video_id") String videoId) {
     log.info("---getVideo---");
     return new ResponseEntity<>(videoService.getVideo(userId, videoId), HttpStatus.OK);
   }
@@ -49,19 +56,26 @@ public class VideoController {
   @GetMapping("/users/{user_id}/videos")
   public ResponseEntity<Object> getVideoList(@PathVariable("user_id") String userId,
       @RequestParam(value = "curriculumId", required = false) Long curriculumId,
-      @RequestParam(value = "sort", required = false, defaultValue = "DATE") SortType sort,
-      @RequestParam(value = "keyword", required = false) String keyword) {
+      @RequestParam(value = "sort", required = false, defaultValue = "RECOMMEND") SortType sort,
+      @RequestParam(value = "keyword", required = false) String keyword) throws IOException {
     log.info("---getVideoList---");
-    return new ResponseEntity<>(videoService.getVideoList(userId, curriculumId, sort, keyword), HttpStatus.OK);
+    log.info("Sort : " + sort.name());
+    return new ResponseEntity<>(
+        sort.equals(SortType.RECOMMEND) ? videoService.getRecommendVideoList(userId, curriculumId, keyword)
+            : videoService.getVideoList(userId, curriculumId, sort, keyword),
+        HttpStatus.OK);
   }
 
-  @GetMapping("/users/{user_id}/videos/recommend")
-  public ResponseEntity<Object> getRecommendVideoList(@PathVariable("user_id") String userId,
-      @RequestParam(value = "curriculumId", required = false) Long curriculumId,
-      @RequestParam(value = "keyword", required = false) String keyword) {
-    log.info("---getRecommendVideoList---");
-    return new ResponseEntity<>(videoService.getRecommendVideoList(userId, curriculumId, keyword), HttpStatus.OK);
-  }
+  // @GetMapping("/users/{user_id}/videos/recommend")
+  // public ResponseEntity<Object> getRecommendVideoList(@PathVariable("user_id")
+  // String userId,
+  // @RequestParam(value = "curriculumId", required = false) Long curriculumId,
+  // @RequestParam(value = "keyword", required = false) String keyword) throws
+  // IOException {
+  // log.info("---getRecommendVideoList---");
+  // return new ResponseEntity<>(videoService.getRecommendVideoList(userId,
+  // curriculumId, keyword), HttpStatus.OK);
+  // }
 
   @GetMapping("/users/{user_id}/videos/bookmark")
   public ResponseEntity<Object> getBookmarkVideoList(@PathVariable("user_id") String userId,
@@ -74,33 +88,27 @@ public class VideoController {
 
   @PutMapping("/users/{user_id}/videos/{video_id}/bookmark")
   public ResponseEntity<Object> insertBookmarkVideo(@PathVariable("user_id") String userId,
-      @PathVariable("video_id") Long videoId) {
+      @PathVariable("video_id") String videoId) {
     log.info("---insertBookmarkVideo---");
     return new ResponseEntity<>(videoService.insertBookmarkVideo(userId, videoId), HttpStatus.OK);
   }
 
   @DeleteMapping("/users/{user_id}/videos/{video_id}/bookmark")
   public ResponseEntity<Object> deleteBookmarkVideo(@PathVariable("user_id") String userId,
-      @PathVariable("video_id") Long videoId) {
+      @PathVariable("video_id") String videoId) {
     log.info("---deleteBookmarkVideo---");
     return new ResponseEntity<>(videoService.deleteBookmarkVideo(userId, videoId), HttpStatus.OK);
   }
 
-  @PostMapping("/videos/{id}/hit")
-  public ResponseEntity<Object> updateVideoHit(@PathVariable("id") Long videoId) {
-    log.info("---updateVideoHit---");
-    return new ResponseEntity<>(videoService.updateVideoHit(videoId), HttpStatus.OK);
-  }
-
   @PostMapping("/users/{user_id}/videos/{id}/hit")
-  public ResponseEntity<Object> updateVideoHit(@PathVariable("user_id") String userId, @PathVariable("id") Long videoId)
-      throws ParseException {
+  public ResponseEntity<Object> updateVideoHit(@PathVariable("user_id") String userId,
+      @PathVariable("id") String videoId) throws ParseException {
     log.info("---updateVideoHit---");
     return new ResponseEntity<>(videoService.updateVideoHit(userId, videoId), HttpStatus.OK);
   }
 
   @PostMapping("/users/{user_id}/videos/{id}/quit")
-  public ResponseEntity<Object> quitVideo(@PathVariable("user_id") String userId, @PathVariable("id") Long videoId,
+  public ResponseEntity<Object> quitVideo(@PathVariable("user_id") String userId, @PathVariable("id") String videoId,
       @RequestParam(value = "duration", required = true) Integer duration) throws ParseException {
     log.info("---quitVideo---");
     return new ResponseEntity<>(videoService.quitVideo(userId, videoId, duration), HttpStatus.OK);

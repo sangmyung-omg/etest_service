@@ -16,7 +16,7 @@ import lombok.Setter;
 @IdClass(VideoHashtagId.class)
 public class VideoHashtag {
   @Id
-  private Long videoId;
+  private String videoId;
   @Id
   private Long hashtagId;
 

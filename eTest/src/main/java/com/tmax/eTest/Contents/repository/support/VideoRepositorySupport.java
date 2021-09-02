@@ -43,21 +43,21 @@ public class VideoRepositorySupport extends QuerydslRepositorySupport {
         return QuerydslUtils.getSortedColumn(Order.ASC, video, "createDate");
       case "HIT":
         return QuerydslUtils.getSortedColumn(Order.DESC, video.videoHit, "hit");
-      case "SEQUENCE":
+      case "RECOMMEND":
         return QuerydslUtils.getSortedColumn(Order.ASC, video, "sequence");
       default:
         throw new ContentsException(ErrorCode.TYPE_ERROR, "Sort should be 'date' or 'hit' !!!");
     }
   }
 
-  public VideoJoin findVideoByUserAndId(String userId, Long videoId) {
-    return tupleToJoin(query.select(video, videoBookmark.userUuid).from(video)
-        .leftJoin(video.videoBookmarks, videoBookmark).on(userEq(userId)).where(idEq(videoId)).fetchOne());
-  }
-
   public List<Video> findVideosByCurriculum(Long curriculumId, SortType sort, String keyword) {
     return query.selectFrom(video).where(curriculumEq(curriculumId)).where(checkKeyword(keyword))
         .orderBy(getVideoSortedColumn(sort)).fetch();
+  }
+
+  public VideoJoin findVideoByUserAndId(String userId, String videoId) {
+    return tupleToJoin(query.select(video, videoBookmark.userUuid).from(video)
+        .leftJoin(video.videoBookmarks, videoBookmark).on(userEq(userId)).where(idEq(videoId)).fetchOne());
   }
 
   public List<VideoJoin> findVideosByUserAndCurriculum(String userId, Long curriculumId, SortType sort,
@@ -78,7 +78,7 @@ public class VideoRepositorySupport extends QuerydslRepositorySupport {
     return CommonUtils.stringNullCheck(userId) ? null : videoBookmark.userUuid.eq(userId);
   }
 
-  private BooleanExpression idEq(Long videoId) {
+  private BooleanExpression idEq(String videoId) {
     return CommonUtils.objectNullcheck(videoId) ? null : video.videoId.eq(videoId);
   }
 

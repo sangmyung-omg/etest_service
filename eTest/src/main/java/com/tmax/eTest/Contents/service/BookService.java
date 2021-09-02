@@ -15,6 +15,7 @@ import com.tmax.eTest.Contents.dto.ListDTO;
 import com.tmax.eTest.Contents.dto.SuccessDTO;
 import com.tmax.eTest.Contents.exception.ContentsException;
 import com.tmax.eTest.Contents.exception.ErrorCode;
+import com.tmax.eTest.Contents.repository.support.BookHitRepositorySupport;
 import com.tmax.eTest.Contents.repository.support.BookRepositorySupport;
 import com.tmax.eTest.Contents.util.CommonUtils;
 import com.tmax.eTest.Contents.util.LRSUtils;
@@ -34,6 +35,9 @@ public class BookService {
   private BookRepositorySupport bookRepositorySupport;
 
   @Autowired
+  private BookHitRepositorySupport bookHitRepositorySupport;
+
+  @Autowired
   private LRSUtils lrsUtils;
 
   @Autowired
@@ -42,6 +46,11 @@ public class BookService {
   public BookDTO getBook(String userId, Long bookId) {
     BookJoin book = bookRepositorySupport.findBookByUserAndId(userId, bookId);
     return convertBookJoinToDTO(book);
+  }
+
+  public ListDTO.Book getBookList(String keyword) {
+    List<Book> books = bookRepositorySupport.findBooks(keyword);
+    return convertBookToDTO(books);
   }
 
   public ListDTO.Book getBookList(String userId, String keyword) {
@@ -75,13 +84,24 @@ public class BookService {
     return new SuccessDTO(true);
   }
 
+  @Transactional
+  public SuccessDTO updateBookHit(Long bookId) {
+    if (bookHitRepositorySupport.notExistsById(bookId))
+      throw new ContentsException(ErrorCode.DB_ERROR, "BookId doesn't exist in BookHit Table");
+    bookHitRepositorySupport.updateVideoHit(bookId);
+
+    return new SuccessDTO(true);
+  }
+
+  @Transactional
   public SuccessDTO updateBookHit(String userId, Long bookId) throws ParseException {
-    // lrsService.init("/SaveStatement");
-    // lrsService.saveStatement(lrsService.makeStatement(userId,
-    // Long.toString(bookId), LRSService.ACTION_TYPE.enter,
-    // LRSService.SOURCE_TYPE.textbook));
+    if (bookHitRepositorySupport.notExistsById(bookId))
+      throw new ContentsException(ErrorCode.DB_ERROR, "BookId doesn't exist in BookHit Table");
+    bookHitRepositorySupport.updateVideoHit(bookId);
+
     lrsapiManager.saveStatementList(Arrays.asList(lrsUtils.makeStatement(userId, Long.toString(bookId),
         LRSUtils.ACTION_TYPE.enter, LRSUtils.SOURCE_TYPE.textbook)));
+
     return new SuccessDTO(true);
   }
 
@@ -91,30 +111,27 @@ public class BookService {
     return new SuccessDTO(true);
   }
 
-  // public ListDTO.Book convertBookToDTO(List<Book> books) {
-  // return new ListDTO.Book(books.size(),
-  // books.stream()
-  // .map(book -> new BookDTO(book.getBookId(), book.getBookSrc(),
-  // book.getTitle(),
-  // book.getCreateDate().toString(), book.getCreatorId(), book.getImgSrc(),
-  // book.getDescription(),
-  // !CommonUtils.objectNullcheck(book.getBookBookmarks())))
-  // .collect(Collectors.toList()));
-  // }
+  public BookDTO convertBookToDTO(Book book) {
+    return BookDTO.builder().bookId(book.getBookId()).bookSrc(book.getBookSrc()).title(book.getTitle())
+        .createDate(book.getCreateDate().toString()).creatorId(book.getCreatorId()).imgSrc(book.getImgSrc())
+        .description(book.getDescription()).hit(book.getBookHit().getHit()).build();
+  }
+
+  public ListDTO.Book convertBookToDTO(List<Book> books) {
+    return new ListDTO.Book(books.size(),
+        books.stream().map(book -> convertBookToDTO(book)).collect(Collectors.toList()));
+  }
 
   public BookDTO convertBookJoinToDTO(BookJoin bookJoin) {
     Book book = bookJoin.getBook();
-    return new BookDTO(book.getBookId(), book.getBookSrc(), book.getTitle(), book.getCreateDate().toString(),
-        book.getCreatorId(), book.getImgSrc(), book.getDescription(),
-        !CommonUtils.stringNullCheck(bookJoin.getUserUuid()));
+    return BookDTO.builder().bookId(book.getBookId()).bookSrc(book.getBookSrc()).title(book.getTitle())
+        .createDate(book.getCreateDate().toString()).creatorId(book.getCreatorId()).imgSrc(book.getImgSrc())
+        .description(book.getDescription()).hit(book.getBookHit().getHit())
+        .bookmark(!CommonUtils.stringNullCheck(bookJoin.getUserUuid())).build();
   }
 
   public ListDTO.Book convertBookJoinToDTO(List<BookJoin> bookJoins) {
-    return new ListDTO.Book(bookJoins.size(), bookJoins.stream().map(bookJoin -> {
-      Book book = bookJoin.getBook();
-      return new BookDTO(book.getBookId(), book.getBookSrc(), book.getTitle(), book.getCreateDate().toString(),
-          book.getCreatorId(), book.getImgSrc(), book.getDescription(),
-          !CommonUtils.stringNullCheck(bookJoin.getUserUuid()));
-    }).collect(Collectors.toList()));
+    return new ListDTO.Book(bookJoins.size(),
+        bookJoins.stream().map(bookJoin -> convertBookJoinToDTO(bookJoin)).collect(Collectors.toList()));
   }
 }
