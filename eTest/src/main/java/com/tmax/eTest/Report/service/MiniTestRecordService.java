@@ -52,6 +52,41 @@ import com.tmax.eTest.LRS.dto.StatementDTO;
 
 import com.tmax.eTest.Common.model.problem.Problem;
 
+import com.tmax.eTest.Common.repository.report.MinitestReportRepo;
+
+import com.tmax.eTest.Common.model.report.MinitestReport;
+import com.tmax.eTest.Report.dto.minitest.PartInfoDTO;
+import com.tmax.eTest.Report.dto.minitest.PartDataDTO;
+
+import com.tmax.eTest.Common.repository.uk.UkMasterRepo;
+import com.tmax.eTest.Common.model.uk.UkMaster;
+
+import java.util.Optional;
+import java.util.Arrays;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import java.util.List;
+import java.time.LocalDateTime;
+import java.util.Set;
+import java.util.Collections;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import java.lang.reflect.Type;
+
+import com.google.common.reflect.TypeToken;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.google.gson.JsonArray;
+import java.util.stream.StreamSupport;
+
+import com.tmax.eTest.LRS.dto.GetStatementInfoDTO;
+import com.tmax.eTest.LRS.dto.StatementDTO;
+
+import com.tmax.eTest.Common.model.problem.Problem;
+
 @Service
 @Slf4j
 public class MiniTestRecordService {

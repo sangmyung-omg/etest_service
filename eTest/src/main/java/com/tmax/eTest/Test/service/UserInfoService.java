@@ -5,16 +5,25 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 import com.tmax.eTest.Common.model.report.DiagnosisReport;
 import com.tmax.eTest.Common.model.report.MinitestReport;
+import com.tmax.eTest.Common.model.user.UserKnowledge;
 import com.tmax.eTest.Common.model.user.UserMaster;
+import com.tmax.eTest.Contents.exception.problem.NoDataException;
+import com.tmax.eTest.LRS.service.StatementService;
 import com.tmax.eTest.Test.repository.DiagnosisReportRepo;
 import com.tmax.eTest.Test.repository.MinitestReportRepo;
+import com.tmax.eTest.Test.repository.UserKnowledgeRepository;
 import com.tmax.eTest.Test.repository.UserRepository;
 
 @Service
 public class UserInfoService {
 	private final Logger logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
+
+	@Autowired
+	private StatementService statementService;
 
 	@Autowired
 	private UserRepository userRepository;
@@ -24,6 +33,9 @@ public class UserInfoService {
 	
 	@Autowired
 	private MinitestReportRepo miniReportRepo;
+
+	@Autowired
+	private UserKnowledgeRepository userKnowledgeRepository;
 
 	public String updateUserInfo(String user_uuid) {
 		UserMaster user = new UserMaster();
@@ -57,5 +69,23 @@ public class UserInfoService {
 		}
 		miniReportRepo.save(dto);
 		return "Successfully updated";
+	}
+
+	public String updateValidatedUserInfo(String userUuid, String NRUuid) throws Exception {
+		// DIAGNOSIS_REPORT 테이블 update
+		List<DiagnosisReport> recordList = diagReportRepo.findByUserUuid(NRUuid);
+		if (recordList.size() == 0)
+			return "error : NOT_FOUND. No records with the old UUID in DIAGNOSIS_REPORT.";
+		for (DiagnosisReport record : recordList) {
+			record.setUserUuid(userUuid);
+		}
+		diagReportRepo.saveAll(recordList);
+
+		// STATEMENT 테이블 update
+		if (!statementService.updateUserID(NRUuid, userUuid)) {
+			return "error : LRS update failed";
+		}
+
+		return "Successfully updated the validated user info";
 	}
 }

@@ -13,6 +13,6 @@ import org.springframework.stereotype.Repository;
 @Repository("TE-UserKnowledgeRepository")
 
 public interface UserKnowledgeRepository extends CrudRepository<UserKnowledge, UserKnowledgeKey> {
-	
+	List<UserKnowledge> findByUserUuid(String userUuid);
 
 }

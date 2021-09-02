@@ -19,7 +19,7 @@ import java.util.function.Function;
 public class JwtTokenUtil implements Serializable {
 
     private static final long serialVersionUID = -2550185165626007488L;
-    public static final long JWT_ACCESS_TOKEN_VALIDITY = 60; //10분
+    public static final long JWT_ACCESS_TOKEN_VALIDITY = 60000000; //10분
     public static final long JWT_REFRESH_TOKEN_VALIDITY = 24 * 60 * 60 * 7; //일주일
 
     @Value("${jwt.secret}")
@@ -48,6 +48,7 @@ public class JwtTokenUtil implements Serializable {
         Claims parseInfo = Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
         Map<String, Object> result = new HashMap<>();
         result.put("email", parseInfo.getSubject());
+        result.put("userUuid",parseInfo.get("userUuid"));
         result.put("role", parseInfo.get("role", List.class));
         return result;
     }
@@ -64,6 +65,7 @@ public class JwtTokenUtil implements Serializable {
         for (GrantedAuthority a: principalDetails.getAuthorities()) {
             li.add(a.getAuthority());
         }
+        claims.put("userUuid", principalDetails.getUserUuid());
         claims.put("email", principalDetails.getEmail());
         claims.put("role",li);
         return Jwts.builder().setClaims(claims).setSubject(principalDetails.getEmail()).setIssuedAt(new Date(System.currentTimeMillis()))

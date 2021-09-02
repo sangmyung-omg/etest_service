@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.http.HttpStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,7 +26,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.tmax.eTest.Auth.dto.PrincipalDetails;
+import com.tmax.eTest.Auth.jwt.JwtTokenUtil;
 import com.tmax.eTest.Contents.dto.CustomizedSolutionDTO;
+import com.tmax.eTest.Contents.dto.problem.AnswerInputDTO;
 import com.tmax.eTest.Contents.service.AnswerServicesBase;
 import com.tmax.eTest.LRS.dto.GetStatementInfoDTO;
 import com.tmax.eTest.LRS.dto.StatementDTO;
@@ -49,23 +53,40 @@ public class AnswerControllerV1 {
 
 	@Autowired
 	LRSAPIManager lrsApiManager;
+
+	@Autowired
+	JwtTokenUtil jwtTokenUtil;
 	
 	@PostMapping(value="problems/{probId}/answer-check", produces = "application/json; charset=utf-8")
-	public ResponseEntity<Object> checkAnswer(@AuthenticationPrincipal PrincipalDetails principalDetails,
+	public ResponseEntity<Object> checkAnswer(HttpServletRequest request,
 											  @PathVariable("probId") Integer probId,
 											  @RequestBody ArrayList<StatementDTO> lrsbody) throws Exception {
+											//   @RequestBody AnswerInputDTO inputDto) throws Exception {
 		logger.info("> answer-check logic start!");
-		Map<String, Object> res = new HashMap<String, Object>();
+		Map<String, Object> result = new HashMap<String, Object>();
 		String userId = "";
 		
-		try {
-			userId = principalDetails.getUserUuid();	
-		} catch (Exception e) {
-			logger.info("userUuid : " + e.getMessage());
+		// 회원, 비회원 판별
+		String header = request.getHeader("Authorization");
+		if (header == null) {																// 비회원일 때 토큰 null
+			logger.info("header.Authorization is null. No token given.");
+			result.put("resultMessage", "header.Authorization is null. No token given.");
+			return new ResponseEntity<>(result, HttpStatus.UNAUTHORIZED);
+		} else {																			// 회원이면 토큰 파싱하여 유저 아이디 꺼냄
+			String token = request.getHeader("Authorization").replace("Bearer ","");
+			try {
+				Map<String, Object> parseInfo = jwtTokenUtil.getUserParseInfo(token);
+				userId = parseInfo.get("userUuid").toString();
+				logger.info("User UUID from header token : " + userId);
+			} catch (Exception e) {
+				logger.info("error : cannot parse jwt token, " + e.getMessage());
+				result.put("error", e.getMessage());
+				return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+			}
 		}
 		// lrsbody의 유저가 입력한 답 꺼내서 정답과 비교해 정답여부 반환. 1 - 정답 / 0 - 오답 / -1 - 정답 없는 문제
 		int isCorrect = answerServices.evaluateIfCorrect(probId, lrsbody);
-		for (Integer i=0; i < lrsbody.size(); i ++) {
+		for (Integer i=0; i < lrsbody.size(); i++) {
 			StatementDTO dto = lrsbody.get(i);
 			if (dto.getActionType().equalsIgnoreCase("submit")) {
 				if (isCorrect == 0) {
@@ -86,13 +107,15 @@ public class AnswerControllerV1 {
 
 		// 결과 반환
 		if (queryResult.size() == 0) {
-			if (isCorrect == -1) res.put("resultMessage", "LRS successfully updated & the value '-1' returned for isCorrect since there's no correct answer for tendency problems");
-			else res.put("resultMessage", "LRS successfully updated & isCorrect successfully returned");
-			res.put("isCorrect", isCorrect);
-			return new ResponseEntity<>(res, HttpStatus.OK);
+			if (isCorrect == -1)
+				result.put("resultMessage", "LRS successfully updated & the value '-1' returned for isCorrect since there's no correct answer for tendency problems");
+			else
+				result.put("resultMessage", "LRS successfully updated & isCorrect successfully returned");
+			result.put("isCorrect", isCorrect);
+			return new ResponseEntity<>(result, HttpStatus.OK);
 		} else {
-			res.put("resultMessage", "error: some of LRS updates are not proceeded");
-			return new ResponseEntity<>(res, HttpStatus.INTERNAL_SERVER_ERROR);
+			result.put("resultMessage", "error: some of LRS updates are not proceeded");
+			return new ResponseEntity<>(result, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 

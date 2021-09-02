@@ -465,6 +465,9 @@ components:
         resultMessage:
           type: string
           example: "Successfully returned"
+        NRUuid:
+          type: string
+          example: "NR-0c966b66-0b06-11ec-9a03-0242ac130003"
         diagProbSetId:
           type: string
           example: "2fc89ea8-fb4b-11eb-9a03-0242ac130003"
@@ -633,7 +636,7 @@ components:
           description: 유저가 해당 활동에서 작성한 답안. ( ex) 문제 A에 3, 5번을 선택하여 제출했다.)
         userId:
           type: string
-          example: af1ed17a-8e55-4ec6-a552-f3d7d8e0276d
+          example: ""
           description: 유저의 ID(JWT or 일반 String 값)
     solutions:
       type: object
@@ -733,7 +736,11 @@ components:
       content:
         application/json:
           schema:
-            type: array
-            items:
-              $ref: "#/components/schemas/lrsBody"
-
+            properties:
+              lrsbody:
+                type: array
+                items:
+                  $ref: "#/components/schemas/lrsBody"
+              NRUuid:
+                type: string
+                example: NR-0c966b66-0b06-11ec-9a03-0242ac130003

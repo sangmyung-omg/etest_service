@@ -1,9 +1,19 @@
 package com.tmax.eTest.Test.controller;
 
-import java.util.Arrays;
+import java.sql.Time;
+import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.TimeZone;
 import java.util.UUID;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,7 +30,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.tmax.eTest.Auth.dto.PrincipalDetails;
+import com.tmax.eTest.Auth.jwt.JwtTokenUtil;
+import com.tmax.eTest.Contents.exception.problem.NoDataException;
+import com.tmax.eTest.LRS.model.Statement;
+import com.tmax.eTest.LRS.repository.StatementRepository;
+import com.tmax.eTest.LRS.util.LRSAPIManager;
 import com.tmax.eTest.Test.config.TestPathConstant;
+// import com.tmax.eTest.Test.dto.DiagnosisOutputDTO;
 import com.tmax.eTest.Test.service.ProblemServiceBase;
 
 @RestController
@@ -32,25 +49,25 @@ public class DiagnosisControllerV1 {
 	@Autowired
 	@Qualifier("ProblemServiceV1")
 	ProblemServiceBase problemService;
+
+	@Autowired
+	JwtTokenUtil jwtTokenUtil;
+
+	@Autowired
+	LRSAPIManager lrsApiManager;
+
+	@Autowired
+	StatementRepository statementRepository;
 	
 	@GetMapping(value = "/diagnosis", produces = "application/json; charset=utf-8")
-	public ResponseEntity<Object> getDiagnosisProblems(@AuthenticationPrincipal PrincipalDetails principalDetails) throws Exception {
+	public ResponseEntity<Object> getDiagnosisProblems(HttpServletRequest request) throws Exception {
 		logger.info("> diagnosis logic start!");
-		// logger.info(principalDetails);
-		String userUuid = "";
-		try {
-			userUuid = principalDetails.getUserUuid();
-			logger.info("userUuid : " + userUuid);
-			
-		} catch (Exception e) {
-			userUuid = "NR-" + UUID.randomUUID().toString();
-			logger.info("userUuid is " + e.getMessage() + " : Unregistered user / So random unregistered UUID is generated : " + userUuid);
-		}
-		// logger.info(userUuid.toString());
-		Map<String, Object> res = new HashMap<String, Object>();
 
+		Map<String, Object> res = new HashMap<String, Object>();
+		
 		// 성향 문제 조회
 		try{
+			// Map<String, Object> res = new HashMap<String, Object>();
 			res = problemService.getDiagnosisTendencyProblems();
 			
 		} catch (Exception E){
@@ -60,18 +77,66 @@ public class DiagnosisControllerV1 {
 		}
 		
 		// 지식 문제 조회
+		Integer firstProbId = 0;		// Statement 저장용 첫 문제 ID 저장.
 		try{
-			res.put("knowledgeProblems", problemService.getDiagnosisKnowledgeProblems().get("knowledgeProblems"));
-
+			List<List<Integer>> problems = (List<List<Integer>>) problemService.getDiagnosisKnowledgeProblems().get("knowledgeProblems");
+			firstProbId = problems.get(0).get(0);
+			res.put("knowledgeProblems", problems);
+			
 		} catch (Exception E){
 			res.clear();
 			logger.info(E.getMessage());
 			res.put("resultMessage", "Internal Server Error.\n" + E.getMessage());
 			return new ResponseEntity<>(res, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
+		
+		String userUuid = "";
+
+		// 회원 / 비회원 판별
+		String header = request.getHeader("Authorization");
+		if (header == null) {
+			logger.info("header is null : Unregistered User. So, random NR-UUID is given.");
+			userUuid = "NR-" + UUID.randomUUID().toString();
+			res.put("NRUuid", userUuid);
+		} else {
+			String token = request.getHeader("Authorization").replace("Bearer ","");
+			Map<String, Object> parseInfo = jwtTokenUtil.getUserParseInfo(token);
+
+			userUuid = parseInfo.get("userUuid").toString();
+			res.put("NRUuid", "");
+
+			logger.info("User ID : " + userUuid);
+		}
+
+		// Random 세트 아이디 발급
+		String diagProbSetId = UUID.randomUUID().toString();
+
+		// 현재시간
+		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.sss", Locale.KOREA);
+		dateFormat.setTimeZone(TimeZone.getTimeZone("Asia/Seoul"));
+		
+		// Setting statement format
+		Statement statement = new Statement();
+		statement.setStatementId(UUID.randomUUID().toString());
+		statement.setUserId(userUuid);
+		statement.setActionType("enter");
+		statement.setSourceType("diagnosis_pattern");
+		statement.setTimestamp(dateFormat.format(new Date()));		// LRS는 ISO 8601 포맷에서 끝의 Z 빼기로.
+		statement.setPlatform("Kofia");
+		statement.setSourceId(Integer.toString(firstProbId));
+		statement.setExtension("{\"diagProbSetId\":\""+ diagProbSetId + "\",\"guessAlarm\":0}");
+
+		logger.info("Save statment : " + statement.toString());
+		try {
+			statementRepository.save(statement);
+		} catch (Exception e) {
+			logger.info("error : insert failed - " + e.getMessage());
+			res.put("resultMessage", "error : statement insert fail - " + e.getMessage());
+			return new ResponseEntity<>(res, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 
 		res.put("resultMessage", "Successfully returned.");
-		res.put("diagProbSetId", UUID.randomUUID().toString());
+		res.put("diagProbSetId", diagProbSetId);
 		return new ResponseEntity<>(res, HttpStatus.OK);
 	}
 	
@@ -84,18 +149,43 @@ public class DiagnosisControllerV1 {
 	*  결론 : 프론트에서는 따로 유저 아이디를 위해 jwt 만들 필요 없이 홈페이지에서 발급된 jwt 토큰만 넘겨주면 됨. 백에서는 아래와 같이 받아서 유저 아이디 꺼내서 사용하면 됨.
 	*  검증은 추후 프론트 붙이면서 진행
 	*/
+	
+	@PreAuthorize("USER_ROLE")
 	@GetMapping(value = "/minitest", produces = "application/json; charset=utf-8")
-	public ResponseEntity<Object> getMinitestProblems(@AuthenticationPrincipal PrincipalDetails principalDetails,			
-													 @RequestParam String userId) throws Exception {
+	public ResponseEntity<Object> getMinitestProblems(HttpServletRequest request,
+													  @AuthenticationPrincipal PrincipalDetails principalDetails,
+													  @RequestParam(required = false) String userId) throws Exception {
 		logger.info("> minitest logic start!");
+		Map<String, Object> result = new HashMap<String, Object>();
 
-		// // search minitest with setnum
-		Map<String, Object> re = problemService.getMinitestProblems(userId);
-		if (re.containsKey("error")) {
-			return new ResponseEntity<>(re, HttpStatus.INTERNAL_SERVER_ERROR);
+		// Check User UUID from request header
+		String userUuid = "";
+		String header = request.getHeader("Authorization");
+		if (header == null) {
+			logger.info("header.Authorization is null. No token given.");
+			result.put("resultMessage", "header.Authorization is null. No token given.");
+			return new ResponseEntity<>(result, HttpStatus.UNAUTHORIZED);
 		} else {
-			re.put("resultMessage", "Successfully returned");
-			return new ResponseEntity<>(re, HttpStatus.OK);
+			String token = request.getHeader("Authorization").replace("Bearer ","");
+			try {
+				Map<String, Object> parseInfo = jwtTokenUtil.getUserParseInfo(token);
+				String email = parseInfo.get("email").toString();
+				logger.info(email);
+				userUuid = parseInfo.get("userUuid").toString();
+				logger.info(userUuid);
+			} catch (Exception e) {
+				logger.info("error : cannot parse jwt token, " + e.getMessage());
+				result.put("error", "Cannot parse jwt token, " + e.getMessage());
+				return new ResponseEntity<>(result, HttpStatus.INTERNAL_SERVER_ERROR);
+			}
+		}
+		
+		result = problemService.getMinitestProblems(userUuid);
+		if (result.containsKey("error")) {
+			return new ResponseEntity<>(result, HttpStatus.INTERNAL_SERVER_ERROR);
+		} else {
+			result.put("resultMessage", "Successfully returned");
+			return new ResponseEntity<>(result, HttpStatus.OK);
 		}
 		
 
