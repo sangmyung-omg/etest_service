@@ -57,7 +57,7 @@ public class AnswerServicesV0 implements AnswerServicesBase {
 	}
 
 	// Not used in previous versions
-	public Integer evaluateIfCorrect(Integer probId, ArrayList<StatementDTO> lrsbody) {
+	public Integer evaluateIfCorrect(Integer probId, List<StatementDTO> lrsbody) {
 		return 0;
 	}
 

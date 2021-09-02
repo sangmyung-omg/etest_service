@@ -8,6 +8,6 @@ import lombok.Data;
 
 @Data
 public class AnswerInputDTO {
-    private final List<StatementDTO> lrsbody;
-    private final String NRUuid;
+    private List<StatementDTO> lrsbody;
+    private String nrUuid;
 }

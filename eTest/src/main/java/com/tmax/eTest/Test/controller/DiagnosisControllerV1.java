@@ -94,7 +94,7 @@ public class DiagnosisControllerV1 {
 			userUuid = "NR-" + UUID.randomUUID().toString();
 			res.put("NRUuid", userUuid);
 		} else {
-			String token = request.getHeader("Authorization").replace("Bearer ","");
+			String token = header.replace("Bearer ","");
 			Map<String, Object> parseInfo = jwtTokenUtil.getUserParseInfo(token);
 
 			userUuid = parseInfo.get("userUuid").toString();
@@ -121,7 +121,7 @@ public class DiagnosisControllerV1 {
 		statement.setSourceId(Integer.toString(firstProbId));
 		statement.setExtension("{\"diagProbSetId\":\""+ diagProbSetId + "\",\"guessAlarm\":0}");
 
-		log.info("Save statment : " + statement.toString());
+		log.info("Save statement : " + statement.toString());
 		try {
 			statementRepository.save(statement);
 		} catch (Exception e) {
@@ -146,17 +146,21 @@ public class DiagnosisControllerV1 {
 	*/
 	
 	// 인가 필요 페이지
-	@PreAuthorize("USER_ROLE")
-	@GetMapping(value = "/minitest", produces = "application/json; charset=utf-8")
+	// @PreAuthorize("ROLE_USER")
+	@GetMapping(value = "/user/minitest", produces = "application/json; charset=utf-8")
 	public ResponseEntity<Object> getMinitestProblems(HttpServletRequest request,
-													  @AuthenticationPrincipal PrincipalDetails principalDetails,
-													  @RequestParam(required = false) String userId) throws Exception {
+													  @AuthenticationPrincipal PrincipalDetails principalDetails) throws Exception {
 		log.info("> minitest logic start!");
 		Map<String, Object> result = new HashMap<String, Object>();
 
 		;
 		// Check User UUID from request header
 		String userUuid = principalDetails.getUserUuid();
+		// String token = request.getHeader("Authorization").replace("Bearer ","");
+		// Map<String, Object> parseInfo = jwtTokenUtil.getUserParseInfo(token);
+
+		// String userUuid = parseInfo.get("userUuid").toString();
+
 		
 		result = problemService.getMinitestProblems(userUuid);
 		if (result.containsKey("error")) {

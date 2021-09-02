@@ -38,10 +38,10 @@ public class AnswerServicesV1 implements AnswerServicesBase {
 	@Autowired
 	ProblemChoiceRepository probChoiceRepo;
 	
-	public Integer evaluateIfCorrect(Integer probId, ArrayList<StatementDTO> lrsbody) throws Exception {
+	public Integer evaluateIfCorrect(Integer probId, List<StatementDTO> lrsbody) throws Exception {
 		String userAnswer = lrsbody.get(0).getUserAnswer();
 		log.info("Problem ID : " + Integer.toString(probId) + ", user answer : " + userAnswer);
-		log.info("Inserted LRS body : " + lrsbody.toString());
+		// log.info("Inserted LRS body : " + lrsbody.toString());
 
 		Map<String, Object> data = new HashMap<String, Object>();
 
@@ -54,7 +54,7 @@ public class AnswerServicesV1 implements AnswerServicesBase {
 		String inputString = data.get("solution").toString();
 		JSONParser parser = new JSONParser();
 		JSONArray jsonArray = (JSONArray) parser.parse(inputString);
-		log.info("json : " + jsonArray.toJSONString() + ", " + Integer.toString(probId));
+		// log.info("json : " + jsonArray.toJSONString() + ", " + Integer.toString(probId));
 
 		String correctAnswer = "";
 		for (int i = 0; i < jsonArray.size(); i++) {
@@ -73,11 +73,11 @@ public class AnswerServicesV1 implements AnswerServicesBase {
 				if (correctAnswer.contains("]")) {
 					correctAnswer = correctAnswer.replaceAll("\\]", "");
 				}
-				log.info("correctAnswer : " + correctAnswer);
+				// log.info("correctAnswer : " + correctAnswer);
 			}
-			log.info("type : " + type);
+			// log.info("type : " + type);
 		}
-		log.info("Total solution string : " + inputString);
+		// log.info("Total solution string : " + inputString);
 		log.info("Correct Answer is... " + correctAnswer);
 		if (correctAnswer.equalsIgnoreCase(userAnswer)) return 1;
 		else return 0;
@@ -102,15 +102,14 @@ public class AnswerServicesV1 implements AnswerServicesBase {
 	public Map<Integer, CustomizedSolutionDTO> getMultipleSolutions(List<Integer> probIdList) {
 		log.info("Getting multiple solution infos......");
 		List<Problem> probList = problemRepo.findByProbIDIn(probIdList);
-		log.info(probList.get(0).getQuestion());
-		log.info(probList.get(0).getSolution());
+		// log.info(probList.get(0).getQuestion());
+		// log.info(probList.get(0).getSolution());
 		Map<Integer, CustomizedSolutionDTO> solutionMap = new HashMap<Integer, CustomizedSolutionDTO>();
 		for (Problem dto : probList) {
 			CustomizedSolutionDTO solutionInfo = new CustomizedSolutionDTO();
 			solutionInfo.setProbId(dto.getProbID());
 			solutionInfo.setMaterial(dto.getSource());
 			solutionInfo.setSolution(dto.getSolution());
-			// logger.info(dto.getSolution());
 			solutionMap.put(dto.getProbID(), solutionInfo);
 		}
 		return solutionMap;
