@@ -16,6 +16,7 @@ import com.tmax.eTest.Report.util.SNDCalculator;
 // import com.tmax.eTest.Report.util.UKScoreCalculator;
 // import com.tmax.eTest.Common.repository.report.DiagnosisReportRepo;
 // import com.tmax.eTest.Test.repository.UserKnowledgeRepository;
+
 import com.tmax.eTest.Report.util.minitest.PartMapper;
 import com.tmax.eTest.Common.repository.report.MinitestReportRepo;
 
@@ -108,9 +109,7 @@ public class MiniTestRecordService {
 
 	@Autowired private UkMasterRepo ukMasterRepo;
 
-
 	@Autowired private PartMapper partMapper;
-
 
 
 	private static final int PICK_ALARM_CNT_THRESHOLD = 3;
@@ -307,6 +306,7 @@ public class MiniTestRecordService {
 									return (isGuess > 0) ? 1 : 0;
 								})
 								.reduce(0, Integer::sum);
+
 
 
 		//TEMP comment template

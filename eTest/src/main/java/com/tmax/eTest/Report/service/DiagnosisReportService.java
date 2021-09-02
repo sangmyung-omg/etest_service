@@ -35,10 +35,14 @@ import com.tmax.eTest.Report.util.StateAndProbProcess;
 import com.tmax.eTest.Report.util.TritonAPIManager;
 import com.tmax.eTest.Report.util.UKScoreCalculator;
 import com.tmax.eTest.Common.model.report.DiagnosisReport;
+import com.tmax.eTest.Common.model.report.DiagnosisReportKey;
 import com.tmax.eTest.Common.model.uk.UkMaster;
 import com.tmax.eTest.Common.repository.report.DiagnosisReportRepo;
 import com.tmax.eTest.Test.repository.UserKnowledgeRepository;
 
+import lombok.extern.log4j.Log4j2;
+
+@Log4j2
 @Service
 public class DiagnosisReportService {
 
@@ -67,17 +71,33 @@ public class DiagnosisReportService {
 	@Autowired
 	DiagnosisRecommend recommendGenerator;
 	
-	private final Logger logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
-	
 	public boolean saveDiagnosisResult(
-			String userId, 
+			String id, 
 			String probSetId) throws Exception
 	{
+		String userId = id;
 		boolean result = true;
 		
-		// 1. Get Statement Info
-		List<StatementDTO> diagnosisProbStatements = getStatementDiagnosisProb(userId, probSetId);
+		if(diagnosisReportRepo.existsById(probSetId))
+		{
+			log.info("Have report in saveDiagnosisResult. Save process stop.");
+			return result;
+		}
 		
+		// 1. Get Statement Info
+		List<StatementDTO> diagnosisProbStatements = getStatementDiagnosisProb(probSetId);
+		
+		if(userId == null)
+			if(diagnosisProbStatements.size() < 0)
+				throw new ReportBadRequestException("Nonmember's ProbSetId is not available. "+probSetId);
+			else
+			{
+				userId = diagnosisProbStatements.get(0).getUserId();
+				log.info("Nonmember's id : "+userId);
+			}
+		
+		
+			
 		// 2. get Problem List from Statement Info
 		List<Problem> probList = getProblemInfos(diagnosisProbStatements);
 		
@@ -193,8 +213,7 @@ public class DiagnosisReportService {
 
 		
 		// score 관련 저장
-		
-		logger.info(report.toString());
+		log.info(report.toString());
 		diagnosisReportRepo.save(report);
 	}
 	
@@ -215,7 +234,7 @@ public class DiagnosisReportService {
 			}
 			catch(Exception e)
 			{
-				logger.info("getProbAndChoiceInfos : "+e.toString());
+				log.info("getProbAndChoiceInfos : "+e.toString());
 			}
 			
 			if(probId!= -1 && answerNum != -1)
@@ -244,7 +263,7 @@ public class DiagnosisReportService {
 				int probId = Integer.parseInt(dto.getSourceId());
 				probIdList.add(probId);
 			} catch (Exception e) {
-				logger.info("getProblemInfos : " + e.toString() + " id : " + dto.getSourceId() + " error!");
+				log.info("getProblemInfos : " + e.toString() + " id : " + dto.getSourceId() + " error!");
 			}
 		}
 		probList = problemRepo.findAllById(probIdList);
@@ -255,12 +274,13 @@ public class DiagnosisReportService {
 	
 
 	
-	private List<StatementDTO> getStatementDiagnosisProb(String id, String probSetId) throws Exception
+	private List<StatementDTO> getStatementDiagnosisProb(
+			//String id, 
+			String probSetId) throws Exception
 	{
 		GetStatementInfoDTO getStateInfo = new GetStatementInfoDTO();
 		
-	
-		getStateInfo.pushUserId(id);
+		//getStateInfo.pushUserId(id);
 
 		getStateInfo.pushSourceType("diagnosis");	
 		getStateInfo.pushSourceType("diagnosis_pattern");		
@@ -306,7 +326,7 @@ public class DiagnosisReportService {
 			}
 		}
 		
-		logger.info(result.size()+"    "+result.toString());
+		log.info(result.size()+"    "+result.toString());
 		
 		
 		return result;

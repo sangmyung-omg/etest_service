@@ -1,46 +1,32 @@
 package com.tmax.eTest.Report.service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Random;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
-import com.tmax.eTest.Common.model.user.UserKnowledge;
-import com.tmax.eTest.Common.model.video.Video;
 import com.tmax.eTest.Common.model.video.VideoBookmark;
 import com.tmax.eTest.Common.model.video.VideoBookmarkId;
 import com.tmax.eTest.Common.repository.user.UserKnowledgeRepo;
 import com.tmax.eTest.Common.repository.video.VideoBookmarkRepository;
 import com.tmax.eTest.Common.repository.video.VideoRepository;
 import com.tmax.eTest.Common.repository.video.VideoUkRelRepository;
-import com.tmax.eTest.LRS.dto.GetStatementInfoDTO;
-import com.tmax.eTest.LRS.dto.StatementDTO;
 import com.tmax.eTest.LRS.util.LRSAPIManager;
-import com.tmax.eTest.Report.dto.RecommendVideoDTO;
 import com.tmax.eTest.Report.exception.ReportBadRequestException;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 @Service
 public class DiagnosisVideoService {
 
 	@Autowired
 	VideoBookmarkRepository videoBookmarkRepo;
-
+	
 	@Autowired
 	UserKnowledgeRepo userKnowledgeRepo;
-
+	
 	@Autowired
 	VideoUkRelRepository videoUkRelRepo;
-
+	
 	@Autowired
 	VideoRepository videoRepo;
-
+	
 	@Autowired
 	LRSAPIManager lrsManager;
 
@@ -51,12 +37,16 @@ public class DiagnosisVideoService {
 			if (isCheckBookmark) {
 				VideoBookmark bookmarkModel = new VideoBookmark(userId, videoId);
 				videoBookmarkRepo.save(bookmarkModel);
-			} else {
+			}
+			else
+			{
 				VideoBookmarkId bookmarkId = new VideoBookmarkId(userId, videoId);
 				videoBookmarkRepo.deleteById(bookmarkId);
 			}
-		} catch (Exception e) {
-			if (isCheckBookmark)
+		}
+		catch(Exception e)
+		{
+			if(isCheckBookmark)
 				throw new ReportBadRequestException("Save Video Bookmark error. Check userID & videoID.", e);
 			else
 				throw new ReportBadRequestException("Delete Video Bookmark error. Check userID & videoID.", e);

@@ -5,17 +5,22 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.tmax.eTest.Common.model.problem.Problem;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Log4j2
 public class DiagnosisRecordDetailDTO {
 
 	int score = 0;
@@ -77,71 +82,6 @@ public class DiagnosisRecordDetailDTO {
 		problemLowLevelInfo.add(probInfo);
 		problemLowLevelInfo.add(probInfo);
 	}
-	
-	private List<String> convertProblemToProbDTOInfo(Problem prob, int isCorr)
-	{
-		List<String> probInfoDTO = new ArrayList<>();
-		
-		probInfoDTO.add("문제 Index");
-		probInfoDTO.add(prob.getProbID().toString());
-		probInfoDTO.add(isCorr+"");
-		probInfoDTO.add(prob.getQuestion());
-		probInfoDTO.add(prob.getDifficulty());
-		
-		return probInfoDTO;
-	}
-	
-	// 문제 정보 삽입 함수.
-	public boolean pushProblemList(List<Problem> probs, Map<Integer, Integer> probCorrInfo)
-	{
-		// initialize
-		problemCorrectInfo = new HashMap<>();
-		problemHighLevelInfo = new ArrayList<>();
-		problemMiddleLevelInfo = new ArrayList<>();
-		problemLowLevelInfo = new ArrayList<>();
-		
-		//맞은 문제 난이도 상 중 하, 전체 문제 난이도 상 중 하
-		
-		int[] probCorrAndAllNum = {0,0,0,0,0,0};
-		for(Problem prob : probs)
-		{
-			int isCorr = probCorrInfo.get(prob.getProbID());
-			List<String> probDTO = convertProblemToProbDTOInfo(prob, isCorr);
-			
-			switch(prob.getDifficulty())
-			{
-			case "상":
-				problemHighLevelInfo.add(probDTO);
-				if(isCorr==1) probCorrAndAllNum[0]++;
-				probCorrAndAllNum[3]++;
-				break;
-			case "중":
-				problemMiddleLevelInfo.add(probDTO);
-				if(isCorr==1) probCorrAndAllNum[1]++;
-				probCorrAndAllNum[4]++;
-				break;
-			case "하":
-				problemLowLevelInfo.add(probDTO);
-				if(isCorr==1) probCorrAndAllNum[2]++;
-				probCorrAndAllNum[5]++;
-				break;
-			default:
-				break;
-			}
-		}
-		
-		int allCorr = probCorrAndAllNum[0] + probCorrAndAllNum[1] + probCorrAndAllNum[2];
-		
-		problemCorrectInfo.put("allCorr", allCorr);
-		problemCorrectInfo.put("allProb", probs.size());
-		problemCorrectInfo.put("high", probCorrAndAllNum[0]+"/"+probCorrAndAllNum[3]);
-		problemCorrectInfo.put("middle", probCorrAndAllNum[1]+"/"+probCorrAndAllNum[4]);
-		problemCorrectInfo.put("low", probCorrAndAllNum[2]+"/"+probCorrAndAllNum[5]);
-		
-		
-		return true;
-	}
-	
 	
 	
 }

@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.tmax.eTest.Auth.jwt.JwtTokenUtil;
 import com.tmax.eTest.Report.dto.DiagnosisRecordDetailDTO;
 import com.tmax.eTest.Report.dto.DiagnosisRecordMainDTO;
+import com.tmax.eTest.Report.exception.ReportBadRequestException;
 import com.tmax.eTest.Report.service.DiagnosisDetailRecordService;
 import com.tmax.eTest.Report.service.DiagnosisMainRecordService;
 import com.tmax.eTest.Report.service.DiagnosisReportService;
@@ -62,8 +63,9 @@ public class DiagnosisReportController {
 			HttpServletRequest request,
 			@PathVariable("probSetId") String probSetId) throws Exception{
 		
-
 		String id = getUserIDFromRequest(request);
+		
+		selfDiagnosisReportService.saveDiagnosisResult(id, probSetId);
 		
 		DiagnosisRecordMainDTO output = diagnosisMainRecordService.getDiagnosisRecordMain(id, probSetId);
 		
@@ -90,6 +92,9 @@ public class DiagnosisReportController {
 			@PathVariable("isBookmarkOn") Boolean isBookmarkOn) throws Exception{
 
 		String id = getUserIDFromRequest(request);
+		
+		if(id == null)
+			throw new ReportBadRequestException("userId is null in setVideoBookmark");
 		
 		return diagnosisVideoService.setVideoBookmark(id, videoId, isBookmarkOn);
 	}

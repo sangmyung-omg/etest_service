@@ -9,9 +9,9 @@ import javax.servlet.http.HttpServletRequest;
 // import java.util.List;
 
 import com.tmax.eTest.Report.dto.MiniTestRecordDTO;
-// import com.tmax.eTest.Report.dto.RecommendVideoDTO;
 import com.tmax.eTest.Report.service.MiniTestRecordService;
 import com.tmax.eTest.Report.service.MiniTestScoreService;
+
 import com.tmax.eTest.Report.util.UserIdFetchTool;
 import com.tmax.eTest.Test.service.UserInfoService;
 
@@ -113,26 +113,4 @@ public class MiniTestReportController {
 		return ResponseEntity.ok().body(output);
 	}
 
-<<<<<<< HEAD
-	@CrossOrigin("*")
-	@PutMapping(value = "/report/miniTestResult/recommendVideoBookmark/{userId}/{videoId}/{isBookmarkOn}", produces = "application/json; charset=utf-8")
-	public boolean setVideoBookmark(@PathVariable("userId") String userId, @PathVariable("videoId") String videoId,
-			@PathVariable("isBookmarkOn") Boolean isBookmarkOn) throws Exception {
-
-		return miniTestVideoService.setVideoBookmark(userId, videoId, isBookmarkOn);
-	}
-<<<<<<< HEAD
-
-	@CrossOrigin("*")
-	@GetMapping(value = "/report/miniTestResult/recommendVideo/{userId}", produces = "application/json; charset=utf-8")
-	public List<VideoResultDTO> recommendVideo(@PathVariable("userId") String userId) throws Exception {
-
-		return miniTestVideoService.getRecommendVideo(userId);
-
-	}
-
-=======
->>>>>>> 69495b2... [feat] Diagnosis Main Record 에 정보 추가.
-=======
->>>>>>> 90b72dc... [feat] VideoId String 화에 따른 변경.(Master Pull 당긴 후 나오는 에러 처리를 위해 dev에서 작업)
 }

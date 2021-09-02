@@ -55,7 +55,7 @@ public class DiagnosisMainRecordService {
 
 
 	public DiagnosisRecordMainDTO getDiagnosisRecordMain(
-			String userId, 
+			String id, 
 			String probSetId) throws Exception {
 		
 		DiagnosisRecordMainDTO result = new DiagnosisRecordMainDTO();
@@ -63,16 +63,19 @@ public class DiagnosisMainRecordService {
 		if(probSetId.equals("dummy"))
 			result.initForDummy();
 		else
-		{
-			DiagnosisReportKey key = new DiagnosisReportKey();
-			key.setDiagnosisId(probSetId);
-			
-			Optional<DiagnosisReport> reportOpt = diagnosisReportRepo.findById(key);
+		{			
+			Optional<DiagnosisReport> reportOpt = diagnosisReportRepo.findById(probSetId);
+			String userId = id;
 			
 			if(reportOpt.isPresent())
 			{
 				DiagnosisReport report = reportOpt.get();
-				List<StatementDTO> statements = getDiagnosisInfo(userId, probSetId);
+				List<StatementDTO> statements = getDiagnosisInfo(probSetId);
+				
+				if(statements.size() < 0 && id == null)
+					throw new ReportBadRequestException("Nonmember's probSetId not available in getDiagnosisRecordMain. " + probSetId);
+				else
+					userId = statements.get(0).getUserId();
 				
 				Map<String, Integer> percentList = new HashMap<>();
 				percentList.put("gi", 
@@ -89,10 +92,11 @@ public class DiagnosisMainRecordService {
 						report.getInvestScore(), 
 						report.getKnowledgeScore());
 				
-				String nickName = "";
+				String nickName = "비회원";
 				
 				try{
-					nickName = userMasterRepo.getById(userId).getNickname();
+					if(id != null)
+						nickName = userMasterRepo.getById(userId).getNickname();
 				}
 				catch(Exception e){
 					throw new ReportBadRequestException("userId unavailable in getDiagnosisRecordMain. "+userId, e);
@@ -177,8 +181,7 @@ public class DiagnosisMainRecordService {
 			
 			try {
 				VideoBookmarkId bookmarkId = new VideoBookmarkId(userId, recVideoId);
-				videoBookmarkRepo.getById(bookmarkId);
-				isBookmark = true;
+				isBookmark = videoBookmarkRepo.existsById(bookmarkId);
 			}
 			catch(Exception e)
 			{
@@ -227,11 +230,11 @@ public class DiagnosisMainRecordService {
 	
 	
 	
-	private List<StatementDTO> getDiagnosisInfo(String userId, String probSetId) 
+	private List<StatementDTO> getDiagnosisInfo(String probSetId) 
 			throws Exception {
 
 		GetStatementInfoDTO input = new GetStatementInfoDTO();
-		input.pushUserId(userId);
+		
 		if (probSetId != null)
 			input.pushExtensionStr(probSetId);
 		input.pushActionType("submit");
