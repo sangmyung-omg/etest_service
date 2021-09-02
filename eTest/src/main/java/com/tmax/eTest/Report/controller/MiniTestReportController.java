@@ -3,10 +3,10 @@ package com.tmax.eTest.Report.controller;
 import java.util.List;
 
 import com.tmax.eTest.Report.dto.MiniTestRecordDTO;
-import com.tmax.eTest.Report.dto.VideoResultDTO;
+import com.tmax.eTest.Report.dto.RecommendVideoDTO;
 import com.tmax.eTest.Report.service.MiniTestRecordService;
 import com.tmax.eTest.Report.service.MiniTestScoreService;
-import com.tmax.eTest.Report.service.MiniTestVideoService;
+import com.tmax.eTest.Report.service.DiagnosisVideoService;
 import com.tmax.eTest.Test.service.UserInfoService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +23,7 @@ public class MiniTestReportController {
 	@Autowired
 	MiniTestScoreService miniTestScoreService;
 	@Autowired
-	MiniTestVideoService miniTestVideoService;
+	DiagnosisVideoService miniTestVideoService;
 	@Autowired
 	MiniTestRecordService miniTestRecordService;
 
@@ -65,6 +65,7 @@ public class MiniTestReportController {
 
 		return miniTestVideoService.setVideoBookmark(userId, videoId, isBookmarkOn);
 	}
+<<<<<<< HEAD
 
 	@CrossOrigin("*")
 	@GetMapping(value = "/report/miniTestResult/recommendVideo/{userId}", produces = "application/json; charset=utf-8")
@@ -74,4 +75,6 @@ public class MiniTestReportController {
 
 	}
 
+=======
+>>>>>>> 69495b2... [feat] Diagnosis Main Record 에 정보 추가.
 }

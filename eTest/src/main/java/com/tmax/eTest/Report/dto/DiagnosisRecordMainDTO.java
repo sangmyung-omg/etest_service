@@ -19,18 +19,24 @@ public class DiagnosisRecordMainDTO {
 	
 	// 최종 점수
 	int giScore=0, giPercentage=0;
+	String giComment = "";
 	String userName = "이름";
+	boolean alarm = false;
 
 	// 점수 관련
 	Map<String, Object> scoreInfo = new HashMap<>();
-	
 	List<String> similarTypeInfo = new ArrayList<>();
-	
+
+	// Video 관련
+	Map<String, List<RecommendVideoDTO>> video = new HashMap<>();
 	
 	public boolean pushInfoByReport(
 			DiagnosisReport report, 
 			Map<String, Integer> percentageInfo,
-			List<String> similarTypeInfo)
+			Map<String, List<RecommendVideoDTO>> recVideoMap,
+			List<String> similarTypeInfo,
+			boolean isAlarm,
+			String nickName)
 	{
 		boolean result = true;
 		
@@ -55,6 +61,9 @@ public class DiagnosisRecordMainDTO {
 		scoreInfo.put("knowledge", knowledgeScoreInfo);
 		
 		this.similarTypeInfo = similarTypeInfo;
+		this.alarm = isAlarm;
+		this.userName = nickName;
+		this.video = recVideoMap;
 		
 		return result;
 	}
@@ -85,6 +94,22 @@ public class DiagnosisRecordMainDTO {
 		similarTypeInfo.add("15%");
 		similarTypeInfo.add("5종목");
 		similarTypeInfo.add("40%");
+		
+		List<RecommendVideoDTO> recList = new ArrayList<>();
+		RecommendVideoDTO recDto = new RecommendVideoDTO();
+		recDto.setBookmark(false);
+		recDto.setHit(30);
+		recDto.setTitle("더미 비디오");
+		recDto.setTotalTime(75.f);
+		recDto.setVideoSrcUrl("dummySrcUrl");
+		recDto.setTitle("dummyTitle");
+		recDto.setThumbnailUrl("dummyThumbUrl");
+		
+		recList.add(recDto);
+		
+		video.put("basic", recList);
+		video.put("type", recList);
+		video.put("advanced", recList);
 		
 		return true;
 	}

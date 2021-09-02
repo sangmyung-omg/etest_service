@@ -140,61 +140,6 @@ public class DiagnosisReportService {
 		return result;
 	}
 
-	
-	public PartUnderstandingDTO getPartInfo(String id, String partName) throws Exception
-	{
-		PartUnderstandingDTO res = new PartUnderstandingDTO();
-		
-		List<StatementDTO> diagnosisProbStatements = getStatementDiagnosisProb(id, null);
-		List<Problem> probList = getProblemInfos(diagnosisProbStatements);
-		Map<String, List<Object>> probInfoForTriton = stateAndProbProcess.makeInfoForTriton(diagnosisProbStatements, probList);
-		TritonResponseDTO tritonResponse = tritonAPIManager.getUnderstandingScoreInTriton(probInfoForTriton);
-		TritonDataDTO embeddingData = null;
-		TritonDataDTO masteryData = null;
-		
-		if(tritonResponse != null)
-		{
-			for (TritonDataDTO dto : tritonResponse.getOutputs()) {
-				if (dto.getName().equals("Embeddings")) {
-					embeddingData = dto;
-				} else if (dto.getName().equals("Mastery")) {
-					masteryData = dto;
-				}
-			}
-	
-			if (embeddingData != null && masteryData != null) {
-				Map<Integer, UkMaster> usedUkMap =stateAndProbProcess.makeUsedUkMap(probList);
-				Map<Integer, Float> ukScoreMap = ukScoreCalculator.makeUKScoreMap(masteryData);
-				
-				//[파트이름, 스코어 등급(A~F), 스코어 점수]
-				List<List<String>> partScoreList = ukScoreCalculator.makePartScore(usedUkMap, ukScoreMap);
-				
-				for(List<String> partScoreInfo : partScoreList)
-				{
-					if(partScoreInfo.get(0).equals(partName))
-					{
-						res.setPoint(Integer.parseInt(partScoreInfo.get(2)));
-						break;
-					}
-				}
-				
-				usedUkMap.forEach((ukId, ukMaster) -> {
-					if(ukMaster.getPart().equals(partName))
-					{
-						res.pushUKUnderstanding(ukMaster.getUkName(), 
-								Float.valueOf(ukScoreMap.get(ukId)*100).intValue());
-					}
-					
-				});
-
-			}
-		}
-		else
-			throw new ReportBadRequestException("Triton Result is Null. Check Input or Triton Server.");
-		
-		return res;
-	}
-	
 	private void saveDiagnosisReport(
 			String id,
 			String probSetId,

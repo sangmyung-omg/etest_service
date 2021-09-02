@@ -18,7 +18,7 @@ import com.tmax.eTest.Common.repository.video.VideoUkRelRepository;
 import com.tmax.eTest.LRS.dto.GetStatementInfoDTO;
 import com.tmax.eTest.LRS.dto.StatementDTO;
 import com.tmax.eTest.LRS.util.LRSAPIManager;
-import com.tmax.eTest.Report.dto.VideoResultDTO;
+import com.tmax.eTest.Report.dto.RecommendVideoDTO;
 import com.tmax.eTest.Report.exception.ReportBadRequestException;
 
 import org.slf4j.Logger;
@@ -27,7 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class MiniTestVideoService {
+public class DiagnosisVideoService {
 
 	@Autowired
 	VideoBookmarkRepository videoBookmarkRepo;
@@ -43,8 +43,11 @@ public class MiniTestVideoService {
 
 	@Autowired
 	LRSAPIManager lrsManager;
+<<<<<<< HEAD:eTest/src/main/java/com/tmax/eTest/Report/service/MiniTestVideoService.java
 
 	private final Logger logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
+=======
+>>>>>>> 69495b2... [feat] Diagnosis Main Record 에 정보 추가.:eTest/src/main/java/com/tmax/eTest/Report/service/DiagnosisVideoService.java
 
 	public boolean setVideoBookmark(String userId, String videoId, boolean isCheckBookmark) throws Exception {
 		try {
@@ -64,6 +67,7 @@ public class MiniTestVideoService {
 
 		return true;
 	}
+<<<<<<< HEAD:eTest/src/main/java/com/tmax/eTest/Report/service/MiniTestVideoService.java
 
 	public List<VideoResultDTO> getRecommendVideo(String userId) throws Exception {
 		List<VideoResultDTO> result = new ArrayList<>();
@@ -122,4 +126,6 @@ public class MiniTestVideoService {
 		return result;
 
 	}
+=======
+>>>>>>> 69495b2... [feat] Diagnosis Main Record 에 정보 추가.:eTest/src/main/java/com/tmax/eTest/Report/service/DiagnosisVideoService.java
 }

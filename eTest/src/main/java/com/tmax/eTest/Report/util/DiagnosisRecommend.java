@@ -106,13 +106,13 @@ public class DiagnosisRecommend {
 	{
 		List<JsonObject> resultBucket = new ArrayList<>();
 		List<JsonObject> recIds = Arrays.asList(
-				makeRecJsonObject("질문 6-1", "video"),
-				makeRecJsonObject("질문 6-2", "video"),
-				makeRecJsonObject("질문 6-3", "video"),
-				makeRecJsonObject("질문 6-4", "video"),
-				makeRecJsonObject("질문 6-5", "video"),
-				makeRecJsonObject("질문 6-6", "video"),
-				makeRecJsonObject("질문 6-7", "video")
+				makeRecJsonObject("1", "video"), // 6-1", "video"),
+				makeRecJsonObject("1", "video"), // 6-2", "video"),
+				makeRecJsonObject("1", "video"), // 6-3", "video"),
+				makeRecJsonObject("1", "video"), // 6-4", "video"),
+				makeRecJsonObject("1", "video"), // 6-5", "video"),
+				makeRecJsonObject("1", "video"), // 6-6", "video"),
+				makeRecJsonObject("1", "video") // 6-7", "video")
 		);
 		
 		if(riskProfileTypeIdx != riskTracingTypeIdx)
@@ -141,16 +141,16 @@ public class DiagnosisRecommend {
 	{
 		List<JsonObject> resultBucket = new ArrayList<>();
 		List<JsonObject> recIds = Arrays.asList(
-				makeRecJsonObject("질문 5-1", "video"),
-				makeRecJsonObject("질문 5-2", "video"),
-				makeRecJsonObject("질문 5-3", "video"),
-				makeRecJsonObject("질문 5-4", "video"),
-				makeRecJsonObject("질문 5-5", "video"),
-				makeRecJsonObject("질문 5-6", "video"),
-				makeRecJsonObject("질문 5-7", "video"),
-				makeRecJsonObject("질문 5-8", "video"),
-				makeRecJsonObject("질문 5-9", "video"),
-				makeRecJsonObject("질문 5-10", "video")
+				makeRecJsonObject("1", "video"), // 5-1", "video"),
+				makeRecJsonObject("1", "video"), // 5-2", "video"),
+				makeRecJsonObject("1", "video"), // 5-3", "video"),
+				makeRecJsonObject("1", "video"), // 5-4", "video"),
+				makeRecJsonObject("1", "video"), // 5-5", "video"),
+				makeRecJsonObject("1", "video"), // 5-6", "video"),
+				makeRecJsonObject("1", "video"), // 5-7", "video"),
+				makeRecJsonObject("1", "video"), // 5-8", "video"),
+				makeRecJsonObject("1", "video"), // 5-9", "video"),
+				makeRecJsonObject("1", "video") // 5-10", "video")
 		);
 		
 		if(investScore < 85)
@@ -262,15 +262,15 @@ public class DiagnosisRecommend {
 	{
 		int[] curriIds = {13, 14, 15};
 		List<JsonObject> recIds = Arrays.asList(
-				makeRecJsonObject("질문 1-1", "video"),
-				makeRecJsonObject("질문 1-2", "video"),
-				makeRecJsonObject("질문 1-3", "video"),
-				makeRecJsonObject("질문 1-4", "video"),
-				makeRecJsonObject("질문 1-5", "video"),
-				makeRecJsonObject("질문 1-6", "video"),
-				makeRecJsonObject("질문 1-7", "video"),
-				makeRecJsonObject("질문 1-8", "video"),
-				makeRecJsonObject("질문 1-9", "video")
+				makeRecJsonObject("1", "video"), //1-1", "video"),
+				makeRecJsonObject("1", "video"), // 1-2", "video"),
+				makeRecJsonObject("1", "video"), // 1-3", "video"),
+				makeRecJsonObject("1", "video"), // 1-4", "video"),
+				makeRecJsonObject("1", "video"), // 1-5", "video"),
+				makeRecJsonObject("1", "video"), // 1-6", "video"),
+				makeRecJsonObject("1", "video"), // 1-7", "video"),
+				makeRecJsonObject("1", "video"), // 1-8", "video"),
+				makeRecJsonObject("1", "video") // 1-9", "video")
 		);
 		List<List<Integer>> recoContentList = Arrays.asList(
 				Arrays.asList(),
@@ -320,15 +320,15 @@ public class DiagnosisRecommend {
 	{
 		int[] curriIds = {16, 17, 18};
 		List<JsonObject> recIds = Arrays.asList(
-				makeRecJsonObject("단계 2-1", "video"),
-				makeRecJsonObject("단계 2-2", "video"),
-				makeRecJsonObject("단계 2-3", "video"),
-				makeRecJsonObject("단계 2-4", "video"),
-				makeRecJsonObject("단계 2-5", "video"),
-				makeRecJsonObject("단계 2-6", "video"),
-				makeRecJsonObject("단계 2-7", "video"),
-				makeRecJsonObject("단계 2-8", "video"),
-				makeRecJsonObject("단계 2-9", "video")
+				makeRecJsonObject("1", "video"), //"단계 2-1", "video"),
+				makeRecJsonObject("1", "video"), //"단계 2-2", "video"),
+				makeRecJsonObject("1", "video"), //"단계 2-3", "video"),
+				makeRecJsonObject("1", "video"), //"단계 2-4", "video"),
+				makeRecJsonObject("1", "video"), //"단계 2-5", "video"),
+				makeRecJsonObject("1", "video"), //"단계 2-6", "video"),
+				makeRecJsonObject("1", "video"), //"단계 2-7", "video"),
+				makeRecJsonObject("1", "video"), //"단계 2-8", "video"),
+				makeRecJsonObject("1", "video") //"단계 2-9", "video")
 		);
 		List<List<Integer>> recoContentList = Arrays.asList(
 				Arrays.asList(),
@@ -378,15 +378,15 @@ public class DiagnosisRecommend {
 	{
 		int[] curriIds = {19, 20, 21};
 		List<JsonObject> recIds = Arrays.asList(
-				makeRecJsonObject("질문 3-1", "video"),
-				makeRecJsonObject("질문 3-2", "video"),
-				makeRecJsonObject("질문 3-3", "video"),
-				makeRecJsonObject("질문 3-4", "video"),
-				makeRecJsonObject("질문 3-5", "video"),
-				makeRecJsonObject("질문 3-6", "video"),
-				makeRecJsonObject("질문 3-7", "video"),
-				makeRecJsonObject("질문 3-8", "video"),
-				makeRecJsonObject("질문 3-9", "video")
+				makeRecJsonObject("1", "video"), // 3-1", "video"),
+				makeRecJsonObject("1", "video"), // 3-2", "video"),
+				makeRecJsonObject("1", "video"), // 3-3", "video"),
+				makeRecJsonObject("1", "video"), // 3-4", "video"),
+				makeRecJsonObject("1", "video"), // 3-5", "video"),
+				makeRecJsonObject("1", "video"), // 3-6", "video"),
+				makeRecJsonObject("1", "video"), // 3-7", "video"),
+				makeRecJsonObject("1", "video"), // 3-8", "video"),
+				makeRecJsonObject("1", "video") // 3-9", "video")
 		);
 		List<List<Integer>> recoContentList = Arrays.asList(
 				Arrays.asList(),
@@ -435,15 +435,15 @@ public class DiagnosisRecommend {
 	{
 		int[] curriIds = {22, 23, 24};
 		List<JsonObject> recIds = Arrays.asList(
-				makeRecJsonObject("보카1", "article"),
-				makeRecJsonObject("보카2", "article"),
-				makeRecJsonObject("보카3", "article"),
-				makeRecJsonObject("보카4", "article"),
-				makeRecJsonObject("보카5", "article"),
-				makeRecJsonObject("보카6", "article"),
-				makeRecJsonObject("보카7", "article"),
-				makeRecJsonObject("보카8", "article"),
-				makeRecJsonObject("보카9", "article")
+				makeRecJsonObject("1", "video"), //"보카1", "article"),
+				makeRecJsonObject("1", "video"), //"보카2", "article"),
+				makeRecJsonObject("1", "video"), //"보카3", "article"),
+				makeRecJsonObject("1", "video"), //"보카4", "article"),
+				makeRecJsonObject("1", "video"), //"보카5", "article"),
+				makeRecJsonObject("1", "video"), //"보카6", "article"),
+				makeRecJsonObject("1", "video"), //"보카7", "article"),
+				makeRecJsonObject("1", "video"), //"보카8", "article"),
+				makeRecJsonObject("1", "video") //"보카9", "article")
 		);
 		List<List<Integer>> recoContentList = Arrays.asList(
 				Arrays.asList(),

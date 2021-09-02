@@ -11,25 +11,24 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.tmax.eTest.Common.model.problem.Problem;
+import com.tmax.eTest.Common.model.report.DiagnosisReport;
+import com.tmax.eTest.Common.model.report.DiagnosisReportKey;
+import com.tmax.eTest.Common.repository.report.DiagnosisReportRepo;
 import com.tmax.eTest.Contents.repository.ProblemRepository;
 import com.tmax.eTest.LRS.dto.GetStatementInfoDTO;
 import com.tmax.eTest.LRS.dto.StatementDTO;
 import com.tmax.eTest.LRS.util.LRSAPIManager;
 import com.tmax.eTest.Report.dto.DiagnosisRecordDetailDTO;
-import com.tmax.eTest.Report.dto.DiagnosisRecordMainDTO;
 import com.tmax.eTest.Report.exception.ReportBadRequestException;
-import com.tmax.eTest.Report.util.SNDCalculator;
 import com.tmax.eTest.Report.util.DiagnosisComment;
-import com.tmax.eTest.Common.model.report.DiagnosisReport;
-import com.tmax.eTest.Common.model.report.DiagnosisReportKey;
-import com.tmax.eTest.Common.repository.report.DiagnosisReportRepo;
+import com.tmax.eTest.Report.util.SNDCalculator;
 
 import lombok.extern.log4j.Log4j2;
 
 @Service
 @Log4j2
-public class DiagnosisRecordService {
-
+public class DiagnosisDetailRecordService {
+	
 	@Autowired
 	LRSAPIManager lrsAPIManager;
 
@@ -43,55 +42,9 @@ public class DiagnosisRecordService {
 	@Autowired
 	SNDCalculator sndCalculator;
 
+
 	private final List<String> partNameList = new ArrayList<>(Arrays.asList("risk", "invest", "knowledge"));
 
-
-	public DiagnosisRecordMainDTO getDiagnosisRecordMain(
-			String userId, 
-			String probSetId) throws Exception {
-		
-		DiagnosisRecordMainDTO result = new DiagnosisRecordMainDTO();
-
-		if(probSetId.equals("dummy"))
-			result.initForDummy();
-		else
-		{
-			DiagnosisReportKey key = new DiagnosisReportKey();
-			key.setDiagnosisId(probSetId);
-			
-			Optional<DiagnosisReport> reportOpt = diagnosisReportRepo.findById(key);
-			
-			if(reportOpt.isPresent())
-			{
-				DiagnosisReport report = reportOpt.get();
-				
-				Map<String, Integer> percentList = new HashMap<>();
-				percentList.put("gi", 
-					sndCalculator.calculateForDiagnosis(sndCalculator.GI_IDX ,report.getGiScore()));
-				percentList.put("risk",
-					sndCalculator.calculateForDiagnosis(sndCalculator.RISK_IDX, report.getRiskScore()));
-				percentList.put("invest", 
-					sndCalculator.calculateForDiagnosis(sndCalculator.INVEST_IDX, report.getInvestScore()));
-				percentList.put("knowledge", 
-					sndCalculator.calculateForDiagnosis(sndCalculator.KNOWLEDGE_IDX, report.getKnowledgeScore()));
-				
-				List<String> similarTypeInfo = commentGenerator.makeSimilarTypeInfo(
-						report.getRiskScore(), 
-						report.getInvestScore(), 
-						report.getKnowledgeScore());
-				
-				result.pushInfoByReport(
-						report, 
-						percentList, 
-						similarTypeInfo);
-			}
-			else
-				throw new ReportBadRequestException("Problem Set Id is unavailable. "+probSetId);
-		}
-
-		return result;
-	}
-	
 	public DiagnosisRecordDetailDTO getDiagnosisRecordDetail(
 			String userId, 
 			String probSetId,
