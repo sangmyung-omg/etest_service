@@ -12,6 +12,11 @@ import com.tmax.eTest.Common.repository.video.VideoUkRelRepository;
 import com.tmax.eTest.LRS.util.LRSAPIManager;
 import com.tmax.eTest.Report.exception.ReportBadRequestException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.tmax.eTest.;
+
 @Service
 public class DiagnosisVideoService {
 
