@@ -3,10 +3,11 @@ package com.tmax.eTest.Contents.service;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import lombok.extern.slf4j.Slf4j;
 
 import com.tmax.eTest.Common.model.problem.DiagnosisProblem;
 import com.tmax.eTest.Common.model.problem.Problem;
@@ -28,9 +29,8 @@ import com.tmax.eTest.Test.repository.UkRepository;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+@Slf4j
 @Service("ProblemServicesV1")
 public class ProblemServicesV1 implements ProblemServicesBase {
 	@Autowired
@@ -54,12 +54,10 @@ public class ProblemServicesV1 implements ProblemServicesBase {
 	@Autowired
 	ErrorReportRepository errorRepo; 
 	
-	private final Logger logger = LoggerFactory.getLogger(this.getClass());
-	
 	public Temp1ProblemOutputDTO getProblemInfo(Integer probId) throws Exception{
 		Temp1ProblemOutputDTO output = new Temp1ProblemOutputDTO();
 
-		logger.info("Getting problem info......");
+		log.info("Getting problem info......");
 		Problem problemInfo = problemRepo.findById(probId).orElseThrow(() -> new NoDataException(probId));
 
 		// 먼저 담을 수 있는 문제 정보 담기
@@ -88,7 +86,7 @@ public class ProblemServicesV1 implements ProblemServicesBase {
 		
 		Temp0ProblemOutputDTO output = new Temp0ProblemOutputDTO();
 		
-		logger.info("Getting problem info......");
+		log.info("Getting problem info......");
 		Problem problemInfo = problemRepo.findById(probId).orElseThrow(() -> new NoDataException(probId));
 		problemInfo.getProblemChoices();
 		output.setAnswerType(problemInfo.getAnswerType());
@@ -118,12 +116,12 @@ public class ProblemServicesV1 implements ProblemServicesBase {
 			if (type.equalsIgnoreCase("QUESTION_TEXT")) questionText.add(data);
 			else if (type.equalsIgnoreCase("EXAMPLE_BOX_TEXT")) exampleBoxText.add(data);
 			else if (type.equalsIgnoreCase("MULTIPLE_CHOICE_TEXT")) {
-				logger.info(data);
+				log.info(data);
 				// logger.info(json.get("data"));
 				try {
 					multipleChoiceText = (List<String>) json.get("data");
 				} catch (Exception e) {
-					logger.info("MULTIPLE_CHOICE_TEXT Parsing error : " + e.getMessage());
+					log.info("MULTIPLE_CHOICE_TEXT Parsing error : " + e.getMessage());
 					multipleChoiceText.add("MULTIPLE_CHOICE_TEXT Parsing error");
 					multipleChoiceText.add(data);
 				}

@@ -6,15 +6,12 @@ import com.tmax.eTest.Common.model.error_report.ErrorReportBody;
 import com.tmax.eTest.Common.model.problem.DiagnosisProblemBody;
 import com.tmax.eTest.Contents.dto.problem.DiagnosisProblemDTO;
 import com.tmax.eTest.Contents.dto.problem.ErrorDTO;
-import com.tmax.eTest.Contents.dto.problem.ProblemDTO;
 import com.tmax.eTest.Contents.dto.problem.Temp0ProblemOutputDTO;
 import com.tmax.eTest.Contents.dto.problem.Temp1ProblemOutputDTO;
 import com.tmax.eTest.Contents.exception.problem.NoDataException;
 import com.tmax.eTest.Contents.exception.problem.UnavailableTypeException;
 import com.tmax.eTest.Contents.service.ProblemServicesBase;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpHeaders;
@@ -29,11 +26,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @CrossOrigin(origins="*")
 @RestController
 @RequestMapping(path = "/contents" + "/v1")
 public class ProblemControllerV1 {
-	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	@Autowired
 	@Qualifier("ProblemServicesV1")
@@ -42,7 +41,7 @@ public class ProblemControllerV1 {
 	// 선택1) 문제 question 정보 풀어해쳐서 각각 필드에 담아서 반환
 	@GetMapping(value="/problems/{probId}/temp0")
 	public ResponseEntity<Object> problem1(@PathVariable("probId") Integer probId) throws Exception{
-		logger.info("> problem1 info logic start! : " + Integer.toString(probId));
+		log.info("> problem1 info logic start! : " + Integer.toString(probId));
 		Temp0ProblemOutputDTO result = new Temp0ProblemOutputDTO();
 		HttpHeaders headers= new HttpHeaders();
         headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
@@ -66,7 +65,7 @@ public class ProblemControllerV1 {
     // 선택2) 문제 question 정보 json 파싱까지만 해서 각각 json 형식에 맞게 필드에 담아서 반환
 	@GetMapping(value="/problems/{probId}/temp1")
 	public ResponseEntity<Object> problem2(@PathVariable("probId") Integer probId) throws Exception{
-		logger.info("> problem2 info logic start! : " + Integer.toString(probId));
+		log.info("> problem2 info logic start! : " + Integer.toString(probId));
 		// HttpHeaders headers= new HttpHeaders();
         // headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
 

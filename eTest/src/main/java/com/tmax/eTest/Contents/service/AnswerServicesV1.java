@@ -7,10 +7,10 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.json.simple.parser.JSONParser;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import lombok.extern.slf4j.Slf4j;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -28,10 +28,9 @@ import com.tmax.eTest.LRS.dto.StatementDTO;
  * @author Sangmyung Lee
  */
 
+@Slf4j
 @Service("AnswerServicesV1")
 public class AnswerServicesV1 implements AnswerServicesBase {
-
-	private final Logger logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
 
 	@Autowired
 	ProblemRepository problemRepo;
@@ -41,31 +40,31 @@ public class AnswerServicesV1 implements AnswerServicesBase {
 	
 	public Integer evaluateIfCorrect(Integer probId, ArrayList<StatementDTO> lrsbody) throws Exception {
 		String userAnswer = lrsbody.get(0).getUserAnswer();
-		logger.info("Problem ID : " + Integer.toString(probId) + ", user answer : " + userAnswer);
-		logger.info("Inserted LRS body : " + lrsbody.toString());
+		log.info("Problem ID : " + Integer.toString(probId) + ", user answer : " + userAnswer);
+		log.info("Inserted LRS body : " + lrsbody.toString());
 
 		Map<String, Object> data = new HashMap<String, Object>();
 
 		try {
 			data = getProblemSolution(probId);
 		} catch (Exception e) {
-			logger.info(e.toString());
+			log.info(e.toString());
 			return 0;
 		}
 		String inputString = data.get("solution").toString();
 		JSONParser parser = new JSONParser();
 		JSONArray jsonArray = (JSONArray) parser.parse(inputString);
-		logger.info("json : " + jsonArray.toJSONString() + ", " + Integer.toString(probId));
+		log.info("json : " + jsonArray.toJSONString() + ", " + Integer.toString(probId));
 
 		String correctAnswer = "";
 		for (int i = 0; i < jsonArray.size(); i++) {
-			logger.info("Item #" + Integer.toString(i) + " of jsonArray : " + jsonArray.get(i).toString());
+			log.info("Item #" + Integer.toString(i) + " of jsonArray : " + jsonArray.get(i).toString());
 			JSONObject json = (JSONObject) jsonArray.get(i);
 			String type = json.get("type").toString();
 			if (type.contains("CORRECT_ANSWER")) {
 				correctAnswer = json.get("data").toString();
 				if (correctAnswer.equals("[]")) {
-					logger.info("A tendency problem has no answer.");
+					log.info("A tendency problem has no answer.");
 					return -1;
 				}
 				if (correctAnswer.contains("[")){
@@ -74,12 +73,12 @@ public class AnswerServicesV1 implements AnswerServicesBase {
 				if (correctAnswer.contains("]")) {
 					correctAnswer = correctAnswer.replaceAll("\\]", "");
 				}
-				logger.info("correctAnswer : " + correctAnswer);
+				log.info("correctAnswer : " + correctAnswer);
 			}
-			logger.info("type : " + type);
+			log.info("type : " + type);
 		}
-		logger.info("Total solution string : " + inputString);
-		logger.info("Correct Answer is... " + correctAnswer);
+		log.info("Total solution string : " + inputString);
+		log.info("Correct Answer is... " + correctAnswer);
 		if (correctAnswer.equalsIgnoreCase(userAnswer)) return 1;
 		else return 0;
 	}
@@ -87,7 +86,7 @@ public class AnswerServicesV1 implements AnswerServicesBase {
 	public Map<String, Object> getProblemSolution(Integer problemID) throws Exception {
 		Map<String, Object> output = new HashMap<String, Object>();
 
-		logger.info("Getting solution info......");
+		log.info("Getting solution info......");
 		Optional<Problem> problemOpt = problemRepo.findById(problemID);
 
 		if (problemOpt.isPresent()) {
@@ -101,10 +100,10 @@ public class AnswerServicesV1 implements AnswerServicesBase {
 	}
 
 	public Map<Integer, CustomizedSolutionDTO> getMultipleSolutions(List<Integer> probIdList) {
-		logger.info("Getting multiple solution infos......");
+		log.info("Getting multiple solution infos......");
 		List<Problem> probList = problemRepo.findByProbIDIn(probIdList);
-		logger.info(probList.get(0).getQuestion());
-		logger.info(probList.get(0).getSolution());
+		log.info(probList.get(0).getQuestion());
+		log.info(probList.get(0).getSolution());
 		Map<Integer, CustomizedSolutionDTO> solutionMap = new HashMap<Integer, CustomizedSolutionDTO>();
 		for (Problem dto : probList) {
 			CustomizedSolutionDTO solutionInfo = new CustomizedSolutionDTO();

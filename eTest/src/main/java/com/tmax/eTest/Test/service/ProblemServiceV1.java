@@ -25,6 +25,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
+import lombok.extern.slf4j.Slf4j;
+
 import com.tmax.eTest.Common.model.problem.DiagnosisCurriculum;
 import com.tmax.eTest.Common.model.problem.DiagnosisProblem;
 import com.tmax.eTest.Common.model.problem.Problem;
@@ -37,11 +39,10 @@ import com.tmax.eTest.LRS.dto.GetStatementInfoDTO;
 import com.tmax.eTest.LRS.dto.StatementDTO;
 import com.tmax.eTest.LRS.util.LRSAPIManager;
 
+@Slf4j
 @Service("ProblemServiceV1")
 @Primary
 public class ProblemServiceV1 implements ProblemServiceBase {
-
-	private final Logger logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
 
 	@Autowired
 	DiagnosisProblemRepository diagnosisRepo;
@@ -79,13 +80,13 @@ public class ProblemServiceV1 implements ProblemServiceBase {
 		Map<String, Object> map = new HashMap<String, Object>();
 		String type = "성향";
 
-		logger.info("Getting diagnosis curriculums info for " + type + "......");
+		log.info("Getting diagnosis curriculums info for " + type + "......");
 		// 진단 커리큘럼 테이블에서 type에 해당되는 커리큘럼 아이디를 모두 가져옴
 		List<DiagnosisCurriculum> selectedCurriculum = diagnosisCurriculumRepo.findByChapterOrderByCurriculumIdAsc(type);
 		
 		List<Integer> selectedCurriculumId = selectedCurriculum.stream().map(dc -> dc.getCurriculumId())
 				.collect(toList());
-		logger.info(String.format("Retrieved all curriculum ids with type %s", type));
+		log.info(String.format("Retrieved all curriculum ids with type %s", type));
 
 		// 성향문제의 경우 : 가져온 커리큘럼 아이디에 해당되는 모든 진단 문제를 하나의 리스트에 합침
 		List<Integer> problemLists = new ArrayList<Integer>();
@@ -112,7 +113,7 @@ public class ProblemServiceV1 implements ProblemServiceBase {
 		Map<String, Object> map = new HashMap<String, Object>();
 		String type = "지식";
 		
-		logger.info("Getting knowledge diagnosis problems info......");
+		log.info("Getting knowledge diagnosis problems info......");
 		List<Problem> selectedProblems2 = problemRepo.findByCategoryOrderByDiagnosisInfoCurriculumIdAscDiagnosisInfoOrderNumAscDifficultyAsc(type);
 		
 		// 지식문제의 경우 : 특정 진단 주제들에 해당되는 진단문제 리스트들을 리스트 안에 넣음
@@ -174,20 +175,20 @@ public class ProblemServiceV1 implements ProblemServiceBase {
 		statementInput.pushSourceType("mini_test_question");
 		statementInput.pushActionType("submit");
 
-		logger.info("Getting LRS log data......");
+		log.info("Getting LRS log data......");
 		try {
 			// Ordering? --> Order by Timestamp ASC
 			statementQuery = lrsAPIManager.getStatementList(statementInput);
-			logger.info("length of the statement query result : " + Integer.toString(statementQuery.size()));
+			log.info("length of the statement query result : " + Integer.toString(statementQuery.size()));
 			Collections.reverse(statementQuery);		// 최근 부터 set id 탐색해야 하므로, reverse
 		} catch (ParseException e) {
-			logger.info(e.getMessage());
+			log.info(e.getMessage());
 			map.put("error", e.getMessage());
 			return map;
 		}
 
 		if (statementQuery.size() == 0) {
-			logger.info("Result of LRS statement query for ID " + userId +" is empty");
+			log.info("Result of LRS statement query for ID " + userId +" is empty");
 			// map.put("error", "Result of LRS statement query for ID " + userId +" is empty");
 			// return map;
 		}
@@ -204,7 +205,7 @@ public class ProblemServiceV1 implements ProblemServiceBase {
 		JSONParser parser = new JSONParser();
 		JSONObject json = new JSONObject();
 
-		if (statementQuery.size() > 0) logger.info("first row of query result : " + statementQuery.get(0).toString());
+		if (statementQuery.size() > 0) log.info("first row of query result : " + statementQuery.get(0).toString());
 		for (StatementDTO query : statementQuery) {
 			String extension = query.getExtension();
 			if (isLatest < 2 && extension != null) {											// 최근 푼 문제 세트 범위이면서, extension이 null 이 아니라면
@@ -216,7 +217,7 @@ public class ProblemServiceV1 implements ProblemServiceBase {
 							if (isLatest == 0) {
 								if (!json.get("diagProbSetId").toString().equalsIgnoreCase("")) {
 									continueProbSetId = json.get("diagProbSetId").toString();
-									logger.info("Latest set id : " + continueProbSetId);
+									log.info("Latest set id : " + continueProbSetId);
 									isLatest++;
 								}
 							}
@@ -233,7 +234,7 @@ public class ProblemServiceV1 implements ProblemServiceBase {
 								} else isLatest++;
 							}
 						} else {
-							logger.info("The key 'diagProbSetId' does not exist in extension json : " + json.toString());
+							log.info("The key 'diagProbSetId' does not exist in extension json : " + json.toString());
 						}
 
 						// cumulate guessAlarm value
@@ -243,9 +244,9 @@ public class ProblemServiceV1 implements ProblemServiceBase {
 							}
 						}
 					} catch (Exception e) {
-						logger.info("Extension Parsing Error with String Value : " + extension.toString() + ", error message : " + e.toString());
+						log.info("Extension Parsing Error with String Value : " + extension.toString() + ", error message : " + e.toString());
 					}
-				} else logger.info("Json format, which is surrounded by '{' and '}', NOT found in extension : " + query.getExtension().toString());
+				} else log.info("Json format, which is surrounded by '{' and '}', NOT found in extension : " + query.getExtension().toString());
 			}
 
 			// 중복 방지 용 푼 문제 ID 수집
@@ -266,7 +267,7 @@ public class ProblemServiceV1 implements ProblemServiceBase {
 		/*
 		*	중복 배제하여 미니진단 문제 조회 - 전체 조회 후 개수에 맞게 분배
 		*/
-		logger.info("Getting minitest problem infos......");
+		log.info("Getting minitest problem infos......");
 		List<TestProblem> minitestQueryResult = minitestRepo.findAllByProbIDNotIn(solvedProbList);
 
 		// 1. LRS에 기록이 없으면 solvedProbList가 empty. 위 쿼리 결과 size() = 0
@@ -279,7 +280,7 @@ public class ProblemServiceV1 implements ProblemServiceBase {
 		if (minitestQueryResult.size() == 0) {
 			minitestQueryResult = minitestRepo.findAll();
 		}
-		if (minitestQueryResult.size() > 0) logger.info(Integer.toString(minitestQueryResult.get(0).getProbID()));
+		if (minitestQueryResult.size() > 0) log.info(Integer.toString(minitestQueryResult.get(0).getProbID()));
 
 		Map<Integer, List<Integer>> partProbIdMap = new HashMap<Integer, List<Integer>>();		// 각 파트 별로 문제 ID 수집
 		Map<Integer, List<Integer>> partNumOrderMap = new HashMap<Integer, List<Integer>>();	// 각 파트의 [순서, 출제 문제 개수] 정보 저장.
@@ -317,14 +318,14 @@ public class ProblemServiceV1 implements ProblemServiceBase {
 		Map<Integer, List<Integer>> additionalProbMap;
 		List<TestProblem> queryList = new ArrayList<TestProblem>();
 		if (partIdAlready.size() < TOTAL_PART_NUM){
-			logger.info("Only " + Integer.toString(partIdAlready.size()) + " parts are satisfied : " + partIdAlready.toString() + ", " + probIdAlready.toString());
+			log.info("Only " + Integer.toString(partIdAlready.size()) + " parts are satisfied : " + partIdAlready.toString() + ", " + probIdAlready.toString());
 			
 			// 쿼리 결과를 각 파트 별로 문제 분리. 새로 조회된 파트는 파트 순서 & 문제 수 정보도 수집.
 			// 문제가 하나도 없을 수는 없음. (다 풀어봤으면 )
-			logger.info("Getting supplementary minitest problem infos......");
+			log.info("Getting supplementary minitest problem infos......");
 			queryList = minitestRepo.findAllByPartPartIDNotInAndProbIDNotIn(partIdAlready, probIdAlready);
 			if (queryList.size() == 0) {
-				logger.info("No minitest query result for parts not in : " + partIdAlready.toString() + ", and probs not in : " + probIdAlready.toString() + ". So, get all probs in insufficient part");
+				log.info("No minitest query result for parts not in : " + partIdAlready.toString() + ", and probs not in : " + probIdAlready.toString() + ". So, get all probs in insufficient part");
 				
 				queryList = minitestRepo.findAllByPartPartIDNotIn(partIdAlready);
 			}
@@ -335,7 +336,7 @@ public class ProblemServiceV1 implements ProblemServiceBase {
 					satisfiedPartList.remove(key);
 				}
 			}
-			logger.info("Out of total parts : " + partProbIdMap.keySet().toString() + ", Only " + Integer.toString(satisfiedPartList.size()) + " parts are satisfied with prob # : " + satisfiedPartList.toString());
+			log.info("Out of total parts : " + partProbIdMap.keySet().toString() + ", Only " + Integer.toString(satisfiedPartList.size()) + " parts are satisfied with prob # : " + satisfiedPartList.toString());
 
 			if (satisfiedPartList.size() < partProbIdMap.keySet().size()) {
 				queryList = minitestRepo.findAllByPartPartIDNotIn(partIdAlready);
@@ -442,7 +443,7 @@ public class ProblemServiceV1 implements ProblemServiceBase {
 			}
 		}
 
-		logger.info("> minitest logic end! : " + Integer.toString(minitestProblems.size()) + ", " + minitestProblems.toString() + " / " + Integer.toString(continueProblems.size()) + ", " + continueProblems.toString());
+		log.info("> minitest logic end! : " + Integer.toString(minitestProblems.size()) + ", " + minitestProblems.toString() + " / " + Integer.toString(continueProblems.size()) + ", " + continueProblems.toString());
 		map.put("newProbSetId", newProbSetId);
 		map.put("minitestProblems", minitestProblems);
 		if (continueProblems.size() > 0) {
@@ -460,7 +461,7 @@ public class ProblemServiceV1 implements ProblemServiceBase {
 
 		for (TestProblem problem : queryResult) {
 			if (problem.getPart() == null) {
-				logger.info("No part mapping info for probId : " + Integer.toString(problem.getProbID()) + ", DB data issue.\nPlease check if data is filled in 'PART' table");
+				log.info("No part mapping info for probId : " + Integer.toString(problem.getProbID()) + ", DB data issue.\nPlease check if data is filled in 'PART' table");
 				continue;
 			}
 			// 파트 별 문제 수집

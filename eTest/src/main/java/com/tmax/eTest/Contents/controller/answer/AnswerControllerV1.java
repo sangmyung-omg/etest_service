@@ -5,18 +5,13 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.http.HttpStatus;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,7 +20,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.tmax.eTest.Auth.dto.PrincipalDetails;
+import lombok.extern.slf4j.Slf4j;
+
 import com.tmax.eTest.Auth.jwt.JwtTokenUtil;
 import com.tmax.eTest.Contents.dto.CustomizedSolutionDTO;
 import com.tmax.eTest.Contents.dto.problem.AnswerInputDTO;
@@ -40,12 +36,11 @@ import com.tmax.eTest.LRS.util.LRSAPIManager;
  */
 
 // @PropertySource("classpath:application.properties")
+@Slf4j
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @RestController
 @RequestMapping(path = "/contents" + "/v1")
 public class AnswerControllerV1 {
-	
-	private final Logger logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
 	
 	@Autowired
 	@Qualifier("AnswerServicesV1")
@@ -62,14 +57,14 @@ public class AnswerControllerV1 {
 											  @PathVariable("probId") Integer probId,
 											  @RequestBody ArrayList<StatementDTO> lrsbody) throws Exception {
 											//   @RequestBody AnswerInputDTO inputDto) throws Exception {
-		logger.info("> answer-check logic start!");
+		log.info("> answer-check logic start!");
 		Map<String, Object> result = new HashMap<String, Object>();
 		String userId = "";
 		
 		// 회원, 비회원 판별
 		String header = request.getHeader("Authorization");
 		if (header == null) {																// 비회원일 때 토큰 null
-			logger.info("header.Authorization is null. No token given.");
+			log.info("header.Authorization is null. No token given.");
 			result.put("resultMessage", "header.Authorization is null. No token given.");
 			return new ResponseEntity<>(result, HttpStatus.UNAUTHORIZED);
 		} else {																			// 회원이면 토큰 파싱하여 유저 아이디 꺼냄
@@ -77,9 +72,9 @@ public class AnswerControllerV1 {
 			try {
 				Map<String, Object> parseInfo = jwtTokenUtil.getUserParseInfo(token);
 				userId = parseInfo.get("userUuid").toString();
-				logger.info("User UUID from header token : " + userId);
+				log.info("User UUID from header token : " + userId);
 			} catch (Exception e) {
-				logger.info("error : cannot parse jwt token, " + e.getMessage());
+				log.info("error : cannot parse jwt token, " + e.getMessage());
 				result.put("error", e.getMessage());
 				return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 			}
@@ -121,15 +116,15 @@ public class AnswerControllerV1 {
 
 	@GetMapping(value="/problems/{setId}/solution", produces = "application/json; charset=utf-8")
 	public Map<String, Object> problem(@PathVariable("setId") String setId) throws Exception{
-		logger.info("> solution logic start!");
+		log.info("> solution logic start!");
 		Map<String, Object> output = new HashMap<String, Object>();
-		logger.info("Set ID : " + setId);
+		log.info("Set ID : " + setId);
 
 		// prepare for LRS GETStatement input
 		GetStatementInfoDTO input = new GetStatementInfoDTO();
 		input.setContainExtension(Arrays.asList(setId));
 
-		logger.info("Getting LRS statement list......");
+		log.info("Getting LRS statement list......");
 		List<StatementDTO> lrsQuery = lrsApiManager.getStatementList(input);
 
 		List<Integer> probIdList = new ArrayList<Integer>();
@@ -156,12 +151,12 @@ public class AnswerControllerV1 {
 				}
 			}
 		}
-		logger.info("probIdList : " + probIdList.toString());
+		log.info("probIdList : " + probIdList.toString());
 
 		List<CustomizedSolutionDTO> solutions = new ArrayList<CustomizedSolutionDTO>();
 		try {
 			Map<Integer, CustomizedSolutionDTO> data = answerServices.getMultipleSolutions(probIdList);
-			logger.info("Solution queryResult length : " + Integer.toString(data.size()));
+			log.info("Solution queryResult length : " + Integer.toString(data.size()));
 			for (Integer probId : probIdList) {
 				data.get(probId).setUserAnswer(probAnswerMap.get(probId));
 				solutions.add(data.get(probId));

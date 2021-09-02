@@ -16,7 +16,7 @@
 	<!-- max history save days (day) -->
 	<property name="MAX_SAVE_DAYS" value="28" />
 
-    <!-- Console Appender -->
+    <!-- Console Appender General -->
 	<springProfile name="default, dev, prod">
 		<!-- Stdout -->
 		<appender name="STDOUT"
@@ -95,17 +95,17 @@
 		</appender>
 	</springProfile>
 
-    <!-- File Appender for Auth -->
+    <!-- File Appender for Common -->
     <springProfile name="prod">
-		<appender name="FILE_Auth" class="ch.qos.logback.core.rolling.RollingFileAppender">
-			<file>${LOG_PATH}/Auth/${LOG_FILE_NAME}.log</file>
+		<appender name="FILE_Common" class="ch.qos.logback.core.rolling.RollingFileAppender">
+			<file>${LOG_PATH}/Common/${LOG_FILE_NAME}.log</file>
 			<encoder
 				class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
 				<pattern>${LOG_PATTERN}</pattern>
 			</encoder>
 			<rollingPolicy
 				class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-				<fileNamePattern>${LOG_PATH}/Auth/${LOG_FILE_NAME}.%d{yyyy-MM-dd}_%i.log</fileNamePattern>
+				<fileNamePattern>${LOG_PATH}/Common/${LOG_FILE_NAME}.%d{yyyy-MM-dd}_%i.log</fileNamePattern>
 				<timeBasedFileNamingAndTriggeringPolicy
 					class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
 					<maxFileSize>${MAX_FILE_SIZE}</maxFileSize>
@@ -115,17 +115,177 @@
 		</appender>
 	</springProfile>
 
-    <!-- File Appender for Auth -->
+    <!-- File Appender for Contents -->
     <springProfile name="prod">
-		<appender name="FILE_Auth" class="ch.qos.logback.core.rolling.RollingFileAppender">
-			<file>${LOG_PATH}/Auth/${LOG_FILE_NAME}.log</file>
+		<appender name="FILE_Contents" class="ch.qos.logback.core.rolling.RollingFileAppender">
+			<file>${LOG_PATH}/Contents/${LOG_FILE_NAME}.log</file>
 			<encoder
 				class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
 				<pattern>${LOG_PATTERN}</pattern>
 			</encoder>
 			<rollingPolicy
 				class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-				<fileNamePattern>${LOG_PATH}/Auth/${LOG_FILE_NAME}.%d{yyyy-MM-dd}_%i.log</fileNamePattern>
+				<fileNamePattern>${LOG_PATH}/Contents/${LOG_FILE_NAME}.%d{yyyy-MM-dd}_%i.log</fileNamePattern>
+				<timeBasedFileNamingAndTriggeringPolicy
+					class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+					<maxFileSize>${MAX_FILE_SIZE}</maxFileSize>
+				</timeBasedFileNamingAndTriggeringPolicy>
+				<maxHistory>${MAX_SAVE_DAYS}</maxHistory>
+			</rollingPolicy>
+		</appender>
+	</springProfile>
+
+    <!-- File Appender for CustomerSupport -->
+    <springProfile name="prod">
+		<appender name="FILE_CustomerSupport" class="ch.qos.logback.core.rolling.RollingFileAppender">
+			<file>${LOG_PATH}/CustomerSupport/${LOG_FILE_NAME}.log</file>
+			<encoder
+				class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+				<pattern>${LOG_PATTERN}</pattern>
+			</encoder>
+			<rollingPolicy
+				class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+				<fileNamePattern>${LOG_PATH}/CustomerSupport/${LOG_FILE_NAME}.%d{yyyy-MM-dd}_%i.log</fileNamePattern>
+				<timeBasedFileNamingAndTriggeringPolicy
+					class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+					<maxFileSize>${MAX_FILE_SIZE}</maxFileSize>
+				</timeBasedFileNamingAndTriggeringPolicy>
+				<maxHistory>${MAX_SAVE_DAYS}</maxHistory>
+			</rollingPolicy>
+		</appender>
+	</springProfile>
+
+    <!-- File Appender for LRS -->
+    <springProfile name="prod">
+		<appender name="FILE_LRS" class="ch.qos.logback.core.rolling.RollingFileAppender">
+			<file>${LOG_PATH}/LRS/${LOG_FILE_NAME}.log</file>
+			<encoder
+				class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+				<pattern>${LOG_PATTERN}</pattern>
+			</encoder>
+			<rollingPolicy
+				class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+				<fileNamePattern>${LOG_PATH}/LRS/${LOG_FILE_NAME}.%d{yyyy-MM-dd}_%i.log</fileNamePattern>
+				<timeBasedFileNamingAndTriggeringPolicy
+					class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+					<maxFileSize>${MAX_FILE_SIZE}</maxFileSize>
+				</timeBasedFileNamingAndTriggeringPolicy>
+				<maxHistory>${MAX_SAVE_DAYS}</maxHistory>
+			</rollingPolicy>
+		</appender>
+	</springProfile>
+
+    <!-- File Appender for ManageUser -->
+    <springProfile name="prod">
+		<appender name="FILE_ManageUser" class="ch.qos.logback.core.rolling.RollingFileAppender">
+			<file>${LOG_PATH}/ManageUser/${LOG_FILE_NAME}.log</file>
+			<encoder
+				class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+				<pattern>${LOG_PATTERN}</pattern>
+			</encoder>
+			<rollingPolicy
+				class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+				<fileNamePattern>${LOG_PATH}/ManageUser/${LOG_FILE_NAME}.%d{yyyy-MM-dd}_%i.log</fileNamePattern>
+				<timeBasedFileNamingAndTriggeringPolicy
+					class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+					<maxFileSize>${MAX_FILE_SIZE}</maxFileSize>
+				</timeBasedFileNamingAndTriggeringPolicy>
+				<maxHistory>${MAX_SAVE_DAYS}</maxHistory>
+			</rollingPolicy>
+		</appender>
+	</springProfile>
+
+    <!-- File Appender for MyPage -->
+    <springProfile name="prod">
+		<appender name="FILE_MyPage" class="ch.qos.logback.core.rolling.RollingFileAppender">
+			<file>${LOG_PATH}/MyPage/${LOG_FILE_NAME}.log</file>
+			<encoder
+				class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+				<pattern>${LOG_PATTERN}</pattern>
+			</encoder>
+			<rollingPolicy
+				class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+				<fileNamePattern>${LOG_PATH}/MyPage/${LOG_FILE_NAME}.%d{yyyy-MM-dd}_%i.log</fileNamePattern>
+				<timeBasedFileNamingAndTriggeringPolicy
+					class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+					<maxFileSize>${MAX_FILE_SIZE}</maxFileSize>
+				</timeBasedFileNamingAndTriggeringPolicy>
+				<maxHistory>${MAX_SAVE_DAYS}</maxHistory>
+			</rollingPolicy>
+		</appender>
+	</springProfile>
+
+    <!-- File Appender for Report -->
+    <springProfile name="prod">
+		<appender name="FILE_Report" class="ch.qos.logback.core.rolling.RollingFileAppender">
+			<file>${LOG_PATH}/Report/${LOG_FILE_NAME}.log</file>
+			<encoder
+				class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+				<pattern>${LOG_PATTERN}</pattern>
+			</encoder>
+			<rollingPolicy
+				class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+				<fileNamePattern>${LOG_PATH}/Report/${LOG_FILE_NAME}.%d{yyyy-MM-dd}_%i.log</fileNamePattern>
+				<timeBasedFileNamingAndTriggeringPolicy
+					class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+					<maxFileSize>${MAX_FILE_SIZE}</maxFileSize>
+				</timeBasedFileNamingAndTriggeringPolicy>
+				<maxHistory>${MAX_SAVE_DAYS}</maxHistory>
+			</rollingPolicy>
+		</appender>
+	</springProfile>
+
+    <!-- File Appender for Support -->
+    <springProfile name="prod">
+		<appender name="FILE_Support" class="ch.qos.logback.core.rolling.RollingFileAppender">
+			<file>${LOG_PATH}/Support/${LOG_FILE_NAME}.log</file>
+			<encoder
+				class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+				<pattern>${LOG_PATTERN}</pattern>
+			</encoder>
+			<rollingPolicy
+				class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+				<fileNamePattern>${LOG_PATH}/Support/${LOG_FILE_NAME}.%d{yyyy-MM-dd}_%i.log</fileNamePattern>
+				<timeBasedFileNamingAndTriggeringPolicy
+					class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+					<maxFileSize>${MAX_FILE_SIZE}</maxFileSize>
+				</timeBasedFileNamingAndTriggeringPolicy>
+				<maxHistory>${MAX_SAVE_DAYS}</maxHistory>
+			</rollingPolicy>
+		</appender>
+	</springProfile>
+
+    <!-- File Appender for Test -->
+    <springProfile name="prod">
+		<appender name="FILE_Test" class="ch.qos.logback.core.rolling.RollingFileAppender">
+			<file>${LOG_PATH}/Test/${LOG_FILE_NAME}.log</file>
+			<encoder
+				class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+				<pattern>${LOG_PATTERN}</pattern>
+			</encoder>
+			<rollingPolicy
+				class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+				<fileNamePattern>${LOG_PATH}/Test/${LOG_FILE_NAME}.%d{yyyy-MM-dd}_%i.log</fileNamePattern>
+				<timeBasedFileNamingAndTriggeringPolicy
+					class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+					<maxFileSize>${MAX_FILE_SIZE}</maxFileSize>
+				</timeBasedFileNamingAndTriggeringPolicy>
+				<maxHistory>${MAX_SAVE_DAYS}</maxHistory>
+			</rollingPolicy>
+		</appender>
+	</springProfile>
+
+    <!-- File Appender for TestStudio -->
+    <springProfile name="prod">
+		<appender name="FILE_TestStudio" class="ch.qos.logback.core.rolling.RollingFileAppender">
+			<file>${LOG_PATH}/TestStudio/${LOG_FILE_NAME}.log</file>
+			<encoder
+				class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+				<pattern>${LOG_PATTERN}</pattern>
+			</encoder>
+			<rollingPolicy
+				class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+				<fileNamePattern>${LOG_PATH}/TestStudio/${LOG_FILE_NAME}.%d{yyyy-MM-dd}_%i.log</fileNamePattern>
 				<timeBasedFileNamingAndTriggeringPolicy
 					class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
 					<maxFileSize>${MAX_FILE_SIZE}</maxFileSize>
@@ -190,21 +350,56 @@
     <springProfile name="prod">
 	    <!-- KOFIA general logger -->
         <logger name="com.tmax.eTest" level="${SERVICE_LOG_LEVEL}" additivity="false">
-                <appender-ref ref="FILE_ALL" />
-                <appender-ref ref="ERROR" />
+            <appender-ref ref="FILE_ALL" />
+            <appender-ref ref="ERROR" />
         </logger>
-        <!-- Admin logger -->
+        <!-- Admin file logger -->
         <logger name="com.tmax.eTest.Admin" level="${SERVICE_LOG_LEVEL}" additivity="true">
-            <appender-ref ref="FILE_RECOMMEND"/>
+            <appender-ref ref="FILE_Admin"/>
         </logger>
-        <!-- AnalysisReport logger -->
-        <logger name="com.tmax.eTest.AnalysisReport" level="${SERVICE_LOG_LEVEL}" additivity="true">
-            <appender-ref ref="FILE_AR"/>
+        <!-- Auth file logger -->
+        <logger name="com.tmax.eTest.Auth" level="${SERVICE_LOG_LEVEL}" additivity="true">
+            <appender-ref ref="FILE_Auth"/>
         </logger>
-        <!-- AdditionalLearning logger -->
-        <logger name="com.tmax.eTest.AdditionalLearning" level="${SERVICE_LOG_LEVEL}" additivity="true">
-            <appender-ref ref="FILE_AL"/>
+        <!-- Common file logger -->
+        <logger name="com.tmax.eTest.Common" level="${SERVICE_LOG_LEVEL}" additivity="true">
+            <appender-ref ref="FILE_Common"/>
+        </logger>
+        <!-- Contents file logger -->
+        <logger name="com.tmax.eTest.Contents" level="${SERVICE_LOG_LEVEL}" additivity="true">
+            <appender-ref ref="FILE_Contents"/>
+        </logger>
+        <!-- CustomerSupport file logger -->
+        <logger name="com.tmax.eTest.CustomerSupport" level="${SERVICE_LOG_LEVEL}" additivity="true">
+            <appender-ref ref="FILE_CustomerSupport"/>
+        </logger>
+        <!-- LRS file logger -->
+        <logger name="com.tmax.eTest.LRS" level="${SERVICE_LOG_LEVEL}" additivity="true">
+            <appender-ref ref="FILE_LRS"/>
+        </logger>
+        <!-- ManageUser file logger -->
+        <logger name="com.tmax.eTest.ManageUser" level="${SERVICE_LOG_LEVEL}" additivity="true">
+            <appender-ref ref="FILE_ManageUser"/>
+        </logger>
+        <!-- MyPage file logger -->
+        <logger name="com.tmax.eTest.MyPage" level="${SERVICE_LOG_LEVEL}" additivity="true">
+            <appender-ref ref="FILE_MyPage"/>
+        </logger>
+        <!-- Report file logger -->
+        <logger name="com.tmax.eTest.Report" level="${SERVICE_LOG_LEVEL}" additivity="true">
+            <appender-ref ref="FILE_Report"/>
+        </logger>
+        <!-- Support file logger -->
+        <logger name="com.tmax.eTest.Support" level="${SERVICE_LOG_LEVEL}" additivity="true">
+            <appender-ref ref="FILE_Support"/>
+        </logger>
+        <!-- Test file logger -->
+        <logger name="com.tmax.eTest.Test" level="${SERVICE_LOG_LEVEL}" additivity="true">
+            <appender-ref ref="FILE_Test"/>
+        </logger>
+        <!-- TestStudio file logger -->
+        <logger name="com.tmax.eTest.TestStudio" level="${SERVICE_LOG_LEVEL}" additivity="true">
+            <appender-ref ref="FILE_TestStudio"/>
         </logger>
 	</springProfile>
-
 </configuration>
