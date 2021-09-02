@@ -86,7 +86,7 @@ public class DiagnosisReportController {
 	@PutMapping(value="/bookmark/{videoId}/{isBookmarkOn}", produces = "application/json; charset=utf-8")
 	public boolean setVideoBookmark(
 			HttpServletRequest request,
-			@PathVariable("videoId") Long videoId,
+			@PathVariable("videoId") String videoId,
 			@PathVariable("isBookmarkOn") Boolean isBookmarkOn) throws Exception{
 
 		String id = getUserIDFromRequest(request);

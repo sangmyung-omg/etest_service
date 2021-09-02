@@ -3,10 +3,8 @@ package com.tmax.eTest.Report.controller;
 import java.util.List;
 
 import com.tmax.eTest.Report.dto.MiniTestRecordDTO;
-import com.tmax.eTest.Report.dto.RecommendVideoDTO;
 import com.tmax.eTest.Report.service.MiniTestRecordService;
 import com.tmax.eTest.Report.service.MiniTestScoreService;
-import com.tmax.eTest.Report.service.DiagnosisVideoService;
 import com.tmax.eTest.Test.service.UserInfoService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,8 +20,6 @@ public class MiniTestReportController {
 
 	@Autowired
 	MiniTestScoreService miniTestScoreService;
-	@Autowired
-	DiagnosisVideoService miniTestVideoService;
 	@Autowired
 	MiniTestRecordService miniTestRecordService;
 
@@ -58,6 +54,7 @@ public class MiniTestReportController {
 		return ResponseEntity.ok().body(output);
 	}
 
+<<<<<<< HEAD
 	@CrossOrigin("*")
 	@PutMapping(value = "/report/miniTestResult/recommendVideoBookmark/{userId}/{videoId}/{isBookmarkOn}", produces = "application/json; charset=utf-8")
 	public boolean setVideoBookmark(@PathVariable("userId") String userId, @PathVariable("videoId") String videoId,
@@ -77,4 +74,6 @@ public class MiniTestReportController {
 
 =======
 >>>>>>> 69495b2... [feat] Diagnosis Main Record 에 정보 추가.
+=======
+>>>>>>> 90b72dc... [feat] VideoId String 화에 따른 변경.(Master Pull 당긴 후 나오는 에러 처리를 위해 dev에서 작업)
 }

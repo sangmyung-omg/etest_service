@@ -12,7 +12,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface VideoRepository extends JpaRepository<Video, Long> {
+public interface VideoRepository extends JpaRepository<Video, String> {
 
   @Query("select new com.tmax.eTest.Contents.dto.VideoJoin(v, vb.userUuid) from Video v left outer join VideoBookmark vb on (v.videoId = vb.videoId and vb.userUuid = :user_id)")
   List<VideoJoin> getUserVideoListAndSort(@Param("user_id") String userId, Sort sort);

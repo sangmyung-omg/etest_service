@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class RecommendVideoDTO {
 	
-	long id;
+	String id;
 	String videoSrcUrl;
 	String title;
 	String thumbnailUrl;

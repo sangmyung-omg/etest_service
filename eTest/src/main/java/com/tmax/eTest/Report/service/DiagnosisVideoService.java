@@ -49,9 +49,18 @@ public class DiagnosisVideoService {
 =======
 >>>>>>> 69495b2... [feat] Diagnosis Main Record 에 정보 추가.:eTest/src/main/java/com/tmax/eTest/Report/service/DiagnosisVideoService.java
 
+<<<<<<< HEAD
 	public boolean setVideoBookmark(String userId, String videoId, boolean isCheckBookmark) throws Exception {
 		try {
 			if (isCheckBookmark) {
+=======
+	public boolean setVideoBookmark(String userId, String videoId, boolean isCheckBookmark) throws Exception
+	{
+		try
+		{
+			if(isCheckBookmark)
+			{
+>>>>>>> 90b72dc... [feat] VideoId String 화에 따른 변경.(Master Pull 당긴 후 나오는 에러 처리를 위해 dev에서 작업)
 				VideoBookmark bookmarkModel = new VideoBookmark(userId, videoId);
 				videoBookmarkRepo.save(bookmarkModel);
 			} else {

@@ -158,7 +158,7 @@ public class DiagnosisMainRecordService {
 		for(int jsonArrIdx = 0; jsonArrIdx < recInfoJsonArray.size(); jsonArrIdx++)
 		{
 			JsonObject recObj = recInfoJsonArray.get(jsonArrIdx).getAsJsonObject();
-			Long recVideoId = Long.parseLong(recObj.get("id").getAsString());
+			String recVideoId = recObj.get("id").getAsString();
 			
 			Video videoInfo = null;
 			
