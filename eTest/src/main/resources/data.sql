@@ -1912,3 +1912,13 @@ insert into "ETEST"."TEST_PROBLEM" ("SET_NUM", "SEQUENCE", "PROB_ID", "SUBJECT" 
 insert into "ETEST"."TEST_PROBLEM" ("SET_NUM", "SEQUENCE", "PROB_ID", "SUBJECT" ) values (1, 20, 20, null);
 
 ------- End of ETEST.TEST_PROBLEM -------
+
+
+------- 210902 add part and external_link in UK_MASTER table -------
+update uk_master set part = '생애주기' where uk_id between (select uk_id from uk_master where uk_name='생애주기') AND (select uk_id from uk_master where uk_name = '은퇴 준비를 위한 재무 계획');
+update uk_master set part = '필요자금 마련방법' where uk_id between (select uk_id from uk_master where uk_name = '필요자금 마련방법') AND (select uk_id from uk_master where uk_name= '방어형 투자자');
+update uk_master set part = '금융투자상품 가치변동요인' where uk_id between (select uk_id from uk_master where uk_name = '금융투자상품 가치변동요인') AND (select uk_id from uk_master where uk_name = '코리아디스카운트');
+update uk_master set part = '금융투자상품의 매매' where uk_id between (select uk_id from uk_master where uk_name = '금융투자상품의 매매') AND (select uk_id from uk_master where uk_name = '자산보관관리보고서(펀드)');
+update uk_master set part = '금융투자상품 관리' where uk_id between (select uk_id from uk_master where uk_name = '금융투자상품 관리') AND (select uk_id from uk_master where uk_name = '상장폐지 사유');
+update uk_master set part = '행동편향' where uk_id between (select uk_id from uk_master where uk_name = '행동편향') AND (select uk_id from uk_master where uk_name = '편향 극복을 위한 지속적 노력');
+update uk_master set external_link = concat('https://www.example.com/', uk_master.uk_id);
