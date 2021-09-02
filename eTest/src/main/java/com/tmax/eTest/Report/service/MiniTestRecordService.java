@@ -150,7 +150,7 @@ public class MiniTestRecordService {
 														return Stream.empty();
 													
 													//build info (name, score, desc, link)	
-													return Stream.of( Arrays.asList(uk.getUkName(), data.get(2), uk.getUkDescription(), "https://www.google.com") );
+													return Stream.of( Arrays.asList(uk.getUkName(), data.get(2), uk.getUkDescription(), "https://www.example.com/" + uk.getUkName()) );
 											  }).collect(Collectors.toList());
 
 		long score = (long)Math.floor(totalScore / ukDataList.size());
@@ -304,6 +304,10 @@ public class MiniTestRecordService {
 									return (isGuess > 0) ? 1 : 0;
 								})
 								.reduce(0, Integer::sum);
+
+
+		//TEMP comment template
+		String[] commentTemplate = {"미니진단을 통해 분석된 지식점수에요. 진단자 평균대비 높은 점수를 받으셨네요.","이제 상세 분야별로 나의 지식 점수를 확인해보세요. 우선적으로 학습해야하는 분야를 알 수 있습니다."};
 
 		
 		MiniTestRecordDTO result =  MiniTestRecordDTO.builder()

@@ -1,14 +1,19 @@
 package com.tmax.eTest.Report.controller;
 
-import java.util.List;
+
+// import java.util.List;
 
 import com.tmax.eTest.Report.dto.MiniTestRecordDTO;
+// import com.tmax.eTest.Report.dto.RecommendVideoDTO;
 import com.tmax.eTest.Report.service.MiniTestRecordService;
 import com.tmax.eTest.Report.service.MiniTestScoreService;
 import com.tmax.eTest.Test.service.UserInfoService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+
+// import com.google.gson.Gson;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,6 +21,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@PreAuthorize("hasRole('ROLE_USER')")
 public class MiniTestReportController {
 
 	@Autowired
@@ -41,14 +47,34 @@ public class MiniTestReportController {
 	}
 
 	@CrossOrigin("*")
-	@GetMapping(value = "/report/miniTest/record/{id}/{probSetId}", produces = "application/json; charset=utf-8")
-	public ResponseEntity<?> miniTestRecord(@PathVariable("id") String id, @PathVariable("probSetId") String probSetId)
-			throws Exception {
+	@GetMapping(value="/report/miniTest/record/{id}/{probSetId}", produces = "application/json; charset=utf-8")
+	public ResponseEntity<?> miniTestRecord(
+			@PathVariable("id") String id,
+			@PathVariable("probSetId") String probSetId) throws Exception{
+		
+		MiniTestRecordDTO output = miniTestRecordService.getMiniTestRecord(id, probSetId);
 
-		// Saving user ID of not-logged-in users - by S.M.
-		// String updateResult = userService.updateUserInfo(id);
-		// ------------------------------------------------
+		return ResponseEntity.ok().body(output);
+	}
 
+	@CrossOrigin("*")
+	@PutMapping(value="/report/miniTest/saveAndGetResult/{id}/{probSetId}", produces = "application/json; charset=utf-8")
+	public ResponseEntity<?> saveAndGetMiniTestRecord(
+			@PathVariable("id") String id,
+			@PathVariable("probSetId") String probSetId) throws Exception{
+		
+		miniTestScoreService.saveMiniTestResult(id, probSetId);
+		MiniTestRecordDTO output = miniTestRecordService.getMiniTestRecord(id, probSetId);
+
+		return ResponseEntity.ok().body(output);
+	}
+
+	@CrossOrigin("*")
+	@GetMapping(value="/report/miniTest/record/set/{probSetId}", produces = "application/json; charset=utf-8")
+	public ResponseEntity<?> miniTestRecord2(@PathVariable("probSetId") String probSetId) throws Exception{
+		//Extract id from auth
+		String id = "";
+		
 		MiniTestRecordDTO output = miniTestRecordService.getMiniTestRecord(id, probSetId);
 
 		return ResponseEntity.ok().body(output);
