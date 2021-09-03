@@ -1,6 +1,5 @@
 stages:
   - build
-  - test
   - package
 
 # Run before script
@@ -10,12 +9,16 @@ before_script:
 # gitlab-ci에서 사용될 변수 설정
 variables:
   # 레지스트리에 푸시될 이미지 이름 설정
-  IMAGE_NAME: "etest-auth"
+  IMAGE_NAME: "kofia-backend"
   # 컨테이너 이름 설정 (ex. wapl-math-backend)
   # ('${NAME}-dep', '${NAME}-service' 이름으로 디플로이먼트와 서비스 배포 예정)
-  NAME: "etest-auth"
+  NAME: "kofia-backend"
   # 레지스트리 호스트 입력
-  REGISTRY_HOST: "hs-registry.220.90.208.8.nip.io:443"
+  REGISTRY_HOST: "kofia-registry.220.90.208.8.nip.io:443"
+  REGISTRY_ID: "admin"
+  REGISTRY_PASSWORD: "admin"
+  REGISTRY_IMAGE_PULL_SECRETS: "hpcd-registry-kofia-registry"
+
 
 # Spring 빌드 job
 gradle-build:
@@ -41,27 +44,6 @@ gradle-build:
   tags:
     - docker # docker gitlab-runner 에서 실행
 
-# Spring 테스트 job
-unitTests:
-  stage: test
-  image: java:8-jdk
-  only:
-    - inactive
-
-  # Spring 테스트 스크립트
-  script:
-    - export GRADLE_USER_HOME=pwd/.gradle
-    - cd eTest
-    - chmod +x gradlew
-    - ./gradlew assemble
-    - ./gradlew test
-  artifacts:
-    paths:
-      - eTest/build/libs/*.jar
-    expire_in: 1 week
-  tags:
-    - docker # docker gitlab-runner 에서 실행
-
 # 도커 이미지 패키징 -> 이미지 푸시 -> 배포 및 이미지 버전 업데이트    
 docker-build:
   stage: package
@@ -70,17 +52,23 @@ docker-build:
   script:
     # 도커 이미지 빌드 후 레지스트리에 푸시
     - docker build -t ${REGISTRY_HOST}/${IMAGE_NAME}:${CI_COMMIT_TAG} .
-    - docker login -u hyperstudy -p hyperstudy123!@# ${REGISTRY_HOST}
+    - docker login -u ${REGISTRY_ID} -p ${REGISTRY_PASSWORD} ${REGISTRY_HOST}
     - docker push ${REGISTRY_HOST}/${IMAGE_NAME}:${CI_COMMIT_TAG}
 
     # 템플릿 yaml 파일에 이미지 이름과 이미지 버전 업데이트 후 하이퍼클라우드에 적용
-    - envsubst '${IMAGE_NAME} ${CI_COMMIT_TAG} ${NAME} ${REGISTRY_HOST}' <sample-template.yaml | kubectl apply -f -
+    - envsubst '${IMAGE_NAME} ${CI_COMMIT_TAG} ${NAME} ${REGISTRY_HOST} ${REGISTRY_IMAGE_PULL_SECRETS} ${GITLAB_USER_LOGIN}' <sample-template.yaml > template.yaml
+    - kubectl apply -f template.yaml
 
     # 템플릿 인스턴스 하이퍼클라우드에 적용(변경 있을 시만 적용)
-    - envsubst '${IMAGE_NAME} ${CI_COMMIT_TAG} ${NAME} ${REGISTRY_HOST}' <sample-instance.yaml | kubectl apply -f -
+    - envsubst '${IMAGE_NAME} ${CI_COMMIT_TAG} ${NAME} ${REGISTRY_HOST} ${REGISTRY_IMAGE_PULL_SECRETS} ${GITLAB_USER_LOGIN}' <sample-instance.yaml > instance.yaml
+    - kubectl apply -f instance.yaml
 
     # 디플로이먼트의 이미지 버전 업데이트
     - kubectl set image deployment ${NAME}-dep ${NAME}-dep=${REGISTRY_HOST}/${IMAGE_NAME}:${CI_COMMIT_TAG}
+  artifacts:
+    paths:
+      - template.yaml
+      - instance.yaml
   tags:
     - shell # shell gitlab-runner 에서 실행
 
