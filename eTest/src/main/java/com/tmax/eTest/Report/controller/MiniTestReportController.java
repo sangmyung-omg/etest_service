@@ -93,6 +93,9 @@ public class MiniTestReportController {
 		
 		miniTestScoreService.saveMiniTestResult(id, probSetId);
 		MiniTestRecordDTO output = miniTestRecordService.getMiniTestRecord(id, probSetId);
+
+		if(output == null)
+			return ResponseEntity.internalServerError().body("Record not found");
 		
 		return ResponseEntity.ok().body(output);
 	}
@@ -109,6 +112,8 @@ public class MiniTestReportController {
 		}
 		
 		MiniTestRecordDTO output = miniTestRecordService.getMiniTestRecord(id, probSetId);
+		if(output == null)
+			return ResponseEntity.internalServerError().body("Record not found");
 
 		return ResponseEntity.ok().body(output);
 	}

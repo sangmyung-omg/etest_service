@@ -299,7 +299,7 @@ public class MiniTestRecordService {
 		statementList = filterPureLrsStatement(statementList);
 
 		//Problem info build
-		List<List<String>> problemInfoTotal = createProblemInfo(statementList, userId);
+ 		List<List<String>> problemInfoTotal = createProblemInfo(statementList, userId);
 
 		List<List<String>> lowInfo = problemInfoTotal.stream().filter(info -> info.get(info.size()-1).equals("하")).collect(Collectors.toList());
 		List<List<String>> midInfo = problemInfoTotal.stream().filter(info -> info.get(info.size()-1).equals("중")).collect(Collectors.toList());
@@ -327,11 +327,23 @@ public class MiniTestRecordService {
 									try{extension = JsonParser.parseString(statement.getExtension()).getAsJsonObject();}
 									catch(Exception e){log.warn("extension can't be parsed. {}", statement.getExtension()); return 0;}
 
-									int isGuess = 0;
-									try{isGuess = extension.get("guessAlarm").getAsInt();}
-									catch(Exception e){log.error("guessAlarm is not a valid int type"); return 0;}
+									Integer isGuessInt = null;
+									try{isGuessInt = extension.get("guessAlarm").getAsInt();}
+									catch(Exception e){}
 
-									return (isGuess > 0) ? 1 : 0;
+									Boolean isGuessBool = null;
+									try{isGuessBool = extension.get("guessAlarm").getAsBoolean();}
+									catch(Exception e){}
+
+									//If both value is null => warn and skip
+									if(isGuessBool == null && isGuessInt == null){
+										log.warn("guessAlarm invalid {}", extension.toString());
+									}
+									
+									if(isGuessInt != null && isGuessInt > 0) return 1;
+									if(isGuessBool != null && isGuessBool) return 1;
+
+									return 0;
 								})
 								.reduce(0, Integer::sum);
 
