@@ -67,7 +67,7 @@ public class AuthController {
             info.put("jwtToken",jwtToken);
             info.put("email",userMaster.getEmail());
             info.put("gender", userMaster.getGender().toString());
-            info.put("birthdat", userMaster.getBirthday().toString());
+            info.put("birthday", userMaster.getBirthday().toString());
             info.put("nickname",userMaster.getNickname());
             info.put("provider",userMaster.getProvider().toString());
             info.put("providerId",userMaster.getProviderId().toString());

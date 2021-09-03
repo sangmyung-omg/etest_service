@@ -89,7 +89,7 @@ public class InquiryController {
 
     @GetMapping(value="/inquiry/attachment")
     public ResponseEntity<Resource> attachment(@Param("filename") String filename){
-        String temp = path;
+        String temp = path+"/inquiry/";
         Path filePath = null;
         filePath = Paths.get(temp+filename);
         HttpHeaders header = new HttpHeaders();
