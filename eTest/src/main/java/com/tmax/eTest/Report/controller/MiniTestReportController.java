@@ -83,7 +83,8 @@ public class MiniTestReportController {
 
 	@CrossOrigin("*")
 	@PutMapping(value = "/report/minitest", produces = "application/json; charset=utf-8")
-	public ResponseEntity<?> updateMiniTestResult(HttpServletRequest request, @RequestParam("probSetId") String probSetId) throws Exception {
+	public ResponseEntity<?> updateMiniTestResult(HttpServletRequest request, @RequestParam("probSetId") String probSetId, 
+												 @RequestParam(value = "forceUpdate", defaultValue = "false") boolean forceUpdate) throws Exception {
 		//Extract id from auth
 		String id = userIdFetchTool.getID(request);
 
@@ -91,7 +92,10 @@ public class MiniTestReportController {
 			return ResponseEntity.internalServerError().body("Cannot get uuid from token info");
 		}
 		
-		miniTestScoreService.saveMiniTestResult(id, probSetId);
+		//update if record does not exist or forceupdate
+		if(!miniTestRecordService.checkMinireportExist(id, probSetId) || forceUpdate)
+			miniTestScoreService.saveMiniTestResult(id, probSetId);
+
 		MiniTestRecordDTO output = miniTestRecordService.getMiniTestRecord(id, probSetId);
 
 		if(output == null)

@@ -295,8 +295,14 @@ public class MiniTestRecordService {
 														  .build());
 		}
 		catch(Exception e){e.printStackTrace(); return null;}
-		if(statementList.size() == 0) return null;
 		statementList = filterPureLrsStatement(statementList);
+		statementList = statementList.stream().parallel().filter(statement -> {
+											try {if(JsonParser.parseString(statement.getExtension()).getAsJsonObject().get("diagProbSetId").getAsString().equals(probSetId)) return true;}
+											catch(Exception e) {log.warn("extension parse error");return false;}
+											return false;
+										})
+										.collect(Collectors.toList()); //filter by problem id
+		if(statementList.size() == 0) return null;
 
 		//Problem info build
  		List<List<String>> problemInfoTotal = createProblemInfo(statementList, userId);
@@ -369,6 +375,12 @@ public class MiniTestRecordService {
 								 .build();
 
 		return result;
+	}
+
+
+	public boolean checkMinireportExist(String userId, String probSetId){
+		Optional<MinitestReport> queryResult = reportRepo.getReport(probSetId, userId);
+		return queryResult.isPresent();
 	}
 	
 }
