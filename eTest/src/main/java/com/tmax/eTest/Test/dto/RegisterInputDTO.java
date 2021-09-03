@@ -5,5 +5,5 @@ import lombok.NoArgsConstructor;
 
 @Data
 public class RegisterInputDTO {
-    private String NRUuid;
+    private String nrUuid;
 }

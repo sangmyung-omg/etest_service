@@ -146,14 +146,12 @@ public class DiagnosisControllerV1 {
 	*/
 	
 	// 인가 필요 페이지
-	// @PreAuthorize("ROLE_USER")
-	@GetMapping(value = "/user/minitest", produces = "application/json; charset=utf-8")
-	public ResponseEntity<Object> getMinitestProblems(HttpServletRequest request,
-													  @AuthenticationPrincipal PrincipalDetails principalDetails) throws Exception {
+	@PreAuthorize("hasRole('ROLE_USER')")
+	@GetMapping(value = "/minitest", produces = "application/json; charset=utf-8")
+	public ResponseEntity<Object> getMinitestProblems(@AuthenticationPrincipal PrincipalDetails principalDetails) throws Exception {
 		log.info("> minitest logic start!");
 		Map<String, Object> result = new HashMap<String, Object>();
 
-		;
 		// Check User UUID from request header
 		String userUuid = principalDetails.getUserUuid();
 		// String token = request.getHeader("Authorization").replace("Bearer ","");
