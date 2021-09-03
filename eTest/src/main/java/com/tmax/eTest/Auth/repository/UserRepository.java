@@ -25,6 +25,8 @@ public interface UserRepository extends JpaRepository<UserMaster, Long> {
 
     Boolean existsByNickname(String nickname);
 
+    @Query("select count(*) from com.tmax.eTest.Common.model.user.UserMaster u where createDate between :dateFrom and :dateTo")
+    Long findAllByCreateTime(@Param("dateFrom") LocalDateTime dateFrom,@Param("dateTo") LocalDateTime dateTo);
 
 
 

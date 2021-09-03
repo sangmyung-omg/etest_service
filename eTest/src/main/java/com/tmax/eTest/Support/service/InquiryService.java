@@ -1,7 +1,6 @@
 package com.tmax.eTest.Support.service;
 
 import com.tmax.eTest.Auth.dto.PrincipalDetails;
-import com.tmax.eTest.Auth.exception.ResourceNotFoundExceptionDto;
 import com.tmax.eTest.Auth.repository.UserRepository;
 import com.tmax.eTest.Common.model.support.Inquiry;
 import com.tmax.eTest.Common.model.support.Inquiry_file;
@@ -10,22 +9,14 @@ import com.tmax.eTest.Support.dto.CreateInquiryDto;
 import com.tmax.eTest.Support.dto.ModifyInquiryDto;
 import com.tmax.eTest.Support.repository.InquiryFileRepository;
 import com.tmax.eTest.Support.repository.InquiryRepository;
-
 import java.io.IOException;
 import java.nio.file.Files;
-
-import org.apache.tika.Tika;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.BeanWrapper;
-import org.springframework.beans.BeanWrapperImpl;
-import org.springframework.beans.FatalBeanException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.nio.file.*;
 import java.util.*;
@@ -45,7 +36,7 @@ public class InquiryService {
     UserRepository userRepository;
 
     @Value("${file.path}")
-    private String uploadFolder;
+    private String filePath;
 
     @Transactional
     public Inquiry createInquiry(CreateInquiryDto createInquiryDto, PrincipalDetails principalDetails) {
@@ -61,9 +52,10 @@ public class InquiryService {
                         .build();
         inquiryRepository.save(inquiry);
 
-        if (!(createInquiryDto.getFileList()== null)) {
+        if (!(createInquiryDto.getFileList() == null)) {
             for(int i=0; i<createInquiryDto.getFileList().size(); i++){
                 String fileName = UUID.randomUUID().toString() + "_" + createInquiryDto.getFileList().get(i).getOriginalFilename();
+                String uploadFolder = filePath + "inquiry/";
                 Path imageFilePath = Paths.get(uploadFolder + fileName);
                 Inquiry_file inquiry_file = Inquiry_file.builder()
                         .name(createInquiryDto.getFileList().get(i).getOriginalFilename().replaceFirst("[.][^.]+$", "")) // 확장자 지우기
@@ -100,6 +92,7 @@ public class InquiryService {
         inquiry.setContent(modifyInquiryDto.getContent());
         inquiry.setTitle(modifyInquiryDto.getTitle());
         inquiry.setType(modifyInquiryDto.getType());
+        String uploadFolder = filePath + "inquiry/";
 
         /***
          * inquiry file은 db/storage 전부 지웠다가 새로 만들고
@@ -112,7 +105,6 @@ public class InquiryService {
             try {
                 Files.delete(filePath);
             } catch (NoSuchFileException e) {
-                System.out.println("삭제하려는 파일이 없습니다");
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -122,8 +114,6 @@ public class InquiryService {
         for(int i =0; i < inquiry.getInquiry_file().size(); i++) {
             inquiryFileNumberList.add(inquiry.getInquiry_file().get(i).getId());
         }
-        System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-        System.out.println(inquiryFileNumberList);
         for (int i = 0; i < inquiryFileNumberList.size(); i++) {
             Long id = inquiryFileNumberList.get(i);
             inquiryFileRepository.deleteById(id);

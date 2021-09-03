@@ -16,7 +16,6 @@ import com.tmax.eTest.Auth.dto.Gender;
 import com.tmax.eTest.Auth.dto.AuthProvider;
 import com.tmax.eTest.Auth.dto.Role;
 import com.tmax.eTest.Common.model.error_report.ErrorReport;
-
 import com.tmax.eTest.Common.model.support.Inquiry;
 import lombok.*;
 

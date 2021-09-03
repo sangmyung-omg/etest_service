@@ -8,6 +8,7 @@ import com.tmax.eTest.Support.service.NoticeService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,7 +24,7 @@ public class NoticeController {
 
     @GetMapping("/notice")
     public CMRespDto<?> findAllNotice() {
-        List<Notice> noticeList =  noticeRepository.findAll();
+        List<Notice> noticeList =  noticeRepository.findAll(Sort.by(Sort.Direction.DESC, "date"));
         return new CMRespDto<>(200,"공지사항 가져오기 성공",noticeList);
     }
 

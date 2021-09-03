@@ -19,9 +19,10 @@ import java.util.function.Function;
 public class JwtTokenUtil implements Serializable {
 
     private static final long serialVersionUID = -2550185165626007488L;
-    public static final long JWT_ACCESS_TOKEN_VALIDITY = 60000000; //10분
-    public static final long JWT_REFRESH_TOKEN_VALIDITY = 24 * 60 * 60 * 7; //일주일
-
+    @Value("${jwt.access.token.time}")
+    private long JWT_ACCESS_TOKEN_VALIDITY; //10분
+    @Value("${jwt.refresh.token.time}")
+    private long JWT_REFRESH_TOKEN_VALIDITY; //일주일
     @Value("${jwt.secret}")
     private String secret;
 
@@ -47,8 +48,8 @@ public class JwtTokenUtil implements Serializable {
     public Map<String, Object> getUserParseInfo(String token) {
         Claims parseInfo = Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
         Map<String, Object> result = new HashMap<>();
+        result.put("userUuid", parseInfo.get("userUuid"));
         result.put("email", parseInfo.getSubject());
-        result.put("userUuid",parseInfo.get("userUuid"));
         result.put("role", parseInfo.get("role", List.class));
         return result;
     }
@@ -65,8 +66,8 @@ public class JwtTokenUtil implements Serializable {
         for (GrantedAuthority a: principalDetails.getAuthorities()) {
             li.add(a.getAuthority());
         }
-        claims.put("userUuid", principalDetails.getUserUuid());
         claims.put("email", principalDetails.getEmail());
+        claims.put("userUuId", principalDetails.getUserUuid());
         claims.put("role",li);
         return Jwts.builder().setClaims(claims).setSubject(principalDetails.getEmail()).setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + JWT_ACCESS_TOKEN_VALIDITY*1000))
@@ -78,20 +79,7 @@ public class JwtTokenUtil implements Serializable {
                 .setExpiration(new Date(System.currentTimeMillis() + JWT_REFRESH_TOKEN_VALIDITY*1000))
                 .signWith(SignatureAlgorithm.HS512, secret).compact();
     }
-    //while creating the token -
-//1. Define  claims of the token, like Issuer, Expiration, Subject, and the ID
-//2. Sign the JWT using the HS512 algorithm and secret key.
-//3. According to JWS Compact Serialization(https://tools.ietf.org/html/draft-ietf-jose-json-web-signature-41#section-3.1)
-//   compaction of the JWT to a URL-safe string
-    /*
-    private String doGenerateToken(Map<String, Object> claims, String subject) {
-        return Jwts.builder().setClaims(claims).setSubject(subject).setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + JWT_TOKEN_VALIDITY * 1000))
-                .signWith(SignatureAlgorithm.HS512, secret).compact();
-    }
 
-     */
-    //validate token
     public Boolean validateToken(String token, PrincipalDetails principalDetails) {
         final String email = getEmailFromToken(token);
         return (email.equals(principalDetails.getEmail()) && !isTokenExpired(token));
