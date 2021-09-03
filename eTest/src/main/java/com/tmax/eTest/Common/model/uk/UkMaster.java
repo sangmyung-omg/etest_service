@@ -29,6 +29,7 @@ public class UkMaster {
 	private String ukDescription;
 	private String trainUnseen;
 	private String part;
+	private String externalLink;
 
 	@OneToMany(mappedBy = "ukId")
 	private List<ProblemChoice> problemChoices = new ArrayList<ProblemChoice>();

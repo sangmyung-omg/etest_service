@@ -12,6 +12,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PartDataDTO {
+    private String partName;
     private Long score;
     private Long percentage;
     private List<List<String>> ukInfo;
