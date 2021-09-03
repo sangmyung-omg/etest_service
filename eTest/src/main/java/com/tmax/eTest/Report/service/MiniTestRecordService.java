@@ -3,20 +3,14 @@ package com.tmax.eTest.Report.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
 import com.tmax.eTest.Contents.repository.ProblemRepository;
 import com.tmax.eTest.LRS.util.LRSAPIManager;
 import com.tmax.eTest.Report.dto.MiniTestRecordDTO;
 import com.tmax.eTest.Report.util.SNDCalculator;
-// import com.tmax.eTest.Report.util.RuleBaseScoreCalculator;
-// import com.tmax.eTest.Report.util.DiagnosisComment;
-// import com.tmax.eTest.Report.util.StateAndProbProcess;
-// import com.tmax.eTest.Report.util.TritonAPIManager;
-// import com.tmax.eTest.Report.util.UKScoreCalculator;
-// import com.tmax.eTest.Common.repository.report.DiagnosisReportRepo;
-// import com.tmax.eTest.Test.repository.UserKnowledgeRepository;
-
 import com.tmax.eTest.Report.util.minitest.PartMapper;
 import com.tmax.eTest.Common.repository.report.MinitestReportRepo;
 
@@ -34,6 +28,7 @@ import java.util.HashMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.List;
+import java.util.ArrayList;
 import java.time.ZonedDateTime;
 import java.util.Set;
 import java.util.Collections;
@@ -53,40 +48,13 @@ import com.tmax.eTest.LRS.dto.StatementDTO;
 
 import com.tmax.eTest.Common.model.problem.Problem;
 
-import com.tmax.eTest.Common.repository.report.MinitestReportRepo;
 
-import com.tmax.eTest.Common.model.report.MinitestReport;
-import com.tmax.eTest.Report.dto.minitest.PartInfoDTO;
-import com.tmax.eTest.Report.dto.minitest.PartDataDTO;
-
-import com.tmax.eTest.Common.repository.uk.UkMasterRepo;
-import com.tmax.eTest.Common.model.uk.UkMaster;
-
-import java.util.Optional;
-import java.util.Arrays;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-import java.util.List;
-import java.time.LocalDateTime;
-import java.util.Set;
-import java.util.Collections;
-import java.util.concurrent.atomic.AtomicInteger;
-
-import java.lang.reflect.Type;
-
-import com.google.common.reflect.TypeToken;
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import com.google.gson.JsonArray;
-import java.util.stream.StreamSupport;
-
-import com.tmax.eTest.LRS.dto.GetStatementInfoDTO;
-import com.tmax.eTest.LRS.dto.StatementDTO;
-
-import com.tmax.eTest.Common.model.problem.Problem;
+@Data
+@AllArgsConstructor
+class PartDataTuple{
+	private String key;
+	private PartDataDTO partData;
+}
 
 @Service
 @Slf4j
@@ -109,10 +77,15 @@ public class MiniTestRecordService {
 
 	@Autowired private UkMasterRepo ukMasterRepo;
 
-	@Autowired private PartMapper partMapper;
-
 
 	private static final int PICK_ALARM_CNT_THRESHOLD = 3;
+	private static final int COMMENT_HIGH_LOW_SPLIT_THRESHOLD_SCORE = 60;
+
+	private PartDataDTO buildPartData(JsonArray mastery, String partname){
+		PartDataDTO output = buildPartData(mastery);
+		output.setPartName(partname);
+		return output;
+	}
 
 	private PartDataDTO buildPartData(JsonArray mastery){
 		//Parse raw data
@@ -152,7 +125,7 @@ public class MiniTestRecordService {
 														return Stream.empty();
 													
 													//build info (name, score, desc, link)	
-													return Stream.of( Arrays.asList(uk.getUkName(), data.get(2), uk.getUkDescription(), "https://www.example.com/" + uk.getUkName()) );
+													return Stream.of( Arrays.asList(uk.getUkName(), data.get(2), uk.getUkDescription(), uk.getExternalLink() ) );
 											  }).collect(Collectors.toList());
 
 		long score = (long)Math.floor(totalScore / ukDataList.size());
@@ -230,6 +203,51 @@ public class MiniTestRecordService {
 		return outProbInfo;
 	}
 
+	private List<StatementDTO> filterPureLrsStatement(List<StatementDTO> statementList) {
+		Map<String, StatementDTO> srcIdStatementMap = new HashMap<>();
+		for(StatementDTO statement : statementList){
+			String srcId = statement.getSourceId();
+			//if not in map insert
+			if(!srcIdStatementMap.containsKey(srcId)){
+				srcIdStatementMap.put(srcId, statement);
+				continue;
+			}
+			
+			//if exists, compare the timestamp and add the later one
+			ZonedDateTime inMapTime = null;
+			ZonedDateTime currTime = null;
+			//Try and inMap's time and curr time
+			try{inMapTime = ZonedDateTime.parse(srcIdStatementMap.get(srcId).getTimestamp());}
+			catch(Exception e){log.warn("Timestamp error in LRS statement {}", srcIdStatementMap.get(srcId).getTimestamp());}
+			try{currTime = ZonedDateTime.parse(statement.getTimestamp());}
+			catch(Exception e){log.warn("Timestamp error in LRS statement {}", statement.getTimestamp());}
+
+			//Overwrite with value that has time
+			if(inMapTime == null && currTime != null){
+				srcIdStatementMap.put(srcId, statement);
+				continue;
+			}
+
+
+			//if both is not null
+			if(inMapTime != null && currTime != null){
+				if(inMapTime.compareTo(currTime) > 0)
+					srcIdStatementMap.put(srcId, statement);
+
+				continue;
+			}
+
+			//Other case?
+			log.warn("Too many invalid timestamps in lrs");
+		}
+
+		//return list from map
+		List<StatementDTO> filteredList = srcIdStatementMap.entrySet().stream().map(e -> e.getValue()).collect(Collectors.toList());
+		// Collections.sort(filteredList, ) --> no need to sort. there is sorting later on
+		
+		return filteredList;
+	}
+
 	
 	public MiniTestRecordDTO getMiniTestRecord(String userId,String probSetId){
 		//Get report
@@ -248,12 +266,20 @@ public class MiniTestRecordService {
 				JsonObject masteryMap = (JsonObject)JsonParser.parseString(minitestMastery);
 
 				//Make readable map first
-				partInfoReadable = masteryMap.entrySet().stream()
-									.collect(Collectors.toMap(e -> e.getKey(),
-															  e -> buildPartData((JsonArray)e.getValue()) ));
+				// partInfoReadable = masteryMap.entrySet().stream()
+				// 					.collect(Collectors.toMap(e -> e.getKey(),
+				// 											  e -> buildPartData((JsonArray)e.getValue()) ));
+				partInfoReadable = PartMapper.map.keySet().stream().map(key -> {
+												JsonArray masteryArray = (JsonArray)masteryMap.get(key);
+												if(masteryArray == null){
+													return new PartDataTuple(key, PartDataDTO.builder().partName(key).ukInfo(new ArrayList<>()).build());
+												}
+												return new PartDataTuple(key, buildPartData(masteryArray, key));
+											})
+											.collect(Collectors.toMap(PartDataTuple::getKey, PartDataTuple::getPartData));
 
 				masteryMap.entrySet().stream().forEach(entry -> {
-					partInfo.setPartData(entry.getKey(), buildPartData((JsonArray)entry.getValue()));
+					partInfo.setPartData(entry.getKey(), buildPartData((JsonArray)entry.getValue(), entry.getKey()));
 				});
 			}
 			catch(Exception e){e.printStackTrace(); log.error("uk mastery parse error. {}. {}. {}",userId, probSetId, minitestMastery);}			
@@ -264,11 +290,13 @@ public class MiniTestRecordService {
 		try{
 			statementList = lrsAPIManager.getStatementList(GetStatementInfoDTO.builder()
 														  .userIdList(Arrays.asList(userId))
+														  .actionTypeList(Arrays.asList("submit"))
 														  .sourceTypeList(Arrays.asList("mini_test_question"))
 														  .build());
 		}
 		catch(Exception e){e.printStackTrace(); return null;}
 		if(statementList.size() == 0) return null;
+		statementList = filterPureLrsStatement(statementList);
 
 		//Problem info build
 		List<List<String>> problemInfoTotal = createProblemInfo(statementList, userId);
@@ -310,7 +338,8 @@ public class MiniTestRecordService {
 
 
 		//TEMP comment template
-		String commentTemplate = "미니진단을 통해 분석된 지식점수에요. 진단자 평균대비 높은 점수를 받으셨네요.\n이제 상세 분야별로 나의 지식 점수를 확인해보세요. 우선적으로 학습해야하는 분야를 알 수 있습니다.";
+		String commentTemplate = String.format("미니진단을 통해 분석된 지식점수에요.\n진단자 평균대비 %s 점수를 받으셨네요.\n이제 상세 분야별로 나의 지식 점수를 확인해보세요.\n우선적으로 학습해야하는 분야를 알 수 있습니다.",
+											   report.getAvgUkMastery().intValue() > COMMENT_HIGH_LOW_SPLIT_THRESHOLD_SCORE ? "높은" : "낮은");
 
 		
 		MiniTestRecordDTO result =  MiniTestRecordDTO.builder()

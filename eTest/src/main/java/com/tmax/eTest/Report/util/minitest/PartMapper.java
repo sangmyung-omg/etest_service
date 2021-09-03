@@ -10,9 +10,13 @@ import com.tmax.eTest.Common.repository.uk.UkMasterRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationStartedEvent;
 import org.springframework.context.event.EventListener;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Component
+@Slf4j
 public class PartMapper {
     @Autowired private UkMasterRepo ukMasterRepo;
 
@@ -30,6 +34,16 @@ public class PartMapper {
     //Build at application startup
     @EventListener
     public void startUpGenerator(ApplicationStartedEvent event){
+        updateMapperData();
+    }
+
+    @Scheduled(fixedRate=60*60*1000)
+    public void scheduledUpdater(){
+        log.debug("Checking update in part section");
+        updateMapperData();
+    }
+
+    private void updateMapperData() {
         Set<String> set = ukMasterRepo.getDistinctPartList();
 
         //Default fallback

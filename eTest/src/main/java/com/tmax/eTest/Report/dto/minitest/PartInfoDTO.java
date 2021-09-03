@@ -3,9 +3,9 @@ package com.tmax.eTest.Report.dto.minitest;
 import lombok.Data;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.NoArgsConstructor;
+// import lombok.NoArgsConstructor;
 
-import java.util.Map;
+import java.util.ArrayList;
 
 import com.tmax.eTest.Report.util.minitest.PartMapper;
 
@@ -16,7 +16,7 @@ import com.tmax.eTest.Report.util.minitest.PartMapper;
 @Data
 @Builder
 @AllArgsConstructor
-@NoArgsConstructor
+// @NoArgsConstructor
 public class PartInfoDTO {
     private PartDataDTO part1;    
     private PartDataDTO part2;
@@ -24,6 +24,10 @@ public class PartInfoDTO {
     private PartDataDTO part4;
     private PartDataDTO part5;
     private PartDataDTO part6;
+
+    public PartInfoDTO() {
+        this.initDefaultDatas();
+    }
 
     public void setPartData(String key, PartDataDTO data){
         Integer index = PartMapper.map.get(key);
@@ -45,5 +49,11 @@ public class PartInfoDTO {
         }
 
         
+    }
+
+    private void initDefaultDatas(){
+        PartMapper.map.keySet().stream().forEach(key -> {
+            this.setPartData(key, PartDataDTO.builder().partName(key).ukInfo(new ArrayList<>()).build());
+        });
     }
 }
