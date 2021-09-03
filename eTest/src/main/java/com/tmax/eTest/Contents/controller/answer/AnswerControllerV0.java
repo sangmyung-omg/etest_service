@@ -46,50 +46,51 @@ public class AnswerControllerV0 {
 
 	@PostMapping(value="problems/{id}/answer-check", produces = "application/json; charset=utf-8")
 	public int checkAnswer(@PathVariable("id") Integer id, @RequestParam String answer, @RequestBody String lrsbody) throws Exception {
-		Map<String, Object> data = null;
-		data = answerServices.getProblemSolution(id);
-		String inputString = data.get("solution").toString();
-		String bug = inputString.substring(0, inputString.indexOf(","));
-		String jd = bug.replaceAll("\\[", "");
-		String temp = jd.substring(jd.length() - 2).replaceAll("\\]", "");
-		temp = temp.replace(" ", "");
+		// Map<String, Object> data = null;
+		// data = answerServices.getProblemSolution(id);
+		// String inputString = data.get("solution").toString();
+		// String bug = inputString.substring(0, inputString.indexOf(","));
+		// String jd = bug.replaceAll("\\[", "");
+		// String temp = jd.substring(jd.length() - 2).replaceAll("\\]", "");
+		// temp = temp.replace(" ", "");
 
-		// final String LRSServerURI = "http://192.168.153.132:8080";
-		final String LRSServerURI = "http://" + LRS_HOST + ":" + LRS_PORT;
+		// // final String LRSServerURI = "http://192.168.153.132:8080";
+		// final String LRSServerURI = "http://" + LRS_HOST + ":" + LRS_PORT;
 
-		Charset utf8 = Charset.forName("UTF-8");
-		MediaType mediaType = new MediaType("application", "json", utf8);
-		WebClient client = WebClient.builder().baseUrl(LRSServerURI + "/SaveStatementList")
-				.defaultHeader(HttpHeaders.CONTENT_TYPE, mediaType.toString()).build();
+		// Charset utf8 = Charset.forName("UTF-8");
+		// MediaType mediaType = new MediaType("application", "json", utf8);
+		// WebClient client = WebClient.builder().baseUrl(LRSServerURI + "/SaveStatementList")
+		// 		.defaultHeader(HttpHeaders.CONTENT_TYPE, mediaType.toString()).build();
 
-		if (temp.equals(answer)) {
-			String body = lrsbody;
-			int end = 0;
-			int start = body.lastIndexOf("isCorrect") + 8;
-			while (true) {
-				String buf = Character.toString(body.charAt(start));
-				if (buf.equals(",")) {
-					end = start;
-					break;
-				}
-				start++;
-			}
+		// if (temp.equals(answer)) {
+		// 	String body = lrsbody;
+		// 	int end = 0;
+		// 	int start = body.lastIndexOf("isCorrect") + 8;
+		// 	while (true) {
+		// 		String buf = Character.toString(body.charAt(start));
+		// 		if (buf.equals(",")) {
+		// 			end = start;
+		// 			break;
+		// 		}
+		// 		start++;
+		// 	}
 
-			StringBuilder changebody = new StringBuilder(body);
-			changebody.setCharAt(end - 1, '1');
+		// 	StringBuilder changebody = new StringBuilder(body);
+		// 	changebody.setCharAt(end - 1, '1');
 
-			logger.info(changebody.toString());
+		// 	logger.info(changebody.toString());
 
-			Mono<String> response = client.post().body(BodyInserters.fromValue(changebody.toString())).retrieve()
-					.bodyToMono(String.class);
-			response.subscribe();
-			return 1;
-		} else {
-			logger.info(lrsbody.toString());
-			Mono<String> response = client.post().body(BodyInserters.fromValue(lrsbody)).retrieve().bodyToMono(String.class);
-			response.subscribe();
-			return 0;
-		}
+		// 	Mono<String> response = client.post().body(BodyInserters.fromValue(changebody.toString())).retrieve()
+		// 			.bodyToMono(String.class);
+		// 	response.subscribe();
+		// 	return 1;
+		// } else {
+		// 	logger.info(lrsbody.toString());
+		// 	Mono<String> response = client.post().body(BodyInserters.fromValue(lrsbody)).retrieve().bodyToMono(String.class);
+		// 	response.subscribe();
+		// 	return 0;
+		// }
+		return 0;
 	}
 
 	@GetMapping(value = "/problems/{id}/solution", produces = "application/json; charset=utf-8")
