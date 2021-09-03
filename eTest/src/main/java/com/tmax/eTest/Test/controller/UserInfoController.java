@@ -3,8 +3,6 @@ package com.tmax.eTest.Test.controller;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -51,7 +49,7 @@ public class UserInfoController {
 		}
 	}
 	
-	@PreAuthorize("hasrole('ROLE_USER')")
+	@PreAuthorize("hasRole('ROLE_USER')")
 	@PutMapping(value = "/registerUser", produces = "application/json; charset=utf-8")
 	public ResponseEntity<Object> updateValidatedUser(@AuthenticationPrincipal PrincipalDetails principalDetails,
 													  @RequestBody RegisterInputDTO body) throws Exception {

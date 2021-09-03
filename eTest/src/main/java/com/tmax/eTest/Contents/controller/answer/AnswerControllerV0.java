@@ -24,14 +24,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import com.tmax.eTest.Contents.exception.problem.NoDataException;
-import com.tmax.eTest.Contents.service.AnswerServicesBase;
 import com.tmax.eTest.Contents.service.ProblemServicesV0;
 import reactor.core.publisher.Mono;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
-
-import reactor.core.publisher.Mono;
 
 @CrossOrigin(origins = "*")
 @PropertySource("classpath:application.properties")
@@ -47,12 +43,6 @@ public class AnswerControllerV0 {
 
 	@Autowired
 	ProblemServicesV0 problemService;
-
-	@Value("${etest.recommend.lrs.host}")
-	private String LRS_HOST;
-
-	@Value("${etest.recommend.lrs.port}")
-	private String LRS_PORT;
 
 	@PostMapping(value="problems/{id}/answer-check", produces = "application/json; charset=utf-8")
 	public int checkAnswer(@PathVariable("id") Integer id, @RequestParam String answer, @RequestBody String lrsbody) throws Exception {
