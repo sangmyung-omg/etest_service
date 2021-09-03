@@ -13,10 +13,91 @@ metadata:
     handled: f
 provider: tmax
 objects:
+  - kind: Deployment
+    apiVersion: apps/v1
+    metadata:
+      name: '${name}-redis-dep'
+      namespace: hyperstudy
+    spec:
+      replicas: 1
+      selector:
+        matchLabels:
+          app: '${name}-redis-dep'
+      template:
+        metadata:
+          creationTimestamp: null
+          labels:
+            app: '${name}-redis-dep'
+            owner: '$GITLAB_USER_LOGIN'
+        spec:
+          containers:
+            - resources:
+                limits:
+                  cpu: '2'
+                  memory: 4Gi
+                requests:
+                  cpu: 100m
+                  memory: 100Mi
+              terminationMessagePath: /dev/termination-log
+              name: '${name}-redis-dep'
+              command:
+                - redis-server
+              env:
+                - name: REDDIS_PASSWORD
+                  value: tmax
+              ports:
+                - containerPort: 6379
+                  protocol: TCP
+              imagePullPolicy: IfNotPresent
+              terminationMessagePolicy: File
+              image: $REGISTRY_HOST/redis:v1.0
+              args:
+                - '--requirepass'
+                - tmax
+          restartPolicy: Always
+          terminationGracePeriodSeconds: 30
+          dnsPolicy: ClusterFirst
+          securityContext: {}
+          imagePullSecrets:
+            - name: $REGISTRY_IMAGE_PULL_SECRETS
+          schedulerName: default-scheduler
+      strategy:
+        type: RollingUpdate
+        rollingUpdate:
+          maxUnavailable: 25%
+          maxSurge: 25%
+      revisionHistoryLimit: 10
+      progressDeadlineSeconds: 600
+  - kind: Service
+    apiVersion: v1
+    metadata:
+      name: '${name}-redis-service'
+      namespace: hyperstudy
+    spec:
+      ports:
+        - protocol: TCP
+          port: 6379
+          targetPort: 6379
+      selector:
+        app: '${name}-redis-dep'
+      type: ClusterIP
+      sessionAffinity: None
   - kind: PersistentVolumeClaim
     apiVersion: v1
     metadata:
-      name: ${name}-pvc
+      name: ${name}-log-pvc
+      namespace: hyperstudy
+    spec:
+      accessModes:
+        - ReadWriteMany
+      resources:
+        requests:
+          storage: 10Gi
+      storageClassName: hdd-ceph-fs
+  - kind: PersistentVolumeClaim
+    apiVersion: v1
+    metadata:
+      name: ${name}-data-pvc
       namespace: hyperstudy
     spec:
       accessModes:
@@ -30,6 +111,7 @@ objects:
     metadata:
       labels:
         app: '${name}-dep'
+        owner: '$GITLAB_USER_LOGIN'
       name: '${name}-dep'
     spec:
       selector:
@@ -41,11 +123,41 @@ objects:
             app: '${name}-dep'
         spec:
           volumes:
-            - name: pvc
+            - name: log-pvc
               persistentVolumeClaim:
-                claimName: ${name}-pvc
+                claimName: ${name}-log-pvc
+            - name: data-pvc
+              persistentVolumeClaim:
+                claimName: ${name}-data-pvc
           containers:
-            - image: $REGISTRY_HOST/$IMAGE_NAME:$CI_COMMIT_TAG
+            - env:
+                - name: jwt_secret
+                  value: tmax
+                - name: jwt_access
+                  value: '6000'
+                - name: jwt_refersh
+                  value: '604800'
+                - name: REDIS_PORT
+                  value: '6379'
+                - name: REDIS_HOST
+                  value: ${name}-redis-service
+                - name: REDIS_PASSWORD
+                  value: tmax
+                - name: INQUIRY_FILE_PATH
+                  value: /inquiry/upload/
+                - name: DB_IP
+                  value: kofia-tibero-dep
+                - name: DB_PORT
+                  value: '8629'
+                - name: DB_USER
+                  value: etest
+                - name: DB_PASS
+                  value: etest
+                - name: TRITON_IP
+                  value: kofia-triton-dep
+                - name: TRITON_PORT
+                  value: '18000'
+              image: $REGISTRY_HOST/$IMAGE_NAME:$CI_COMMIT_TAG
               name: '${name}-dep'
               ports:
                 - containerPort: 8080
@@ -58,10 +170,12 @@ objects:
                   cpu: 100m
                   memory: 1Gi
               volumeMounts:
-                - name: pvc
-                  mountPath: /workspace/etest/upload/
+                - name: log-pvc
+                  mountPath: /logs
+                - name: data-pvc
+                  mountPath: /data
           imagePullSecrets:
-            - name: hpcd-registry-hs-registry
+            - name: $REGISTRY_IMAGE_PULL_SECRETS
   - apiVersion: v1
     kind: Service
     metadata:
