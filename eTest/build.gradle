@@ -57,6 +57,7 @@ dependencies {
 	implementation 'com.querydsl:querydsl-apt'
 	implementation group: 'org.apache.tika', name: 'tika-core', version: '2.0.0'
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis:2.5.3'
+	implementation 'org.springframework.boot:spring-boot-starter-aop'
 
 }
 
