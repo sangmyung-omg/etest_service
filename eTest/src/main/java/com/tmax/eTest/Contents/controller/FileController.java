@@ -14,7 +14,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StreamUtils;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.extern.slf4j.Slf4j;
@@ -23,20 +22,24 @@ import lombok.extern.slf4j.Slf4j;
 @RestController
 public class FileController {
 
-  @Value("${etest.contents.file.defaultPath}")
+  @Value("${file.path}")
   private String DEFAULT_PATH;
 
-  @GetMapping("/file")
-  public ResponseEntity<Object> download() {
-    throw new IllegalArgumentException("Filename is null");
-  }
+  private static final String CONTETNS_PATH = "contents" + File.separator;
 
-  @GetMapping("/file/{filename}")
-  public ResponseEntity<Object> download(@PathVariable("filename") String filename, HttpServletRequest request,
-      HttpServletResponse response) throws IOException {
+  // @GetMapping("/file")
+  // public ResponseEntity<Object> download(@RequestParam(value = "filename",
+  // required = true) String filename,
+  // HttpServletRequest request, HttpServletResponse response) throws IOException
+  // {
+
+  @GetMapping("/file/**")
+  public ResponseEntity<Object> download(HttpServletRequest request, HttpServletResponse response) throws IOException {
+
+    String filename = request.getRequestURI().split(request.getContextPath() + "/file/")[1];
 
     log.info("File Download: " + filename);
-    String filePath = DEFAULT_PATH + filename;
+    String filePath = DEFAULT_PATH + CONTETNS_PATH + filename;
     File downloadFile = new File(filePath);
     FileInputStream inputStream = new FileInputStream(downloadFile);
 
