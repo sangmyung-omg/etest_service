@@ -10,12 +10,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.tmax.eTest.Contents.controller.ArticleController;
 import com.tmax.eTest.TestStudio.controller.component.DiagProblemApiComponentTs;
 import com.tmax.eTest.TestStudio.controller.component.TestProblemApiComponentTs;
 import com.tmax.eTest.TestStudio.dto.problems.in.GetProblemDTOIn;
@@ -25,10 +27,12 @@ import com.tmax.eTest.TestStudio.dto.problems.out.GetDiagProblemDTOOut;
 import com.tmax.eTest.TestStudio.dto.problems.out.GetTestProblemDTOOut;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @CrossOrigin(origins = "*")
 @RequiredArgsConstructor
+@Slf4j
 public class DiagProblemControllerTs {
 	
 	private final DiagProblemApiComponentTs diagProblemApiComponent;
@@ -38,20 +42,27 @@ public class DiagProblemControllerTs {
 	 * 
 	 */
 	
-	@GetMapping("/DiagProblems")
+//	@GetMapping("/DiagProblems")
+	@GetMapping(value="/DiagProblems/{userID}/{probIDs}")
 	public ResponseEntity<GetDiagProblemDTOOut> problems(
-			@RequestBody GetProblemDTOIn request
+//			@RequestBody GetProblemDTOIn request
+			@PathVariable("userID") String userID,
+			@PathVariable("probIDs") String probIDs
 			) throws Exception {
 		
 		try {
 //			System.out.println(request.getProbID());
 			
-			GetDiagProblemDTOOut res = diagProblemApiComponent.diagProblemsGetComponent( request.getProbIDs() );
+			GetDiagProblemDTOOut res = diagProblemApiComponent.diagProblemsGetComponent( 
+//					request.getProbIDs() 
+					probIDs
+					);
 			
 			return new ResponseEntity<>( res, HttpStatus.OK );
 			
 		} catch(Exception e) {
 			e.printStackTrace();
+			log.error(e.getMessage());
 			throw e;
 		}
 	}
@@ -74,6 +85,7 @@ public class DiagProblemControllerTs {
 			
 		}catch(Exception e) {
 			 e.printStackTrace(); 
+			 log.error(e.getMessage());
 			 throw e;
 		}
 	}
@@ -90,6 +102,7 @@ public class DiagProblemControllerTs {
 			
 		}catch(Exception e) {
 			 e.printStackTrace(); 
+			 log.error(e.getMessage());
 			 throw e;	
 		}
 	}

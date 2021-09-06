@@ -5,6 +5,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.swing.plaf.basic.BasicInternalFrameTitlePane.SystemMenuBar;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -28,6 +30,8 @@ import com.tmax.eTest.TestStudio.repository.ProbChoiceQRepositoryTs;
 import com.tmax.eTest.TestStudio.service.DiagProblemServiceTs;
 import com.tmax.eTest.TestStudio.service.ProbChoiceServiceTs;
 import com.tmax.eTest.TestStudio.service.ProbUKRelServiceTs;
+import com.tmax.eTest.TestStudio.util.InitialConsonantTs;
+import com.tmax.eTest.TestStudio.util.PathUtilTs;
 
 import lombok.RequiredArgsConstructor;
 
@@ -43,6 +47,10 @@ public class TestControllerETest {
 	private final ProbChoiceServiceTs probChoiceServiceETest;
 	private final ProbUKRelServiceTs probUKRelServiceETest;
 	private final ProbChoiceQRepositoryTs probChoiceQRepositoryETest;
+	private final PathUtilTs pathUtilTs;
+	private PathUtilTs testP = new PathUtilTs();
+	private String dirPath = testP.getDirPath();
+	private final InitialConsonantTs initialConsonantTs; 
 
 	/**
 	 * 등록
@@ -192,6 +200,41 @@ public class TestControllerETest {
 			}
 			
 			return new ResponseEntity<>(output.toString(), HttpStatus.OK);
+			
+		}catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	@GetMapping("/jsonP")
+	public ResponseEntity<String> jsonParsing(
+//			@RequestBody CreateDiagProblemRequest request
+			) {
+		
+		try {
+			
+			String output = initialConsonantTs.InitialConsonantsV2(
+					"[{\"data\":\"3년 간 주식투자로 다음과 같은 현금흐름이 발생했을 때, 보유기간 동안 수익률로 올바른 것은?\",\"type\":\"QUESTION_TEXT\"},{\"data\":\"주식 매입 금액 : 100만원\\n주식 매도 금액 : 120만원\\n배당금 : 10만원\\n비용 : 5만원\",\"type\":\"PREFACED_EXAMPLE_BOX_TEXT\"},{\"type\":\"MULTIPLE_CHOICE_TEXT\",\"data\":[\"20%\",\"25%\",\"30%\",\"35%\"]}]"
+					);
+			System.out.println(output);
+			return new ResponseEntity<>(output, HttpStatus.OK);
+			
+		}catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	@GetMapping("/imagePathTest")
+	public ResponseEntity<String> imagePathTest(
+//			@RequestBody CreateDiagProblemRequest request
+			) {
+		
+		try {
+			System.out.println( dirPath );
+			System.out.println( pathUtilTs.getDefaultPath() );
+			System.out.println( pathUtilTs.getDirPath() );
+			String output = "-";
+			return new ResponseEntity<>(output, HttpStatus.OK);
 			
 		}catch (Exception e) {
 			e.printStackTrace();

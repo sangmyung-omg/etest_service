@@ -28,6 +28,7 @@ import com.tmax.eTest.TestStudio.dto.problems.in.PutTestProbStatusDTOIn;
 import com.tmax.eTest.TestStudio.dto.problems.in.PutTestProblemDTOIn;
 import com.tmax.eTest.TestStudio.dto.problems.out.GetDiagProblemDTOOut;
 import com.tmax.eTest.TestStudio.dto.problems.out.GetTestProblemDTOOut;
+import com.tmax.eTest.TestStudio.controller.TestProblemControllerTs;
 import com.tmax.eTest.TestStudio.controller.component.exception.CustomExceptionTs;
 import com.tmax.eTest.TestStudio.controller.component.exception.ErrorCodeEnumTs;
 import com.tmax.eTest.TestStudio.controller.component.exception.NoDataExceptionTs;
@@ -43,14 +44,17 @@ import com.tmax.eTest.TestStudio.service.ProbUKRelServiceTs;
 import com.tmax.eTest.TestStudio.service.ProblemServiceTs;
 import com.tmax.eTest.TestStudio.service.TestProblemServiceTs;
 import com.tmax.eTest.TestStudio.service.UKServiceTs;
+import com.tmax.eTest.TestStudio.util.InitialConsonantTs;
 import com.tmax.eTest.TestStudio.util.PathUtilTs;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Transactional(rollbackFor = Exception.class)
 @CrossOrigin(origins = "*")
 @RequiredArgsConstructor
+@Slf4j
 public class TestProblemApiComponentTs {
 	
 	private final ProblemServiceTs problemServiceETest;
@@ -61,7 +65,8 @@ public class TestProblemApiComponentTs {
 	
 	private final ProblemApiComponentTs problemApiComponentTs;
 	private final ImageFileServerApiComponentTs imageFileServerApiComponentETest;
-	private final PathUtilTs pathUtilEtest = new PathUtilTs();
+	private final PathUtilTs pathUtilEtest;
+	private final InitialConsonantTs initialConsonantTs;
 	
 	/**
 	 * 문제 생성 problemCreate component
@@ -123,7 +128,8 @@ public class TestProblemApiComponentTs {
 					problem.setValiatorID(request.getUserID());
 					problem.setValiateDate(timestamp);
 				}
-				
+				problem.setQuestionInitial( initialConsonantTs.InitialConsonantsV2( requestInfo.getQuestion() ) );
+				problem.setSolutionInitial( initialConsonantTs.InitialConsonantsV2( requestInfo.getSolution() ) );
 				
 				/*
 				 * problem table
@@ -203,7 +209,6 @@ public class TestProblemApiComponentTs {
 					/*
 					 * probImage table
 					 */
-					
 					if(requestInfo.getImgSrcListIn()!=null) {
 						if(!requestInfo.getImgSrcListIn().isEmpty()) {
 
@@ -253,15 +258,15 @@ public class TestProblemApiComponentTs {
 	 * probId List 받아 문제 조회, GetTestProblemDTOOut 반환
 	 */	
 	public GetTestProblemDTOOut testProblemsGetComponent(
-//			String probIdStr
+			String probIdStr
 //			List<Long> probIdList
-			List<String> strProbIdList
+//			List<String> strProbIdList
 			) throws Exception {
 		
 			GetTestProblemDTOOut output = new GetTestProblemDTOOut( new ArrayList<BaseTestProblemSetDTO>() );
 
 			// set : probId []
-//			String[] strProbIdList = probIdStr.replace(" ","").split(",");
+			String[] strProbIdList = probIdStr.replace(" ","").split(",");
 			
 				for(String strProbId : strProbIdList) {
 					if(strProbId==null||strProbId=="") {
@@ -314,8 +319,8 @@ public class TestProblemApiComponentTs {
 //											PC.getProbIDOnly().toString(), //probId
 											null,
 											String.valueOf( PC.getChoiceNum() ),
-											PC.getUkIDOnly().toString(),
-											PC.getChoiceScore().toString()
+											PC.getUkIDOnly()==null? null: PC.getUkIDOnly().toString(),
+											PC.getChoiceScore()==null? null: PC.getChoiceScore().toString()
 										)
 									);
 						}

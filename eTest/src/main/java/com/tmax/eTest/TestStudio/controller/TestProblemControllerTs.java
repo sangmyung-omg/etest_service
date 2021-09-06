@@ -10,12 +10,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.tmax.eTest.Contents.controller.ArticleController;
 import com.tmax.eTest.TestStudio.controller.component.TestProblemApiComponentTs;
 import com.tmax.eTest.TestStudio.controller.component.exception.CustomExceptionTs;
 import com.tmax.eTest.TestStudio.controller.component.exception.ErrorCodeEnumTs;
@@ -30,10 +32,12 @@ import com.tmax.eTest.TestStudio.dto.problems.out.GetTestProblemDTOOut;
 import com.tmax.eTest.TestStudio.dto.problems.out.PostTestProblemDTOOut;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @CrossOrigin(origins = "*")
 @RequiredArgsConstructor
+@Slf4j
 public class TestProblemControllerTs {
 	
 	private final TestProblemApiComponentTs testProblemApiComponent;
@@ -105,6 +109,7 @@ public class TestProblemControllerTs {
 			
 		}catch (Exception e) {
 			e.printStackTrace();
+			log.error(e.getMessage());
 			throw e;
 		}
 	}
@@ -116,22 +121,30 @@ public class TestProblemControllerTs {
 	 * 
 	 */
 	
-	@GetMapping("/TestProblems")
+//	@GetMapping("/TestProblems")
+	@GetMapping(value="/TestProblems/{userID}/{probIDs}")
 	public ResponseEntity<GetTestProblemDTOOut> problems (
-			@RequestBody GetProblemDTOIn request
+//			@RequestBody GetProblemDTOIn request
+			@PathVariable("userID") String userID,
+			@PathVariable("probIDs") String probIDs
 			) throws Exception {
 		
 		try {
 			
-			if(request.getProbIDs().isEmpty()) {
+//			if(request.getProbIDs().isEmpty()) {
+			if(probIDs == null) {
 				throw new CustomExceptionTs(ErrorCodeEnumTs.INVALID_REQUEST_INPUT);
 			}
-			GetTestProblemDTOOut res = testProblemApiComponent.testProblemsGetComponent( request.getProbIDs() ) ;
+			GetTestProblemDTOOut res = testProblemApiComponent.testProblemsGetComponent( 
+//					request.getProbIDs()
+					probIDs
+					) ;
 			
 			return new ResponseEntity<>( res, HttpStatus.OK );
 			
 		} catch(Exception e) {
 			e.printStackTrace();
+			log.error(e.getMessage());
 			throw e;
 
 		}
@@ -152,7 +165,8 @@ public class TestProblemControllerTs {
 
 			
 		}catch(Exception e) {
-			 e.printStackTrace(); 
+			 e.printStackTrace();
+			 log.error(e.getMessage());
 			 throw e;	
 		}
 	}
@@ -168,7 +182,8 @@ public class TestProblemControllerTs {
 
 			
 		}catch(Exception e) {
-			e.printStackTrace(); 
+			e.printStackTrace();
+			log.error(e.getMessage());
 			throw e;
 		}
 	}
@@ -188,6 +203,7 @@ public class TestProblemControllerTs {
 			
 		}catch(Exception e) {
 			 e.printStackTrace(); 
+			 log.error(e.getMessage());
 			 throw e;
 		}
 	}

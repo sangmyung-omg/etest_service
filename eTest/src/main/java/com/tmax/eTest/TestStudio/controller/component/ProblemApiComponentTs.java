@@ -28,6 +28,7 @@ import com.tmax.eTest.TestStudio.dto.problems.in.PutTestProbStatusDTOIn;
 import com.tmax.eTest.TestStudio.dto.problems.in.PutTestProblemDTOIn;
 import com.tmax.eTest.TestStudio.dto.problems.out.GetDiagProblemDTOOut;
 import com.tmax.eTest.TestStudio.dto.problems.out.GetTestProblemDTOOut;
+import com.tmax.eTest.TestStudio.controller.TestProblemControllerTs;
 import com.tmax.eTest.TestStudio.controller.component.exception.CustomExceptionTs;
 import com.tmax.eTest.TestStudio.controller.component.exception.ErrorCodeEnumTs;
 import com.tmax.eTest.TestStudio.controller.component.exception.NoDataExceptionTs;
@@ -46,11 +47,13 @@ import com.tmax.eTest.TestStudio.service.UKServiceTs;
 import com.tmax.eTest.TestStudio.util.PathUtilTs;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Transactional(rollbackFor = Exception.class)
 @CrossOrigin(origins = "*")
 @RequiredArgsConstructor
+@Slf4j
 public class ProblemApiComponentTs {
 	
 	private final ProblemServiceTs problemServiceETest;
@@ -60,7 +63,7 @@ public class ProblemApiComponentTs {
 	private final TestProblemServiceTs testProblemServiceETest;
 	
 	private final ImageFileServerApiComponentTs imageFileServerApiComponentETest;
-	private final PathUtilTs pathUtilEtest = new PathUtilTs();
+	private final PathUtilTs pathUtilEtest;
 
 	
 	/**
@@ -161,6 +164,6 @@ public class ProblemApiComponentTs {
 			 return "fail";		
 		}
 	}
-	
-		
+
+
 }

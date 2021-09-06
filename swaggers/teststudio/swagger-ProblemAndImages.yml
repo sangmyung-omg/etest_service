@@ -6,7 +6,8 @@ info:
   contact:
     email: changeon_lim@tmax.co.kr
 paths:
-  /DiagProblems:
+  # /DiagProblems:
+  /DiagProblems/{userID}/{probIDs}:
     get:
       tags:
       - teststudio
@@ -21,12 +22,26 @@ paths:
       #       schema:
       #         $ref: '#/definitions/GetProblemDTOIn'
       parameters:
-      - in: body
-        # name: body
-        # description: part
+      - name: userID
+        in: path
+        description: 사용자 아이디
         required: true
         schema:
-              $ref: '#/definitions/GetProblemDTOIn'
+          type: string
+          format: string
+      - name: probIDs
+        in: path
+        description: 문제IDs String (format ex = 1, 2, 3)
+        required: true
+        schema:
+          type: string
+          format: string
+      # - in: body
+      #   # name: body
+      #   # description: part
+      #   required: true
+      #   schema:
+      #         $ref: '#/definitions/GetProblemDTOIn'
       responses:
         200:
           description: success
@@ -34,7 +49,7 @@ paths:
             $ref: '#/definitions/GetDiagProblemDTOOut'
         400:
           description: bad input parameter
-
+  /DiagProblems:
     put:
       tags:
       - teststudio
@@ -70,7 +85,8 @@ paths:
         400:
           description: bad input parameter
 # 
-  /TestProblems:
+  # /TestProblems:
+  /TestProblems/{userID}/{probIDs}:
     get:
       tags:
       - teststudio
@@ -78,10 +94,24 @@ paths:
       description:  
         미니진단 문제를 가져옵니다.
       parameters:
-      - in: body
+      - name: userID
+        in: path
+        description: 사용자 아이디
         required: true
         schema:
-              $ref: '#/definitions/GetProblemDTOIn'
+          type: string
+          format: string
+      - name: probIDs
+        in: path
+        description: 문제IDs String (format ex = 1, 2, 3)
+        required: true
+        schema:
+          type: string
+          format: string
+      # - in: body
+      #   required: true
+      #   schema:
+      #         $ref: '#/definitions/GetProblemDTOIn'
       responses:
         200:
           description: success
@@ -89,7 +119,7 @@ paths:
             $ref: '#/definitions/GetTestProblemDTOOut'
         400:
           description: bad input parameter
-
+  /TestProblems:
     post:
       tags:
       - teststudio

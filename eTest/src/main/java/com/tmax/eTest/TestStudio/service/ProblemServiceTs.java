@@ -12,6 +12,7 @@ import com.tmax.eTest.TestStudio.controller.component.exception.NoDataExceptionT
 import com.tmax.eTest.TestStudio.dto.problems.base.BaseProblemDTO;
 import com.tmax.eTest.TestStudio.repository.ProblemQRepositoryTs;
 import com.tmax.eTest.TestStudio.repository.ProblemRepositoryTs;
+import com.tmax.eTest.TestStudio.util.InitialConsonantTs;
 import com.tmax.eTest.TestStudio.util.PathUtilTs;
 
 import lombok.RequiredArgsConstructor;
@@ -24,6 +25,7 @@ public class ProblemServiceTs {
 	private final ProblemRepositoryTs problemRepository;
 	private final ProblemQRepositoryTs problemQRepositoryETest;
 	private final PathUtilTs pathUtilEtest = new PathUtilTs();
+	private final InitialConsonantTs initialConsonantTs;
 	
 	/**
 	 * 문제 조회
@@ -80,12 +82,16 @@ public class ProblemServiceTs {
 			if(requestInfo.getAnswerType()!=null)
 				problem.setAnswerType(requestInfo.getAnswerType());
 			
-			if(requestInfo.getQuestion()!=null)
+			if(requestInfo.getQuestion()!=null) {
 				problem.setQuestion(requestInfo.getQuestion());
+				problem.setQuestionInitial( initialConsonantTs.InitialConsonantsV2( requestInfo.getQuestion() ) );
+			}
 			
-			if(requestInfo.getSolution()!=null)
+			if(requestInfo.getSolution()!=null) {
 				problem.setSolution(requestInfo.getSolution());
-			
+				problem.setSolutionInitial( initialConsonantTs.InitialConsonantsV2( requestInfo.getSolution() ) );
+			}
+				
 			if(requestInfo.getDifficulty()!=null)
 				problem.setDifficulty(requestInfo.getDifficulty());
 			

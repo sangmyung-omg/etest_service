@@ -15,6 +15,7 @@ import com.tmax.eTest.Common.model.problem.Problem;
 import com.tmax.eTest.Common.model.problem.ProblemChoice;
 import com.tmax.eTest.Common.model.uk.ProblemUKRelation;
 import com.tmax.eTest.Common.model.uk.UkMaster;
+import com.tmax.eTest.TestStudio.controller.TestProblemControllerTs;
 import com.tmax.eTest.TestStudio.dto.problems.base.BaseDiagCurriculumDTO;
 import com.tmax.eTest.TestStudio.dto.problems.base.BaseDiagProblemSetDTO;
 import com.tmax.eTest.TestStudio.dto.problems.base.BaseProbChoiceDTO;
@@ -33,11 +34,13 @@ import com.tmax.eTest.TestStudio.service.UKServiceTs;
 import com.tmax.eTest.TestStudio.util.PathUtilTs;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Transactional(rollbackFor = Exception.class)
 @CrossOrigin(origins = "*")
 @RequiredArgsConstructor
+@Slf4j
 public class DiagProblemApiComponentTs {
 	
 	private final ProblemServiceTs problemServiceETest;
@@ -50,16 +53,16 @@ public class DiagProblemApiComponentTs {
 //	private final TestProblemApiComponentETest testProblemApiComponent;
 	private final	ProblemApiComponentTs problemApiComponentTs;
 	private final ImageFileServerApiComponentTs imageFileServerApiComponentETest;
-	private final PathUtilTs pathUtilEtest = new PathUtilTs();
+	private final PathUtilTs pathUtilEtest;
 	
 	/**
 	 * 문제 조회
 	 * 
 	 */
 	public GetDiagProblemDTOOut diagProblemsGetComponent(
-//			String probIdStr
+			String probIdStr
 //			List<Long> probIdList
-			List<String> strProbIdList
+//			List<String> strProbIdList
 			) throws Exception{
 		
 		//
@@ -67,7 +70,7 @@ public class DiagProblemApiComponentTs {
 		GetDiagProblemDTOOut output = new GetDiagProblemDTOOut( new ArrayList<BaseDiagProblemSetDTO>() );
 
 		// set : probId []
-//		String[] strProbIdList = probIdStr.replace(" ","").split(",");
+		String[] strProbIdList = probIdStr.replace(" ","").split(",");
 		
 			for(String strProbId : strProbIdList) {
 				if(strProbId==null||strProbId=="") {
@@ -117,8 +120,8 @@ public class DiagProblemApiComponentTs {
 //										PC.getProbIDOnly().toString(), //probId
 										null,
 										String.valueOf( PC.getChoiceNum() ),
-										PC.getUkIDOnly().toString(),
-										PC.getChoiceScore().toString()
+										PC.getUkIDOnly()==null? null: PC.getUkIDOnly().toString(),
+										PC.getChoiceScore()==null? null: PC.getChoiceScore().toString()
 									)
 								);
 					}
