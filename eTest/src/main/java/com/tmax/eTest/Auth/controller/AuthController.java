@@ -109,7 +109,7 @@ public class AuthController {
         return new CMRespDto<> (200 , "회원가입 완료",jwtToken);
     }
 
-    @PostMapping("/duplicateCheck")
+    @PostMapping("/emailDuplicateCheck")
     public CMRespDto<?> duplicateCheck(@RequestBody DuplicateCheckDto duplicateCheckDto) {
         Map<String,String> data = new HashMap<>();
         Boolean res = false;
@@ -120,12 +120,26 @@ public class AuthController {
         }else{
             data.put("email","중복된 회원 없음");
         }
+
+        if (res == true) {
+            return new CMRespDto<>(201, "중복 회원 존재", data);
+        } else{
+            return new CMRespDto<>(200, "회원가입 가능", data);
+        }
+    }
+
+    @PostMapping("/nicknameDuplicateCheck")
+    public CMRespDto<?> nicknameDuplicateCheck(@RequestBody DuplicateCheckDto duplicateCheckDto) {
+        Map<String,String> data = new HashMap<>();
+        Boolean res = false;
+
         if ( authService.nickNameDuplicateCheck(duplicateCheckDto.getNickname()) ){
             data.put("nickname","중복된 회원이 존재합니다");
             res = true;
         }else{
             data.put("nickname","중복된 회원 없음");
         }
+
         if (res == true) {
             return new CMRespDto<>(201, "중복 회원 존재", data);
         } else{
