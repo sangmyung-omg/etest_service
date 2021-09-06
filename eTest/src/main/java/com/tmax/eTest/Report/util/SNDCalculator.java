@@ -33,9 +33,21 @@ public class SNDCalculator {
 	
 	public int calculateForDiagnosis(int typeIndex, int score)
 	{
-		return (int) Math.round( new NormalDistribution(
+		Long tempResult = Math.round( new NormalDistribution(
 				MEAN_LIST[typeIndex],
 				SD_LIST[typeIndex]).cumulativeProbability(score) * 100);
+		
+		int result = tempResult.intValue();
+		
+		// clamp 0 ~ 100 range
+		result = (result < 0)? 0 
+				: (result > 100) ? 100 
+				: result;
+		
+		// lower percentage => upper percentage
+		result = 100 - result;
+		
+		return result;
 	}
 	
 	public int calculateForSelfDiag(double giScore)

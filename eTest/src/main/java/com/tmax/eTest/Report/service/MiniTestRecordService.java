@@ -321,9 +321,9 @@ public class MiniTestRecordService {
 		//Set values
 		problemCorrectInfo.put("allProb", problemInfoTotal.size());
 		problemCorrectInfo.put("allCorr", lowCorr + midCorr + highCorr);
-		problemCorrectInfo.put("low", lowCorr + "/" + problemInfoTotal.size());
-		problemCorrectInfo.put("mid", midCorr + "/" + problemInfoTotal.size());
-		problemCorrectInfo.put("high", highCorr + "/" + problemInfoTotal.size());
+		problemCorrectInfo.put("low", lowCorr + "/" + lowInfo.size());
+		problemCorrectInfo.put("mid", midCorr + "/" + midInfo.size());
+		problemCorrectInfo.put("high", highCorr + "/" + highInfo.size());
 
 
 		//Try alarm get for lrs statements

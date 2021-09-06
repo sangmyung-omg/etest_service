@@ -139,6 +139,18 @@ public class ProblemServiceV1 implements ProblemServiceBase {
 			difficultyList.add(p.getDifficulty());
 			probIdList.add(p.getProbID());
 
+			// 마지막 문제까지 돌았으면 마지막 주제에 대해서 담기
+			if (p.getProbID() == selectedProblems2.get(selectedProblems2.size()-1).getProbID()) {
+				List<Integer> tempList = new ArrayList<Integer>();
+				if (difficultyList.contains("상"))
+					tempList.add(probIdList.get(difficultyList.indexOf("상")));
+				if (difficultyList.contains("중"))
+					tempList.add(probIdList.get(difficultyList.indexOf("중")));
+				if (difficultyList.contains("하"))
+					tempList.add(probIdList.get(difficultyList.indexOf("하")));
+				
+				problemList.add(tempList);
+			}
 //			logger.info(Integer.toString(p.getProbID()) + ", " + p.getCategory() + ", " + p.getDifficulty() + ", " + p.getDiagnosisInfo().getSubject() + ", " + p.getDiagnosisInfo().getCurriculumId() + ", " + Integer.toString(p.getDiagnosisInfo().getOrderNum()));
 		}
 		problemList.remove(0);

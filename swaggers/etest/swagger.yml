@@ -11,8 +11,10 @@ tags:
   description: 문제 풀이 페이지 관련
 - name: Test
   description: 출제 문제 선정
-- name: Analysis Report
-  description: 진단 리포트 관련
+- name: Self Diagnosis Report
+  description: 자가 진단 리포트 관련
+- name: Minitest Report
+  description: 미니 테스트 리포트 관련
 - name: User
   description: 유저 정보 CRUD
 
@@ -263,131 +265,94 @@ paths:
                   resultMessage:
                     type: string
                     example: "Error: status code 500"
-  /report/diagnosisResult/{id}:
+  /report/diagnosis/record/{probSetId}:
     get:
       tags:
-      - Analysis Report
-      summary: 자가진단 리포트의 첫페이지 정보를 가져옵니다.
-      description: 자가진단 리포트의 GI 지수, 영역별 진단 결과, 진단 결과 텍스트, AI 예측 Part 별 이해도를 반환합니다. UX 예시와 값을 대체로 맞췄으니 참고하여 해당 값들의 역할을 파악 바랍니다.
+      - Self Diagnosis Report
+      summary: 자가진단 리포트의 메인 페이지 정보를 가져옵니다. 
+      description: 자가진단 리포트의 GI 점수, 퍼센테이지, GI 점수별 코멘트, 유저 닉네임, 알람 여부 등을 가져옵니다. 자가진단 시행 후, 해당 자가진단 Set ID에 대해, 첫 API Call 시, 해당 리포트를 생성 후 리포트 정보를 가져옵니다. Output에 대한 자세한 사항은 DiagnosisRecordMainDTO를 참조 바랍니다. 
       parameters:
-      - name: id
+      - name: probSetId
         in: path
-        description: 유저 ID
+        description: 해당 자가진단 문제 셋 ID
         required: true
         schema:
           type: string
           format: string
+          example: '1d80abe8-c8fb-45b1-9307-de689ccfaf60'
+      - $ref: "#/components/parameters/Authorization"
       responses:
         200:
           description: OK
           content:
             json:
               schema:
-                type: object
-                example:
-                  giScore: 63
-                  giPercentage: 20
-                  partDiagnosisResult:
-                    위험적합도점수: 72
-                    의사결정적합도점수: 65
-                    지식이해도: 52
-                  similarTypeInfo: [
-                    "25.93%", 
-                    "8종목", 
-                    "55%"
-                  ]
-                  decisionMaking: [
-                    "투자원칙 명확 & 편향 논리적", 
-                    "투자원칙 불명확", 
-                    "편향 감정적"
-                  ]
-                  investKnowledge: [
-                    "지식수준 하", 
-                    "기본지식 및 소양 학습"
-                  ]
-                  riskFidelity: [
-                    "투자현황 보수적 & 리스크 보수적", 
-                    "안정적 투자를 지향하지만 투자 가능 기간이 긴 편은 아니기 때문에 꾸준한 모니터링이 필요함"
-                  ]
-                  totalResult: [
-                    "상하하", 
-                    "동일한 유형의 평균 주식 비중은 25.93% 입니다.", 
-                    "동일한 유형의 평균 주식 수는 8종목 입니다.", 
-                    "동일한 유형의 평균 선호종목 수는 55% 입니다."
-                    ]
-                  strongPartInfo: [
-                    ["생애주기", 
-                    "생애주기 영역에서 상대적으로 높은 이해도를 갖고 있습니다.",
-                    "70"]
-                  ]
-                  weakPartInfo: [
-                    ["필요자금 마련방법", 
-                    "필요자금 마련방법는 더 많은 이해가 필요해 보입니다. AI가 학습 컨텐츠를 추천해드립니다.", 
-                    "35"], 
-                    ["가치변화의 요인", 
-                    "가치변화의 요인는 더 많은 이해가 필요해 보입니다. AI가 학습 컨텐츠를 추천해드립니다.", 
-                    "14"]
-                  ]
-  /report/diagnosisResult/{id}/{part}:
+                $ref: "#/components/schemas/DiagnosisRecordMainDTO"
+  /report/diagnosis/record/{probSetId}/{partName}:
     get:
       tags:
-      - Analysis Report
+      - Self Diagnosis Report
       summary: 자가진단 리포트의 파트 상세 정보 페이지의 정보를 가져옵니다.
-      description: 파트 이해도 점수, 상세 UK별 점수를 가져옵니다. UX 예시와 값을 대체로 맞췄으니 참고하여 해당 값들의 역할을 파악 바랍니다.
+      description: 파트별 점수, 해당 파트의 코멘트 등을 가져옵니다. output에 대한 자세한 사항은 DiagnosisRecordDetailDTO Schema 를 참고하시기 바랍니다.
       parameters:
-      - name: id
+      - name: probSetId
         in: path
-        description: 유저 ID
+        description: 해당 자가진단 문제 셋 ID
         required: true
         schema:
           type: string
           format: string
-      - name: part
+          example: '1d80abe8-c8fb-45b1-9307-de689ccfaf60'
+      - name: partName
         in: path
-        description: Part ID
+        description: 해당 자가진단의 상세 파트 이름(risk, invest, knowledge 중 하나)
         required: true
         schema:
           type: string
           format: string
+          example: 'risk'
+      - $ref: "#/components/parameters/Authorization"
       responses:
         200:
           description: OK
           content:
             json:
               schema:
-                type: object
-                example:
-                  point: 35
-                  ukUnderstanding:
-                    가치주/성장주: 29
-                    달러코스트 평균법: 45
-                    대형주/소형주: 26
-                    리스크 특징: 35
-                    배당: 24
-                    배당성장: 30
-                    보유종목 수: 44
-                    부채: 32
-                    선호 투자종목: 46
-                    시가배당율: 39
-                    시가총액: 25
-                    업종대표주: 29
-                    영업이익: 28
-                    자사주소각: 20
-                    자산관리 목표: 27
-                    장기투자: 40
-                    주식 포트폴리오: 31
-                    주식투자 비중: 46
-                    증권사 거래기간: 46
-                    척도법: 41
-                    초보자에게 맞는 주식 종목: 40
-                    투자수익: 27
-                    투자액 고정법: 45
-                    투자율 고정법: 41
-                    투자종목: 39
+                $ref: "#/components/schemas/DiagnosisRecordDetailDTO"
+  /report/diagnosis/bookmark/{videoId}/{isBookmarkOn}:
+    get:
+      tags:
+      - Self Diagnosis Report
+      summary: 비디오 북마크 지정 해제 API
+      description: 자가진단 중 표출된 추천 비디오의 북마크를 지정하고 해제하는 API 입니다.
+      parameters:
+      - name: videoId
+        in: path
+        description: 자가진단 중 표출된 추천 비디오의 ID
+        required: true
+        schema:
+          type: string
+          format: string
+          example: '1d80abe8-c8fb-45b1-9307-de689ccfaf60'
+      - name: isBookmarkOn
+        in: path
+        description: 북마크 지정 여부. (true 시 지정, false 시 해제)
+        required: true
+        schema:
+          type: boolean
+          example: true
+      - $ref: "#/components/parameters/Authorization"
+      responses:
+        200:
+          description: OK
+          content:
+            json:
+              schema:
+                $ref: "#/components/schemas/DiagnosisRecordDetailDTO"
   /report/miniTestResult/{id}:
     get:
       tags:
-      - Analysis Report
+      - Self Diagnosis Report
       summary: 미니 테스트 리포트의 정보를 가져옵니다.
       description: 투자 지식 평가 점수, 백분율, Part 별 이해도, 취약 영역 상세, 지식문제 수준 진단 기록을 가져옵니다. UX 예시와 값을 대체로 맞췄으니 참고하여 해당 값들의 역할을 파악 바랍니다.
       parameters:
@@ -684,6 +649,207 @@ components:
             - 1
             - 0
             - -1
+    DiagnosisRecordMainDTO:
+      type: object
+      properties:
+        giScore:
+          type: integer
+          example: 85
+          description: 자가 진단 GI 점수.
+        giPercentage:
+          type: integer
+          example: 67
+          description: 자가 진단 GI 점수 퍼센테이지. (ex 상위 15%)
+        userName:
+          type: string
+          example: '홍길동'
+          description: 해당 유저의 닉네임.
+        alarm:
+          type: boolean
+          example: true
+          description: 자가 진단 알람 여부.
+        scoreInfo:
+          type: object
+          properties:
+            risk:
+              type: object
+              properties:
+                score:
+                  type: integer
+                  example: 71
+                  description: 위험 대응 점수
+                percentage:
+                  type: integer
+                  example : 15
+                  description: 위험 대응 점수 퍼센테이지. (ex 상위 15%)
+            invest:
+              type: object
+              properties:
+                score:
+                  type: integer
+                  example: 71
+                  description: 투자 행동 편향 점수
+                percentage:
+                  type: integer
+                  example : 15
+                  description: 투자 행동 편향 점수 퍼센테이지. (ex 상위 15%)
+            knowledge:
+              type: object
+              properties:
+                score:
+                  type: integer
+                  example: 71
+                  description: 지식 이해 점수
+                percentage:
+                  type: integer
+                  example : 15
+                  description: 지식 이해 점수 퍼센테이지. (ex 상위 15%)
+        similarTypeInfo:
+          type: array
+          items:
+            type: string
+          description: 자신과 비슷한 유형의 투자자 정보. [투자자 비율, 평균 투자종목 수, 주식투자 비중] 으로 구성.
+          example: ['15%', '5종목', '40%']
+        video:
+          type: object
+          properties:
+            basic:
+              type: array
+              items:
+                $ref: '#/components/schemas/RecommendVideoDTO'
+            type:
+              type: array
+              items:
+                $ref: '#/components/schemas/RecommendVideoDTO'
+            advanced:
+              type: array
+              items:
+                $ref: '#/components/schemas/RecommendVideoDTO'
+          description: 추천 비디오 관련 정보. (투자 기초(basic), 투자 실전(advanced), 투자 성향(type)) 
+    RecommendVideoDTO:
+      type: object
+      properties:
+        id:
+          type: string
+          description: 해당 비디오의 ID
+          example: 'asdgkljbn-sklagjdnvb24fj-12489sdfn'
+        videoSrcUrl:
+          type: string
+          description: 해당 비디오의 영상 URL
+          example: 'https://youtube.com/vnwEchbie'
+        title:
+          type: string
+          description: 해당 비디오의 제목
+          example: '[슈카월드] 투자란?'
+        thumbnailUrl:
+          type: string
+          description: 해당 비디오의 썸네일 URL 
+          example: 'thumbmail.png'
+        totalTime:
+          type: number
+          description: 해당 비디오의 재생 시간 길이. (단위 second)
+          example: 864
+        hit:
+          type: integer
+          description: 해당 비디오의 조회수 
+          example: 30
+        isBookmark:
+          type: boolean
+          description: 해당 유저가 해당 비디오에 북마크가 되었는지에 대한 여부.
+          example: true
+    DiagnosisRecordDetailDTO:
+      type: object
+      properties:
+        score:
+          type: integer
+          description: 해당 파트의 점수
+          example: 89
+        percentage:
+          type: string
+          description: 해당 파트 점수의 퍼센테이지 (ex 상위 15%)
+          example: 15
+        mainCommentInfo:
+          type: object
+          properties:
+            main:
+              type: string
+              description: 해당 파트 점수에 따른 메인 코멘트
+              example: 현명한 하이브리드형 투자자
+            detail:
+              type: string
+              description: 해당 파트 점수에 따른 메인 코멘트 설명문
+              example: 하이브리드형 투자자는 공격적일때는 공격적으로, 보수적일때는 보수적으로....
+          description: 해당 파트 점수에 따른 코멘트
+        detailCommentInfo:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+                description: 해당 파트의 상세 점수 이름
+                example: 투자위험 태도
+              main:
+                type: string
+                description: 해당 파트의 상세 점수 메인 코멘트
+                example: 너무 큰 위험도 너무 작은 위험도 추구하지 않는, 중립형 투자자
+              detail:
+                type: string
+                description: 해당 파트의 상세 점수 메인 코멘트 설명문
+                example: 당신은 리스크 중립형으로 위험을 적당하게 수용하고 인내하는 투자자 입니다.
+              score:
+                type: integer
+                description: 해당 파트의 상세 점수
+                example: 42
+          description: 해당 파트의 상세 점수에 대한 코멘트
+        problemCorrectInfo:
+          type: object
+          properties:
+            allCorr:
+              type: integer
+              description: 모든 문제 중 맞은 갯수
+              example: 3
+            allProb:
+              type: integer
+              description: 모든 문제 갯수
+              example: 12
+            high:
+              type: string
+              description: 난이도 상, '정답 맞은 갯수 / 모든 문제' 형태의 string
+              example: '1/1'
+            middle:
+              type: integer
+              description: 난이도 중, '정답 맞은 갯수 / 모든 문제' 형태의 string
+              example: '1/6'
+            low:
+              type: integer
+              description: 난이도 하, '정답 맞은 갯수 / 모든 문제' 형태의 string
+              example: '1/5'
+          description: 지식 이해(knowledge) 파트 일 경우 활성화. 문제 정오답에 대한 정보 Object
+        problemHighLevelInfo:
+          type: array
+          items:
+            type: array
+            items:
+              type: string
+              example: [문제 index, 문제 UUID, 정오답 여부(true or false), 문제 내용, 난이도]
+          description: 난이도 상, 유저가 푼 문제 정보
+        problemMiddleLevelInfo:
+          type: array
+          items:
+            type: array
+            items:
+              type: string
+              example: [문제 index, 문제 UUID, 정오답 여부(true or false), 문제 내용, 난이도]
+          description: 난이도 중, 유저가 푼 문제 정보
+        problemLowLevelInfo:
+          type: array
+          items:
+            type: array
+            items:
+              type: string
+              example: [문제 index, 문제 UUID, 정오답 여부(true or false), 문제 내용, 난이도]
+          description: 난이도 하, 유저가 푼 문제 정보  
   parameters:
     userId:
       in: query
