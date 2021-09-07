@@ -12,7 +12,7 @@ import java.util.List;
 
 @Repository("MY-MinitestReportRepo")
 public interface MinitestReportRepo extends JpaRepository<MinitestReport, Long> {
-    @Query(value = "SELECT * FROM Minitest_Report WHERE USER_UUID = :USER_UUID", nativeQuery = true)
+    @Query(value = "SELECT * FROM Minitest_Report WHERE USER_UUID = :USER_UUID order by minitest_date asc", nativeQuery = true)
     List<MinitestReport> findAllByUserUuid(@Param("USER_UUID") String userUuid);
 
 }
