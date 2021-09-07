@@ -32,7 +32,6 @@ public class AuthService {
             if (!emailDuplicateCheck(signUpRequestDto.getEmail()) && !nickNameDuplicateCheck(signUpRequestDto.getNickname())) {
                 UserMaster userMaster = UserMaster.builder()
                         .nickname(signUpRequestDto.getNickname())
-                        .password(bCryptPasswordEncoder.encode(UUID.randomUUID().toString()))
                         .email(signUpRequestDto.getEmail())
                         .provider(signUpRequestDto.getProvider())
                         .role(Role.USER)
