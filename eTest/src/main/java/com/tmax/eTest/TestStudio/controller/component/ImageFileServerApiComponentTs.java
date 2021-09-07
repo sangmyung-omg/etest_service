@@ -422,7 +422,7 @@ public class ImageFileServerApiComponentTs {
 	/**
 	 * 이미지 파일 base64 인코딩 후 String 으로 반환
 	 */
-	private String getImgFileServiceComponent(Long probId, String src){
+	public String getImgFileServiceComponent(Long probId, String src){
 		final Integer BUFFER_SIZE = 3 * 1024;
 		FileInputStream fis = null;
 		StringBuffer sb = null;

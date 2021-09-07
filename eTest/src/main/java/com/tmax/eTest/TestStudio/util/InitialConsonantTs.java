@@ -40,13 +40,14 @@ public class InitialConsonantTs {
 						 rtName = rtName + " ";
 						 
 					 }else if( jsonObj.get("data").getClass().getName() == "org.json.simple.JSONArray" ) {
-						 ArrayList<String> tempArrayList = (ArrayList<String>) jsonObj.get("data");
-						 for(String tempData : tempArrayList) {
+//						 ArrayList<String> tempArrayList = (ArrayList<String>) jsonObj.get("data");
+						 ArrayList<Object> tempArrayList = (ArrayList<Object>) jsonObj.get("data");
+						 for(Object tempObjData : tempArrayList) {
 							 
 //							 tempData = tempData.replaceAll( System.getProperty("line.separator").toString(), " ");
-							 tempData = tempData.replaceAll("(\r\n|\r|\n|\n\r)", " ");
+							 String tempStrData = tempObjData.toString().replaceAll("(\r\n|\r|\n|\n\r)", " ");
 							 
-							 rtName = rtName + InitialConsonants( tempData );
+							 rtName = rtName + InitialConsonants( tempStrData );
 							 rtName = rtName + " ";
 							
 						 }

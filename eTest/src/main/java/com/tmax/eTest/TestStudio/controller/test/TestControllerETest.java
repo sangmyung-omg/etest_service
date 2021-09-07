@@ -7,6 +7,9 @@ import java.util.stream.Collectors;
 
 import javax.swing.plaf.basic.BasicInternalFrameTitlePane.SystemMenuBar;
 
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -50,7 +53,7 @@ public class TestControllerETest {
 	private final PathUtilTs pathUtilTs;
 	private PathUtilTs testP = new PathUtilTs();
 	private String dirPath = testP.getDirPath();
-	private final InitialConsonantTs initialConsonantTs; 
+	private final InitialConsonantTs initialConsonantTs;
 
 	/**
 	 * 등록
@@ -233,6 +236,49 @@ public class TestControllerETest {
 			System.out.println( dirPath );
 			System.out.println( pathUtilTs.getDefaultPath() );
 			System.out.println( pathUtilTs.getDirPath() );
+			
+			String rtName = "";
+			String jsonStr = "[{\"data\":\"투자에서 발생하는 수익률은 다음과 같이 계산한다. 먼저 주식과 채권과 같은 투자 자산을 매도한 가격에서 이를 매입할 때 들어간 금액을 뺀 시세 차익과 채권 이자와 주식 배당처럼 투자 자산에서 발생한 현금흐름을 더한다. 그리로 수수료 등 비용을 차감한다. 이렇게 계산한 금액을 매입 금액으로 나눈 다음 100을 곱해 퍼센트(%)로 환산하면 수익률을 계산할 수 있다. \\n\\n수익률=(매도 금액-매입 금액±보유 기간 중 현금흐름-비용)/(매입 금액)  ×100\\n          =  (120만원-100만원+10만원-5만원)/100만원  ×100 = 25% \",\"type\":\"SOLUTION_TEXT\"},{\"type\":\"MULTIPLE_CHOICE_IMAGE\",\"dataType\":\"image\",\"data\":[\"test4.png\",\"test5.png\",\"test6.png\"]},{\"data\":[\"2\"],\"type\":\"MULTIPLE_CHOICE_CORRECT_ANSWER\"}]";
+			
+			JSONParser jsonParser = new JSONParser();
+			
+			 JSONArray jsonArray = (JSONArray) jsonParser.parse(jsonStr);
+
+			 for(int i=0; i< jsonArray.size() ; i++) {
+				 
+				 JSONObject jsonObj = (JSONObject) jsonArray.get(i);
+				 if( jsonObj.containsKey("data") ) {
+					 if( jsonObj.get("data").getClass().getName() == "java.lang.String" ) {
+						 String tempData = (String) jsonObj.get("data");
+//						 tempData = tempData.replaceAll( System.getProperty("line.separator").toString(), " ");
+						 tempData = tempData.replaceAll("(\r\n|\r|\n|\n\r)", " ");
+						 
+						 rtName = rtName + initialConsonantTs.InitialConsonants(tempData);
+						 rtName = rtName + " ";
+						 
+					 }else if( jsonObj.get("data").getClass().getName() == "org.json.simple.JSONArray" ) {
+						 System.out.println("testttttttttttttest");
+						 System.out.println( jsonObj.get("data").getClass().arrayType() );
+						 
+						 ArrayList<Object> tempArrayList = (ArrayList<Object>) jsonObj.get("data");
+//						 ArrayList<String> tempArrayList = (ArrayList<String>) jsonObj.get("data");
+						 for(Object a : tempArrayList)
+						 System.out.println( tempArrayList.get(0).toString() ) ;
+						 System.out.println( tempArrayList.get(0).toString().getClass().getName() ) ;
+//						 for(String tempData : tempArrayList) {
+//							 
+////							 tempData = tempData.replaceAll( System.getProperty("line.separator").toString(), " ");
+//							 tempData = tempData.replaceAll("(\r\n|\r|\n|\n\r)", " ");
+//							 
+//							 rtName = rtName + initialConsonantTs.InitialConsonants(tempData);
+//							 rtName = rtName + " ";
+//							
+//						 }
+					 }
+				 }
+			 }
+			
+			
 			String output = "-";
 			return new ResponseEntity<>(output, HttpStatus.OK);
 			
