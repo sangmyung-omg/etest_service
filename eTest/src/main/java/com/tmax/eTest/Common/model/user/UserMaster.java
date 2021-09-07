@@ -62,6 +62,8 @@ public class UserMaster {
 	@Column(name = "NICK_NAME")
 	private String nickname;
 
+	private String name;
+
 	// 이벤트 알람 동의 (선택)
 	private Boolean event_sms_agreement;
 	// 장기 미 접속시 계정 활성화 (선택)
