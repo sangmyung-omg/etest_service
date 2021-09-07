@@ -47,9 +47,6 @@ public class UserMaster {
 	@Column(nullable = false)
 	private String email;
 
-	@JsonIgnore
-	private String password;
-
 	@Enumerated(EnumType.STRING)
 	private Role role;
 
