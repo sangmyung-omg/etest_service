@@ -13,15 +13,13 @@ public class PrincipalDetails implements OAuth2User, UserDetails {
     private static final long serialVersionUID = 1L;
 
     private String email;
-    private String password;
     private String userUuid;
     private Collection<? extends GrantedAuthority> authorities;
     private Map<String, Object> attributes;
     private String nickname;
 
-    public PrincipalDetails( String email, String password, String userUuid, String nickname, Collection<? extends GrantedAuthority> authorities) {
+    public PrincipalDetails( String email,  String userUuid, String nickname, Collection<? extends GrantedAuthority> authorities) {
         this.email = email;
-        this.password = password;
         this.authorities = authorities;
         this.userUuid = userUuid;
         this.nickname = nickname;
@@ -33,7 +31,6 @@ public class PrincipalDetails implements OAuth2User, UserDetails {
 
         return new PrincipalDetails(
                 user.getEmail(),
-                user.getPassword(),
                 user.getUserUuid(),
                 user.getNickname(),
                 authorities
@@ -51,10 +48,6 @@ public class PrincipalDetails implements OAuth2User, UserDetails {
         return email;
     }
 
-    @Override
-    public String getPassword() {
-        return password;
-    }
 
     @Override
     public String getUsername() {
@@ -84,6 +77,11 @@ public class PrincipalDetails implements OAuth2User, UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return authorities;
+    }
+
+    @Override
+    public String getPassword() {
+        return null;
     }
 
     @Override
