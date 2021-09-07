@@ -24,7 +24,9 @@ import com.tmax.eTest.Contents.repository.ProblemChoiceRepository;
 import com.tmax.eTest.Contents.repository.ProblemRepository;
 import com.tmax.eTest.Contents.repository.ProblemUKRelRepository;
 import com.tmax.eTest.Contents.repository.TestProblemRepository;
+import com.tmax.eTest.Contents.util.ImgFileUtils;
 import com.tmax.eTest.Test.repository.UkRepository;
+import com.tmax.eTest.TestStudio.controller.component.ImageFileServerApiComponentTs;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -52,7 +54,13 @@ public class ProblemServicesV1 implements ProblemServicesBase {
 	UkRepository uKMasterRepo;
 	
 	@Autowired
-	ErrorReportRepository errorRepo; 
+	ErrorReportRepository errorRepo;
+
+	@Autowired
+	ImageFileServerApiComponentTs imgAPI;
+
+	@Autowired
+	ImgFileUtils imgfileUtils;
 	
 	public Temp1ProblemOutputDTO getProblemInfo(Integer probId) throws Exception{
 		Temp1ProblemOutputDTO output = new Temp1ProblemOutputDTO();
@@ -69,11 +77,56 @@ public class ProblemServicesV1 implements ProblemServicesBase {
 		JSONArray questionJsonArray = (JSONArray) parser.parse(problemInfo.getQuestion());
 		List<ComponentDTO> componentList = new ArrayList<ComponentDTO>();
 		for (int i=0; i < questionJsonArray.size(); i++) {
+			List<String> dataList = new ArrayList<String>();
 			JSONObject json = (JSONObject) questionJsonArray.get(i);
+			String type = json.get("type").toString();
+			String data = json.get("data").toString();
 			ComponentDTO component = new ComponentDTO();
-			component.setData(json.get("data").toString());
-			component.setType(json.get("type").toString());
+
+			// \n은 파싱할 필요 X. 보기의 delimiter를 \n으로 한 경우 없고, 그냥 텍스트 표출 중 줄바꿈을 위해 넣은 것임. - 수진님 confirm.
+			// if (data.contains("\\n")) {
+			// 	log.info(Arrays.toString(data.split("\\n")));
+			// 	log.info(Arrays.toString(data.split("\\\\n")));
+			// 	log.info(Arrays.toString(data.split("\n")));
+			// 	component.setData(Arrays.asList(data.split("\\\\n")));
+			// } else {
+			// 	component.setData(Arrays.asList(data));
+			// }
+			
+			if (data.startsWith("[") && data.endsWith("]")) {
+				// ["a", "b", "c", ... ] 의 형태라 가정.
+				dataList = Arrays.asList(data.substring(2, data.length()-2).split("\",\""));
+				log.info(dataList.toString());
+				List<String> temp = new ArrayList<String>();
+				if (type.contains("IMAGE")) {
+					for (String img_name : dataList) {
+						String sb = imgfileUtils.getImgFileServiceComponent(probId, img_name);
+						temp.add(sb);
+					}
+
+					// dataList.clear();
+					dataList = temp;
+					// String img_base64_string = imgAPI.getImgFileServiceComponent((long) probId, "test1.png");
+					// log.info("image result : " + img_base64_string);
+				}
+			} else
+				dataList = new ArrayList<String>(Arrays.asList(data));
+			
+			String preface = "";
+			if (type.contains("EXAMPLE_BOX")) {
+				if (json.containsKey("preface")) {
+					preface = json.get("preface").toString();
+				} else {
+					log.info("No preface info. So, set 'null' for the value of preface.");
+					preface = "null";
+				}
+			}
+			
+			component.setData(dataList);
+			component.setType(type);
+			component.setPreface(preface);
 			componentList.add(component);
+
 		}
 
 		output.setComponents(componentList);
@@ -114,7 +167,7 @@ public class ProblemServicesV1 implements ProblemServicesBase {
 			
 			componentTypeList.add(type);
 			if (type.equalsIgnoreCase("QUESTION_TEXT")) questionText.add(data);
-			else if (type.equalsIgnoreCase("EXAMPLE_BOX_TEXT")) exampleBoxText.add(data);
+			else if (type.contains("EXAMPLE_BOX_TEXT")) exampleBoxText.add(data);
 			else if (type.equalsIgnoreCase("MULTIPLE_CHOICE_TEXT")) {
 				log.info(data);
 				// logger.info(json.get("data"));
@@ -136,7 +189,7 @@ public class ProblemServicesV1 implements ProblemServicesBase {
 				if (json.containsKey("preface"))
 					preface = json.get("preface").toString();
 			}
-			else if (type.equalsIgnoreCase("EXAMPLE_BOX_IMAGE")) exampleBoxText.add(data);
+			else if (type.contains("EXAMPLE_BOX_IMAGE")) exampleBoxText.add(data);
 
 		}
 

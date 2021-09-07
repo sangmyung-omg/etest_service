@@ -127,15 +127,18 @@ paths:
                   answerType: MULTIPLE_CHOICE
                   components:
                     - data: 
-                        "3년 간 주식투자로 다음과 같은 현금흐름이 발생했을 때, 보유기간 동안 수익률로 올바른 것은?"
+                      - "3년 간 주식투자로 다음과 같은 현금흐름이 발생했을 때, 보유기간 동안 수익률로 올바른 것은?"
                       type:
                         "QUESTION_TEXT"
                     - data:
-                        "주식 매입 금액 : 100만원\\n주식 매도 금액 : 120만원\\n배당금 : 10만원\\n비용 : 5만원"
+                      - "주식 매입 금액 : 100만원\n주식 매도 금액 : 120만원\n배당금 : 10만원\n비용 : 5만원"
                       type:
                         "PREFACED_EXAMPLE_BOX_TEXT"
                     - data:
-                        '["20%","25%","30%","35%"]}]'
+                      - "20%"
+                      - "25%"
+                      - "30%"
+                      - "35%"
                       type:
                         "MULTIPLE_CHOICE_TEXT"
                   difficulty: 상/중/하

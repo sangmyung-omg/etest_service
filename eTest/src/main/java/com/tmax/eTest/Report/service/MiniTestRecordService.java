@@ -303,6 +303,7 @@ public class MiniTestRecordService {
 										})
 										.collect(Collectors.toList()); //filter by problem id
 		if(statementList.size() == 0) return null;
+		statementList = filterPureLrsStatement(statementList);
 
 		//Problem info build
  		List<List<String>> problemInfoTotal = createProblemInfo(statementList, userId);
