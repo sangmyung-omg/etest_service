@@ -169,10 +169,11 @@ public class DiagnosisReportService {
 	{
 		
 
-		int investItemNum = 0, stockRatio = 0;
+		int investItemNum = 0, stockRatio = 0, investPeriod = 0;
 		
 		int[] investItemNumList = {2, 5, 7, 10};
 		int[] investStockRatioList = {5, 20, 40, 55};
+		int[] investPeriodList = {0, 1, 2, 4};
 		
 		if(scoreMap.get(RuleBaseScoreCalculator.STOCK_NUM_ANS) != null
 				&& scoreMap.get(RuleBaseScoreCalculator.STOCK_NUM_ANS) < investItemNumList.length)
@@ -180,7 +181,10 @@ public class DiagnosisReportService {
 		
 		if(scoreMap.get(RuleBaseScoreCalculator.STOCK_RATIO_ANS) != null
 				&& scoreMap.get(RuleBaseScoreCalculator.STOCK_RATIO_ANS) < investStockRatioList.length)
-			investItemNum = investStockRatioList[scoreMap.get(RuleBaseScoreCalculator.STOCK_RATIO_ANS)];
+			stockRatio = investStockRatioList[scoreMap.get(RuleBaseScoreCalculator.STOCK_RATIO_ANS)];
+		
+		if(scoreMap.get(RuleBaseScoreCalculator.STOCK_PERIOD_ANS) != null)
+			investPeriod = scoreMap.get(RuleBaseScoreCalculator.STOCK_PERIOD_ANS);
 		
 		DiagnosisReport report = DiagnosisReport.builder()
 				.diagnosisId((probSetId == null)
@@ -208,6 +212,7 @@ public class DiagnosisReportService {
 				.userMbti("XXXX")
 				.investItemNum(investItemNum)
 				.stockRatio(stockRatio)
+				.investPeriod(investPeriod)
 				.diagnosisDate(Timestamp.valueOf(LocalDateTime.now()))
 				.build();
 

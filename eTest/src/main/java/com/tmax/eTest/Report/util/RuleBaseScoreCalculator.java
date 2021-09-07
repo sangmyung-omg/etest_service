@@ -48,6 +48,7 @@ public class RuleBaseScoreCalculator {
 	final public static String GI_SCORE_KEY = "GI점수";
 	final public static String RISK_ANSWER_1_KEY = "RiskA1";
 	final public static String RISK_ANSWER_2_KEY = "RiskA2";
+	final public static String STOCK_PERIOD_ANS = "증권사 거래기간";
 	final public static String STOCK_RATIO_ANS = "주식비중답변";
 	final public static String STOCK_NUM_ANS = "주식종목수답변";
 
@@ -84,7 +85,9 @@ public class RuleBaseScoreCalculator {
 				{
 				case "투자현황":
 					riskTracingProb.add(probInfo);
-					if(probInfo.getFirst().getDiagnosisInfo().getCurriculumId() == 2) // 주식 투자 비중
+					if(probInfo.getFirst().getDiagnosisInfo().getCurriculumId() == 1)
+						res.put(STOCK_PERIOD_ANS, probInfo.getSecond());
+					else if(probInfo.getFirst().getDiagnosisInfo().getCurriculumId() == 2) // 주식 투자 비중
 						res.put(STOCK_RATIO_ANS, probInfo.getSecond());
 					else if(probInfo.getFirst().getDiagnosisInfo().getCurriculumId() == 3) // 보유 종목 수
 						res.put(STOCK_NUM_ANS, probInfo.getSecond());

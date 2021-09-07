@@ -49,6 +49,7 @@ public class DiagnosisReport {
 	private Float avgUkMastery;
 	private String userMbti;
 	private Integer investItemNum;
+	private Integer investPeriod;
 	private Integer stockRatio;
 	private Timestamp diagnosisDate;
 	

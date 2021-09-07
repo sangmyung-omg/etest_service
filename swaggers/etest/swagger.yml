@@ -658,8 +658,12 @@ components:
           description: 자가 진단 GI 점수.
         giPercentage:
           type: integer
-          example: 67
+          example: 15
           description: 자가 진단 GI 점수 퍼센테이지. (ex 상위 15%)
+        giComment:
+          type: string
+          example: '자가 진단 상위권에 해당되는 점수 입니다.'
+          description: 자가 진단 GI 점수에 따른 코멘트.        
         userName:
           type: string
           example: '홍길동'

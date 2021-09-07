@@ -157,7 +157,7 @@ public class MiniTestRecordService {
 											.collect(Collectors.toMap(Problem::getProbID, p->p));
 		
 		//Index. TODO. parallelize here to make dramatic speed change
-		AtomicInteger probIndex = new AtomicInteger(0);
+		AtomicInteger probIndex = new AtomicInteger(1);
 		List<List<String>> outProbInfo = statementList.stream()
 												  .flatMap(statement -> {
 														Integer probId = null;
