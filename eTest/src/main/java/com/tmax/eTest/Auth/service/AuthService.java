@@ -36,6 +36,7 @@ public class AuthService {
                         .email(signUpRequestDto.getEmail())
                         .provider(signUpRequestDto.getProvider())
                         .role(Role.USER)
+                        .name(signUpRequestDto.getName())
                         .userUuid(UUID.randomUUID().toString())
                         .gender(signUpRequestDto.getGender())
                         .providerId(signUpRequestDto.getProviderId())
