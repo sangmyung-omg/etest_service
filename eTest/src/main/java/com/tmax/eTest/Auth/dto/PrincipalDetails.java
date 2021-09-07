@@ -17,8 +17,9 @@ public class PrincipalDetails implements OAuth2User, UserDetails {
     private Collection<? extends GrantedAuthority> authorities;
     private Map<String, Object> attributes;
     private String nickname;
-
-    public PrincipalDetails( String email,  String userUuid, String nickname, Collection<? extends GrantedAuthority> authorities) {
+    private String name;
+    public PrincipalDetails( String name, String email, String userUuid, String nickname, Collection<? extends GrantedAuthority> authorities) {
+        this.name = name;
         this.email = email;
         this.authorities = authorities;
         this.userUuid = userUuid;
@@ -30,6 +31,7 @@ public class PrincipalDetails implements OAuth2User, UserDetails {
                 singletonList(new SimpleGrantedAuthority("ROLE_"+user.getRole()));
 
         return new PrincipalDetails(
+                user.getName(),
                 user.getEmail(),
                 user.getUserUuid(),
                 user.getNickname(),
@@ -95,7 +97,7 @@ public class PrincipalDetails implements OAuth2User, UserDetails {
 
     @Override
     public String getName() {
-        return userUuid;
+        return name;
     }
 
     public String getUserUuid() { return userUuid;}

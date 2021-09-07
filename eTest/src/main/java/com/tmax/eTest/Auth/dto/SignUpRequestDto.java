@@ -21,6 +21,8 @@ public class SignUpRequestDto {
 
     private String nickname;
 
+    private String name;
+
     @Enumerated(EnumType.STRING)
     private Role role;
     @JsonFormat(pattern = "yyyy-MM-dd")
