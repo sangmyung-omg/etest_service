@@ -157,7 +157,7 @@ public class MiniTestRecordService {
 											.collect(Collectors.toMap(Problem::getProbID, p->p));
 		
 		//Index. TODO. parallelize here to make dramatic speed change
-		AtomicInteger probIndex = new AtomicInteger(0);
+		AtomicInteger probIndex = new AtomicInteger(1);
 		List<List<String>> outProbInfo = statementList.stream()
 												  .flatMap(statement -> {
 														Integer probId = null;
@@ -321,9 +321,9 @@ public class MiniTestRecordService {
 		//Set values
 		problemCorrectInfo.put("allProb", problemInfoTotal.size());
 		problemCorrectInfo.put("allCorr", lowCorr + midCorr + highCorr);
-		problemCorrectInfo.put("low", lowCorr + "/" + problemInfoTotal.size());
-		problemCorrectInfo.put("mid", midCorr + "/" + problemInfoTotal.size());
-		problemCorrectInfo.put("high", highCorr + "/" + problemInfoTotal.size());
+		problemCorrectInfo.put("low", lowCorr + "/" + lowInfo.size());
+		problemCorrectInfo.put("mid", midCorr + "/" + midInfo.size());
+		problemCorrectInfo.put("high", highCorr + "/" + highInfo.size());
 
 
 		//Try alarm get for lrs statements

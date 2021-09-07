@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.google.gson.JsonObject;
+import com.tmax.eTest.TestStudio.controller.TestProblemControllerTs;
 import com.tmax.eTest.TestStudio.controller.component.exception.CustomExceptionTs;
 import com.tmax.eTest.TestStudio.controller.component.exception.ErrorCodeEnumTs;
 import com.tmax.eTest.TestStudio.dto.problems.base.BaseProblemIDandImageSrcsDTO;
@@ -27,26 +28,28 @@ import com.tmax.eTest.TestStudio.service.ProblemServiceTs;
 import com.tmax.eTest.TestStudio.util.PathUtilTs;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Transactional
 @RequiredArgsConstructor
+@Slf4j
 public class ImageFileServerApiComponentTs {
 	
 
 	private final ProblemServiceTs problemServiceETest;
-	private final PathUtilTs pathUtilEtest = new PathUtilTs();
+	private final PathUtilTs pathUtilTs;
 	
 	/**
 	 * Image Post 
 	 * 
 	 */
 	
-//	private String dirPath = File.separator + "data" + File.separator + "imgsrc";
-	private String dirPath = pathUtilEtest.getDirPath();
+//	private String dirPath = pathUtilTs.getDirPath();
 	
 	public String getDirPath() {
-		return this.dirPath;
+//		return this.dirPath;
+		return pathUtilTs.getDirPath();
 	}
 	
 	public String ImageUploadServiceComponent(
@@ -58,9 +61,11 @@ public class ImageFileServerApiComponentTs {
 			if(imgMFileList.size()<1) {
 				throw new Exception("no-imageData");
 			}
-			
+			System.out.println(getDirPath());
+			System.out.println(pathUtilTs.getDirPath());
 			//tmp경로 생성
-			File tmpDir = new File(dirPath + File.separator + "tmp");
+//			File tmpDir = new File(dirPath + File.separator + "tmp");
+			File tmpDir = new File(getDirPath() + File.separator + "tmp");
 			if( !tmpDir.exists() ){
 				tmpDir.mkdirs();
 			}
@@ -169,7 +174,7 @@ public class ImageFileServerApiComponentTs {
 	public Boolean assignImgFileServiceComponent(String userID, Long probID, String src ){
 		
 		try {
-
+			String dirPath = getDirPath(); 
 			if(userID == null || probID == null || src == null) return false;
 			// 파일 경로 변경
 			File from = new File(dirPath + File.separator + "tmp" + File.separator + userID + File.separator + src);
@@ -213,6 +218,7 @@ public class ImageFileServerApiComponentTs {
 						throw new CustomExceptionTs(ErrorCodeEnumTs.EXCEEDED_REQUEST_SIZE);
 					}else {
 						for( String src : srcList ){
+							
 							if(src==null) {
 								continue;
 							}
@@ -240,6 +246,7 @@ public class ImageFileServerApiComponentTs {
 	public Boolean deleteImgSrcFileOfProbIDServiceComponent(Long probID){	
 
 		try {
+				String dirPath = getDirPath();
 				if(probID ==null) return false;
 				
 				String probIDtoString = Long.toString(probID); 		
@@ -262,6 +269,7 @@ public class ImageFileServerApiComponentTs {
 	public Boolean deleteImgSrcFolerOfProbIDServiceComponent(Long probID){	
 
 		try {
+				String dirPath = getDirPath();
 				if(probID ==null) return false;
 				
 				String probIDtoString = Long.toString(probID); 		
@@ -284,7 +292,7 @@ public class ImageFileServerApiComponentTs {
 	public Boolean deleteImgTempFolerOfUserIDServiceComponent(String userID){	
 
 		try {
-			
+				String dirPath = getDirPath();
 				if(userID==null) return false;
 			
 				File folder = new File(dirPath + File.separator + "tmp" + File.separator + userID);
@@ -308,6 +316,7 @@ public class ImageFileServerApiComponentTs {
 	public Boolean deleteImgSrcsOfProbIDServiceComponent(Long probID, List<String> imgSrcs){	
 
 		try {
+				String dirPath = getDirPath();
 				if(probID==null) return false;
 				
 				String probIDtoString = Long.toString(probID); 		
@@ -344,7 +353,7 @@ public class ImageFileServerApiComponentTs {
 	 * 이미지 파일 JsonObject to String 반환  JsonObject:( key:이미지 파일 이름/value:Base64인코딩 된 이미지 {key1:value1,key2:value2})
 	 */
 	public String getImgByProbIDServiceComponent(Long probId){
-		
+		String dirPath = getDirPath();
 		if(probId==null) return null;
 		
 		JsonObject jsonObject = new JsonObject();
@@ -375,7 +384,7 @@ public class ImageFileServerApiComponentTs {
 	 */
 
 	public List<String> getImgJsonToStrListByProbIDServiceComponent(Long probId){
-		
+		String dirPath = getDirPath();
 		if(probId==null) return null;
 		
 		List<String> result = new ArrayList<String>();
@@ -419,6 +428,7 @@ public class ImageFileServerApiComponentTs {
 		StringBuffer sb = null;
 		
 		try {
+			String dirPath = getDirPath();
 			fis = new FileInputStream(dirPath + File.separator + Long.toString(probId) + File.separator + src);
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
@@ -470,7 +480,7 @@ public class ImageFileServerApiComponentTs {
 		for(String strProbId : strProbIdList) {
 //	    for(Long probId : probIdList) {
 //	    	String strProbId = probId.toString();
-			File folder = new File(pathUtilEtest.getDirPath() + File.separator + strProbId);
+			File folder = new File(pathUtilTs.getDirPath() + File.separator + strProbId);
 			if( folder.exists()) {
 
 				List<String> srcList = new ArrayList<String>();

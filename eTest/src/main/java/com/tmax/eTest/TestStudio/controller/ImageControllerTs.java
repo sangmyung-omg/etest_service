@@ -17,17 +17,20 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.tmax.eTest.Contents.controller.ArticleController;
 import com.tmax.eTest.TestStudio.controller.component.ImageFileServerApiComponentTs;
 import com.tmax.eTest.TestStudio.dto.problems.base.BaseProblemIDandImageSrcsDTO;
 import com.tmax.eTest.TestStudio.dto.problems.in.GetProblemDTOIn;
 import com.tmax.eTest.TestStudio.dto.problems.out.GetProblemImageDTOOut;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 
 @RestController
 @CrossOrigin(origins = "*")
 @RequiredArgsConstructor
+@Slf4j
 public class ImageControllerTs {
 	
 	private final ImageFileServerApiComponentTs imageFileServerApiComponentETest;
@@ -55,6 +58,7 @@ public class ImageControllerTs {
 		} catch (Exception e) {
 			
 			e.printStackTrace(); 
+			log.error(e.getMessage());
 			throw e;
 			
 		}		
@@ -72,6 +76,7 @@ public class ImageControllerTs {
 		} catch (Exception e) {
 			
 			e.printStackTrace(); 
+			log.error(e.getMessage());
 			throw e;
 		}		
 	}	

@@ -153,7 +153,14 @@ public class DiagnosisControllerV1 {
 		Map<String, Object> result = new HashMap<String, Object>();
 
 		// Check User UUID from request header
-		String userUuid = principalDetails.getUserUuid();
+		String userUuid = "";
+		try {
+			userUuid = principalDetails.getUserUuid();
+		} catch (Exception e) {
+			log.info("Cannot get userUuid from token");
+			result.put("error", "Cannot get userUuid from token");
+			return new ResponseEntity<>(result, HttpStatus.NO_CONTENT);
+		}
 		// String token = request.getHeader("Authorization").replace("Bearer ","");
 		// Map<String, Object> parseInfo = jwtTokenUtil.getUserParseInfo(token);
 
