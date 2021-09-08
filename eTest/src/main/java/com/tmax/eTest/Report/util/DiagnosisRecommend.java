@@ -106,13 +106,13 @@ public class DiagnosisRecommend {
 	{
 		List<JsonObject> resultBucket = new ArrayList<>();
 		List<JsonObject> recIds = Arrays.asList(
-				makeRecJsonObject("CV2021202020212012019999998", "video"), // 6-1", "video"),
-				makeRecJsonObject("CV2021202020212012019999998", "video"), // 6-2", "video"),
-				makeRecJsonObject("CV2021202020212012019999998", "video"), // 6-3", "video"),
-				makeRecJsonObject("CV2021202020212012019999998", "video"), // 6-4", "video"),
-				makeRecJsonObject("CV2021202020212012019999998", "video"), // 6-5", "video"),
-				makeRecJsonObject("CV2021202020212012019999998", "video"), // 6-6", "video"),
-				makeRecJsonObject("CV2021202020212012019999998", "video") // 6-7", "video")
+				makeRecJsonObject("Dummy6-1", "video"),
+				makeRecJsonObject("Dummy6-2", "video"),
+				makeRecJsonObject("Dummy6-3", "video"),
+				makeRecJsonObject("Dummy6-4", "video"),
+				makeRecJsonObject("Dummy6-5", "video"),
+				makeRecJsonObject("Dummy6-6", "video"),
+				makeRecJsonObject("Dummy6-7", "video")
 		);
 		
 		if(riskProfileTypeIdx != riskTracingTypeIdx)
@@ -141,16 +141,16 @@ public class DiagnosisRecommend {
 	{
 		List<JsonObject> resultBucket = new ArrayList<>();
 		List<JsonObject> recIds = Arrays.asList(
-				makeRecJsonObject("CV2021202020212012019999998", "video"), // 5-1", "video"),
-				makeRecJsonObject("CV2021202020212012019999998", "video"), // 5-2", "video"),
-				makeRecJsonObject("CV2021202020212012019999998", "video"), // 5-3", "video"),
-				makeRecJsonObject("CV2021202020212012019999998", "video"), // 5-4", "video"),
-				makeRecJsonObject("CV2021202020212012019999998", "video"), // 5-5", "video"),
-				makeRecJsonObject("CV2021202020212012019999998", "video"), // 5-6", "video"),
-				makeRecJsonObject("CV2021202020212012019999998", "video"), // 5-7", "video"),
-				makeRecJsonObject("CV2021202020212012019999998", "video"), // 5-8", "video"),
-				makeRecJsonObject("CV2021202020212012019999998", "video"), // 5-9", "video"),
-				makeRecJsonObject("CV2021202020212012019999998", "video") // 5-10", "video")
+				makeRecJsonObject("Dummy5-1", "video"),
+				makeRecJsonObject("Dummy5-2", "video"),
+				makeRecJsonObject("Dummy5-3", "video"),
+				makeRecJsonObject("Dummy5-4", "video"),
+				makeRecJsonObject("Dummy5-5", "video"),
+				makeRecJsonObject("Dummy5-6", "video"),
+				makeRecJsonObject("Dummy5-7", "video"),
+				makeRecJsonObject("Dummy5-8", "video"),
+				makeRecJsonObject("Dummy5-9", "video"),
+				makeRecJsonObject("Dummy5-10", "video")
 		);
 		
 		if(investScore < 85)
@@ -262,15 +262,15 @@ public class DiagnosisRecommend {
 	{
 		int[] curriIds = {13, 14, 15};
 		List<JsonObject> recIds = Arrays.asList(
-				makeRecJsonObject("CV2021202030344114259999993", "video"), //1-1", "video"),
-				makeRecJsonObject("CV2021202030344114259999993", "video"), // 1-2", "video"),
-				makeRecJsonObject("CV2021202030344114259999993", "video"), // 1-3", "video"),
-				makeRecJsonObject("CV2021202030344114259999993", "video"), // 1-4", "video"),
-				makeRecJsonObject("CV2021202030344114259999993", "video"), // 1-5", "video"),
-				makeRecJsonObject("CV2021202030344114259999993", "video"), // 1-6", "video"),
-				makeRecJsonObject("CV2021202030344114259999993", "video"), // 1-7", "video"),
-				makeRecJsonObject("CV2021202030344114259999993", "video"), // 1-8", "video"),
-				makeRecJsonObject("CV2021202030344114259999993", "video") // 1-9", "video")
+				makeRecJsonObject("Dummy1-1", "video"),
+				makeRecJsonObject("Dummy1-2", "video"),
+				makeRecJsonObject("Dummy1-3", "video"),
+				makeRecJsonObject("Dummy1-4", "video"),
+				makeRecJsonObject("Dummy1-5", "video"),
+				makeRecJsonObject("Dummy1-6", "video"),
+				makeRecJsonObject("Dummy1-7", "video"),
+				makeRecJsonObject("Dummy1-8", "video"),
+				makeRecJsonObject("Dummy1-9", "video")
 		);
 		List<List<Integer>> recoContentList = Arrays.asList(
 				Arrays.asList(),
@@ -320,15 +320,15 @@ public class DiagnosisRecommend {
 	{
 		int[] curriIds = {16, 17, 18};
 		List<JsonObject> recIds = Arrays.asList(
-				makeRecJsonObject("CV2021202030344114259999993", "video"), //"단계 2-1", "video"),
-				makeRecJsonObject("CV2021202030344114259999994", "video"), //"단계 2-2", "video"),
-				makeRecJsonObject("CV2021202030344114259999994", "video"), //"단계 2-3", "video"),
-				makeRecJsonObject("CV2021202030344114259999994", "video"), //"단계 2-4", "video"),
-				makeRecJsonObject("CV2021202030344114259999994", "video"), //"단계 2-5", "video"),
-				makeRecJsonObject("CV2021202030344114259999996", "video"), //"단계 2-6", "video"),
-				makeRecJsonObject("CV2021202030344114259999996", "video"), //"단계 2-7", "video"),
-				makeRecJsonObject("CV2021202030344114259999996", "video"), //"단계 2-8", "video"),
-				makeRecJsonObject("CV2021202030344114259999996", "video") //"단계 2-9", "video")
+				makeRecJsonObject("Dummy2-1", "video"),
+				makeRecJsonObject("Dummy2-2", "video"),
+				makeRecJsonObject("Dummy2-3", "video"),
+				makeRecJsonObject("Dummy2-4", "video"),
+				makeRecJsonObject("Dummy2-5", "video"),
+				makeRecJsonObject("Dummy2-6", "video"),
+				makeRecJsonObject("Dummy2-7", "video"),
+				makeRecJsonObject("Dummy2-8", "video"),
+				makeRecJsonObject("Dummy2-9", "video")
 		);
 		List<List<Integer>> recoContentList = Arrays.asList(
 				Arrays.asList(),
@@ -378,15 +378,15 @@ public class DiagnosisRecommend {
 	{
 		int[] curriIds = {19, 20, 21};
 		List<JsonObject> recIds = Arrays.asList(
-				makeRecJsonObject("CV2021202030344114259999997", "video"), // 3-1", "video"),
-				makeRecJsonObject("CV2021202030344114259999997", "video"), // 3-2", "video"),
-				makeRecJsonObject("CV2021202030344114259999997", "video"), // 3-3", "video"),
-				makeRecJsonObject("CV2021202030344114259999997", "video"), // 3-4", "video"),
-				makeRecJsonObject("CV2021202030344114259999997", "video"), // 3-5", "video"),
-				makeRecJsonObject("CV2021102030344114259999998", "video"), // 3-6", "video"),
-				makeRecJsonObject("CV2021102030344114259999998", "video"), // 3-7", "video"),
-				makeRecJsonObject("CV2021102030344114259999998", "video"), // 3-8", "video"),
-				makeRecJsonObject("CV2021102030344114259999998", "video") // 3-9", "video")
+				makeRecJsonObject("Dummy3-1", "video"),
+				makeRecJsonObject("Dummy3-2", "video"),
+				makeRecJsonObject("Dummy3-3", "video"),
+				makeRecJsonObject("Dummy3-4", "video"),
+				makeRecJsonObject("Dummy3-5", "video"),
+				makeRecJsonObject("Dummy3-6", "video"),
+				makeRecJsonObject("Dummy3-7", "video"),
+				makeRecJsonObject("Dummy3-8", "video"),
+				makeRecJsonObject("Dummy3-9", "video")
 		);
 		List<List<Integer>> recoContentList = Arrays.asList(
 				Arrays.asList(),
@@ -435,15 +435,15 @@ public class DiagnosisRecommend {
 	{
 		int[] curriIds = {22, 23, 24};
 		List<JsonObject> recIds = Arrays.asList(
-				makeRecJsonObject("CV2021202020212012019999998", "video"), //"보카1", "article"),
-				makeRecJsonObject("CV2021202020212012019999998", "video"), //"보카2", "article"),
-				makeRecJsonObject("CV2021202020212012019999998", "video"), //"보카3", "article"),
-				makeRecJsonObject("CV2021202020212012019999998", "video"), //"보카4", "article"),
-				makeRecJsonObject("CV2021202020212012019999998", "video"), //"보카5", "article"),
-				makeRecJsonObject("CV2021202020212012019999998", "video"), //"보카6", "article"),
-				makeRecJsonObject("CV2021202030344114259999993", "video"), //"보카7", "article"),
-				makeRecJsonObject("CV2021202030344114259999993", "video"), //"보카8", "article"),
-				makeRecJsonObject("CV2021202030344114259999993", "video") //"보카9", "article")
+				makeRecJsonObject("DummyVoca1", "video"),
+				makeRecJsonObject("DummyVoca2", "video"),
+				makeRecJsonObject("DummyVoca3", "video"),
+				makeRecJsonObject("DummyVoca4", "video"),
+				makeRecJsonObject("DummyVoca5", "video"),
+				makeRecJsonObject("DummyVoca6", "video"),
+				makeRecJsonObject("DummyVoca7", "video"),
+				makeRecJsonObject("DummyVoca8", "video"),
+				makeRecJsonObject("DummyVoca9", "video")
 		);
 		List<List<Integer>> recoContentList = Arrays.asList(
 				Arrays.asList(),
