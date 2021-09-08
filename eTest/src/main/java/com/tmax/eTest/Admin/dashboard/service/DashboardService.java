@@ -2,10 +2,7 @@ package com.tmax.eTest.Admin.dashboard.service;
 
 import com.tmax.eTest.Admin.dashboard.dto.FilterQueryDTO;
 import com.tmax.eTest.Admin.dashboard.dto.FilterDTO;
-import com.tmax.eTest.Admin.dashboard.repository.DiagnosisReportRepository;
-import com.tmax.eTest.Admin.dashboard.repository.MinitestReportRepository;
-import com.tmax.eTest.Admin.dashboard.repository.StatementRepository;
-import com.tmax.eTest.Admin.dashboard.repository.UserCreateTimeRepository;
+import com.tmax.eTest.Admin.dashboard.repository.*;
 import com.tmax.eTest.Auth.dto.Gender;
 import com.tmax.eTest.Common.model.report.DiagnosisReport;
 import com.tmax.eTest.Common.model.report.MinitestReport;
@@ -33,6 +30,7 @@ public class DashboardService {
     private final DiagnosisReportRepository diagnosisReportRepository;
     private final MinitestReportRepository minitestReportRepository;
     private final UserCreateTimeRepository userCreateTimeRepository;
+    private final UserDeleteTimeRepository userDeleteTimeRepository;
     public FilterQueryDTO filterQueryBuilder(FilterDTO filterDTO) {
         FilterQueryDTO filterQueryDTO = FilterQueryDTO.builder()
                 .gender(filterDTO.getGender())
@@ -58,19 +56,16 @@ public class DashboardService {
         return minitestReportRepository.filter(filterQueryBuilder(filterDTO));
     }
 
-    public List<Statement> getStatement(FilterDTO filterDTO) {
+    public List<Statement> getAccessor(FilterDTO filterDTO) {
         return statementRepository.filter(filterQueryBuilder(filterDTO));
     }
 
-    public List<UserMaster> getCreateTime(FilterDTO filterDTO) {
+    public List<UserMaster> getUserIncrease(FilterDTO filterDTO) {
         return userCreateTimeRepository.filter(filterQueryBuilder(filterDTO));
     }
-//    public Long getPlaytime(FilterDTO filterDTO) {
-//        GetStatementInfoDTO getStatementInfoDTO = new GetStatementInfoDTO();
-//        String dateFromStr = filterDTO.getDateFrom().toString().substring(0,10);
-//        String dateToStr = filterDTO.getDateTo().plusDays(1).toString().substring(0,10);
-//        return statementRepository.findAllByFilter( dateFromStr, dateToStr,Gender.female.toString());
-//    }
+    public List<UserMaster> getUserDelete(FilterDTO filterDTO) {
+        return userDeleteTimeRepository.filter(filterQueryBuilder(filterDTO));
+    }
 }
 
 

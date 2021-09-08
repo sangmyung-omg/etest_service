@@ -19,6 +19,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -48,9 +49,13 @@ public class AuthController {
     private long JWT_ACCESS_TOKEN_VALIDITY;
     @Value("${jwt.refresh.token.time}")
     private long JWT_REFRESH_TOKEN_VALIDITY;
-
+    public static String getClientIp(HttpServletRequest req) {
+        String ip = req.getHeader("X-Forwarded-For");
+        if (ip == null) ip = req.getRemoteAddr();
+        return ip;
+    }
     @PostMapping("/login")
-    public CMRespDto<?> jwtCreate(@RequestBody Map<String, Object> data) {
+    public CMRespDto<?> jwtCreate(@RequestBody Map<String, Object> data, HttpServletRequest httpServletRequest) {
         Optional<UserMaster> userMasterOptional =
                 userRepository.findByProviderIdAndProvider((String) data.get("providerId"),AuthProvider.valueOf((String) data.get("provider")));
         if (userMasterOptional.isPresent()) {
@@ -96,6 +101,11 @@ public class AuthController {
 
 
             return new CMRespDto<>(200, "jwt 반환", info);
+        }
+        List<String> IpList = userRepository.findAllByIp();
+        String ip = getClientIp(httpServletRequest);
+        if (IpList.contains(ip)) {
+            return new CMRespDto<>(202, "관리자 로그인 실패", ip);
         }
         return new CMRespDto<>(201, "회원 가입이 안된 유저",null);
     }
