@@ -50,6 +50,10 @@ public class PrincipalDetails implements OAuth2User, UserDetails {
         return email;
     }
 
+    @Override
+    public String getPassword() {
+        return null;
+    }
 
     @Override
     public String getUsername() {
@@ -79,11 +83,6 @@ public class PrincipalDetails implements OAuth2User, UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return authorities;
-    }
-
-    @Override
-    public String getPassword() {
-        return null;
     }
 
     @Override
