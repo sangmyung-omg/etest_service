@@ -80,6 +80,26 @@ public class MiniTestReportController {
 		return ResponseEntity.ok().body(output);
 	}
 	//Secure API 
+	
+	@CrossOrigin("*")
+	@PutMapping(value = "/report/minitest/delete", produces = "application/json; charset=utf-8")
+	public ResponseEntity<?> deleteMiniTestResult(HttpServletRequest request, 
+			@RequestParam("probSetId") String probSetId) throws Exception {
+		//Extract id from auth
+		String id = userIdFetchTool.getID(request);
+		boolean result = false;
+
+		if(id == null){
+			return ResponseEntity.internalServerError().body("Cannot get uuid from token info");
+		}
+		
+		if(!miniTestRecordService.checkMinireportExist(id, probSetId))
+			result = miniTestScoreService.deleteMiniTestResult(probSetId);
+
+		
+		return ResponseEntity.ok().body(result);
+	}
+	
 
 	@CrossOrigin("*")
 	@PutMapping(value = "/report/minitest", produces = "application/json; charset=utf-8")

@@ -8,6 +8,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.json.simple.JSONArray;
@@ -37,7 +38,9 @@ import com.tmax.eTest.Report.util.UKScoreCalculator;
 import com.tmax.eTest.Common.model.report.DiagnosisReport;
 import com.tmax.eTest.Common.model.report.DiagnosisReportKey;
 import com.tmax.eTest.Common.model.uk.UkMaster;
+import com.tmax.eTest.Common.model.user.UserMaster;
 import com.tmax.eTest.Common.repository.report.DiagnosisReportRepo;
+import com.tmax.eTest.Common.repository.user.UserMasterRepo;
 import com.tmax.eTest.Test.repository.UserKnowledgeRepository;
 
 import lombok.extern.log4j.Log4j2;
@@ -57,6 +60,8 @@ public class DiagnosisReportService {
 	UserKnowledgeRepository userKnowledgeRepo;
 	@Autowired
 	DiagnosisReportRepo diagnosisReportRepo;
+	@Autowired
+	UserMasterRepo userMasterRepo;
 	
 	@Autowired
 	StateAndProbProcess stateAndProbProcess;
@@ -159,6 +164,30 @@ public class DiagnosisReportService {
 		
 		return result;
 	}
+	
+	public boolean deleteDiagnosisReport(String id, String probSetId) throws Exception
+	{
+		boolean result = true;
+		
+		Optional<DiagnosisReport> reportOpt = diagnosisReportRepo.findById(probSetId);
+		
+		if(reportOpt.isPresent())
+		{
+			DiagnosisReport report = reportOpt.get();
+			
+			if(report.getUserUuid().equals(id))
+				diagnosisReportRepo.deleteById(probSetId);
+			else
+				throw new ReportBadRequestException(
+					"Report's userID and sended userId are not equals in deleteDiagnosisReport.");
+		}
+		else
+		{
+			throw new ReportBadRequestException("ProbSetId is not available in deleteDiagnosisReport. "+probSetId);
+		}
+		
+		return result;
+	}
 
 	private void saveDiagnosisReport(
 			String id,
@@ -173,7 +202,6 @@ public class DiagnosisReportService {
 		
 		int[] investItemNumList = {2, 5, 7, 10};
 		int[] investStockRatioList = {5, 20, 40, 55};
-		int[] investPeriodList = {0, 1, 2, 4};
 		
 		if(scoreMap.get(RuleBaseScoreCalculator.STOCK_NUM_ANS) != null
 				&& scoreMap.get(RuleBaseScoreCalculator.STOCK_NUM_ANS) < investItemNumList.length)
@@ -220,6 +248,20 @@ public class DiagnosisReportService {
 		// score 관련 저장
 		log.info(report.toString());
 		diagnosisReportRepo.save(report);
+		
+		
+		// 유저 정보 수정.
+		Optional<UserMaster> userInfo = userMasterRepo.findById(id);
+		
+		if(userInfo.isPresent())
+		{
+			UserMaster um = userInfo.get();
+			um.setInvestPeriod(investPeriod);
+			userMasterRepo.save(um);
+		}
+		else
+			log.info("User Info Not Found in saveDiangosisReport. "+id);		
+		
 	}
 	
 	private List<Pair<Problem, Integer>> getProblemAndChoiceInfos(

@@ -11,9 +11,16 @@ import org.springframework.stereotype.Component;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.tmax.eTest.Report.dto.triton.TritonDataDTO;
+
+import lombok.extern.log4j.Log4j2;
+
+import com.tmax.eTest.Common.model.problem.Problem;
+import com.tmax.eTest.Common.model.problem.TestProblem;
+import com.tmax.eTest.Common.model.uk.ProblemUKRelation;
 import com.tmax.eTest.Common.model.uk.UkMaster;
 
 @Component
+@Log4j2
 public class UKScoreCalculator {
 
 	public String calculateUKScoreString(float ukScore)
@@ -31,11 +38,100 @@ public class UKScoreCalculator {
 		else
 			return "F";
 	}
+	
+	
+	
+	public float makeAllThemeAvg(Map<String, List<List<String>>> themeInfo)
+	{
+		float result = 0;
+		int count = 0;
+		
+		for (Map.Entry<String, List<List<String>>> entry : themeInfo.entrySet()) {
+			float themeSum = 0;
+			int themeCount = 0;
+			for(List<String> ukInfo : entry.getValue())
+			{
+				try {
+					String scoreStr = ukInfo.get(2);
+					themeSum += Float.parseFloat(scoreStr);
+					themeCount++;
+				}
+				catch(Exception e)
+				{
+					log.info("Error in makeAllThemeAvg. "+ ukInfo.toString());
+				}
+			}
+			
+			if(themeCount != 0)
+			{
+				result += themeSum / themeCount;
+				count++;
+			}
+		}
+		
+		if(count != 0)
+			result /= count;
+		
+		return result;
+	}
+	// example
+	// {"주제 이름" : [["UKID", "Uk 이름", "UK 점수"], ["UKID", "Uk 이름", "UK 점수"], ["UKID", "Uk 이름", "UK 점수"], ...],
+	// "주제 이름" : [["UKID", "Uk 이름", "UK 점수"], ["UKID", "Uk 이름", "UK 점수"], ["UKID", "Uk 이름", "UK 점수"], ...]}
+	public Map<String, List<List<String>>> makeThemeInfo(
+			Map<Integer, Float> ukScore,
+			List<Problem> probInfos) 
+	{
+		Map<String, List<List<String>>> result = new HashMap<>();
+		Map<String, List<String>> themeAndUkMap = new HashMap<>();
+		
+		for(Problem prob : probInfos)
+		{
+			TestProblem themeInfo = prob.getTestInfo();
+			if(themeInfo != null)
+			{
+				String themeName = themeInfo.getPart().getPartName();
+				List<ProblemUKRelation> probUkInfos = prob.getProblemUKReleations();
+				
+				for(ProblemUKRelation probUkInfo : probUkInfos)
+				{
+					List<String> partUK = new ArrayList<>();
+					UkMaster ukInfo = probUkInfo.getUkId();
+					String ukName = ukInfo.getUkName();
+					
+					if(themeAndUkMap.get(themeName) == null)
+					{
+						themeAndUkMap.put(themeName, new ArrayList<>());
+					}
+										
+					if(!themeAndUkMap.get(themeName).contains(ukName))
+					{
+						partUK.add(ukInfo.getUkId()+"");
+						partUK.add(ukInfo.getUkName());
+						partUK.add(Float.toString(ukScore.get(ukInfo.getUkId()) * 100));
+						
+						if(result.get(themeName) == null)
+						{
+							List<List<String>> themeResult = new ArrayList<>();
+							themeResult.add(partUK);
+							result.put(themeName, themeResult);
+						}
+						else
+						{
+							result.get(themeName).add(partUK);
+						}
+						themeAndUkMap.get(themeName).add(ukName);
+					}
+				}
+			}
+		}
+		
+		return result;
+	}
+	
 
 	public Map<String, List<List<String>>> makePartUkDetail(
 			Map<Integer, UkMaster> ukMap, 
-			Map<Integer, Float> ukScore, 
-			List<List<String>> partScore) 
+			Map<Integer, Float> ukScore) 
 	{
 		Map<String, List<List<String>>> result = new HashMap<>();
 

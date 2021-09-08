@@ -69,6 +69,9 @@ public class UserMaster {
 	private Boolean service_agreement  ;
 	// 개인정보 수집이용에 동의합니다(필수)
 	private Boolean collect_info  ;
+	
+	// 유저 투자 경력 Index
+	private Integer investPeriod;
 
 	@OneToMany(mappedBy = "userMaster",  cascade = {CascadeType.REMOVE},fetch = FetchType.LAZY)
 	@JsonIgnoreProperties({"userMaster"})
