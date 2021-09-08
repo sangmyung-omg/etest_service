@@ -27,4 +27,14 @@ public class UserController {
         return userRepository.findByEmail(principalDetails.getEmail())
                 .orElseThrow(() -> new ResourceNotFoundExceptionDto("User", "email", principalDetails.getEmail()));
     }
+    @GetMapping("/submaster")
+    public UserMaster getCurrentsubMaster(@AuthenticationPrincipal PrincipalDetails principalDetails) {
+        return userRepository.findByEmail(principalDetails.getEmail())
+                .orElseThrow(() -> new ResourceNotFoundExceptionDto("User", "email", principalDetails.getEmail()));
+    }
+    @GetMapping("/master")
+    public UserMaster getCurrentmaster(@AuthenticationPrincipal PrincipalDetails principalDetails) {
+        return userRepository.findByEmail(principalDetails.getEmail())
+                .orElseThrow(() -> new ResourceNotFoundExceptionDto("User", "email", principalDetails.getEmail()));
+    }
 }
