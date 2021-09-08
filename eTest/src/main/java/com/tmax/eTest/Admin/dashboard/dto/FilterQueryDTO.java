@@ -14,5 +14,5 @@ public class FilterQueryDTO {
     private String gender;
     private LocalDate ageGroupLowerBound;
     private LocalDate ageGroupUpperBound;
-    private String investmentExperience;
+    private int investmentExperience;
 }

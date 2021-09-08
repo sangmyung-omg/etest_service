@@ -27,6 +27,7 @@ public class DiagnosisReportRepository extends UserFilterRepository {
                 .from(diagnosisReport).join(userMaster)
                 .on(userMaster.userUuid.eq(diagnosisReport.userUuid))
                 .where(
+                        investmentExperienceFilter(filterQueryDTO.getInvestmentExperience()),
                         dateFilter(filterQueryDTO.getDateFrom(), filterQueryDTO.getDateTo()),
                         genderFilter(filterQueryDTO.getGender()),
                         ageGroupFilter(filterQueryDTO.getAgeGroupLowerBound(), filterQueryDTO.getAgeGroupUpperBound())
@@ -35,8 +36,9 @@ public class DiagnosisReportRepository extends UserFilterRepository {
     }
 
     private BooleanExpression dateFilter(Timestamp dateFrom, Timestamp dateTo){
-        if (dateFrom == null & dateTo == null)
+        if (dateFrom == null & dateTo == null){
             return null;
+        }
         return diagnosisReport.diagnosisDate.between(dateFrom, dateTo);
     }
 }

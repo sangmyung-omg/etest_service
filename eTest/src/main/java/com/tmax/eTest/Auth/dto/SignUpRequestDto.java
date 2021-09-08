@@ -25,8 +25,6 @@ public class SignUpRequestDto {
 
     @Enumerated(EnumType.STRING)
     private Role role;
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    private String password;
 
     @Enumerated(EnumType.STRING)
     private AuthProvider provider;

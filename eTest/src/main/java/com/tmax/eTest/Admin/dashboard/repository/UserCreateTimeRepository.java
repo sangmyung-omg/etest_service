@@ -1,31 +1,34 @@
 package com.tmax.eTest.Admin.dashboard.repository;
 
-import static com.tmax.eTest.Common.model.report.QDiagnosisReport.diagnosisReport;
-import static com.tmax.eTest.Common.model.report.QMinitestReport.minitestReport;
-import static com.tmax.eTest.Common.model.user.QUserMaster.userMaster;
-
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.tmax.eTest.Admin.dashboard.dto.FilterQueryDTO;
-import com.tmax.eTest.Common.model.report.MinitestReport;
+import com.tmax.eTest.Common.model.user.UserMaster;
+import com.tmax.eTest.LRS.model.Statement;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import java.sql.Timestamp;
+import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.List;
 
+import static com.tmax.eTest.Common.model.user.QUserMaster.userMaster;
+import static com.tmax.eTest.LRS.model.QStatement.statement;
+import static com.tmax.eTest.Common.model.report.QDiagnosisReport.diagnosisReport;
+
 @Repository
-public class MinitestReportRepository extends UserFilterRepository {
+public class UserCreateTimeRepository extends UserFilterRepository {
     private final JPAQueryFactory query;
 
-    public MinitestReportRepository (EntityManager entityManager) {
+    public UserCreateTimeRepository(EntityManager entityManager) {
         this.query = new JPAQueryFactory(entityManager);
     }
 
-    public List<MinitestReport> filter(FilterQueryDTO filterQueryDTO) {
-        return query.select(minitestReport)
-                .from(minitestReport)
-                .join(userMaster).on(userMaster.userUuid.eq(minitestReport.userUuid))
+    public List<UserMaster> filter(FilterQueryDTO filterQueryDTO) {
+        return query.select(userMaster)
+                .from(userMaster)
+                .join(statement).on(statement.userId.eq(userMaster.userUuid))
                 .where(
                         dateFilter(filterQueryDTO.getDateFrom(), filterQueryDTO.getDateTo()),
                         genderFilter(filterQueryDTO.getGender()),
@@ -35,8 +38,10 @@ public class MinitestReportRepository extends UserFilterRepository {
     }
 
     private BooleanExpression dateFilter(Timestamp dateFrom, Timestamp dateTo){
+        LocalDateTime dateFromLDT = dateFrom.toLocalDateTime();
+        LocalDateTime dateToLDT = dateTo.toLocalDateTime();
         if (dateFrom == null & dateTo == null)
             return null;
-        return minitestReport.minitestDate.between(dateFrom, dateTo);
+        return userMaster.createDate.between(dateFromLDT, dateToLDT);
     }
 }

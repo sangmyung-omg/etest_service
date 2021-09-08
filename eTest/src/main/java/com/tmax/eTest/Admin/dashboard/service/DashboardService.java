@@ -5,9 +5,11 @@ import com.tmax.eTest.Admin.dashboard.dto.FilterDTO;
 import com.tmax.eTest.Admin.dashboard.repository.DiagnosisReportRepository;
 import com.tmax.eTest.Admin.dashboard.repository.MinitestReportRepository;
 import com.tmax.eTest.Admin.dashboard.repository.StatementRepository;
+import com.tmax.eTest.Admin.dashboard.repository.UserCreateTimeRepository;
 import com.tmax.eTest.Auth.dto.Gender;
 import com.tmax.eTest.Common.model.report.DiagnosisReport;
 import com.tmax.eTest.Common.model.report.MinitestReport;
+import com.tmax.eTest.Common.model.user.UserMaster;
 import com.tmax.eTest.LRS.dto.GetStatementInfoDTO;
 import com.tmax.eTest.LRS.model.Statement;
 import lombok.RequiredArgsConstructor;
@@ -30,7 +32,7 @@ public class DashboardService {
     @Qualifier(value = "AD-DiagnosisReportRepository")
     private final DiagnosisReportRepository diagnosisReportRepository;
     private final MinitestReportRepository minitestReportRepository;
-
+    private final UserCreateTimeRepository userCreateTimeRepository;
     public FilterQueryDTO filterQueryBuilder(FilterDTO filterDTO) {
         FilterQueryDTO filterQueryDTO = FilterQueryDTO.builder()
                 .gender(filterDTO.getGender())
@@ -58,6 +60,10 @@ public class DashboardService {
 
     public List<Statement> getStatement(FilterDTO filterDTO) {
         return statementRepository.filter(filterQueryBuilder(filterDTO));
+    }
+
+    public List<UserMaster> getCreateTime(FilterDTO filterDTO) {
+        return userCreateTimeRepository.filter(filterQueryBuilder(filterDTO));
     }
 //    public Long getPlaytime(FilterDTO filterDTO) {
 //        GetStatementInfoDTO getStatementInfoDTO = new GetStatementInfoDTO();

@@ -53,9 +53,9 @@ public class DashboardController {
         int result = dashboardService.getStatement(filterDTO).size();
         return new CMRespDto<>(200, "success", result);
     }
-//    @PostMapping("/dashboard/cumulative/player")
-//    public CMRespDto<?> getCumulativePlayer (@RequestBody SignUpCreateDateDTO signUpCreateDateDTO){
-//        Long result = userRepository.findAllByCreateTime(signUpCreateDateDTO.getDateFrom(),signUpCreateDateDTO.getDateTo());
-//        return new CMRespDto<>(200, "success", result);
-//    }
+    @PostMapping("/dashboard/cumulative/player")
+    public CMRespDto<?> getCumulativePlayer (@RequestBody FilterDTO filterDTO){
+        int result = dashboardService.getCreateTime(filterDTO).size();
+        return new CMRespDto<>(200, "success", result);
+    }
 }

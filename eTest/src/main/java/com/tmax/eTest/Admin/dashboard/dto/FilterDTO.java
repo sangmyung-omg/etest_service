@@ -10,7 +10,7 @@ public class FilterDTO {
     private LocalDateTime dateTo;
     private String gender;
     private Integer ageGroup;
-    private String investmentExperience;
+    private int investmentExperience;
 }
 
 
