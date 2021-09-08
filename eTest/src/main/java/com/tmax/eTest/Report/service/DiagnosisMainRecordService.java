@@ -164,20 +164,24 @@ public class DiagnosisMainRecordService {
 			JsonObject recObj = recInfoJsonArray.get(jsonArrIdx).getAsJsonObject();
 			String recVideoId = recObj.get("id").getAsString();
 			
-			Video videoInfo = null;
+			Optional<Video> videoInfoOpt = null;
 			
 			boolean isBookmark = false;
 			int hit = 0;
 			
-			try {
-				videoInfo = videoRepo.getById(recVideoId);
-				hit = videoInfo.getVideoHit().getHit();
+		
+			videoInfoOpt = videoRepo.findById(recVideoId);
+			
+			if(videoInfoOpt.isPresent()) {				
+				if(videoInfoOpt.get().getVideoHit() != null)
+					hit = videoInfoOpt.get().getVideoHit().getHit();
 			}
-			catch(Exception e)
+			else
 			{
 				log.info("VideoId unavailable in getRecommendVideoList - "+recVideoId);
 				continue;
 			}
+			
 			
 			try {
 				VideoBookmarkId bookmarkId = new VideoBookmarkId(userId, recVideoId);
@@ -188,7 +192,7 @@ public class DiagnosisMainRecordService {
 				// find bookmark fail do nothing.
 			}
 						
-			result.add(new RecommendVideoDTO(videoInfo, hit, isBookmark));
+			result.add(new RecommendVideoDTO(videoInfoOpt.get(), hit, isBookmark));
 		}
 		
 		return result;
