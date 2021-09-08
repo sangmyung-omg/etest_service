@@ -215,7 +215,7 @@ public class DiagnosisMainRecordService {
 			{
 				JsonObject extObj = JsonParser.parseString(extJsonStr).getAsJsonObject();
 				
-				if(extObj.get("guessAlarm").getAsInt() == 1)
+				if(extObj.get("guessAlarm").getAsBoolean())
 					checkAlarm++;
 			}
 			catch(Exception e)

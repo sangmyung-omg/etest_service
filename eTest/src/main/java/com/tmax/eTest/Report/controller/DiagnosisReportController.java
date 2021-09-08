@@ -6,6 +6,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -46,6 +47,7 @@ public class DiagnosisReportController {
 	JwtTokenUtil jwtTokenUtil;
 	
 
+	@Deprecated
 	@PutMapping(value="/saveResult/{probSetId}", produces = "application/json; charset=utf-8")
 	public boolean diagnosisResult(
 			HttpServletRequest request,
@@ -56,6 +58,21 @@ public class DiagnosisReportController {
 		boolean output = selfDiagnosisReportService.saveDiagnosisResult(id, probSetId);
 		
 		return output;
+	}
+	
+	@PutMapping(value="/record/delete/{probSetId}", produces = "application/json; charset=utf-8")
+	public ResponseEntity<?> deleteDiagnosisReport(
+			HttpServletRequest request,
+			@PathVariable("probSetId") String probSetId) throws Exception{
+
+		String id = getUserIDFromRequest(request);
+		
+		if(id == null)
+			throw new ReportBadRequestException("userId is null in deleteDiagnosisReport.");
+		
+		boolean result = selfDiagnosisReportService.deleteDiagnosisReport(id, probSetId);
+		
+		return ResponseEntity.ok().body(result);
 	}
 	
 	@GetMapping(value="/record/{probSetId}", produces = "application/json; charset=utf-8")
@@ -98,6 +115,7 @@ public class DiagnosisReportController {
 		
 		return diagnosisVideoService.setVideoBookmark(id, videoId, isBookmarkOn);
 	}
+	
 	
 	
 	public String getUserIDFromRequest(HttpServletRequest request)

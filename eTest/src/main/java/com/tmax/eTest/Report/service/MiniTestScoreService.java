@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
@@ -23,11 +24,14 @@ import com.tmax.eTest.LRS.dto.StatementDTO;
 import com.tmax.eTest.LRS.util.LRSAPIManager;
 import com.tmax.eTest.Report.dto.triton.TritonDataDTO;
 import com.tmax.eTest.Report.dto.triton.TritonResponseDTO;
+import com.tmax.eTest.Report.exception.ReportBadRequestException;
 import com.tmax.eTest.Report.util.SNDCalculator;
 import com.tmax.eTest.Report.util.StateAndProbProcess;
 import com.tmax.eTest.Report.util.TritonAPIManager;
 import com.tmax.eTest.Report.util.UKScoreCalculator;
+import com.tmax.eTest.Common.model.report.DiagnosisReport;
 import com.tmax.eTest.Common.model.report.MinitestReport;
+import com.tmax.eTest.Common.model.report.MinitestReportKey;
 import com.tmax.eTest.Common.model.uk.UkMaster;
 import com.tmax.eTest.Common.model.user.UserEmbedding;
 import com.tmax.eTest.Common.model.user.UserKnowledge;
@@ -35,7 +39,10 @@ import com.tmax.eTest.Common.repository.report.MinitestReportRepo;
 import com.tmax.eTest.Test.repository.UserEmbeddingRepository;
 import com.tmax.eTest.Test.repository.UserKnowledgeRepository;
 
+import lombok.extern.log4j.Log4j2;
+
 @Service
+@Log4j2
 public class MiniTestScoreService {
 
 	@Autowired
@@ -58,8 +65,6 @@ public class MiniTestScoreService {
 	MinitestReportRepo minitestReportRepo;
 	
 	@Autowired SNDCalculator sndCalculator;
-
-	private final Logger logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
 
 	public boolean saveMiniTestResult(String userId, String probSetId) {
 		boolean result = true;
@@ -84,7 +89,7 @@ public class MiniTestScoreService {
 			}
 			
 			if (embeddingData != null && masteryData != null) {
-				Map<Integer, UkMaster> usedUkMap =stateAndProbProcess.makeUsedUkMap(probInfos);
+//				Map<Integer, UkMaster> usedUkMap =stateAndProbProcess.makeUsedUkMap(probInfos);
 				Map<Integer, Float> ukScoreMap = scoreCalculator.makeUKScoreMap(masteryData);
 				float ukModiRatio = 1.5f, ukModiDif = 0.1f;
 				ukScoreMap.forEach((ukUuid, score) -> {
@@ -92,20 +97,28 @@ public class MiniTestScoreService {
 					modScore = (modScore > 1)? 1.f : (modScore <= 0.05) ? 0.05f : modScore;
 					ukScoreMap.put(ukUuid, modScore);
 				});
-				List<List<String>> partScoreList = scoreCalculator.makePartScore(usedUkMap, ukScoreMap);
-				Map<String, List<List<String>>> partUkDetail = scoreCalculator.makePartUkDetail(usedUkMap, ukScoreMap, partScoreList);
+//				List<List<String>> partScoreList = scoreCalculator.makePartScore(usedUkMap, ukScoreMap);
+//				Map<String, List<List<String>>> partUkDetail = scoreCalculator.makePartUkDetail(usedUkMap, ukScoreMap);
+//				
+//				float avg = 0;
+//				for (List<String> part : partScoreList) {
+//					avg += Float.parseFloat(part.get(2));
+//				}
+				
+//				int ukAvgScore = 0;
+//				
+//				if(partScoreList.size() > 0)
+//					ukAvgScore = Math.round(avg / partScoreList.size());
+				
+				Map<String, List<List<String>>> partUkDetail = scoreCalculator.makeThemeInfo(ukScoreMap, probInfos);
+				int ukAvgScore = Math.round(scoreCalculator.makeAllThemeAvg(partUkDetail));
+				
+				log.info(partUkDetail.toString());
+				
 				int setNum = 0;
 				if(probInfos.size() > 0)
 					setNum = 1;//probInfos.get(0).getTestInfo().getSetNum(); jinhyung edit
-				float avg = 0;
-				for (List<String> part : partScoreList) {
-					avg += Float.parseFloat(part.get(2));
-				}
 				
-				int ukAvgScore = 0;
-				
-				if(partScoreList.size() > 0)
-					ukAvgScore = Math.round(avg / partScoreList.size());
 				// 오래걸림. (거의 5.3초 중 5초 차지
 				saveUserUKInfo(userId, ukScoreMap);
 				saveMinitestReport(userId, probSetId, ukAvgScore, diagQuestionInfo, setNum, partUkDetail);
@@ -113,6 +126,16 @@ public class MiniTestScoreService {
 		}
 		
 
+		return result;
+	}
+	
+	// 이미 exist 여부를 검사하고 옴. 그러므로 바로 삭제.
+	public boolean deleteMiniTestResult(String probSetId)
+	{
+		boolean result = true;
+
+		minitestReportRepo.deleteById(probSetId);
+		
 		return result;
 	}
 	
@@ -171,7 +194,7 @@ public class MiniTestScoreService {
 				probIdList.add(probId);
 				probList = problemRepo.findAllById(probIdList);
 			} catch (Exception e) {
-				logger.info(
+				log.info(
 					"getProblemInfos : " + e.toString() + " id : " + dto.getSourceId() + " error!");
 			}
 		}
@@ -199,7 +222,7 @@ public class MiniTestScoreService {
 		try {
 			userKnowledgeRepo.saveAll(userKnowledgeSet);
 		} catch (Exception e) {
-			logger.info(e.toString());
+			log.info(e.toString());
 		}
 	}
 	
@@ -214,7 +237,7 @@ public class MiniTestScoreService {
 		try {
 			userEmbeddingRepo.save(updateEmbedding);
 		} catch (Exception e) {
-			logger.info(e.toString());
+			log.info(e.toString());
 		}
 	}
 

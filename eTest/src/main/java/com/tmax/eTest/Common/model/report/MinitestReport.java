@@ -22,7 +22,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name="MINITEST_REPORT")
-@IdClass(MinitestReportKey.class)
 public class MinitestReport {
 	@Id
 	private String minitestId;

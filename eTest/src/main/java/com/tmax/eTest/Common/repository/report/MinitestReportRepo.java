@@ -9,7 +9,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.Optional;
 
-public interface MinitestReportRepo extends CrudRepository<MinitestReport, MinitestReportKey>{
+public interface MinitestReportRepo extends CrudRepository<MinitestReport, String>{
     @Query("Select m from MinitestReport m where minitestId=:minitestID and userUuid=:userUUID")
     Optional<MinitestReport> getReport(@Param("minitestID") String minitestID, @Param("userUUID") String userUUID);
 }
