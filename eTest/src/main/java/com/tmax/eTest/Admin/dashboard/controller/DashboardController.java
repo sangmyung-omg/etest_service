@@ -35,12 +35,14 @@ public class DashboardController {
             (@RequestBody(required = false) FilterDTO filterDTO){
         Integer diagnosis = dashboardService.getDiagnosis(filterDTO).size();
         Integer minitest = dashboardService.getMinitest(filterDTO).size();
-
+        Integer userIncrease = dashboardService.getUserIncrease(filterDTO).size();
+        Integer userDelete = dashboardService.getUserDelete(filterDTO).size();
+        Integer totalAccessUser = dashboardService.getAccessor(filterDTO).size();
         return ResponseEntity.ok(DashboardOverallDTO.builder()
-//                .totalAccessUser()
-//                .userIncrease()
+                .totalAccessUser(totalAccessUser)
+                .userIncrease(userIncrease)
 //                .userRegistered()
-//                .userDeleted()
+                .userDeleted(userDelete)
 //                .userTotal()
                 .diagnosisTotal(diagnosis + minitest)
                 .diagnosis(diagnosis)
@@ -48,14 +50,19 @@ public class DashboardController {
                 .build());
     }
 
-    @PostMapping("/dashboard/cumulative/accessor")
-    public CMRespDto<?> getCumulativeAccessor (@RequestBody FilterDTO filterDTO){
-        int result = dashboardService.getStatement(filterDTO).size();
+    @PostMapping("/dashboard/accessor")
+    public CMRespDto<?> getAccessor (@RequestBody FilterDTO filterDTO){
+        int result = dashboardService.getAccessor(filterDTO).size();
         return new CMRespDto<>(200, "success", result);
     }
-    @PostMapping("/dashboard/cumulative/player")
-    public CMRespDto<?> getCumulativePlayer (@RequestBody FilterDTO filterDTO){
-        int result = dashboardService.getCreateTime(filterDTO).size();
+    @PostMapping("/dashboard/user/increase")
+    public CMRespDto<?> getUserIncrease (@RequestBody FilterDTO filterDTO){
+        int result = dashboardService.getUserIncrease(filterDTO).size();
+        return new CMRespDto<>(200, "success", result);
+    }
+    @PostMapping("/dashboard/user/delete")
+    public CMRespDto<?> getUserDelete (@RequestBody FilterDTO filterDTO){
+        int result = dashboardService.getUserDelete(filterDTO).size();
         return new CMRespDto<>(200, "success", result);
     }
 }

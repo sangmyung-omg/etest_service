@@ -28,6 +28,8 @@ public interface UserRepository extends JpaRepository<UserMaster, Long> {
     @Query("select count(*) from com.tmax.eTest.Common.model.user.UserMaster u where createDate between :dateFrom and :dateTo")
     Long findAllByCreateTime(@Param("dateFrom") LocalDateTime dateFrom,@Param("dateTo") LocalDateTime dateTo);
 
+    @Query("select u.ip from com.tmax.eTest.Common.model.user.UserMaster u where ip != null")
+    List<String> findAllByIp();
 
 
 }

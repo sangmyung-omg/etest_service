@@ -82,6 +82,9 @@ public class UserMaster {
 	@Column(name = "CREATE_DATE")
 	private LocalDateTime createDate;
 
+	@Column(name = "IP")
+	private String ip;
+
 	@PrePersist // 디비에 INSERT 되기 직전에 실행
 	public void createDate() {
 		this.createDate = LocalDateTime.now();
