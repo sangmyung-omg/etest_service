@@ -43,7 +43,7 @@ public class DiagProblemControllerTs {
 	 */
 	
 //	@GetMapping("/DiagProblems")
-	@GetMapping(value="/DiagProblems/{userID}/{probIDs}")
+	@GetMapping(value="/test-studio/DiagProblems/{userID}/{probIDs}")
 	public ResponseEntity<GetDiagProblemDTOOut> problems(
 //			@RequestBody GetProblemDTOIn request
 			@PathVariable("userID") String userID,
@@ -73,7 +73,7 @@ public class DiagProblemControllerTs {
 	 * @throws Exception 
 	 * 
 	 */
-	@PutMapping("/DiagProblems")
+	@PutMapping("/test-studio/DiagProblems")
 	public ResponseEntity<String> updateProblems(
 			@RequestBody PutDiagProblemDTOIn request) throws Exception {
 		
@@ -90,7 +90,7 @@ public class DiagProblemControllerTs {
 		}
 	}
 	
-	@PutMapping("/DiagCurrStatus")
+	@PutMapping("/test-studio/DiagCurrStatus")
 	public ResponseEntity<String> updateDiagCurrStatus(
 			@RequestBody PutDiagCurrStatusDTOIn request) throws Exception {
 		

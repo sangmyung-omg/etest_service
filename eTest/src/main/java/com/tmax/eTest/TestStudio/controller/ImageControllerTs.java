@@ -43,7 +43,7 @@ public class ImageControllerTs {
 	 */
 	
 	
-	@PostMapping("/Image")
+	@PostMapping("/test-studio/Image")
 	@ResponseStatus(HttpStatus.CREATED)
 	public ResponseEntity<String> ImageUpload(
 			@RequestPart(value="img") List<MultipartFile> imgMFileList,
@@ -64,7 +64,7 @@ public class ImageControllerTs {
 		}		
 	}	
 	
-	@GetMapping("/ImageSrc")
+	@GetMapping("/test-studio/ImageSrc")
 	public ResponseEntity<GetProblemImageDTOOut> ImageList(
 			@RequestBody GetProblemDTOIn request
 			) throws Exception {

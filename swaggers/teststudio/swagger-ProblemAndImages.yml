@@ -7,7 +7,7 @@ info:
     email: changeon_lim@tmax.co.kr
 paths:
   # /DiagProblems:
-  /DiagProblems/{userID}/{probIDs}:
+  /test-studio/DiagProblems/{userID}/{probIDs}:
     get:
       tags:
       - teststudio
@@ -49,7 +49,7 @@ paths:
             $ref: '#/definitions/GetDiagProblemDTOOut'
         400:
           description: bad input parameter
-  /DiagProblems:
+  /test-studio/DiagProblems:
     put:
       tags:
       - teststudio
@@ -67,7 +67,7 @@ paths:
         400:
           description: bad input parameter
 # 
-  /DiagCurrStatus:
+  /test-studio/DiagCurrStatus:
     put:
       tags:
       - teststudio
@@ -86,7 +86,7 @@ paths:
           description: bad input parameter
 # 
   # /TestProblems:
-  /TestProblems/{userID}/{probIDs}:
+  /test-studio/TestProblems/{userID}/{probIDs}:
     get:
       tags:
       - teststudio
@@ -119,7 +119,7 @@ paths:
             $ref: '#/definitions/GetTestProblemDTOOut'
         400:
           description: bad input parameter
-  /TestProblems:
+  /test-studio/TestProblems:
     post:
       tags:
       - teststudio
@@ -173,7 +173,7 @@ paths:
         400:
           description: bad input parameter
 # 
-  /TestProbStatus:
+  /test-studio/TestProbStatus:
     put:
       tags:
       - teststudio
@@ -191,7 +191,7 @@ paths:
         400:
           description: bad input parameter
 # 
-  /Image:
+  /test-studio/Image:
     post:
       tags:
       - teststudio
@@ -215,7 +215,7 @@ paths:
         400:
           description: bad input parameter
 # 
-  /ImageSrc:
+  /test-studio/ImageSrc:
     get:
       tags:
       - teststudio

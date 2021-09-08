@@ -6,7 +6,7 @@ info:
   contact:
     email: jinhyung_lee@tmax.co.kr
 paths:
-  /uk:
+  /test-studio/uk:
     get:
       tags:
       - teststudio
@@ -24,7 +24,7 @@ paths:
               $ref: '#/definitions/UKList'
         400:
           description: bad input parameter
-  /curriculum:
+  /test-studio/curriculum:
     get:
       tags:
       - teststudio
@@ -42,7 +42,7 @@ paths:
               $ref: '#/definitions/CurriculumList'
         400:
           description: bad input parameter
-  /curriculum/{id}:
+  /test-studio/curriculum/{id}:
     patch:
       tags:
       - teststudio
@@ -68,7 +68,7 @@ paths:
           description: success
         400:
           description: bad input parameter
-  /part:
+  /test-studio/part:
     get:
       tags:
       - teststudio
@@ -106,7 +106,7 @@ paths:
           description: success
         400:
           description: bad input parameter
-  /part/{id}:
+  /test-studio/part/{id}:
     put:
       tags:
       - teststudio
@@ -151,7 +151,7 @@ paths:
           description: success
         400:
           description: bad input parameter
-  /problems/self:
+  /test-studio/problems/self:
     get:
       tags:
       - teststudio
@@ -175,7 +175,7 @@ paths:
               $ref: '#/definitions/SelfProblemIdList'
         400:
           description: bad input parameter
-  /problems/mini:
+  /test-studio/problems/mini:
     get:
       tags:
       - teststudio

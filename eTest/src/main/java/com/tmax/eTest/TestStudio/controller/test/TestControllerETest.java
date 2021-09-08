@@ -257,8 +257,8 @@ public class TestControllerETest {
 						 rtName = rtName + " ";
 						 
 					 }else if( jsonObj.get("data").getClass().getName() == "org.json.simple.JSONArray" ) {
-						 System.out.println("testttttttttttttest");
-						 System.out.println( jsonObj.get("data").getClass().arrayType() );
+//						 System.out.println("testttttttttttttest");
+//						 System.out.println( jsonObj.get("data").getClass().arrayType() ); // 특정인만 error? why?
 						 
 						 ArrayList<Object> tempArrayList = (ArrayList<Object>) jsonObj.get("data");
 //						 ArrayList<String> tempArrayList = (ArrayList<String>) jsonObj.get("data");

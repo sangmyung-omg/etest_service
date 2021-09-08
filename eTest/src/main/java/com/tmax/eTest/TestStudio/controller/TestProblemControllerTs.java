@@ -47,7 +47,7 @@ public class TestProblemControllerTs {
 	 * new ResponseEntity<>(probGetResponse, HttpStatus.ACCEPTED);
 	 * @throws Exception 
 	 */
-	@PostMapping("/TestProblems")
+	@PostMapping("/test-studio/TestProblems")
 	public 
 			ResponseEntity<PostTestProblemDTOOut> 
 //			ResponseEntity<String>
@@ -122,7 +122,7 @@ public class TestProblemControllerTs {
 	 */
 	
 //	@GetMapping("/TestProblems")
-	@GetMapping(value="/TestProblems/{userID}/{probIDs}")
+	@GetMapping(value="/test-studio/TestProblems/{userID}/{probIDs}")
 	public ResponseEntity<GetTestProblemDTOOut> problems (
 //			@RequestBody GetProblemDTOIn request
 			@PathVariable("userID") String userID,
@@ -154,7 +154,7 @@ public class TestProblemControllerTs {
 	 * 수정 
 	 * 
 	 */
-	@PutMapping("/TestProblems")
+	@PutMapping("/test-studio/TestProblems")
 	public ResponseEntity<String> updateProblems(
 			@RequestBody PutTestProblemDTOIn request) throws Exception {
 		
@@ -171,7 +171,7 @@ public class TestProblemControllerTs {
 		}
 	}
 	
-	@PutMapping("/TestProbStatus")
+	@PutMapping("/test-studio/TestProbStatus")
 	public ResponseEntity<String> updateTestProbStatus(
 			@RequestBody PutTestProbStatusDTOIn request) throws Exception {
 		
@@ -192,7 +192,7 @@ public class TestProblemControllerTs {
 	 * 삭제
 	 * 
 	 */
-	@DeleteMapping("/TestProblems")
+	@DeleteMapping("/test-studio/TestProblems")
 	public ResponseEntity<String> delete(@RequestBody DeleteProblemDTOIn request) throws Exception {
 		
 		try {
