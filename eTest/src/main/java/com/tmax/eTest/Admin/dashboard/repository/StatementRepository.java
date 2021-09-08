@@ -2,6 +2,7 @@ package com.tmax.eTest.Admin.dashboard.repository;
 
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import static com.tmax.eTest.Common.model.report.QDiagnosisReport.diagnosisReport;
 
 import static com.tmax.eTest.LRS.model.QStatement.statement;
 import static com.tmax.eTest.Common.model.user.QUserMaster.userMaster;
@@ -33,8 +34,7 @@ public class StatementRepository extends UserFilterRepository {
     public List<Statement> filter(FilterQueryDTO filterQueryDTO) {
         return query.select(statement)
                 .from(statement)
-                .join(userMaster)
-                .on(statement.userId.eq(userMaster.userUuid))
+                .innerJoin(userMaster).on(statement.userId.eq(userMaster.userUuid))
                 .where(
                         dateFilter(filterQueryDTO.getDateFrom(), filterQueryDTO.getDateTo()),
                         genderFilter(filterQueryDTO.getGender()),
@@ -43,8 +43,9 @@ public class StatementRepository extends UserFilterRepository {
                 .fetch();
     }
     private BooleanExpression dateFilter(Timestamp dateFrom, Timestamp dateTo){
-        if (dateFrom == null & dateTo == null)
+        if (dateFrom == null & dateTo == null){
             return null;
+        }
         return statement.statementDate.between(dateFrom, dateTo);
     }
 }
