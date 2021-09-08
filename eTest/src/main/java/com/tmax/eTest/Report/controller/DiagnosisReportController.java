@@ -8,10 +8,12 @@ import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.tmax.eTest.Auth.jwt.JwtTokenUtil;
@@ -60,10 +62,10 @@ public class DiagnosisReportController {
 		return output;
 	}
 	
-	@PutMapping(value="/record/delete/{probSetId}", produces = "application/json; charset=utf-8")
+	@DeleteMapping(value="/record", produces = "application/json; charset=utf-8")
 	public ResponseEntity<?> deleteDiagnosisReport(
 			HttpServletRequest request,
-			@PathVariable("probSetId") String probSetId) throws Exception{
+			@RequestParam("probSetId") String probSetId) throws Exception{
 
 		String id = getUserIDFromRequest(request);
 		
