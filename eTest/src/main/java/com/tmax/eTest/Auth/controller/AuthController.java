@@ -44,8 +44,11 @@ public class AuthController {
 
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final AuthService authService;
-    public static final long JWT_ACCESS_TOKEN_VALIDITY = 10* 60; //10분
-    public static final long JWT_REFRESH_TOKEN_VALIDITY = 24 * 60 * 60 * 7; //일주일
+    @Value("${jwt.access.token.time}")
+    private long JWT_ACCESS_TOKEN_VALIDITY;
+    @Value("${jwt.refresh.token.time}")
+    private long JWT_REFRESH_TOKEN_VALIDITY;
+
     @PostMapping("/login")
     public CMRespDto<?> jwtCreate(@RequestBody Map<String, Object> data) {
         Optional<UserMaster> userMasterOptional =
