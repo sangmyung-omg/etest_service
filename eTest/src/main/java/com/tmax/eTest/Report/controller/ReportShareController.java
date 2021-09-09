@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RestController;
 
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -33,6 +32,10 @@ public class ReportShareController {
     @GetMapping(value="/report/mini/share")
     public ResponseEntity<?> getMethodName(@RequestParam(value = "sharekey") String key) {
         Object output = reportShareService.getReportDataFromKey(key);
+
+        if(output == null)
+            return ResponseEntity.notFound().build();
+
         return ResponseEntity.ok().body(output);
     }
 

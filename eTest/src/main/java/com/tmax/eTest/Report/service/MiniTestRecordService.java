@@ -295,10 +295,9 @@ public class MiniTestRecordService {
 														  .build());
 		}
 		catch(Exception e){e.printStackTrace(); return null;}
-		statementList = filterPureLrsStatement(statementList);
 		statementList = statementList.stream().parallel().filter(statement -> {
 											try {if(JsonParser.parseString(statement.getExtension()).getAsJsonObject().get("diagProbSetId").getAsString().equals(probSetId)) return true;}
-											catch(Exception e) {log.warn("extension parse error");return false;}
+											catch(Exception e) {e.printStackTrace(); log.warn("extension parse error");return false;}
 											return false;
 										})
 										.collect(Collectors.toList()); //filter by problem id
