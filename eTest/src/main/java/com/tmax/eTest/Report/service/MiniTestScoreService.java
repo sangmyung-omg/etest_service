@@ -130,13 +130,25 @@ public class MiniTestScoreService {
 		return result;
 	}
 	
-	// 이미 exist 여부를 검사하고 옴. 그러므로 바로 삭제.
-	public boolean deleteMiniTestResult(String probSetId)
+	public boolean deleteMiniTestResult(String id, String probSetId) throws Exception
 	{
 		boolean result = true;
-
-		minitestReportRepo.deleteById(probSetId);
 		
+		Optional<MinitestReport> reportOpt = minitestReportRepo.findById(probSetId);
+		
+		if(reportOpt.isPresent())
+		{
+			MinitestReport report = reportOpt.get();
+			log.info(id+" "+probSetId);
+			if(report.getUserUuid().equals(id))
+				minitestReportRepo.deleteById(probSetId);
+			else
+				throw new ReportBadRequestException(
+					"Report's userID and sended userId are not equals in deleteMiniTestResult.");
+		}
+		else
+			throw new ReportBadRequestException("ProbSetId is not available in deleteMiniTestResult. "+probSetId);
+
 		return result;
 	}
 	

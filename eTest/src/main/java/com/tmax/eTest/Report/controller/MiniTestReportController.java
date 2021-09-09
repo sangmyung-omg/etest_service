@@ -94,8 +94,7 @@ public class MiniTestReportController {
 			return ResponseEntity.internalServerError().body("Cannot get uuid from token info");
 		}
 		
-		if(!miniTestRecordService.checkMinireportExist(id, probSetId))
-			result = miniTestScoreService.deleteMiniTestResult(probSetId);
+		result = miniTestScoreService.deleteMiniTestResult(id, probSetId);
 
 		
 		return ResponseEntity.ok().body(result);
