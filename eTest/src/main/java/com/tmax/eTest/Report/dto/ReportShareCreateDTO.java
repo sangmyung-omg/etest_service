@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ReportShareCreateDTO {
+    private String userId;
     private String type = "minitest";
     private String probSetId;
     private String expire = "100000000";
