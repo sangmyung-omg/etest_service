@@ -322,7 +322,7 @@ public class MiniTestRecordService {
 		problemCorrectInfo.put("allProb", problemInfoTotal.size());
 		problemCorrectInfo.put("allCorr", lowCorr + midCorr + highCorr);
 		problemCorrectInfo.put("low", lowCorr + "/" + lowInfo.size());
-		problemCorrectInfo.put("mid", midCorr + "/" + midInfo.size());
+		problemCorrectInfo.put("middle", midCorr + "/" + midInfo.size());
 		problemCorrectInfo.put("high", highCorr + "/" + highInfo.size());
 
 
