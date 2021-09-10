@@ -60,13 +60,13 @@ public class ReportShareService {
             
             //Get type from the token
             String type = json.get("type").getAsString();
-            String userId = json.get("userId").getAsString();
+            String userId = !json.get("userId").isJsonNull() ? json.get("userId").getAsString() : null;
             String probSetId = json.get("probSetId").getAsString();
             String expire = json.get("expire").getAsString();
 
             //TODO check expire
             
-            if(type.equals(TYPE_MINITEST)){
+            if(type.equals(TYPE_MINITEST) && userId != null){
                 MiniTestRecordDTO output = miniTestRecordService.getMiniTestRecord(userId, probSetId);
                 return output;
             }
@@ -79,6 +79,7 @@ public class ReportShareService {
             return null;
         }
         catch(Exception e){
+            e.printStackTrace();
             return null;
         }
     }
@@ -94,7 +95,7 @@ public class ReportShareService {
             
             //Get type from the token
             String type = json.get("type").getAsString();
-            String userId = json.get("userId").getAsString();
+            String userId = !json.get("userId").isJsonNull() ? json.get("userId").getAsString() : null;
             String probSetId = json.get("probSetId").getAsString();
             String expire = json.get("expire").getAsString();
 
