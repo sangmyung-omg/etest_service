@@ -104,25 +104,17 @@ public class RuleBaseScoreCalculator {
 				case "인지편향":
 					investProfileProb.add(probInfo);
 					break;
-				case "투자지식":
-					switch(curriculum.getSubSection())
-					{
-					case "투자 상식":
-						knowledgeCommonProb.add(probInfo);
-						break;
-					case "종목고르기":
-						knowledgeTypeProb.add(probInfo);
-						break;
-					case "가격변동 특징":
-						knowledgeChangeProb.add(probInfo);
-						break;
-					case "매매방법":
-						knowledgeSellProb.add(probInfo);
-						break;
-					default:
-						log.info("probDivideAndCalculateScores section invalid : " + curriculum.getSubSection());
-						break;
-					}
+				case "투자기초":
+					knowledgeCommonProb.add(probInfo);
+					break;
+				case "종목고르기":
+					knowledgeTypeProb.add(probInfo);
+					break;
+				case "가격 변동 특징":
+					knowledgeChangeProb.add(probInfo);
+					break;
+				case "매매방법":
+					knowledgeSellProb.add(probInfo);
 					break;
 				default:
 					log.info("probDivideAndCalculateScores section invalid : " + section);
@@ -231,9 +223,11 @@ public class RuleBaseScoreCalculator {
 			{
 				JsonObject jo = solution.get(i).getAsJsonObject();
 				
+				log.info(jo.get("type").getAsString());
 				if(jo.get("type") != null && jo.get("data") != null &&
 					jo.get("type").getAsString().equals("MULTIPLE_CHOICE_CORRECT_ANSWER"))
 				{
+					
 					int answer = jo.get("data").getAsInt();
 					int idx = choice == answer ? 0 : 3;
 					idx += prob.getDifficulty().equals("상") ? 0 
@@ -244,6 +238,7 @@ public class RuleBaseScoreCalculator {
 					
 					break;
 				}
+				
 			}
 		}
 		

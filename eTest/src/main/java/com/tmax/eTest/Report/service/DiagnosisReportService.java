@@ -249,18 +249,24 @@ public class DiagnosisReportService {
 		log.info(report.toString());
 		diagnosisReportRepo.save(report);
 		
-		
-		// 유저 정보 수정.
-		Optional<UserMaster> userInfo = userMasterRepo.findById(id);
-		
-		if(userInfo.isPresent())
+		try
 		{
-			UserMaster um = userInfo.get();
-			um.setInvestPeriod(investPeriod);
-			userMasterRepo.save(um);
+		// 유저 정보 수정.
+			Optional<UserMaster> userInfo = userMasterRepo.findById(id);
+			
+			if(userInfo.isPresent())
+			{
+				UserMaster um = userInfo.get();
+				um.setInvestPeriod(investPeriod);
+				userMasterRepo.save(um);
+			}
+			else
+				log.info("User Info Not Found in saveDiangosisReport. "+id);
+		} 
+		catch (Exception e)
+		{
+			log.info("User Info Not Found in saveDiangosisReport. "+id);
 		}
-		else
-			log.info("User Info Not Found in saveDiangosisReport. "+id);		
 		
 	}
 	
