@@ -313,15 +313,18 @@ public class DiagnosisComment {
 	{
 		Map<String, String> result = new HashMap<>();
 		int[] rankMinValue = {85, 70, 55, 40, 25};
-		int knowledgeScoreIdx = 0;
+		int knowledgeScoreIdx = rankMinValue.length - 1;
 		
 		String[] knowledgeMain = {"우수", "양호", "보통", "노력요함", "부족"};
 		String[] knowledgeDetail = {"우수", "양호", "보통", "노력요함", "부족"};
 		
 		
 		for(int i = 0; i < rankMinValue.length; i++)
-			if(knowledgeScore < rankMinValue[i])
-				knowledgeScoreIdx = i+1;
+			if(knowledgeScore >= rankMinValue[i])
+			{
+				knowledgeScoreIdx = i;
+				break;
+			}
 		
 		result.put("main", knowledgeMain[knowledgeScoreIdx]);
 		result.put("detail", knowledgeDetail[knowledgeScoreIdx]);
@@ -345,16 +348,22 @@ public class DiagnosisComment {
 		int stretchActualScore = (int) ((typeScore + changeScore + sellScore) / 72.f * 100);
 		int[] rankMinValue = {89, 74, 58, 42, 26};
 		
-		int commonIdx = 0;
-		int actualIdx = 0;
+		int commonIdx = rankMinValue.length -1;
+		int actualIdx = rankMinValue.length -1;
 		
 		for(int i = 0; i < rankMinValue.length; i++)
-		{
-			if(stretchCommonScore < rankMinValue[i])
-				commonIdx = i+1;
-			if(stretchActualScore < rankMinValue[i])
-				actualIdx = i+1;
-		}
+			if(stretchCommonScore >= rankMinValue[i])
+			{
+				commonIdx = i;
+				break;
+			}
+		for(int i = 0; i < rankMinValue.length; i++)
+			if(stretchActualScore >= rankMinValue[i])
+			{
+				actualIdx = i;
+				break;
+			}
+				
 		
 		commonCommentInfo.put("name", "투자 기초");
 		//commonCommentInfo.put("main", "");

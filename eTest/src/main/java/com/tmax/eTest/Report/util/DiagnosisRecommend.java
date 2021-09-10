@@ -59,7 +59,7 @@ public class DiagnosisRecommend {
 					sellProbChoiceInfo.add(probInfo);
 					break;
 				default:
-					log.info("probDivideAndCalculateScores section invalid : " + curriculum.getSubSection());
+					//log.info("probDivideAndCalculateScores section invalid : " + curriculum.getSubSection());
 					break;
 				}
 			}
