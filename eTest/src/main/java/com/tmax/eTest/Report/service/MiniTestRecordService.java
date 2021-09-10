@@ -61,16 +61,7 @@ class PartDataTuple{
 public class MiniTestRecordService {
 
 	@Autowired private LRSAPIManager lrsAPIManager;
-	// @Autowired private TritonAPIManager tritonAPIManager;
-	
 	@Autowired private ProblemRepository problemRepo;
-	// @Autowired private UserKnowledgeRepository userKnowledgeRepo;
-	// @Autowired private DiagnosisReportRepo diagnosisReportRepo;
-	
-	// @Autowired private StateAndProbProcess stateAndProbProcess;
-	// @Autowired private RuleBaseScoreCalculator ruleBaseScoreCalculator;
-	// @Autowired private UKScoreCalculator ukScoreCalculator;
-	// @Autowired private DiagnosisComment commentGenerator;
 	@Autowired private SNDCalculator sndCalculator;
 
 	@Autowired private MinitestReportRepo reportRepo;
@@ -80,6 +71,10 @@ public class MiniTestRecordService {
 
 	private static final int PICK_ALARM_CNT_THRESHOLD = 3;
 	private static final int COMMENT_HIGH_LOW_SPLIT_THRESHOLD_SCORE = 60;
+
+	private static final int UK_INFO_MASTERY_INDEX = 1;
+
+	private static final int UK_INFO_SLICE_LENGTH = 5;
 
 	private PartDataDTO buildPartData(JsonArray mastery, String partname){
 		PartDataDTO output = buildPartData(mastery);
@@ -127,6 +122,8 @@ public class MiniTestRecordService {
 													//build info (name, score, desc, link)	
 													return Stream.of( Arrays.asList(uk.getUkName(), data.get(2), uk.getUkDescription(), uk.getExternalLink() ) );
 											  }).collect(Collectors.toList());
+		Collections.sort(ukInfo, (a,b) -> Double.compare( Double.parseDouble(a.get(UK_INFO_MASTERY_INDEX)), Double.parseDouble(b.get(UK_INFO_MASTERY_INDEX)))); //sort by mastery
+		ukInfo = ukInfo.subList(0, Math.min(UK_INFO_SLICE_LENGTH, ukInfo.size())); //slice list to desired length
 
 		long score = (long)Math.floor(totalScore / ukDataList.size());
 

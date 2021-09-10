@@ -23,7 +23,7 @@ public class PartInfoDTO {
     private PartDataDTO part3;
     private PartDataDTO part4;
     private PartDataDTO part5;
-    private PartDataDTO part6;
+    // private PartDataDTO part6;
 
     public PartInfoDTO() {
         this.initDefaultDatas();
@@ -42,8 +42,8 @@ public class PartInfoDTO {
                 this.part4 = data; break;
             case 5:
                 this.part5 = data; break;
-            case 6:
-                this.part6 = data; break;
+            // case 6:
+            //     this.part6 = data; break;
             default:
                 break;
         }

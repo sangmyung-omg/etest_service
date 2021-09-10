@@ -2,9 +2,11 @@ package com.tmax.eTest.Report.util.minitest;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
+import java.util.List;
 // import java.util.concurrent.atomic.AtomicInteger;
 
+import com.tmax.eTest.Common.model.problem.Part;
+import com.tmax.eTest.Common.repository.problem.PartRepo;
 import com.tmax.eTest.Common.repository.uk.UkMasterRepo;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,9 +20,11 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 @Slf4j
 public class PartMapper {
-    @Autowired private UkMasterRepo ukMasterRepo;
+    @Autowired private PartRepo partRepo;
 
     public static Map<String, Integer> map = new HashMap<>();
+
+    private static final int PART_COUNT = 5;
     
     // static {
     //     map.put("가치변화의 요인", 1);
@@ -44,24 +48,23 @@ public class PartMapper {
     }
 
     private void updateMapperData() {
-        Set<String> set = ukMasterRepo.getDistinctPartList();
+        List<Part> set = partRepo.findAll();
 
         //Default fallback
         if(set.size() == 0 ){
-            map.put("가치변화의 요인", 1);
-            map.put("금융투자상품 관리", 2);
-            map.put("금융투자상품의 매매", 3);
-            map.put("생애주기", 4);
-            map.put("필요자금 마련방법", 5);
-            map.put("행동편향", 6);
+            map.put("금융투자 이해&금융투자 기본", 1);
+            map.put("금융투자상품 - 주식", 2);
+            map.put("금융투자상품 가치평가", 3);
+            map.put("금융투자상품 보유관리", 4);
+            map.put("리스크관리 및 행동편향", 5);
             return;
         }
 
         int index = 1;
-        for(String partname : set){map.put(partname, index++);}
+        for(Part part : set){map.put(part.getPartName(), index++);}
 
         //Minimum => fill the rest
-        while(index <= 6){
+        while(index <= PART_COUNT){
             map.put("dummy" + index,  index++);
         }
 
