@@ -15,7 +15,7 @@ import java.util.TimeZone;
 public class ETestApplication {
 	@PostConstruct
 	public void setTimeZone(){
-		TimeZone.setDefault(TimeZone.getTimeZone("Asiz/Seoul"));
+		TimeZone.setDefault(TimeZone.getTimeZone("Asia/Seoul"));
 	}
 	public static void main(String[] args) {
 		SpringApplication.run(ETestApplication.class, args);
