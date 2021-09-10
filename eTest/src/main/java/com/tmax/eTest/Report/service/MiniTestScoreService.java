@@ -97,24 +97,24 @@ public class MiniTestScoreService {
 					modScore = (modScore > 1)? 1.f : (modScore <= 0.05) ? 0.05f : modScore;
 					ukScoreMap.put(ukUuid, modScore);
 				});
-				List<List<String>> partScoreList = scoreCalculator.makePartScore(usedUkMap, ukScoreMap);
-				Map<String, List<List<String>>> partUkDetail = scoreCalculator.makePartUkDetail(usedUkMap, ukScoreMap);
-				
-				float avg = 0;
-				for (List<String> part : partScoreList) {
-					avg += Float.parseFloat(part.get(2));
-				}
-				
-				int ukAvgScore = 0;
-				
-				if(partScoreList.size() > 0)
-					ukAvgScore = Math.round(avg / partScoreList.size());
+//				List<List<String>> partScoreList = scoreCalculator.makePartScore(usedUkMap, ukScoreMap);
+//				Map<String, List<List<String>>> partUkDetail = scoreCalculator.makePartUkDetail(usedUkMap, ukScoreMap);
+//				
+//				float avg = 0;
+//				for (List<String> part : partScoreList) {
+//					avg += Float.parseFloat(part.get(2));
+//				}
+//				
+//				int ukAvgScore = 0;
+//				
+//				if(partScoreList.size() > 0)
+//					ukAvgScore = Math.round(avg / partScoreList.size());
 				
 				// 문제 주제 쪽으로 uk 정보 변경.
-//				Map<String, List<List<String>>> partUkDetail = scoreCalculator.makeThemeInfo(ukScoreMap, probInfos);
-//				int ukAvgScore = Math.round(scoreCalculator.makeAllThemeAvg(partUkDetail));
-//				
-//				log.info(partUkDetail.toString());
+				Map<String, List<List<String>>> partUkDetail = scoreCalculator.makeThemeInfo(ukScoreMap, probInfos);
+				int ukAvgScore = Math.round(scoreCalculator.makeAllThemeAvg(partUkDetail));
+				
+				log.info(partUkDetail.toString());
 				
 				int setNum = 0;
 				if(probInfos.size() > 0)
