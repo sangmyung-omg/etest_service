@@ -120,7 +120,7 @@ public class ReportShareController {
     }
 
     @PostMapping(value="/report/diag/share")
-    @PreAuthorize("hasRole('ROLE_USER')")
+    // @PreAuthorize("hasRole('ROLE_USER')")
     public ResponseEntity<?> createShareReportDiagnosis(HttpServletRequest request, @RequestBody ReportShareCreateDTO createDTO){
         String userId = userIdFetchTool.getID(request);
         String key = reportShareService.createReportShareKey(ReportShareService.TYPE_DIAG, userId, createDTO.getProbSetId(), createDTO.getExpire());
