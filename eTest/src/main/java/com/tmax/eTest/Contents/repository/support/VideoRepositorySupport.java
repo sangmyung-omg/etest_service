@@ -50,14 +50,18 @@ public class VideoRepositorySupport extends QuerydslRepositorySupport {
     }
   }
 
-  public List<Video> findVideosByCurriculum(Long curriculumId, SortType sort, String keyword) {
-    return query.selectFrom(video).where(curriculumEq(curriculumId)).where(checkKeyword(keyword))
-        .orderBy(getVideoSortedColumn(sort)).fetch();
+  public Video findVideoById(String videoId) {
+    return query.selectFrom(video).where(idEq(videoId)).fetchOne();
   }
 
   public VideoJoin findVideoByUserAndId(String userId, String videoId) {
     return tupleToJoin(query.select(video, videoBookmark.userUuid).from(video)
         .leftJoin(video.videoBookmarks, videoBookmark).on(userEq(userId)).where(idEq(videoId)).fetchOne());
+  }
+
+  public List<Video> findVideosByCurriculum(Long curriculumId, SortType sort, String keyword) {
+    return query.selectFrom(video).where(curriculumEq(curriculumId)).where(checkKeyword(keyword))
+        .orderBy(getVideoSortedColumn(sort)).fetch();
   }
 
   public List<VideoJoin> findVideosByUserAndCurriculum(String userId, Long curriculumId, SortType sort,

@@ -74,14 +74,19 @@ public class VideoService {
     return convertVideoCurriculumToDTO(curriculums);
   }
 
-  public ListDTO.Video getVideoList(Long curriculumId, SortType sort, String keyword) {
-    List<Video> videos = videoRePositorySupport.findVideosByCurriculum(curriculumId, sort, keyword);
-    return convertVideoToDTO(videos);
+  public VideoDTO getVideo(String videoId) {
+    Video video = videoRePositorySupport.findVideoById(videoId);
+    return convertVideoToDTO(video);
   }
 
   public VideoDTO getVideo(String userId, String videoId) {
     VideoJoin video = videoRePositorySupport.findVideoByUserAndId(userId, videoId);
     return convertVideoJoinToDTO(video);
+  }
+
+  public ListDTO.Video getVideoList(Long curriculumId, SortType sort, String keyword) {
+    List<Video> videos = videoRePositorySupport.findVideosByCurriculum(curriculumId, sort, keyword);
+    return convertVideoToDTO(videos);
   }
 
   public ListDTO.Video getVideoList(String userId, Long curriculumId, SortType sort, String keyword) {

@@ -72,7 +72,9 @@ public class VideoController {
   public ResponseEntity<Object> getVideo(@PathVariable("video_id") String videoId, HttpServletRequest request) {
     log.info("---getVideo---");
     String userId = getUserId(request);
-    return new ResponseEntity<>(videoService.getVideo(userId, videoId), HttpStatus.OK);
+    return new ResponseEntity<>(
+        CommonUtils.stringNullCheck(userId) ? videoService.getVideo(videoId) : videoService.getVideo(userId, videoId),
+        HttpStatus.OK);
   }
 
   @PostMapping("/videos/{id}/hit")
