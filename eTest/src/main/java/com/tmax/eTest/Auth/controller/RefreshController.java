@@ -2,7 +2,6 @@ package com.tmax.eTest.Auth.controller;
 
 import com.tmax.eTest.Auth.dto.PrincipalDetails;
 import com.tmax.eTest.Auth.jwt.JwtTokenUtil;
-import com.tmax.eTest.Auth.jwt.RefreshToken;
 import com.tmax.eTest.Auth.repository.UserRepository;
 import com.tmax.eTest.Auth.service.PrincipalDetailsService;
 import com.tmax.eTest.Common.model.user.UserMaster;
@@ -10,8 +9,6 @@ import io.jsonwebtoken.ExpiredJwtException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -29,8 +26,6 @@ public class RefreshController {
     private UserRepository userRepository;
     @Autowired
     PrincipalDetailsService principalDetailsService;
-    @Autowired
-    RedisTemplate<String, Object> redisTemplate;
     @Autowired
     JwtTokenUtil jwtTokenUtil;
 
@@ -59,18 +54,17 @@ public class RefreshController {
             }
             if (refreshToken != null) { //refresh를 같이 보냈으면.
                 try {
-                    ValueOperations<String, Object> vop = redisTemplate.opsForValue();
-                    RefreshToken result = (RefreshToken) vop.get(email);
-                    refreshTokenFromDb = result.getRefreshToken();
-                    log.info("rtfrom db: " + refreshTokenFromDb);
+                    Optional<UserMaster> userMasterOptional = userRepository.findByEmail(email);
+                    UserMaster userMaster = userMasterOptional.get();
+                    refreshTokenFromDb = userMasterOptional.get().getRefreshToken();
                 } catch (IllegalArgumentException e) {
                     log.warn("illegal argument!!");
                 }
                 //둘이 일치하고 만료도 안됐으면 재발급 해주기.
                 if (refreshToken.equals(refreshTokenFromDb) && !jwtTokenUtil.isTokenExpired(refreshToken)) {
-                    Optional<UserMaster> oUser = userRepository.findByEmail(email);
-                    UserMaster user = oUser.get();
-                    PrincipalDetails principal = PrincipalDetails.create(user);
+                    Optional<UserMaster> userMasterOptional = userRepository.findByEmail(email);
+                    UserMaster userMaster = userMasterOptional.get();
+                    PrincipalDetails principal = PrincipalDetails.create(userMaster);
                     String newToken =  jwtTokenUtil.generateAccessToken(principal);
                     map.put("success", true);
                     map.put("accessToken", newToken);
