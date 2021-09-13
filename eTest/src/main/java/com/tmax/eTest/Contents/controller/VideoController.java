@@ -40,6 +40,7 @@ public class VideoController {
     if (header == null) {
       log.info("header is null : Unregistered User.");
     } else {
+      log.info("header exists : Registered User.");
       String token = header.replace("Bearer ", "");
       Map<String, Object> parseInfo = jwtTokenUtil.getUserParseInfo(token);
       userId = parseInfo.get("userUuid").toString();

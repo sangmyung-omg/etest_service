@@ -27,7 +27,8 @@ public class DiagnosisReportRepositorySupport extends QuerydslRepositorySupport 
   }
 
   public DiagnosisReport findDiagnosisReportByUser(String userId) {
-    return query.selectFrom(diagnosisReport).where(userEq(userId)).orderBy(getDiagnosisReportSortedColumn()).fetchOne();
+    return query.selectFrom(diagnosisReport).where(userEq(userId)).orderBy(getDiagnosisReportSortedColumn())
+        .fetchFirst();
   }
 
   private BooleanExpression userEq(String userId) {
