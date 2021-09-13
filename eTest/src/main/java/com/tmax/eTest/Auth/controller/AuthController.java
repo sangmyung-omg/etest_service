@@ -2,7 +2,6 @@ package com.tmax.eTest.Auth.controller;
 
 import com.tmax.eTest.Auth.dto.*;
 import com.tmax.eTest.Auth.jwt.JwtTokenUtil;
-import com.tmax.eTest.Auth.jwt.RefreshToken;
 import com.tmax.eTest.Auth.repository.UserRepository;
 import com.tmax.eTest.Auth.service.AuthService;
 import com.tmax.eTest.Common.model.user.UserMaster;
@@ -12,18 +11,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
-
 import javax.servlet.http.HttpServletRequest;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 
 @RestController
 @RequiredArgsConstructor
@@ -33,8 +28,6 @@ public class AuthController {
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
 
-    @Autowired
-    RedisTemplate<String, Object> redisTemplate;
 
     @Value("${jwt.secret}")
     private String secret;
@@ -64,12 +57,7 @@ public class AuthController {
 
             String jwtToken = jwtTokenUtil.generateAccessToken(principal);
             String refreshToken = jwtTokenUtil.generateRefreshToken(userMaster.getEmail());
-
-            RefreshToken refreshTokenEntity = new RefreshToken();
-            refreshTokenEntity.setEmail(userMaster.getEmail());
-            refreshTokenEntity.setRefreshToken(refreshToken);
-            ValueOperations<String, Object> vop = redisTemplate.opsForValue();
-            vop.set(userMaster.getEmail(), refreshTokenEntity,JWT_REFRESH_TOKEN_VALIDITY, TimeUnit.SECONDS);
+            userMaster.setRefreshToken(refreshToken);
 
             Map<String,String> info = new HashMap<>();
             info.put("jwtToken",jwtToken);
@@ -174,9 +162,8 @@ public class AuthController {
     @GetMapping("/user/logout")
     @Transactional
     public CMRespDto<?> logout(@AuthenticationPrincipal PrincipalDetails principalDetails) {
-        // redis refresh token 삭제
-        ValueOperations<String, Object> vop = redisTemplate.opsForValue();
-        vop.set(principalDetails.getEmail(), 0,1, TimeUnit.NANOSECONDS);
+        Optional<UserMaster> userMasterOptional = userRepository.findByEmail(principalDetails.getEmail());
+        userMasterOptional.get().setRefreshToken(null);
 
         // LRS에 로그아웃 정보 저장
         StatementDTO statementDTO = new StatementDTO();
