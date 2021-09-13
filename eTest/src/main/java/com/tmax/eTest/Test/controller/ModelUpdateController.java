@@ -25,7 +25,11 @@ public class ModelUpdateController {
 
     @GetMapping(value = "/ukRel", produces = "application/json; charset=utf-8")
     public ResponseEntity<Object> getUkRelations() {
+        log.info("> UK Rel logic start!");
         UkRelOutputDTO result = modelService.getUkRelInfo();
+        if (result.getResultMessage().contains("error") | result.getResultMessage().contains("warning")) {
+            return new ResponseEntity<>(result, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 }
