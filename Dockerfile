@@ -6,5 +6,4 @@ USER spring:spring
 ARG JAR_FILE=eTest/build/libs/eTest-0.0.1-SNAPSHOT.jar
 COPY ${JAR_FILE} app.jar
 RUN chown spring /app.jar
-RUN exec java -Djava.security.egd=file:/dev/./urandom -Dspring.profiles.active=prod -Duser.timezone=Asia/Seoul -jar /app.jar
-ENTRYPOINT ["java","-jar","/app.jar"]
+ENTRYPOINT ["java", "-Djava.security.egd=file:/dev/./urandom", "-Dspring.profiles.active=prod", "-Duser.timezone=Asia/Seoul", "-jar","/app.jar"]
