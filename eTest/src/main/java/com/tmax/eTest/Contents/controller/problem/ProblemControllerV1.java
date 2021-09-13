@@ -50,6 +50,7 @@ public class ProblemControllerV1 {
 			result = problemService.getParsedProblemInfo(probId);
 			
 			result.setMessage("Successfully returned");
+			log.info(result.toString());
 			return new ResponseEntity<>(result, headers, HttpStatus.OK);
 		}catch(NoDataException e) {
 			result = new Temp0ProblemOutputDTO();
@@ -70,7 +71,7 @@ public class ProblemControllerV1 {
         // headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
 
 		Temp1ProblemOutputDTO result = problemService.getProblemInfo(probId);
-
+		log.info(result.toString());
 		return new ResponseEntity<>(result, HttpStatus.OK);
 
 		// try {

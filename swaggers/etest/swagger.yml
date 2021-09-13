@@ -17,6 +17,8 @@ tags:
   description: 미니 테스트 리포트 관련
 - name: User
   description: 유저 정보 CRUD
+- name: Model
+  description: 이해도 모델 업데이트 관련
 
 paths:
   /contents/v0/problems/{probId}:
@@ -426,6 +428,20 @@ paths:
                   type: object
                   example:
                     resultMessage: Internal Server Error.
+  /model/ukRel:
+    get:
+      tags:
+        - Model
+      summary: 모델 업데이트를 위한 UK_REL 정보를 가져옵니다.
+      description: 현 상태의 UK_REL 테이블 정보를 조회해옵니다.
+      responses:
+        200:
+          description: 성공
+          content:
+            json:
+              schema:
+                $ref: "#/components/schemas/ukRelResult"
+
 components:
   schemas:
     diagnosisProblemList:
@@ -652,6 +668,36 @@ components:
             - 1
             - 0
             - -1
+    ukRelResult:
+      type: object
+      properties:
+        resultMessage:
+          type: string
+          example: "Successfully returned"
+        baseUk:
+          type: array
+          example:
+            - 4
+            - 8
+            - 12
+            - 13
+            - 5
+            - 6
+            - 7
+            - 9
+            - 10
+        preUk:
+          type: array
+          example:
+            - 3
+            - 3
+            - 3
+            - 3
+            - 4
+            - 5
+            - 6
+            - 8
+            - 9
     DiagnosisRecordMainDTO:
       type: object
       properties:

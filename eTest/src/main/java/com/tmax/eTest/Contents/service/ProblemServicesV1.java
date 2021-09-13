@@ -83,35 +83,34 @@ public class ProblemServicesV1 implements ProblemServicesBase {
 			String data = json.get("data").toString();
 			ComponentDTO component = new ComponentDTO();
 
+			if (!data.equalsIgnoreCase("")) {
+				// 슬래시에도 escape 문자 붙어서 처리.
+				while (data.contains("\\/")) {
+					data = data.replace("\\/", "/");
+				}
+
+				// DB 데이터 자체에는 쌍따옴표에 escape 없어야 되는데 있는 경우 (response 전달 시 \\\" 로 표시되어서 오류)
+				while (data.contains("\\\"")) {
+					data = data.replace("\\\"", "\"");
+				}
+			}
+
 			// \n은 파싱할 필요 X. 보기의 delimiter를 \n으로 한 경우 없고, 그냥 텍스트 표출 중 줄바꿈을 위해 넣은 것임. - 수진님 confirm.
-			// if (data.contains("\\n")) {
-			// 	log.info(Arrays.toString(data.split("\\n")));
-			// 	log.info(Arrays.toString(data.split("\\\\n")));
-			// 	log.info(Arrays.toString(data.split("\n")));
-			// 	component.setData(Arrays.asList(data.split("\\\\n")));
-			// } else {
-			// 	component.setData(Arrays.asList(data));
-			// }
 			
 			if (data.startsWith("[") && data.endsWith("]")) {
 				// ["a", "b", "c", ... ] 의 형태라 가정.
 				dataList = Arrays.asList(data.substring(2, data.length()-2).split("\",\""));
-				log.info(dataList.toString());
 				List<String> temp = new ArrayList<String>();
 				if (type.contains("IMAGE")) {
 					for (String img_name : dataList) {
 						String sb = imgfileUtils.getImgFileServiceComponent(probId, img_name);
 						temp.add(sb);
 					}
-
-					// dataList.clear();
 					dataList = temp;
-					// String img_base64_string = imgAPI.getImgFileServiceComponent((long) probId, "test1.png");
-					// log.info("image result : " + img_base64_string);
 				}
 			} else
 				dataList = new ArrayList<String>(Arrays.asList(data));
-			
+
 			String preface = "";
 			if (type.contains("EXAMPLE_BOX")) {
 				if (json.containsKey("preface")) {
