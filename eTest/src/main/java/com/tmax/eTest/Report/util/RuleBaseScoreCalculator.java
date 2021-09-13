@@ -51,6 +51,14 @@ public class RuleBaseScoreCalculator {
 	final public static String STOCK_PERIOD_ANS = "증권사 거래기간";
 	final public static String STOCK_RATIO_ANS = "주식비중답변";
 	final public static String STOCK_NUM_ANS = "주식종목수답변";
+	
+	final private boolean DEBUG_LOG = false;
+	
+	private void debugLog(String str)
+	{
+		if(DEBUG_LOG)
+			log.info(str);
+	}
 
 
 	public Map<String,Integer> probDivideAndCalculateScoresV2(List<Pair<Problem, Integer>> probInfos)
@@ -67,7 +75,7 @@ public class RuleBaseScoreCalculator {
 		List<Pair<Problem, Integer>> riskPatiProb = new ArrayList<>();	//리스크 감내 역량
 		
 		// 투자 지식
-		List<Pair<Problem, Integer>> knowledgeCommonProb = new ArrayList<>(); // 주식상식
+		List<Pair<Problem, Integer>> knowledgeBasicProb = new ArrayList<>(); // 주식상식
 		List<Pair<Problem, Integer>> knowledgeTypeProb = new ArrayList<>(); // 종목고르기
 		List<Pair<Problem, Integer>> knowledgeChangeProb = new ArrayList<>(); // 가격변동특징
 		List<Pair<Problem, Integer>> knowledgeSellProb = new ArrayList<>(); // 매매방법
@@ -105,7 +113,7 @@ public class RuleBaseScoreCalculator {
 					investProfileProb.add(probInfo);
 					break;
 				case "투자기초":
-					knowledgeCommonProb.add(probInfo);
+					knowledgeBasicProb.add(probInfo);
 					break;
 				case "종목고르기":
 					knowledgeTypeProb.add(probInfo);
@@ -127,6 +135,17 @@ public class RuleBaseScoreCalculator {
 			}
 		}
 		
+		debugLog("Invest tracing Prob Num : "+investTracingProb.size());
+		debugLog("Invest profile Prob Num : "+investProfileProb.size());
+		debugLog("Risk tracing Prob Num : "+riskTracingProb.size());
+		debugLog("Risk 감내역량 Prob Num : "+riskPatiProb.size());
+		debugLog("Risk 감내 수준 Prob Num : "+riskLevelProb.size());
+		debugLog("Knowledge 투자기초 Prob Num : "+knowledgeBasicProb.size());
+		debugLog("Knowledge 종목고르기 Prob Num : "+knowledgeTypeProb.size());
+		debugLog("Knowledge 가격 변동 특징 Prob Num : "+knowledgeChangeProb.size());
+		debugLog("Knowledge 매매방법 Prob Num : "+knowledgeSellProb.size());
+		
+		
 		if(riskPatiProb.size() != 2) // 2문항
 		{
 			log.info("probDivideAndCalculateScores riskPatienceProb size error : " + riskPatiProb.size());
@@ -145,7 +164,7 @@ public class RuleBaseScoreCalculator {
 		res.putAll(calculateRiskScore(riskTracingProb, riskPatiProb, riskLevelProb));
 		res.putAll(calculateDecisionMakingScore(investTracingProb, investProfileProb));
 		res.putAll(calculateInvestKnowledgeScoreV2(
-				knowledgeCommonProb, 
+				knowledgeBasicProb, 
 				knowledgeTypeProb,
 				knowledgeChangeProb,
 				knowledgeSellProb));
@@ -171,6 +190,15 @@ public class RuleBaseScoreCalculator {
 
 		float tempScore = Math.abs((riskTracingScore - 4) * 100 / 12.f - (riskProfileScore - 5) * 100 / 15.f);
 		int riskScore = Float.valueOf((100 - tempScore) * 0.6f).intValue() + 35;
+		
+		debugLog("in calculateRiskScore tracing, profile :"+riskTracingScore+" "+riskProfileScore);
+		debugLog("in calculateRiskScore capa, level :"+riskCapaScore+" "+riskLevelScore);
+		debugLog("in calculateRiskScore temp, risk :"+tempScore+" "+riskScore);
+		
+		for(Pair<Problem, Integer> temp : riskCapaProbList)
+			debugLog("in calculateRiskScore riskCapaProbList :"+temp.getFirst().getProbID()+" "+temp.getSecond());
+		for(Pair<Problem, Integer> temp : riskLevelProbList)
+			debugLog("in calculateRiskScore riskLevelProbList :"+temp.getFirst().getProbID()+" "+temp.getSecond());
 
 		res.put(RISK_SCORE, riskScore);
 		res.put(RISK_TRACING_SCORE, riskTracingScore);
@@ -280,6 +308,7 @@ public class RuleBaseScoreCalculator {
 				if(choice.getChoiceNum() == prob.getSecond() && choice.getChoiceScore() != null)
 				{
 					res += choice.getChoiceScore();
+					debugLog("in makeScore :"+prob.getFirst().getProbID()+" "+ prob.getSecond()+" "+choice.getChoiceScore());
 					break;
 				}
 			}

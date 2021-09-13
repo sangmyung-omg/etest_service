@@ -30,7 +30,7 @@ public class DiagnosisRecommend {
 	{
 		List<JsonArray> result = new ArrayList<>();
 		
-		List<Pair<Problem, Integer>> commonProbChoiceInfo = new ArrayList<>();
+		List<Pair<Problem, Integer>> basicProbChoiceInfo = new ArrayList<>();
 		List<Pair<Problem, Integer>> knowledgeTypeProb = new ArrayList<>();
 		List<Pair<Problem, Integer>> changeProbChoiceInfo = new ArrayList<>();
 		List<Pair<Problem, Integer>> sellProbChoiceInfo = new ArrayList<>();
@@ -44,15 +44,15 @@ public class DiagnosisRecommend {
 			{
 				DiagnosisCurriculum curriculum = prob.getDiagnosisInfo().getCurriculum();
 				
-				switch(curriculum.getSubSection())
+				switch(curriculum.getSection())
 				{
-				case "투자 상식":
-					commonProbChoiceInfo.add(probInfo);
+				case "투자기초":
+					basicProbChoiceInfo.add(probInfo);
 					break;
 				case "종목고르기":
 					knowledgeTypeProb.add(probInfo);
 					break;
-				case "가격변동 특징":
+				case "가격 변동 특징":
 					changeProbChoiceInfo.add(probInfo);
 					break;
 				case "매매방법":
@@ -67,7 +67,7 @@ public class DiagnosisRecommend {
 				log.info("probDivideAndCalculateScores prob not have diagnosisInfo : " + prob.toString());
 		}
 		
-		result.add(getBasicRecommend(commonProbChoiceInfo));
+		result.add(getBasicRecommend(basicProbChoiceInfo));
 		result.add(getAdvancedRecommend(knowledgeTypeProb, changeProbChoiceInfo, sellProbChoiceInfo));
 		result.add(getTypeRecommend(scoreMap));
 		
