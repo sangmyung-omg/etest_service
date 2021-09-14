@@ -105,8 +105,8 @@ public class DiagnosisDetailRecordService {
 		
 		DiagnosisRecordDetailDTO result = DiagnosisRecordDetailDTO.builder()
 				.score(report.getKnowledgeScore())
-				.percentage(sndCalculator.calculateForDiagnosis(
-						sndCalculator.KNOWLEDGE_IDX, 
+				.percentage(sndCalculator.calculatePercentage(
+						SNDCalculator.Type.DIAG_KNOWLEDGE, 
 						report.getKnowledgeScore()))
 				.mainCommentInfo(commentGenerator.makeKnowledgeMainComment(
 						report.getKnowledgeScore()))
@@ -129,8 +129,8 @@ public class DiagnosisDetailRecordService {
 	{
 		DiagnosisRecordDetailDTO result = DiagnosisRecordDetailDTO.builder()
 				.score(report.getRiskScore())
-				.percentage(sndCalculator.calculateForDiagnosis(
-						sndCalculator.RISK_IDX, 
+				.percentage(sndCalculator.calculatePercentage(
+						SNDCalculator.Type.DIAG_RISK, 
 						report.getRiskScore()))
 				.mainCommentInfo(commentGenerator.makeRiskMainComment(
 						report.getRiskProfileScore(), 
@@ -148,8 +148,8 @@ public class DiagnosisDetailRecordService {
 	{
 		DiagnosisRecordDetailDTO result = DiagnosisRecordDetailDTO.builder()
 				.score(report.getInvestScore())
-				.percentage(sndCalculator.calculateForDiagnosis(
-						sndCalculator.INVEST_IDX, 
+				.percentage(sndCalculator.calculatePercentage(
+						SNDCalculator.Type.DIAG_INVEST, 
 						report.getInvestScore()))
 				.mainCommentInfo(commentGenerator.makeInvestMainComment(
 						report.getInvestProfileScore(), 

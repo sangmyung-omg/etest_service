@@ -79,13 +79,13 @@ public class DiagnosisMainRecordService {
 				
 				Map<String, Integer> percentList = new HashMap<>();
 				percentList.put("gi", 
-					sndCalculator.calculateForDiagnosis(sndCalculator.GI_IDX ,report.getGiScore()));
+					sndCalculator.calculatePercentage(SNDCalculator.Type.DIAG_GI ,report.getGiScore()));
 				percentList.put("risk",
-					sndCalculator.calculateForDiagnosis(sndCalculator.RISK_IDX, report.getRiskScore()));
+					sndCalculator.calculatePercentage(SNDCalculator.Type.DIAG_RISK, report.getRiskScore()));
 				percentList.put("invest", 
-					sndCalculator.calculateForDiagnosis(sndCalculator.INVEST_IDX, report.getInvestScore()));
+					sndCalculator.calculatePercentage(SNDCalculator.Type.DIAG_INVEST, report.getInvestScore()));
 				percentList.put("knowledge", 
-					sndCalculator.calculateForDiagnosis(sndCalculator.KNOWLEDGE_IDX, report.getKnowledgeScore()));
+					sndCalculator.calculatePercentage(SNDCalculator.Type.DIAG_KNOWLEDGE, report.getKnowledgeScore()));
 				
 				List<String> similarTypeInfo = commentGenerator.makeSimilarTypeInfo(
 						report.getRiskScore(), 

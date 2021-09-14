@@ -1,8 +1,9 @@
 package com.tmax.eTest.Report.util;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.commons.math3.distribution.NormalDistribution;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import lombok.extern.log4j.Log4j2;
@@ -12,20 +13,81 @@ import lombok.extern.log4j.Log4j2;
 @Log4j2
 public class SNDCalculator {
 	
+	public enum Type{
+        DIAG_GI("gi"),
+        DIAG_RISK("diag_risk"),
+        DIAG_INVEST("invest"),
+        DIAG_KNOWLEDGE("knowledge"),
+        MINI_TOTAL("total"),
+        MINI_BASIC("basic"),
+        MINI_STOCK("stock"),
+        MINI_VALUE("value"),
+        MINI_POSSESSION("possession"),
+        MINI_RISK("mini_risk");
+
+        //@Getter
+        private String value;
+        
+        private Type(String value){
+            this.value = value;
+        }
+
+        public String toString(){
+            return this.value;
+        }
+	}
+
+	private static final Map<Type, Double> MEAN_MAP = new HashMap<>();
+	private static final Map<Type, Double> SD_MAP = new HashMap<>();
+	static {
+		MEAN_MAP.put(Type.DIAG_GI, 70.7);
+		MEAN_MAP.put(Type.DIAG_RISK, 81.1149);
+		MEAN_MAP.put(Type.DIAG_INVEST, 65.6091);
+		MEAN_MAP.put(Type.DIAG_KNOWLEDGE, 67.6552);
+		MEAN_MAP.put(Type.MINI_TOTAL, 51.6531);
+		MEAN_MAP.put(Type.MINI_BASIC, 56.2712);
+		MEAN_MAP.put(Type.MINI_STOCK, 53.0511);
+		MEAN_MAP.put(Type.MINI_VALUE, 49.1177);
+		MEAN_MAP.put(Type.MINI_POSSESSION, 50.4613);
+		MEAN_MAP.put(Type.MINI_RISK, 52.3645);
+		
+		
+		SD_MAP.put(Type.DIAG_GI, 7.5801);
+		SD_MAP.put(Type.DIAG_RISK, 8.5425);
+		SD_MAP.put(Type.DIAG_INVEST, 10.5698);
+		SD_MAP.put(Type.DIAG_KNOWLEDGE, 13.9352	);
+		SD_MAP.put(Type.MINI_TOTAL, 12.48);
+		SD_MAP.put(Type.MINI_BASIC, 16.16);
+		SD_MAP.put(Type.MINI_STOCK, 13.39);
+		SD_MAP.put(Type.MINI_VALUE, 12.14);
+		SD_MAP.put(Type.MINI_POSSESSION, 15.02);
+		SD_MAP.put(Type.MINI_RISK, 17.10);
+		
+	}
+
+	
 	// 자가진단 CBT 분석 기초자료_20210813_v1.0.xlsx 에서 발췌
-	final double[] MEAN_LIST = {70.7, 81.1149, 65.6091, 67.6552}; // GI 지수, risk, invest, knowledge
-	final double[] SD_LIST = {7.5801, 8.5672, 10.6003, 14.0570}; // GI 지수, risk, invest, knowledge
+	final double[] DIAG_MEAN_LIST = {70.7, 81.1149, 65.6091, 67.6552}; // GI 지수, risk, invest, knowledge
+	final double[] DIAG_SD_LIST = {7.5801, 8.5672, 10.6003, 14.0570}; // GI 지수, risk, invest, knowledge
+	
+	final double[] MINI_MEAN_LIST = {70.7, 81.1149, 65.6091, 67.6552}; // 종합, 기본, 주식, 가치평가, 보유관리, 리스크 관리
+	final double[] MINI_SD_LIST = {7.5801, 8.5672, 10.6003, 14.0570}; // 종합, 기본, 주식, 가치평가, 보유관리, 리스크 관리
 	
 	public final int GI_IDX = 0;
 	public final int RISK_IDX = 1;
 	public final int INVEST_IDX = 2;
 	public final int KNOWLEDGE_IDX = 3;
 	
-	public int calculateForDiagnosis(int typeIndex, int score)
+	public int calculateForMiniTest(double ukAvgScore)
+	{
+		return calculateForConf90Percent(0, 100, ukAvgScore);
+	}
+	
+	public int calculatePercentage(Type type, int score)
 	{
 		Long tempResult = Math.round( new NormalDistribution(
-				MEAN_LIST[typeIndex],
-				SD_LIST[typeIndex]).cumulativeProbability(score) * 100);
+				MEAN_MAP.get(type),
+				SD_MAP.get(type)).cumulativeProbability(score) * 100);
 		
 		int result = tempResult.intValue();
 		
@@ -39,11 +101,7 @@ public class SNDCalculator {
 		
 		return result;
 	}
-	
-	public int calculateForMiniTest(double ukAvgScore)
-	{
-		return calculateForConf90Percent(0, 100, ukAvgScore);
-	}
+
 	
 	private int calculateForConf90Percent(double min, double max, double rawX)
 	{

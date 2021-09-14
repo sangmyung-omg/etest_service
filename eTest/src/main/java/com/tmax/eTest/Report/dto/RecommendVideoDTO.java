@@ -13,6 +13,7 @@ public class RecommendVideoDTO {
 	String videoSrcUrl;
 	String title;
 	String thumbnailUrl;
+	String type;
 	float totalTime;
 	int hit;
 	boolean isBookmark;
@@ -29,5 +30,6 @@ public class RecommendVideoDTO {
 		this.hit = hit;
 		this.isBookmark = isBookmark;
 		this.totalTime = videoModel.getTotalTime();
+		this.type = videoModel.getType();
 	}
 }

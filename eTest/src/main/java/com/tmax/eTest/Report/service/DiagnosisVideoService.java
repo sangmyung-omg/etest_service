@@ -12,9 +12,9 @@ import com.tmax.eTest.Common.repository.video.VideoUkRelRepository;
 import com.tmax.eTest.LRS.util.LRSAPIManager;
 import com.tmax.eTest.Report.exception.ReportBadRequestException;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.log4j.Log4j2;
 
+@Log4j2
 @Service
 public class DiagnosisVideoService {
 
@@ -33,29 +33,28 @@ public class DiagnosisVideoService {
 	@Autowired
 	LRSAPIManager lrsManager;
 
-	private final Logger logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
-
 	public boolean setVideoBookmark(String userId, String videoId, boolean isCheckBookmark) throws Exception {
-		try {
-			if (isCheckBookmark) {
-				VideoBookmark bookmarkModel = new VideoBookmark(userId, videoId);
-				videoBookmarkRepo.save(bookmarkModel);
-			}
-			else
-			{
-				VideoBookmarkId bookmarkId = new VideoBookmarkId(userId, videoId);
-				videoBookmarkRepo.deleteById(bookmarkId);
-			}
-		}
-		catch(Exception e)
+		
+		VideoBookmarkId videoBookmarkId = new VideoBookmarkId(userId, videoId);
+		VideoBookmark videoBookmark = new VideoBookmark(userId, videoId);
+
+		if(isCheckBookmark)
 		{
-			if(isCheckBookmark)
-				throw new ReportBadRequestException("Save Video Bookmark error. Check userID & videoID.", e);
+			if (videoBookmarkRepo.existsById(videoBookmarkId))
+				throw new ReportBadRequestException("VideoBookmark already exists in VideoBookmark Table");
 			else
-				throw new ReportBadRequestException("Delete Video Bookmark error. Check userID & videoID.", e);
+				videoBookmarkRepo.save(videoBookmark);
+		}
+		else
+		{
+		    videoBookmarkRepo.delete(videoBookmarkRepo.findById(videoBookmarkId).orElseThrow(
+		        () -> new ReportBadRequestException("VideoBookmark doesn't exist in VideoBookmark Table")));
+
 		}
 
 		return true;
 	}
+	
+	
 
 }

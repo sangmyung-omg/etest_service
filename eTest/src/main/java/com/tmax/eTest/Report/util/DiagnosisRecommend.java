@@ -477,7 +477,7 @@ public class DiagnosisRecommend {
 	{
 		JsonObject res = new JsonObject();
 		res.addProperty("id", video.getVideoId());
-		res.addProperty("type", "video");
+		res.addProperty("type", video.getType());
 		
 		return res;
 	}
