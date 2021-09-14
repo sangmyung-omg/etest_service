@@ -46,12 +46,13 @@ public class BookBookmark implements Persistable<BookBookmarkId> {
   @Transient
   private BookBookmarkId bookBookmarkId;
 
-  @Transient
-  private CommonUtils commonUtils;
+  // @Transient
+  // private CommonUtils commonUtils;
 
   @Override
   public BookBookmarkId getId() {
-    return commonUtils.objectNullcheck(bookBookmarkId) ? bookBookmarkId = new BookBookmarkId(this.userUuid, this.bookId)
+    return new CommonUtils().objectNullcheck(bookBookmarkId)
+        ? bookBookmarkId = new BookBookmarkId(this.userUuid, this.bookId)
         : bookBookmarkId;
   }
 

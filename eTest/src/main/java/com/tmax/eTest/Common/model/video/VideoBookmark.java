@@ -46,12 +46,12 @@ public class VideoBookmark implements Persistable<VideoBookmarkId> {
   @Transient
   private VideoBookmarkId videoBookmarkId;
 
-  @Transient
-  private CommonUtils commonUtils;
+  // @Transient
+  // private CommonUtils commonUtils;
 
   @Override
   public VideoBookmarkId getId() {
-    return commonUtils.objectNullcheck(videoBookmarkId)
+    return new CommonUtils().objectNullcheck(videoBookmarkId)
         ? videoBookmarkId = new VideoBookmarkId(this.userUuid, this.videoId)
         : videoBookmarkId;
   }
