@@ -24,4 +24,6 @@ public interface VideoRepository extends JpaRepository<Video, String> {
   List<Video> findAllByVideoBookmarksUserUuid(String userId, Sort sort);
 
   List<Video> findAllByVideoBookmarksUserUuidAndCurriculumId(String userId, Long curriculumId, Sort sort);
+  
+  List<Video> findAllByRelatedIn(Iterable<String> relatedList);
 }

@@ -24,7 +24,6 @@ import com.tmax.eTest.Contents.repository.ProblemRepository;
 import com.tmax.eTest.LRS.dto.GetStatementInfoDTO;
 import com.tmax.eTest.LRS.dto.StatementDTO;
 import com.tmax.eTest.LRS.util.LRSAPIManager;
-import com.tmax.eTest.Report.dto.PartUnderstandingDTO;
 import com.tmax.eTest.Report.dto.triton.TritonDataDTO;
 import com.tmax.eTest.Report.dto.triton.TritonResponseDTO;
 import com.tmax.eTest.Report.exception.ReportBadRequestException;

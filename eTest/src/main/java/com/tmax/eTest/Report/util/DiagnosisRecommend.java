@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Component;
 
@@ -15,6 +16,8 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.tmax.eTest.Common.model.problem.DiagnosisCurriculum;
 import com.tmax.eTest.Common.model.problem.Problem;
+import com.tmax.eTest.Common.model.video.Video;
+import com.tmax.eTest.Common.repository.video.VideoRepository;
 import com.tmax.eTest.Report.exception.ReportBadRequestException;
 
 import lombok.extern.log4j.Log4j2;
@@ -22,6 +25,27 @@ import lombok.extern.log4j.Log4j2;
 @Component
 @Log4j2
 public class DiagnosisRecommend {
+	
+	@Autowired
+	VideoRepository videoRepo;
+	
+	final List<String> Q1_RELATED = Arrays.asList(
+			"질문1-1","질문1-2","질문1-3","질문1-4","질문1-5","질문1-6","질문1-7","질문1-8","질문1-9");
+	final List<String> Q2_RELATED = Arrays.asList(
+			"단계2-1","단계2-2","단계2-3","단계2-4","단계2-5","단계2-6","단계2-7","단계2-8","단계2-9");
+	final List<String> Q3_RELATED = Arrays.asList(
+			"질문3-1","질문3-2","질문3-3","질문3-4","질문3-5","질문3-6","질문3-7","질문3-8","질문3-9");
+	final List<String> VOCA_RELATED = Arrays.asList(
+			"보카1","보카2","보카3","보카4","보카5","보카6","보카7","보카8","보카9","보카0");
+	final List<String> Q5_RELATED = Arrays.asList(
+			"질문5-1","질문5-2","질문5-3","질문5-4","질문5-5","질문5-6","질문5-7","질문5-8","질문5-9","질문5-10");
+	final List<String> Q6_RELATED = Arrays.asList(
+			"질문6-1","질문6-2","질문6-3","질문6-4","질문6-5","질문6-6","질문6-7");
+	
+	final int[] INVEST_BASIC_CURR_ID = {13, 14, 15};
+	final int[] CHOICE_STOCK_CURR_ID = {16, 17, 18};
+	final int[] PRICE_CHANGE_CURR_ID = {19, 20, 21};
+	final int[] SELL_WAY_CURR_ID = {22, 23, 24};
 	
 	public List<JsonArray> getRecommendLists(
 			List<Pair<Problem, Integer>> choiceAndProbInfo,
@@ -46,16 +70,16 @@ public class DiagnosisRecommend {
 				
 				switch(curriculum.getSection())
 				{
-				case "투자기초":
+				case DiagnosisUtil.SEC_INVEST_BASIC:
 					basicProbChoiceInfo.add(probInfo);
 					break;
-				case "종목고르기":
+				case DiagnosisUtil.SEC_CHOICE_STOCK:
 					knowledgeTypeProb.add(probInfo);
 					break;
-				case "가격 변동 특징":
+				case DiagnosisUtil.SEC_PRICE_CHANGE:
 					changeProbChoiceInfo.add(probInfo);
 					break;
-				case "매매방법":
+				case DiagnosisUtil.SEC_SELL_WAY:
 					sellProbChoiceInfo.add(probInfo);
 					break;
 				default:
@@ -104,32 +128,27 @@ public class DiagnosisRecommend {
 			int riskProfileTypeIdx,
 			int riskTracingTypeIdx)
 	{
-		List<JsonObject> resultBucket = new ArrayList<>();
-		List<JsonObject> recIds = Arrays.asList(
-				makeRecJsonObject("Dummy6-1", "video"),
-				makeRecJsonObject("Dummy6-2", "video"),
-				makeRecJsonObject("Dummy6-3", "video"),
-				makeRecJsonObject("Dummy6-4", "video"),
-				makeRecJsonObject("Dummy6-5", "video"),
-				makeRecJsonObject("Dummy6-6", "video"),
-				makeRecJsonObject("Dummy6-7", "video")
-		);
 		
+		List<String> relatedList = new ArrayList<>();
+		
+		// 자가진단 코멘트 및 추천 콘텐츠 정리 20210902 추천코멘트(고객작성) #위험관리 규칙 참고
 		if(riskProfileTypeIdx != riskTracingTypeIdx)
 		{
-			resultBucket.add(recIds.get(0));
-			resultBucket.add(recIds.get(1));
-			resultBucket.add(recIds.get(2));
-			resultBucket.add(recIds.get(3));
-			resultBucket.add(recIds.get(4));
+			relatedList.add(Q6_RELATED.get(0));
+			relatedList.add(Q6_RELATED.get(1));
+			relatedList.add(Q6_RELATED.get(2));
+			relatedList.add(Q6_RELATED.get(3));
+			relatedList.add(Q6_RELATED.get(4));
 		}
 		
 		if(riskProfileTypeIdx == 2)
-			resultBucket.add(recIds.get(5));
+			relatedList.add(Q6_RELATED.get(5));
 		else if(riskProfileTypeIdx == 0)
-			resultBucket.add(recIds.get(6));
+			relatedList.add(Q6_RELATED.get(6));
 		
-		return resultBucket;
+		List<JsonObject> result = makeVideoJsonObject(relatedList);
+		
+		return result;
 	}
 	
 	private List<JsonObject> getInvestTypeRecommend(
@@ -139,45 +158,36 @@ public class DiagnosisRecommend {
 			int riskTracingTypeIdx,
 			int riskAnsNum10)
 	{
-		List<JsonObject> resultBucket = new ArrayList<>();
-		List<JsonObject> recIds = Arrays.asList(
-				makeRecJsonObject("Dummy5-1", "video"),
-				makeRecJsonObject("Dummy5-2", "video"),
-				makeRecJsonObject("Dummy5-3", "video"),
-				makeRecJsonObject("Dummy5-4", "video"),
-				makeRecJsonObject("Dummy5-5", "video"),
-				makeRecJsonObject("Dummy5-6", "video"),
-				makeRecJsonObject("Dummy5-7", "video"),
-				makeRecJsonObject("Dummy5-8", "video"),
-				makeRecJsonObject("Dummy5-9", "video"),
-				makeRecJsonObject("Dummy5-10", "video")
-		);
+		List<String> relatedList = new ArrayList<>();
 		
+		// 자가진단 코멘트 및 추천 콘텐츠 정리 20210902 추천코멘트(고객작성) #행동편향 규칙 참고
 		if(investScore < 85)
 		{
-			resultBucket.add(recIds.get(0));
-			resultBucket.add(recIds.get(1));
-			resultBucket.add(recIds.get(2));
-			resultBucket.add(recIds.get(3));
+			relatedList.add(Q5_RELATED.get(0));
+			relatedList.add(Q5_RELATED.get(1));
+			relatedList.add(Q5_RELATED.get(2));
+			relatedList.add(Q5_RELATED.get(3));
 		}
 		
 		if(riskProfileTypeIdx == 0 || (riskProfileTypeIdx == 1 && riskTracingTypeIdx == 0))
-			resultBucket.add(recIds.get(4));
+			relatedList.add(Q5_RELATED.get(4));
 		else if((riskProfileTypeIdx == 1 && riskTracingTypeIdx == 2) || riskProfileTypeIdx == 2)
-			resultBucket.add(recIds.get(5));
+			relatedList.add(Q5_RELATED.get(5));
 		
 		if(riskAnsNum10 <= 2)
-			resultBucket.add(recIds.get(6));		// 단기 투자자 관련 질문
+			relatedList.add(Q5_RELATED.get(6));		// 단기 투자자 관련 질문
 		else 
-			resultBucket.add(recIds.get(7));		// 장기 투자자 관련 질문
+			relatedList.add(Q5_RELATED.get(7));		// 장기 투자자 관련 질문
 		
 		if(investTracingScore <= 36)
 		{
-			resultBucket.add(recIds.get(8));
-			resultBucket.add(recIds.get(9));
+			relatedList.add(Q5_RELATED.get(8));
+			relatedList.add(Q5_RELATED.get(9));
 		}
 		
-		return resultBucket;
+		List<JsonObject> result = makeVideoJsonObject(relatedList);
+		
+		return result;
 	}
 	
 	private JsonArray getAdvancedRecommend(
@@ -205,7 +215,7 @@ public class DiagnosisRecommend {
 	// 
 	private List<JsonObject> getRecommend(
 			List<Pair<Problem, Integer>> probChoiceInfo,
-			Map<String, List<JsonObject>> recommendIdList,
+			Map<String, List<String>> recommendIdList,
 			int[] curriculumIds) throws Exception
 	{
 		List<JsonObject> result = new ArrayList<>();
@@ -250,7 +260,10 @@ public class DiagnosisRecommend {
 								+ prob.getProbID()  + " keyValue : " + keyValue +
 								" materials : " +colValue +" "+diffValue + " "+ currValue);
 					
-					result.addAll(recommendIdList.get(recommendIdsKey[keyValue]));
+					List<JsonObject> videoObjs = makeVideoJsonObject(
+							recommendIdList.get(recommendIdsKey[keyValue]));
+					
+					result.addAll(videoObjs);
 				}
 			}
 		}
@@ -260,18 +273,6 @@ public class DiagnosisRecommend {
 	
 	private JsonArray getBasicRecommend(List<Pair<Problem, Integer>> commonProbChoiceInfo) throws Exception
 	{
-		int[] curriIds = {13, 14, 15};
-		List<JsonObject> recIds = Arrays.asList(
-				makeRecJsonObject("Dummy1-1", "video"),
-				makeRecJsonObject("Dummy1-2", "video"),
-				makeRecJsonObject("Dummy1-3", "video"),
-				makeRecJsonObject("Dummy1-4", "video"),
-				makeRecJsonObject("Dummy1-5", "video"),
-				makeRecJsonObject("Dummy1-6", "video"),
-				makeRecJsonObject("Dummy1-7", "video"),
-				makeRecJsonObject("Dummy1-8", "video"),
-				makeRecJsonObject("Dummy1-9", "video")
-		);
 		List<List<Integer>> recoContentList = Arrays.asList(
 				Arrays.asList(),
 				Arrays.asList(),
@@ -295,21 +296,20 @@ public class DiagnosisRecommend {
 				Arrays.asList(4,5,6,7)
 		);
 
-		Map<String, List<JsonObject>> recommendIdList = new HashMap<>();		
+		Map<String, List<String>> recommendIdList = new HashMap<>();		
 		for(int keyIdx = 0; keyIdx < recommendIdsKey.length; keyIdx++)
 		{
-			List<JsonObject> input = new ArrayList<>();
+			List<String> input = new ArrayList<>();
 			
 			List<Integer> recIdIdxList = recoContentList.get(keyIdx);
 
 			for(int idIdx : recIdIdxList)
-				input.add(recIds.get(idIdx));
+				input.add(Q1_RELATED.get(idIdx));
 			
 			recommendIdList.put(recommendIdsKey[keyIdx], input);
 		}
 		
-		
-		List<JsonObject> resultBucket = getRecommend(commonProbChoiceInfo, recommendIdList, curriIds);
+		List<JsonObject> resultBucket = getRecommend(commonProbChoiceInfo, recommendIdList, INVEST_BASIC_CURR_ID);
 		
 		return makeRandomResult(resultBucket);
 	}
@@ -318,18 +318,6 @@ public class DiagnosisRecommend {
 			List<Pair<Problem, Integer>> typeProbChoiceInfo) 
 			throws Exception
 	{
-		int[] curriIds = {16, 17, 18};
-		List<JsonObject> recIds = Arrays.asList(
-				makeRecJsonObject("Dummy2-1", "video"),
-				makeRecJsonObject("Dummy2-2", "video"),
-				makeRecJsonObject("Dummy2-3", "video"),
-				makeRecJsonObject("Dummy2-4", "video"),
-				makeRecJsonObject("Dummy2-5", "video"),
-				makeRecJsonObject("Dummy2-6", "video"),
-				makeRecJsonObject("Dummy2-7", "video"),
-				makeRecJsonObject("Dummy2-8", "video"),
-				makeRecJsonObject("Dummy2-9", "video")
-		);
 		List<List<Integer>> recoContentList = Arrays.asList(
 				Arrays.asList(),
 				Arrays.asList(0,1,2),
@@ -353,21 +341,20 @@ public class DiagnosisRecommend {
 				Arrays.asList(6,7,8)
 		);
 
-		Map<String, List<JsonObject>> recommendIdList = new HashMap<>();		
+		Map<String, List<String>> recommendIdList = new HashMap<>();		
 		for(int keyIdx = 0; keyIdx < recommendIdsKey.length; keyIdx++)
 		{
-			List<JsonObject> input = new ArrayList<>();
+			List<String> input = new ArrayList<>();
 			
 			List<Integer> recIdIdxList = recoContentList.get(keyIdx);
 
 			for(int idIdx : recIdIdxList)
-				input.add(recIds.get(idIdx));
+				input.add(Q2_RELATED.get(idIdx));
 			
 			recommendIdList.put(recommendIdsKey[keyIdx], input);
 		}
 		
-		
-		List<JsonObject> resultBucket = getRecommend(typeProbChoiceInfo, recommendIdList, curriIds);
+		List<JsonObject> resultBucket = getRecommend(typeProbChoiceInfo, recommendIdList, CHOICE_STOCK_CURR_ID);
 		
 		return resultBucket;
 	}
@@ -376,18 +363,6 @@ public class DiagnosisRecommend {
 			List<Pair<Problem, Integer>> changeProbChoiceInfo) 
 			throws Exception
 	{
-		int[] curriIds = {19, 20, 21};
-		List<JsonObject> recIds = Arrays.asList(
-				makeRecJsonObject("Dummy3-1", "video"),
-				makeRecJsonObject("Dummy3-2", "video"),
-				makeRecJsonObject("Dummy3-3", "video"),
-				makeRecJsonObject("Dummy3-4", "video"),
-				makeRecJsonObject("Dummy3-5", "video"),
-				makeRecJsonObject("Dummy3-6", "video"),
-				makeRecJsonObject("Dummy3-7", "video"),
-				makeRecJsonObject("Dummy3-8", "video"),
-				makeRecJsonObject("Dummy3-9", "video")
-		);
 		List<List<Integer>> recoContentList = Arrays.asList(
 				Arrays.asList(),
 				Arrays.asList(0,1,2),
@@ -411,20 +386,20 @@ public class DiagnosisRecommend {
 				Arrays.asList(6,7,8)
 		);
 
-		Map<String, List<JsonObject>> recommendIdList = new HashMap<>();		
+		Map<String, List<String>> recommendIdList = new HashMap<>();		
 		for(int keyIdx = 0; keyIdx < recommendIdsKey.length; keyIdx++)
 		{
-			List<JsonObject> input = new ArrayList<>();
+			List<String> input = new ArrayList<>();
 			
 			List<Integer> recIdIdxList = recoContentList.get(keyIdx);
 
 			for(int idIdx : recIdIdxList)
-				input.add(recIds.get(idIdx));
+				input.add(Q3_RELATED.get(idIdx));
 			
 			recommendIdList.put(recommendIdsKey[keyIdx], input);
 		}
 		
-		List<JsonObject> resultBucket = getRecommend(changeProbChoiceInfo, recommendIdList, curriIds);
+		List<JsonObject> resultBucket = getRecommend(changeProbChoiceInfo, recommendIdList, PRICE_CHANGE_CURR_ID);
 		
 		return resultBucket;
 	}
@@ -433,18 +408,8 @@ public class DiagnosisRecommend {
 			List<Pair<Problem, Integer>> sellProbChoiceInfo) 
 			throws Exception
 	{
-		int[] curriIds = {22, 23, 24};
-		List<JsonObject> recIds = Arrays.asList(
-				makeRecJsonObject("DummyVoca1", "video"),
-				makeRecJsonObject("DummyVoca2", "video"),
-				makeRecJsonObject("DummyVoca3", "video"),
-				makeRecJsonObject("DummyVoca4", "video"),
-				makeRecJsonObject("DummyVoca5", "video"),
-				makeRecJsonObject("DummyVoca6", "video"),
-				makeRecJsonObject("DummyVoca7", "video"),
-				makeRecJsonObject("DummyVoca8", "video"),
-				makeRecJsonObject("DummyVoca9", "video")
-		);
+		
+		
 		List<List<Integer>> recoContentList = Arrays.asList(
 				Arrays.asList(),
 				Arrays.asList(0,1,2),
@@ -468,20 +433,20 @@ public class DiagnosisRecommend {
 				Arrays.asList(6,7,8)
 		);
 
-		Map<String, List<JsonObject>> recommendIdList = new HashMap<>();		
+		Map<String, List<String>> recommendIdList = new HashMap<>();		
 		for(int keyIdx = 0; keyIdx < recommendIdsKey.length; keyIdx++)
 		{
-			List<JsonObject> input = new ArrayList<>();
+			List<String> input = new ArrayList<>();
 			
 			List<Integer> recIdIdxList = recoContentList.get(keyIdx);
 
 			for(int idIdx : recIdIdxList)
-				input.add(recIds.get(idIdx));
+				input.add(VOCA_RELATED.get(idIdx));
 			
 			recommendIdList.put(recommendIdsKey[keyIdx], input);
 		}
 		
-		List<JsonObject> resultBucket = getRecommend(sellProbChoiceInfo, recommendIdList, curriIds);
+		List<JsonObject> resultBucket = getRecommend(sellProbChoiceInfo, recommendIdList, SELL_WAY_CURR_ID);
 		
 		return resultBucket;
 	}
@@ -508,12 +473,23 @@ public class DiagnosisRecommend {
 		return result;
 	}
 	
-	private JsonObject makeRecJsonObject(String id, String type)
+	private JsonObject makeRecJsonObject(Video video)
 	{
 		JsonObject res = new JsonObject();
-		res.addProperty("id", id);
-		res.addProperty("type", type);
+		res.addProperty("id", video.getVideoId());
+		res.addProperty("type", "video");
 		
 		return res;
+	}
+	
+	
+	private List<JsonObject> makeVideoJsonObject(List<String> relatedList){
+		List<JsonObject> result = new ArrayList<>();
+		List<Video> videoRes = videoRepo.findAllByRelatedIn(relatedList);
+		
+		for(Video video : videoRes)
+			result.add(makeRecJsonObject(video));
+		
+		return result;
 	}
 }

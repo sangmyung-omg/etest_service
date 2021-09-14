@@ -112,16 +112,16 @@ public class RuleBaseScoreCalculator {
 				case "인지편향":
 					investProfileProb.add(probInfo);
 					break;
-				case "투자기초":
+				case DiagnosisUtil.SEC_INVEST_BASIC:
 					knowledgeBasicProb.add(probInfo);
 					break;
-				case "종목고르기":
+				case DiagnosisUtil.SEC_CHOICE_STOCK:
 					knowledgeTypeProb.add(probInfo);
 					break;
-				case "가격 변동 특징":
+				case DiagnosisUtil.SEC_PRICE_CHANGE:
 					knowledgeChangeProb.add(probInfo);
 					break;
-				case "매매방법":
+				case DiagnosisUtil.SEC_SELL_WAY:
 					knowledgeSellProb.add(probInfo);
 					break;
 				default:
@@ -251,7 +251,6 @@ public class RuleBaseScoreCalculator {
 			{
 				JsonObject jo = solution.get(i).getAsJsonObject();
 				
-				log.info(jo.get("type").getAsString());
 				if(jo.get("type") != null && jo.get("data") != null &&
 					jo.get("type").getAsString().equals("MULTIPLE_CHOICE_CORRECT_ANSWER"))
 				{
