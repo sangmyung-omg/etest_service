@@ -9,17 +9,17 @@ plugins {
 group = 'com.tmax'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '1.8'
-apply plugin: 'war'
+// apply plugin: 'war'
 
 // 배포용 WAR 생성 - SM
-def baseName = 'kofia-backend'
-def version = '0.0.1'
-bootWar {
-	archiveFileName = "boot-${baseName}-${version}.war"
-}
-war {
-	archiveFileName = "${baseName}-${version}.war"
-}
+// def baseName = 'kofia-backend'
+// def version = '0.0.1'
+// bootWar {
+// 	archiveFileName = "boot-${baseName}-${version}.war"
+// }
+// war {
+//	archiveFileName = "${baseName}-${version}.war"
+// }
 // 끝
 
 configurations {
