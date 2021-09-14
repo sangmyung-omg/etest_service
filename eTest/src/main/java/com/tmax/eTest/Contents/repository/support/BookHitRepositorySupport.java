@@ -6,12 +6,16 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.tmax.eTest.Common.model.book.BookHit;
 import com.tmax.eTest.Contents.util.CommonUtils;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public class BookHitRepositorySupport extends QuerydslRepositorySupport {
   private final JPAQueryFactory query;
+
+  @Autowired
+  private CommonUtils commonUtils;
 
   public BookHitRepositorySupport(JPAQueryFactory query) {
     super(BookHit.class);
@@ -20,7 +24,7 @@ public class BookHitRepositorySupport extends QuerydslRepositorySupport {
 
   // 애매한뎅
   public Boolean notExistsById(Long bookId) {
-    return CommonUtils.objectNullcheck(query.selectOne().from(bookHit).where(bookHit.bookId.eq(bookId)).fetchFirst());
+    return commonUtils.objectNullcheck(query.selectOne().from(bookHit).where(bookHit.bookId.eq(bookId)).fetchFirst());
   }
 
   public Long updateVideoHit(Long bookId) {

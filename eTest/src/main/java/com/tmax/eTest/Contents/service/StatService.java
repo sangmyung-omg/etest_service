@@ -36,8 +36,8 @@ public class StatService {
   @Autowired
   private HitStatRepositorySupport hitStatRepositorySupport;
 
-  // @Autowired
-  // private LRSService lrsService;
+  @Autowired
+  private CommonUtils commonUtils;
 
   @Autowired
   private LRSUtils lrsUtils;
@@ -88,10 +88,10 @@ public class StatService {
       if (userMap.containsKey(userId)) {
         Map<String, Long> counterMap = userMap.get(userId).stream()
             .collect(Collectors.groupingBy(e -> e.getSourceType(), Collectors.counting()));
-        hit = new Hit(CommonUtils.zeroIfNull(counterMap.get(LRSUtils.SOURCE_TYPE.video.name())),
-            CommonUtils.zeroIfNull(counterMap.get(LRSUtils.SOURCE_TYPE.textbook.name())),
-            CommonUtils.zeroIfNull(counterMap.get(LRSUtils.SOURCE_TYPE.wiki.name())),
-            CommonUtils.zeroIfNull(counterMap.get(LRSUtils.SOURCE_TYPE.article.name())));
+        hit = new Hit(commonUtils.zeroIfNull(counterMap.get(LRSUtils.SOURCE_TYPE.video.name())),
+            commonUtils.zeroIfNull(counterMap.get(LRSUtils.SOURCE_TYPE.textbook.name())),
+            commonUtils.zeroIfNull(counterMap.get(LRSUtils.SOURCE_TYPE.wiki.name())),
+            commonUtils.zeroIfNull(counterMap.get(LRSUtils.SOURCE_TYPE.article.name())));
       }
 
       StatDTO stat = StatDTO.builder().userId(userId).hit(hit).bookMark(bookMark).build();

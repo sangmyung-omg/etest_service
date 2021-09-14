@@ -22,6 +22,7 @@ import com.tmax.eTest.Contents.exception.ErrorCode;
 import com.tmax.eTest.Contents.util.CommonUtils;
 import com.tmax.eTest.Contents.util.QuerydslUtils;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import org.springframework.stereotype.Repository;
 
@@ -32,6 +33,12 @@ import lombok.extern.slf4j.Slf4j;
 public class VideoRepositorySupport extends QuerydslRepositorySupport {
   private final JPAQueryFactory query;
 
+  @Autowired
+  private CommonUtils commonUtils;
+
+  @Autowired
+  private QuerydslUtils querydslUtils;
+
   public VideoRepositorySupport(JPAQueryFactory query) {
     super(Video.class);
     this.query = query;
@@ -40,13 +47,14 @@ public class VideoRepositorySupport extends QuerydslRepositorySupport {
   public OrderSpecifier<?> getVideoSortedColumn(SortType sort) {
     switch (sort.name()) {
       case "DATE":
-        return QuerydslUtils.getSortedColumn(Order.ASC, video, "createDate");
+        return querydslUtils.getSortedColumn(Order.ASC, video, "createDate");
       case "HIT":
-        return QuerydslUtils.getSortedColumn(Order.DESC, video.videoHit, "hit");
+        return querydslUtils.getSortedColumn(Order.DESC, video.videoHit, "hit");
       case "RECOMMEND":
-        return QuerydslUtils.getSortedColumn(Order.ASC, video, "sequence");
+      case "SEQUENCE":
+        return querydslUtils.getSortedColumn(Order.ASC, video, "sequence");
       default:
-        throw new ContentsException(ErrorCode.TYPE_ERROR, "Sort should be 'date' or 'hit' !!!");
+        throw new ContentsException(ErrorCode.TYPE_ERROR, sort.name() + ": type not provided!");
     }
   }
 
@@ -79,20 +87,20 @@ public class VideoRepositorySupport extends QuerydslRepositorySupport {
   }
 
   private BooleanExpression userEq(String userId) {
-    return CommonUtils.stringNullCheck(userId) ? null : videoBookmark.userUuid.eq(userId);
+    return commonUtils.stringNullCheck(userId) ? null : videoBookmark.userUuid.eq(userId);
   }
 
   private BooleanExpression idEq(String videoId) {
-    return CommonUtils.objectNullcheck(videoId) ? null : video.videoId.eq(videoId);
+    return commonUtils.objectNullcheck(videoId) ? null : video.videoId.eq(videoId);
   }
 
   private BooleanExpression curriculumEq(Long curriculumId) {
-    return CommonUtils.objectNullcheck(curriculumId) ? null : video.curriculumId.eq(curriculumId);
+    return commonUtils.objectNullcheck(curriculumId) ? null : video.curriculumId.eq(curriculumId);
   }
 
   private BooleanExpression checkKeyword(String keyword) {
-    return CommonUtils.stringNullCheck(keyword) ? null
-        : video.title.contains(keyword)
+    return commonUtils.stringNullCheck(keyword) ? null
+        : video.title.containsIgnoreCase(keyword)
             .or(video.videoUks.any()
                 .in(JPAExpressions.selectFrom(videoUkRel).where(videoUkRel.video.eq(video),
                     videoUkRel.ukMaster.ukName.contains(keyword))))

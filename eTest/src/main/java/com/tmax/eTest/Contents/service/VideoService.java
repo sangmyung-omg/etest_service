@@ -43,10 +43,10 @@ import lombok.extern.slf4j.Slf4j;
 public class VideoService {
 
   private enum VideoType {
-    YOUTUBE, SELF
+    YOUTUBE, SELF, ARTICLE
   }
 
-  private final String YOUTUBE_TYPE = "youtu.be";
+  private final String YOUTUBE_TYPE = "youtu";
 
   @Autowired
   private VideoCurriculumRepositorySupport videoCurriculumRepositorySupport;
@@ -62,6 +62,9 @@ public class VideoService {
 
   @Autowired
   private LRSUtils lrsUtils;
+
+  @Autowired
+  private CommonUtils commonUtils;
 
   @Autowired
   private LRSAPIManager lrsapiManager;
@@ -96,7 +99,7 @@ public class VideoService {
 
   public ListDTO.Video getRecommendVideoList(String userId, Long curriculumId, String keyword) throws IOException {
     List<String> recommendVideos = getDiagnosisRecommendVideoList(userId);
-    Boolean recommended = !CommonUtils.objectNullcheck(recommendVideos);
+    Boolean recommended = !commonUtils.objectNullcheck(recommendVideos);
 
     List<VideoJoin> videos = videoRePositorySupport.findVideosByUserAndCurriculum(userId, curriculumId,
         SortType.RECOMMEND, keyword);
@@ -112,7 +115,7 @@ public class VideoService {
 
   private List<String> getDiagnosisRecommendVideoList(String userId) throws IOException {
     DiagnosisReport diagnosisReport = diagnosisReportRepositorySupport.findDiagnosisReportByUser(userId);
-    if (CommonUtils.objectNullcheck(diagnosisReport)) {
+    if (commonUtils.objectNullcheck(diagnosisReport)) {
       log.info("Diagnosis Report doesn't contain " + userId);
       return null;
     }
@@ -120,8 +123,8 @@ public class VideoService {
     String typeStr = diagnosisReport.getRecommendTypeList();
     String advancedStr = diagnosisReport.getRecommendAdvancedList();
     ObjectMapper mapper = new ObjectMapper();
-    if (CommonUtils.stringNullCheck(basicStr) || CommonUtils.stringNullCheck(typeStr)
-        || CommonUtils.stringNullCheck(advancedStr)) {
+    if (commonUtils.stringNullCheck(basicStr) || commonUtils.stringNullCheck(typeStr)
+        || commonUtils.stringNullCheck(advancedStr)) {
       log.info("Diagnosis Report By " + userId + " isn't recommended");
       return null;
     }
@@ -197,6 +200,13 @@ public class VideoService {
     return new SuccessDTO(true);
   }
 
+  public SuccessDTO quitVideo(String videoId, Integer duration) {
+    // lrsapiManager.saveStatementList(Arrays.asList(
+    // lrsUtils.makeStatement(userId, videoId, LRSUtils.ACTION_TYPE.quit,
+    // LRSUtils.SOURCE_TYPE.video, duration)));
+    return new SuccessDTO(true);
+  }
+
   public SuccessDTO quitVideo(String userId, String videoId, Integer duration) throws ParseException {
     lrsapiManager.saveStatementList(Arrays.asList(
         lrsUtils.makeStatement(userId, videoId, LRSUtils.ACTION_TYPE.quit, LRSUtils.SOURCE_TYPE.video, duration)));
@@ -208,9 +218,10 @@ public class VideoService {
         .imgSrc(video.getImgSrc()).subject(video.getVideoCurriculum().getSubject()).totalTime(video.getTotalTime())
         .startTime(video.getStartTime()).endTime(video.getEndTime()).hit(video.getVideoHit().getHit())
         .createDate(video.getCreateDate().toString())
-        .videoType(!CommonUtils.stringNullCheck(video.getVideoSrc()) && video.getVideoSrc().contains(YOUTUBE_TYPE)
-            ? VideoType.YOUTUBE.toString()
-            : VideoType.SELF.toString())
+        .videoType(video.getType().equals(VideoType.ARTICLE.name()) ? video.getType()
+            : !commonUtils.stringNullCheck(video.getVideoSrc()) && video.getVideoSrc().contains(YOUTUBE_TYPE)
+                ? VideoType.YOUTUBE.toString()
+                : VideoType.SELF.toString())
         .uks(video.getVideoUks().stream().map(videoUks -> videoUks.getUkMaster().getUkName())
             .collect(Collectors.toList()))
         .hashtags(video.getVideoHashtags().stream().map(videoHashtags -> videoHashtags.getHashtag().getName())
@@ -228,10 +239,11 @@ public class VideoService {
     return VideoDTO.builder().videoId(video.getVideoId()).videoSrc(video.getVideoSrc()).title(video.getTitle())
         .imgSrc(video.getImgSrc()).subject(video.getVideoCurriculum().getSubject()).totalTime(video.getTotalTime())
         .startTime(video.getStartTime()).endTime(video.getEndTime()).hit(video.getVideoHit().getHit())
-        .createDate(video.getCreateDate().toString()).bookmark(!CommonUtils.stringNullCheck(videoJoin.getUserUuid()))
-        .videoType(!CommonUtils.stringNullCheck(video.getVideoSrc()) && video.getVideoSrc().contains(YOUTUBE_TYPE)
-            ? VideoType.YOUTUBE.toString()
-            : VideoType.SELF.toString())
+        .createDate(video.getCreateDate().toString()).bookmark(!commonUtils.stringNullCheck(videoJoin.getUserUuid()))
+        .videoType(video.getType().equals(VideoType.ARTICLE.name()) ? video.getType()
+            : !commonUtils.stringNullCheck(video.getVideoSrc()) && video.getVideoSrc().contains(YOUTUBE_TYPE)
+                ? VideoType.YOUTUBE.toString()
+                : VideoType.SELF.toString())
         .uks(video.getVideoUks().stream().map(videoUks -> videoUks.getUkMaster().getUkName())
             .collect(Collectors.toList()))
         .hashtags(video.getVideoHashtags().stream().map(videoHashtags -> videoHashtags.getHashtag().getName())

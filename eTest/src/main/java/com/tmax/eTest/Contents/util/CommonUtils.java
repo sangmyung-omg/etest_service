@@ -4,22 +4,24 @@ import java.util.Optional;
 
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Component;
 
+@Component(value = "CommonUtils")
 public class CommonUtils {
 
-  public static boolean stringNullCheck(String str) {
+  public boolean stringNullCheck(String str) {
     return StringUtils.isBlank(str);
   }
 
-  public static boolean objectNullcheck(Object obj) {
+  public boolean objectNullcheck(Object obj) {
     return ObjectUtils.isEmpty(obj);
   }
 
-  public static long zeroIfNull(Long num) {
+  public long zeroIfNull(Long num) {
     return Optional.ofNullable(num).orElse(0L);
   }
 
-  public static int zeroIfNull(Integer num) {
+  public int zeroIfNull(Integer num) {
     return Optional.ofNullable(num).orElse(0);
   }
 }

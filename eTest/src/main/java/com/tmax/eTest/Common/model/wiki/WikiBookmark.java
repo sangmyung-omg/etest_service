@@ -46,9 +46,12 @@ public class WikiBookmark implements Persistable<WikiBookmarkId> {
   @Transient
   private WikiBookmarkId wikiBookmarkId;
 
+  @Transient
+  private CommonUtils commonUtils;
+
   @Override
   public WikiBookmarkId getId() {
-    return CommonUtils.objectNullcheck(wikiBookmarkId) ? wikiBookmarkId = new WikiBookmarkId(this.userUuid, this.wikiId)
+    return commonUtils.objectNullcheck(wikiBookmarkId) ? wikiBookmarkId = new WikiBookmarkId(this.userUuid, this.wikiId)
         : wikiBookmarkId;
   }
 

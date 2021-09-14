@@ -74,6 +74,9 @@ public class StatJobConfiguration extends DefaultBatchConfigurer {
   private LRSUtils lrsUtils;
 
   @Autowired
+  private CommonUtils commonUtils;
+
+  @Autowired
   private LRSAPIManager lrsapiManager;
 
   @Autowired
@@ -111,10 +114,10 @@ public class StatJobConfiguration extends DefaultBatchConfigurer {
           if (!hitStatRepository.existsByStatDate(date))
             hitStatRepository.save(HitStat.builder().statDate(date).build());
 
-          hitStatRepository.updateHit(date, CommonUtils.zeroIfNull(counterMap.get(LRSUtils.SOURCE_TYPE.video.name())),
-              CommonUtils.zeroIfNull(counterMap.get(LRSUtils.SOURCE_TYPE.textbook.name())),
-              CommonUtils.zeroIfNull(counterMap.get(LRSUtils.SOURCE_TYPE.wiki.name())),
-              CommonUtils.zeroIfNull(counterMap.get(LRSUtils.SOURCE_TYPE.article.name())));
+          hitStatRepository.updateHit(date, commonUtils.zeroIfNull(counterMap.get(LRSUtils.SOURCE_TYPE.video.name())),
+              commonUtils.zeroIfNull(counterMap.get(LRSUtils.SOURCE_TYPE.textbook.name())),
+              commonUtils.zeroIfNull(counterMap.get(LRSUtils.SOURCE_TYPE.wiki.name())),
+              commonUtils.zeroIfNull(counterMap.get(LRSUtils.SOURCE_TYPE.article.name())));
 
           log.info("Job Success!");
           return RepeatStatus.FINISHED;

@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.tmax.eTest.Contents.util.CommonUtils;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +25,9 @@ public class FileController {
 
   @Value("${file.path}")
   private String DEFAULT_PATH;
+
+  @Autowired
+  private CommonUtils commonUtils;
 
   private static final String CONTETNS_PATH = "contents" + File.separator;
 
@@ -47,7 +51,7 @@ public class FileController {
     log.info("File Size: " + fileSize);
 
     String mimeType = request.getServletContext().getMimeType(filePath);
-    if (CommonUtils.stringNullCheck(mimeType))
+    if (commonUtils.stringNullCheck(mimeType))
       mimeType = "application/octet-stream";
     log.info("MimeType: " + mimeType);
 

@@ -41,6 +41,9 @@ public class BookService {
   private LRSUtils lrsUtils;
 
   @Autowired
+  private CommonUtils commonUtils;
+
+  @Autowired
   private LRSAPIManager lrsapiManager;
 
   public BookDTO getBook(String userId, Long bookId) {
@@ -127,7 +130,7 @@ public class BookService {
     return BookDTO.builder().bookId(book.getBookId()).bookSrc(book.getBookSrc()).title(book.getTitle())
         .createDate(book.getCreateDate().toString()).creatorId(book.getCreatorId()).imgSrc(book.getImgSrc())
         .description(book.getDescription()).hit(book.getBookHit().getHit())
-        .bookmark(!CommonUtils.stringNullCheck(bookJoin.getUserUuid())).build();
+        .bookmark(!commonUtils.stringNullCheck(bookJoin.getUserUuid())).build();
   }
 
   public ListDTO.Book convertBookJoinToDTO(List<BookJoin> bookJoins) {

@@ -10,6 +10,7 @@ import com.tmax.eTest.Common.model.report.DiagnosisReport;
 import com.tmax.eTest.Contents.util.CommonUtils;
 import com.tmax.eTest.Contents.util.QuerydslUtils;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import org.springframework.stereotype.Repository;
 
@@ -17,13 +18,19 @@ import org.springframework.stereotype.Repository;
 public class DiagnosisReportRepositorySupport extends QuerydslRepositorySupport {
   private final JPAQueryFactory query;
 
+  @Autowired
+  private CommonUtils commonUtils;
+
+  @Autowired
+  private QuerydslUtils querydslUtils;
+
   public DiagnosisReportRepositorySupport(JPAQueryFactory query) {
     super(DiagnosisReport.class);
     this.query = query;
   }
 
   public OrderSpecifier<?> getDiagnosisReportSortedColumn() {
-    return QuerydslUtils.getSortedColumn(Order.DESC, diagnosisReport, "diagnosisDate");
+    return querydslUtils.getSortedColumn(Order.DESC, diagnosisReport, "diagnosisDate");
   }
 
   public DiagnosisReport findDiagnosisReportByUser(String userId) {
@@ -32,6 +39,6 @@ public class DiagnosisReportRepositorySupport extends QuerydslRepositorySupport 
   }
 
   private BooleanExpression userEq(String userId) {
-    return CommonUtils.stringNullCheck(userId) ? null : diagnosisReport.userUuid.eq(userId);
+    return commonUtils.stringNullCheck(userId) ? null : diagnosisReport.userUuid.eq(userId);
   }
 }

@@ -15,12 +15,16 @@ import com.tmax.eTest.Common.model.wiki.Wiki;
 import com.tmax.eTest.Contents.dto.WikiJoin;
 import com.tmax.eTest.Contents.util.CommonUtils;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public class WikiRepositorySupport extends QuerydslRepositorySupport {
   private final JPAQueryFactory query;
+
+  @Autowired
+  private CommonUtils commonUtils;
 
   public WikiRepositorySupport(JPAQueryFactory query) {
     super(Wiki.class);
@@ -43,15 +47,15 @@ public class WikiRepositorySupport extends QuerydslRepositorySupport {
   }
 
   private BooleanExpression userEq(String userId) {
-    return CommonUtils.stringNullCheck(userId) ? null : wikiBookmark.userUuid.eq(userId);
+    return commonUtils.stringNullCheck(userId) ? null : wikiBookmark.userUuid.eq(userId);
   }
 
   private BooleanExpression idEq(Long wikiId) {
-    return CommonUtils.objectNullcheck(wikiId) ? null : wiki.wikiId.eq(wikiId);
+    return commonUtils.objectNullcheck(wikiId) ? null : wiki.wikiId.eq(wikiId);
   }
 
   private BooleanExpression checkKeyword(String keyword) {
-    return CommonUtils.stringNullCheck(keyword) ? null
+    return commonUtils.stringNullCheck(keyword) ? null
         : wiki.title.contains(keyword).or(wiki.wikiUks.any().in(JPAExpressions.selectFrom(wikiUkRel)
             .where(wikiUkRel.wiki.eq(wiki), wikiUkRel.ukMaster.ukName.contains(keyword))));
   }

@@ -39,6 +39,8 @@ public class Video {
   private Date endDate;
   private Long sequence;
   private String codeSet;
+  private String type;
+  private String related;
 
   @ManyToOne(fetch = FetchType.EAGER)
   @JoinColumn(name = "curriculumId", insertable = false, updatable = false)

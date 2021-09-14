@@ -62,7 +62,7 @@ paths:
           format: integer
       - name: sort
         in: query
-        description: DATE(날짜순)/HIT(조회순)
+        description: DATE(날짜순)/HIT(조회순)/RECOMMEND(추천순)/SEQUENCE(우선순위순)
         required: false
         schema:
           type: string
@@ -81,44 +81,14 @@ paths:
           content:
             json:
               schema:
-                $ref: '#/components/schemas/VideoListModel'                               
-  /videos/{video_id}/hit:
-    post:
-      tags:
-      - Video
-      summary: 영상 조회수 업데이트
-      description: 해당 영상의 조회수를 증가시키고 LRS 저장
-      parameters:
-      - name: video_id
-        in: path
-        description: 유저아이디
-        required: true
-        schema:
-          type: integer
-          format: integer
-      responses:
-        200:
-          description: OK
-          content:
-            json:
-              schema:
-                type: object
-                example:
-                  isSuccess: true                 
-  /users/{user_id}/videos/{video_id}:
+                $ref: '#/components/schemas/VideoListModel'  
+  /videos/{video_id}:
     get:
       tags:
         - Video
       summary : 유저의 영상 조회
       description : 유저의 북마크 정보를 포함한 영상 조회
       parameters:
-      - name: user_id
-        in: path
-        description: 사용자 아이디
-        required: true
-        schema:
-          type: string
-          format: string
       - name: video_id
         in: path
         description: 영상 아이디
@@ -133,63 +103,13 @@ paths:
             json:
               schema:
                 $ref: '#/components/schemas/VideoModel'
-  /users/{user_id}/videos:
-    get:
-      tags:
-        - Video
-      summary : 유저의 영상 리스트 조회
-      description : 유저의 북마크 정보를 포함한 영상 리스트 조회
-      parameters:
-      - name: user_id
-        in: path
-        description: 사용자 아이디
-        required: true
-        schema:
-          type: string
-          format: string
-      - name: curriculumId
-        in: query
-        description: 영상 주제
-        required: false
-        schema:
-          type: integer
-          format: integer
-      - name: sort
-        in: query
-        description: DATE(날짜순)/HIT(조회순)/RECOMMEND(추천순)
-        required: false
-        schema:
-          type: string
-          format: string
-          default: RECOMMEND
-      - name: keyword
-        in: query
-        description: 검색 키워드
-        required: false
-        schema:
-          type: string
-          format: string
-      responses:
-        200:
-          description: OK
-          content:
-            json:
-              schema:
-                $ref: '#/components/schemas/VideoListModel'
-  /users/{user_id}/videos/bookmark:
+  /videos/bookmark:
     get:
       tags:
         - Video
       summary : 유저의 북마크 영상 리스트 조회
       description : 유저가 북마크 선택한 영상 리스트 조회
       parameters:
-      - name: user_id
-        in: path
-        description: 사용자 아이디
-        required: true
-        schema:
-          type: string
-          format: string
       - name: curriculumId
         in: query
         description: 영상 주제
@@ -199,7 +119,7 @@ paths:
           format: integer
       - name: sort
         in: query
-        description: DATE(날짜순)/HIT(조회순)
+        description: DATE(날짜순)/HIT(조회순)/RECOMMEND(추천순)/SEQUENCE(우선순위순)
         required: false
         schema:
           type: string
@@ -219,20 +139,13 @@ paths:
             json:
               schema:
                 $ref: '#/components/schemas/VideoListModel'
-  /users/{user_id}/videos/{video_id}/bookmark:
+  /videos/{video_id}/bookmark:
     put:
       tags:
         - Video
       summary : 유저의 영상 북마크 추가
       description : 유저가 영상에 북마크 추가
       parameters:
-      - name: user_id
-        in: path
-        description: 사용자 아이디
-        required: true
-        schema:
-          type: string
-          format: string
       - name: video_id
         in: path
         description: 영상 아이디
@@ -278,20 +191,13 @@ paths:
                 type: object
                 example:
                   isSuccess: true           
-  /users/{user_id}/videos/{video_id}/hit:
+  /videos/{video_id}/hit:
     post:
       tags:
       - Video
       summary: 영상 조회수 업데이트
       description: 해당 영상의 조회수를 증가시키고 LRS 저장
       parameters:
-      - name: user_id
-        in: path
-        description: 유저아이디
-        required: true
-        schema:
-          type: string
-          format: string
       - name: video_id
         in: path
         description: 유저아이디
@@ -308,20 +214,13 @@ paths:
                 type: object
                 example:
                   isSuccess: true                  
-  /users/{user_id}/videos/{video_id}/quit:
+  /videos/{video_id}/quit:
     post:
       tags:
       - Video
       summary: 영상 quit 업데이트
       description: 해당 영상의 quit LRS 저장
       parameters:
-      - name: user_id
-        in: path
-        description: 유저아이디
-        required: true
-        schema:
-          type: string
-          format: string
       - name: video_id
         in: path
         description: 유저아이디

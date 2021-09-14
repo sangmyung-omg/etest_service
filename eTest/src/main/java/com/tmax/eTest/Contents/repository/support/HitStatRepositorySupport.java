@@ -13,12 +13,19 @@ import com.tmax.eTest.Contents.dto.DateDTO;
 import com.tmax.eTest.Contents.util.CommonUtils;
 import com.tmax.eTest.Contents.util.QuerydslUtils;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public class HitStatRepositorySupport extends QuerydslRepositorySupport {
   private final JPAQueryFactory query;
+
+  @Autowired
+  private CommonUtils commonUtils;
+
+  @Autowired
+  private QuerydslUtils querydslUtils;
 
   public HitStatRepositorySupport(JPAQueryFactory query) {
     super(HitStat.class);
@@ -30,11 +37,11 @@ public class HitStatRepositorySupport extends QuerydslRepositorySupport {
   }
 
   public OrderSpecifier<?> sortByDate() {
-    return QuerydslUtils.getSortedColumn(Order.ASC, hitStat, "statDate");
+    return querydslUtils.getSortedColumn(Order.ASC, hitStat, "statDate");
   }
 
   private BooleanExpression cmpDate(DateDTO date) {
-    if (CommonUtils.objectNullcheck(date))
+    if (commonUtils.objectNullcheck(date))
       return null;
     return hitStat.statDate.between(date.getDateFrom(), date.getDateTo());
   }

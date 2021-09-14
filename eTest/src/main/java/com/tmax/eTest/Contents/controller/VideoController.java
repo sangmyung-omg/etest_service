@@ -2,14 +2,15 @@ package com.tmax.eTest.Contents.controller;
 
 import java.io.IOException;
 import java.text.ParseException;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.tmax.eTest.Auth.jwt.JwtTokenUtil;
 import com.tmax.eTest.Contents.dto.SortType;
+import com.tmax.eTest.Contents.exception.ContentsException;
+import com.tmax.eTest.Contents.exception.ErrorCode;
 import com.tmax.eTest.Contents.service.VideoService;
 import com.tmax.eTest.Contents.util.CommonUtils;
+import com.tmax.eTest.Contents.util.JWTUtils;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -32,22 +33,10 @@ public class VideoController {
   private VideoService videoService;
 
   @Autowired
-  JwtTokenUtil jwtTokenUtil;
+  private CommonUtils commonUtils;
 
-  private String getUserId(HttpServletRequest request) {
-    String header = request.getHeader("Authorization");
-    String userId = null;
-    if (header == null) {
-      log.info("header is null : Unregistered User.");
-    } else {
-      log.info("header exists : Registered User.");
-      String token = header.replace("Bearer ", "");
-      Map<String, Object> parseInfo = jwtTokenUtil.getUserParseInfo(token);
-      userId = parseInfo.get("userUuid").toString();
-      log.info("User ID : " + userId);
-    }
-    return userId;
-  }
+  @Autowired
+  private JWTUtils jwtUtils;
 
   @GetMapping("/videos/curriculums")
   public ResponseEntity<Object> getVideoCurriculumList() {
@@ -61,9 +50,9 @@ public class VideoController {
       @RequestParam(value = "keyword", required = false) String keyword, HttpServletRequest request)
       throws IOException {
     log.info("---getVideoList---");
-    String userId = getUserId(request);
+    String userId = jwtUtils.getUserId(request);
     return new ResponseEntity<>(
-        CommonUtils.stringNullCheck(userId) ? videoService.getVideoList(curriculumId, sort, keyword)
+        commonUtils.stringNullCheck(userId) ? videoService.getVideoList(curriculumId, sort, keyword)
             : (sort.equals(SortType.RECOMMEND) ? videoService.getRecommendVideoList(userId, curriculumId, keyword)
                 : videoService.getVideoList(userId, curriculumId, sort, keyword)),
         HttpStatus.OK);
@@ -72,28 +61,10 @@ public class VideoController {
   @GetMapping("/videos/{video_id}")
   public ResponseEntity<Object> getVideo(@PathVariable("video_id") String videoId, HttpServletRequest request) {
     log.info("---getVideo---");
-    String userId = getUserId(request);
+    String userId = jwtUtils.getUserId(request);
     return new ResponseEntity<>(
-        CommonUtils.stringNullCheck(userId) ? videoService.getVideo(videoId) : videoService.getVideo(userId, videoId),
+        commonUtils.stringNullCheck(userId) ? videoService.getVideo(videoId) : videoService.getVideo(userId, videoId),
         HttpStatus.OK);
-  }
-
-  @PostMapping("/videos/{id}/hit")
-  public ResponseEntity<Object> updateVideoHit(@PathVariable("id") String videoId, HttpServletRequest request)
-      throws ParseException {
-    log.info("---updateVideoHit---");
-    String userId = getUserId(request);
-    return new ResponseEntity<>(CommonUtils.stringNullCheck(userId) ? videoService.updateVideoHit(videoId)
-        : videoService.updateVideoHit(userId, videoId), HttpStatus.OK);
-  }
-
-  @PostMapping("/videos/{id}/quit")
-  public ResponseEntity<Object> quitVideo(@PathVariable("id") String videoId,
-      @RequestParam(value = "duration", required = true) Integer duration, HttpServletRequest request)
-      throws ParseException {
-    log.info("---quitVideo---");
-    String userId = getUserId(request);
-    return new ResponseEntity<>(videoService.quitVideo(userId, videoId, duration), HttpStatus.OK);
   }
 
   @GetMapping("/videos/bookmark")
@@ -102,15 +73,38 @@ public class VideoController {
       @RequestParam(value = "sort", required = false, defaultValue = "DATE") SortType sort,
       @RequestParam(value = "keyword", required = false) String keyword, HttpServletRequest request) {
     log.info("---getBookmarkVideoList---");
-    String userId = getUserId(request);
+    String userId = jwtUtils.getUserId(request);
+    if (commonUtils.stringNullCheck(userId))
+      throw new ContentsException(ErrorCode.USER_ERROR);
     return new ResponseEntity<>(videoService.getBookmarkVideoList(userId, curriculumId, sort, keyword), HttpStatus.OK);
+  }
+
+  @PostMapping("/videos/{id}/hit")
+  public ResponseEntity<Object> updateVideoHit(@PathVariable("id") String videoId, HttpServletRequest request)
+      throws ParseException {
+    log.info("---updateVideoHit---");
+    String userId = jwtUtils.getUserId(request);
+    return new ResponseEntity<>(commonUtils.stringNullCheck(userId) ? videoService.updateVideoHit(videoId)
+        : videoService.updateVideoHit(userId, videoId), HttpStatus.OK);
+  }
+
+  @PostMapping("/videos/{id}/quit")
+  public ResponseEntity<Object> quitVideo(@PathVariable("id") String videoId,
+      @RequestParam(value = "duration", required = true) Integer duration, HttpServletRequest request)
+      throws ParseException {
+    log.info("---quitVideo---");
+    String userId = jwtUtils.getUserId(request);
+    return new ResponseEntity<>(commonUtils.stringNullCheck(userId) ? videoService.quitVideo(videoId, duration)
+        : videoService.quitVideo(userId, videoId, duration), HttpStatus.OK);
   }
 
   @PutMapping("/videos/{video_id}/bookmark")
   public ResponseEntity<Object> insertBookmarkVideo(@PathVariable("video_id") String videoId,
       HttpServletRequest request) {
     log.info("---insertBookmarkVideo---");
-    String userId = getUserId(request);
+    String userId = jwtUtils.getUserId(request);
+    if (commonUtils.stringNullCheck(userId))
+      throw new ContentsException(ErrorCode.USER_ERROR);
     return new ResponseEntity<>(videoService.insertBookmarkVideo(userId, videoId), HttpStatus.OK);
   }
 
@@ -118,7 +112,9 @@ public class VideoController {
   public ResponseEntity<Object> deleteBookmarkVideo(@PathVariable("video_id") String videoId,
       HttpServletRequest request) {
     log.info("---deleteBookmarkVideo---");
-    String userId = getUserId(request);
+    String userId = jwtUtils.getUserId(request);
+    if (commonUtils.stringNullCheck(userId))
+      throw new ContentsException(ErrorCode.USER_ERROR);
     return new ResponseEntity<>(videoService.deleteBookmarkVideo(userId, videoId), HttpStatus.OK);
   }
 

@@ -15,12 +15,16 @@ import com.tmax.eTest.Common.model.article.Article;
 import com.tmax.eTest.Contents.dto.ArticleJoin;
 import com.tmax.eTest.Contents.util.CommonUtils;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public class ArticleRepositorySupport extends QuerydslRepositorySupport {
   private final JPAQueryFactory query;
+
+  @Autowired
+  private CommonUtils commonUtils;
 
   public ArticleRepositorySupport(JPAQueryFactory query) {
     super(Article.class);
@@ -45,15 +49,15 @@ public class ArticleRepositorySupport extends QuerydslRepositorySupport {
   }
 
   private BooleanExpression userEq(String userId) {
-    return CommonUtils.stringNullCheck(userId) ? null : articleBookmark.userUuid.eq(userId);
+    return commonUtils.stringNullCheck(userId) ? null : articleBookmark.userUuid.eq(userId);
   }
 
   private BooleanExpression idEq(Long articleId) {
-    return CommonUtils.objectNullcheck(articleId) ? null : article.articleId.eq(articleId);
+    return commonUtils.objectNullcheck(articleId) ? null : article.articleId.eq(articleId);
   }
 
   private BooleanExpression checkKeyword(String keyword) {
-    return CommonUtils.stringNullCheck(keyword) ? null
+    return commonUtils.stringNullCheck(keyword) ? null
         : article.title.contains(keyword).or(article.articleUks.any().in(JPAExpressions.selectFrom(articleUkRel)
             .where(articleUkRel.article.eq(article), articleUkRel.ukMaster.ukName.contains(keyword))));
   }

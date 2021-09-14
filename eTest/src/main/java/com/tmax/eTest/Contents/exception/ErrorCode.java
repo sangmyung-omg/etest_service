@@ -8,7 +8,7 @@ public enum ErrorCode implements ErrorCodeBase {
 
   GENERIC_ERROR("0001", "Generic error has occured."), DB_ERROR("0002", "DB error has occured."),
   TYPE_ERROR("0003", "Query type is wrong."), LRS_ERROR("0004", "LRS Service error has occured."),
-  DIAGNOSIS_ERROR("0005", "Diagnosis Report Error has occured.");
+  DIAGNOSIS_ERROR("0005", "Diagnosis Report Error has occured."), USER_ERROR("0006", "User Should not be null.");
 
   static final String ERROR_CODE_PREFIX = "ERR-REC-";
 

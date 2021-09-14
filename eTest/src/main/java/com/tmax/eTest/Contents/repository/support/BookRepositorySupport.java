@@ -13,12 +13,16 @@ import com.tmax.eTest.Common.model.book.Book;
 import com.tmax.eTest.Contents.dto.BookJoin;
 import com.tmax.eTest.Contents.util.CommonUtils;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public class BookRepositorySupport extends QuerydslRepositorySupport {
   private final JPAQueryFactory query;
+
+  @Autowired
+  private CommonUtils commonUtils;
 
   public BookRepositorySupport(JPAQueryFactory query) {
     super(Book.class);
@@ -45,15 +49,15 @@ public class BookRepositorySupport extends QuerydslRepositorySupport {
   }
 
   private BooleanExpression userEq(String userId) {
-    return CommonUtils.stringNullCheck(userId) ? null : bookBookmark.userUuid.eq(userId);
+    return commonUtils.stringNullCheck(userId) ? null : bookBookmark.userUuid.eq(userId);
   }
 
   private BooleanExpression idEq(Long bookId) {
-    return CommonUtils.objectNullcheck(bookId) ? null : book.bookId.eq(bookId);
+    return commonUtils.objectNullcheck(bookId) ? null : book.bookId.eq(bookId);
   }
 
   private BooleanExpression checkKeyword(String keyword) {
-    return CommonUtils.stringNullCheck(keyword) ? null : book.title.contains(keyword);
+    return commonUtils.stringNullCheck(keyword) ? null : book.title.contains(keyword);
   }
 
   private BookJoin tupleToJoin(Tuple tuple) {

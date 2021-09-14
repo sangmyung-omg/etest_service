@@ -38,6 +38,9 @@ public class ArticleService {
   private LRSUtils lrsUtils;
 
   @Autowired
+  private CommonUtils commonUtils;
+
+  @Autowired
   private LRSAPIManager lrsapiManager;
 
   public ArticleDTO getArticle(String userId, Long articleId) {
@@ -99,7 +102,7 @@ public class ArticleService {
   // article.getCreateDate().toString(), article.getCreatorId(),
   // article.getDescription(), article.getImgSrc(),
   // article.getSource(),
-  // !CommonUtils.objectNullcheck(article.getArticleBookmarks()),
+  // !commonUtils.objectNullcheck(article.getArticleBookmarks()),
   // article.getArticleUks()
   // .stream().map(articleUks ->
   // articleUks.getUkMaster().getUkName()).collect(Collectors.toList())))
@@ -110,7 +113,7 @@ public class ArticleService {
     Article article = articleJoin.getArticle();
     return new ArticleDTO(article.getArticleId(), article.getArticleUrl(), article.getTitle(),
         article.getCreateDate().toString(), article.getCreatorId(), article.getDescription(), article.getImgSrc(),
-        article.getSource(), !CommonUtils.stringNullCheck(articleJoin.getUserUuid()), article.getArticleUks().stream()
+        article.getSource(), !commonUtils.stringNullCheck(articleJoin.getUserUuid()), article.getArticleUks().stream()
             .map(articleUks -> articleUks.getUkMaster().getUkName()).collect(Collectors.toList()));
   }
 
@@ -119,7 +122,7 @@ public class ArticleService {
       Article article = articleJoin.getArticle();
       return new ArticleDTO(article.getArticleId(), article.getArticleUrl(), article.getTitle(),
           article.getCreateDate().toString(), article.getCreatorId(), article.getDescription(), article.getImgSrc(),
-          article.getSource(), !CommonUtils.stringNullCheck(articleJoin.getUserUuid()), article.getArticleUks().stream()
+          article.getSource(), !commonUtils.stringNullCheck(articleJoin.getUserUuid()), article.getArticleUks().stream()
               .map(articleUks -> articleUks.getUkMaster().getUkName()).collect(Collectors.toList()));
     }).collect(Collectors.toList()));
   }

@@ -36,6 +36,9 @@ public class WikiService {
   private LRSUtils lrsUtils;
 
   @Autowired
+  private CommonUtils commonUtils;
+
+  @Autowired
   private LRSAPIManager lrsapiManager;
 
   public WikiDTO getWiki(String userId, Long wikiId) {
@@ -97,7 +100,7 @@ public class WikiService {
   // wiki.getCreateDate().toString(),
   // wiki.getCreatorId(), wiki.getDescription(), wiki.getSummary(),
   // wiki.getSource(),
-  // !CommonUtils.objectNullcheck(wiki.getWikiBookmarks()),
+  // !commonUtils.objectNullcheck(wiki.getWikiBookmarks()),
   // wiki.getWikiUks().stream()
   // .map(wikiUks ->
   // wikiUks.getUkMaster().getUkName()).collect(Collectors.toList())))
@@ -108,7 +111,7 @@ public class WikiService {
     Wiki wiki = wikiJoin.getWiki();
     return new WikiDTO(wiki.getWikiId(), wiki.getTitle(), wiki.getCreateDate().toString(), wiki.getCreatorId(),
         wiki.getDescription(), wiki.getSummary(), wiki.getSource(),
-        !CommonUtils.stringNullCheck(wikiJoin.getUserUuid()),
+        !commonUtils.stringNullCheck(wikiJoin.getUserUuid()),
         wiki.getWikiUks().stream().map(wikiUks -> wikiUks.getUkMaster().getUkName()).collect(Collectors.toList()));
   }
 
@@ -117,7 +120,7 @@ public class WikiService {
       Wiki wiki = wikiJoin.getWiki();
       return new WikiDTO(wiki.getWikiId(), wiki.getTitle(), wiki.getCreateDate().toString(), wiki.getCreatorId(),
           wiki.getDescription(), wiki.getSummary(), wiki.getSource(),
-          !CommonUtils.stringNullCheck(wikiJoin.getUserUuid()),
+          !commonUtils.stringNullCheck(wikiJoin.getUserUuid()),
           wiki.getWikiUks().stream().map(wikiUks -> wikiUks.getUkMaster().getUkName()).collect(Collectors.toList()));
     }).collect(Collectors.toList()));
   }
