@@ -37,7 +37,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
-@Transactional(rollbackFor = Exception.class)
+@Transactional(rollbackFor = {Exception.class})
 @CrossOrigin(origins = "*")
 @RequiredArgsConstructor
 @Slf4j
@@ -190,8 +190,7 @@ public class DiagProblemApiComponentTs {
 			
 			return "success";
 		}catch(Exception e) {
-			 e.printStackTrace(); 
-			 return "fail";		
+			 throw e;	
 		}
 	}
 	

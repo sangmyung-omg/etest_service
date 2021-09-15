@@ -12,7 +12,7 @@ import com.tmax.eTest.TestStudio.controller.component.exception.NoDataExceptionT
 import com.tmax.eTest.TestStudio.dto.problems.base.BaseProblemDTO;
 import com.tmax.eTest.TestStudio.repository.ProblemQRepositoryTs;
 import com.tmax.eTest.TestStudio.repository.ProblemRepositoryTs;
-import com.tmax.eTest.TestStudio.util.InitialConsonantTs;
+import com.tmax.eTest.TestStudio.util.InitialConsonantUtilTs;
 import com.tmax.eTest.TestStudio.util.PathUtilTs;
 
 import lombok.RequiredArgsConstructor;
@@ -25,7 +25,7 @@ public class ProblemServiceTs {
 	private final ProblemRepositoryTs problemRepository;
 	private final ProblemQRepositoryTs problemQRepositoryETest;
 	private final PathUtilTs pathUtilEtest = new PathUtilTs();
-	private final InitialConsonantTs initialConsonantTs;
+	private final InitialConsonantUtilTs initialConsonantTs;
 	
 	/**
 	 * 문제 조회

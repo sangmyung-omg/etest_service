@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 import lombok.Getter;
 
 @Component
-public class InitialConsonantTs {
+public class InitialConsonantUtilTs {
 	
 	public String InitialConsonantsV2( String jsonStr ) throws Exception{
 		

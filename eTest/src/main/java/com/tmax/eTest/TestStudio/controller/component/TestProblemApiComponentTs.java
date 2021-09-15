@@ -44,7 +44,7 @@ import com.tmax.eTest.TestStudio.service.ProbUKRelServiceTs;
 import com.tmax.eTest.TestStudio.service.ProblemServiceTs;
 import com.tmax.eTest.TestStudio.service.TestProblemServiceTs;
 import com.tmax.eTest.TestStudio.service.UKServiceTs;
-import com.tmax.eTest.TestStudio.util.InitialConsonantTs;
+import com.tmax.eTest.TestStudio.util.InitialConsonantUtilTs;
 import com.tmax.eTest.TestStudio.util.PathUtilTs;
 
 import lombok.RequiredArgsConstructor;
@@ -66,7 +66,7 @@ public class TestProblemApiComponentTs {
 	private final ProblemApiComponentTs problemApiComponentTs;
 	private final ImageFileServerApiComponentTs imageFileServerApiComponentETest;
 	private final PathUtilTs pathUtilEtest;
-	private final InitialConsonantTs initialConsonantTs;
+	private final InitialConsonantUtilTs initialConsonantTs;
 	
 	/**
 	 * 문제 생성 problemCreate component

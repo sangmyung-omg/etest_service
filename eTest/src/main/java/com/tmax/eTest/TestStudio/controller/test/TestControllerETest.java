@@ -33,7 +33,7 @@ import com.tmax.eTest.TestStudio.repository.ProbChoiceQRepositoryTs;
 import com.tmax.eTest.TestStudio.service.DiagProblemServiceTs;
 import com.tmax.eTest.TestStudio.service.ProbChoiceServiceTs;
 import com.tmax.eTest.TestStudio.service.ProbUKRelServiceTs;
-import com.tmax.eTest.TestStudio.util.InitialConsonantTs;
+import com.tmax.eTest.TestStudio.util.InitialConsonantUtilTs;
 import com.tmax.eTest.TestStudio.util.PathUtilTs;
 
 import lombok.RequiredArgsConstructor;
@@ -53,7 +53,7 @@ public class TestControllerETest {
 	private final PathUtilTs pathUtilTs;
 	private PathUtilTs testP = new PathUtilTs();
 	private String dirPath = testP.getDirPath();
-	private final InitialConsonantTs initialConsonantTs;
+	private final InitialConsonantUtilTs initialConsonantTs;
 
 	/**
 	 * 등록

@@ -50,7 +50,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
-@Transactional(rollbackFor = Exception.class)
+@Transactional(rollbackFor = {Exception.class})
 @CrossOrigin(origins = "*")
 @RequiredArgsConstructor
 @Slf4j
@@ -71,7 +71,6 @@ public class ProblemApiComponentTs {
 	 * 
 	 */
 	public String updateBasicProblemcomponent(BaseProblemSetDTO baseProblemSetDTO, String userID  ) throws Exception{
-		try {
 					
 			if(baseProblemSetDTO != null) {
 				
@@ -99,7 +98,15 @@ public class ProblemApiComponentTs {
 //									problemChoice.setProbID(problemTemp);
 								problemChoice.setChoiceNum( Long.parseLong( PC.getChoiceNum() ) );
 								UkMaster ukMasterTemp = new UkMaster();
-								ukMasterTemp.setUkId(Integer.parseInt( PC.getUkID() ) );
+								if( PC.getUkID() ==null ) {
+									ukMasterTemp.setUkId( null );
+								}else {
+									ukMasterTemp.setUkId(Integer.parseInt( PC.getUkID() ) );
+								}
+								if(true) {
+//									throw new Exception("testExceptino"); //todo: delete rollback test
+//									ukMasterTemp.setUkId(Integer.parseInt( PC.getUkID() ) );
+								}
 //									problemChoice.setUkId(ukServiceETest.findOneByUKId( Long.parseLong(PC.getUkID()) ));
 								problemChoice.setUkId(ukMasterTemp);
 								if(PC.getChoiceScore()!=null) {
@@ -159,10 +166,7 @@ public class ProblemApiComponentTs {
 			}
 					
 			return "success";
-		}catch(Exception e) {
-			 e.printStackTrace(); 
-			 return "fail";		
-		}
+
 	}
 
 
