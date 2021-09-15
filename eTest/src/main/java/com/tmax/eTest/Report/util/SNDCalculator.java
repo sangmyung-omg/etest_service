@@ -40,19 +40,19 @@ public class SNDCalculator {
 	private static final Map<Type, Double> MEAN_MAP = new HashMap<>();
 	private static final Map<Type, Double> SD_MAP = new HashMap<>();
 	static {
-		MEAN_MAP.put(Type.DIAG_GI, 70.7);
+		MEAN_MAP.put(Type.DIAG_GI, 71.);
 		MEAN_MAP.put(Type.DIAG_RISK, 81.1149);
 		MEAN_MAP.put(Type.DIAG_INVEST, 65.6091);
 		MEAN_MAP.put(Type.DIAG_KNOWLEDGE, 67.6552);
 		MEAN_MAP.put(Type.MINI_TOTAL, 51.6531);
-		MEAN_MAP.put(Type.MINI_BASIC, 56.2712);
+		MEAN_MAP.put(Type.MINI_BASIC, 53.2712);
 		MEAN_MAP.put(Type.MINI_STOCK, 53.0511);
 		MEAN_MAP.put(Type.MINI_VALUE, 49.1177);
 		MEAN_MAP.put(Type.MINI_POSSESSION, 50.4613);
 		MEAN_MAP.put(Type.MINI_RISK, 52.3645);
 		
 		
-		SD_MAP.put(Type.DIAG_GI, 7.5801);
+		SD_MAP.put(Type.DIAG_GI, 7.7107);
 		SD_MAP.put(Type.DIAG_RISK, 8.5425);
 		SD_MAP.put(Type.DIAG_INVEST, 10.5698);
 		SD_MAP.put(Type.DIAG_KNOWLEDGE, 13.9352	);
@@ -73,9 +73,20 @@ public class SNDCalculator {
 	
 	public int calculatePercentage(Type type, int score)
 	{
-		Long tempResult = Math.round( new NormalDistribution(
-				MEAN_MAP.get(type),
-				SD_MAP.get(type)).cumulativeProbability(score) * 100);
+		double mean = MEAN_MAP.get(type);
+		double sd = SD_MAP.get(type);
+		
+		// 자가진단의 데이터가 너무 평균에 몰려있는 관계로. 자가진단 하위 50% 인 경우 분산 3배.
+		if(score < mean && 
+				(type == Type.DIAG_GI 
+				|| type == Type.DIAG_RISK 
+				|| type == Type.DIAG_INVEST 
+				|| type == Type.DIAG_KNOWLEDGE))
+			sd *= 3;
+		
+		Long tempResult = Math.round( 
+				new NormalDistribution(mean, sd)
+				.cumulativeProbability(score) * 100);
 		
 		int result = tempResult.intValue();
 		
