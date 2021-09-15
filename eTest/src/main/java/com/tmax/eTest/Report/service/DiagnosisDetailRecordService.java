@@ -247,6 +247,7 @@ public class DiagnosisDetailRecordService {
 			probInfo.add((isCorr==1)?"true":"false");
 			probInfo.add(probContent);
 			probInfo.add(prob.getDifficulty());
+			probInfo.add(prob.getIntention());
 			
 			switch(diffIdx)
 			{
