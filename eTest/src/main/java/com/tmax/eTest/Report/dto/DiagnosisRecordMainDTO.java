@@ -65,6 +65,13 @@ public class DiagnosisRecordMainDTO {
 		this.userName = nickName;
 		this.video = recVideoMap;
 		
+		if(giPercentage > 40)
+			this.giComment = "자가진단을 통해 분석된 GI 지수에요. 아는만큼 길이 보이는 법입니다. "
+					+ "투자공부를 시작하셔서 나에게 꼭 맞는 투자 방법을 찾아보세요.";
+		else
+			this.giComment = "자가진단을 통해 분석된 GI 지수에요. 진단자 평균 대비 높은 점수를 받으셨네요. "
+					+ "금융투자를 위한 기본적인 소양이 갖춰지신 것으로 분석됩니다!";
+		
 		return result;
 	}
 	

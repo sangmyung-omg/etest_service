@@ -66,18 +66,6 @@ public class SNDCalculator {
 	}
 
 	
-	// 자가진단 CBT 분석 기초자료_20210813_v1.0.xlsx 에서 발췌
-	final double[] DIAG_MEAN_LIST = {70.7, 81.1149, 65.6091, 67.6552}; // GI 지수, risk, invest, knowledge
-	final double[] DIAG_SD_LIST = {7.5801, 8.5672, 10.6003, 14.0570}; // GI 지수, risk, invest, knowledge
-	
-	final double[] MINI_MEAN_LIST = {70.7, 81.1149, 65.6091, 67.6552}; // 종합, 기본, 주식, 가치평가, 보유관리, 리스크 관리
-	final double[] MINI_SD_LIST = {7.5801, 8.5672, 10.6003, 14.0570}; // 종합, 기본, 주식, 가치평가, 보유관리, 리스크 관리
-	
-	public final int GI_IDX = 0;
-	public final int RISK_IDX = 1;
-	public final int INVEST_IDX = 2;
-	public final int KNOWLEDGE_IDX = 3;
-	
 	public int calculateForMiniTest(double ukAvgScore)
 	{
 		return calculateForConf90Percent(0, 100, ukAvgScore);

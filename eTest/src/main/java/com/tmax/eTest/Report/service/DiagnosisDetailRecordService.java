@@ -120,7 +120,7 @@ public class DiagnosisDetailRecordService {
 				.problemMiddleLevelInfo(problemMiddleLevelInfo)
 				.problemLowLevelInfo(problemLowLevelInfo)
 				.build();
-		
+		log.info(result.toString());
 		return result;
 	}
 	
