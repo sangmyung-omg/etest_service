@@ -24,14 +24,13 @@ import lombok.Setter;
 @Entity
 public class Book {
   @Id
-  private Long bookId;
+  private String bookId;
   private String bookSrc;
   private String title;
-  private Date createDate;
-  private String creatorId;
   private String imgSrc;
   private String description;
-  private String codeSet;
+  private Date createDate;
+  private String creatorId;
 
   @OneToOne(fetch = FetchType.EAGER)
   @JoinColumn(name = "bookId")

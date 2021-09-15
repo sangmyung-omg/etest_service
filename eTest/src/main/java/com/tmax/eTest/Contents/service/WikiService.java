@@ -111,8 +111,9 @@ public class WikiService {
     Wiki wiki = wikiJoin.getWiki();
     return new WikiDTO(wiki.getWikiId(), wiki.getTitle(), wiki.getCreateDate().toString(), wiki.getCreatorId(),
         wiki.getDescription(), wiki.getSummary(), wiki.getSource(),
-        !commonUtils.stringNullCheck(wikiJoin.getUserUuid()),
-        wiki.getWikiUks().stream().map(wikiUks -> wikiUks.getUkMaster().getUkName()).collect(Collectors.toList()));
+        !commonUtils.stringNullCheck(wikiJoin.getUserUuid()));
+    // wiki.getWikiUks().stream().map(wikiUks ->
+    // wikiUks.getUkMaster().getUkName()).collect(Collectors.toList()));
   }
 
   public ListDTO.Wiki convertWikiJoinToDTO(List<WikiJoin> wikiJoins) {
@@ -120,8 +121,9 @@ public class WikiService {
       Wiki wiki = wikiJoin.getWiki();
       return new WikiDTO(wiki.getWikiId(), wiki.getTitle(), wiki.getCreateDate().toString(), wiki.getCreatorId(),
           wiki.getDescription(), wiki.getSummary(), wiki.getSource(),
-          !commonUtils.stringNullCheck(wikiJoin.getUserUuid()),
-          wiki.getWikiUks().stream().map(wikiUks -> wikiUks.getUkMaster().getUkName()).collect(Collectors.toList()));
+          !commonUtils.stringNullCheck(wikiJoin.getUserUuid()));
+      // wiki.getWikiUks().stream().map(wikiUks ->
+      // wikiUks.getUkMaster().getUkName()).collect(Collectors.toList()));
     }).collect(Collectors.toList()));
   }
 }

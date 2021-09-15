@@ -11,6 +11,6 @@ import lombok.Setter;
 @Entity
 public class BookHit {
   @Id
-  private Long bookId;
+  private String bookId;
   private Integer hit;
 }

@@ -42,7 +42,7 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class VideoService {
 
-  private enum VideoType {
+  public enum VideoType {
     YOUTUBE, SELF, ARTICLE
   }
 
@@ -177,7 +177,7 @@ public class VideoService {
   }
 
   @Transactional
-  public SuccessDTO updateVideoHit(String videoId) {
+  public SuccessDTO updateVideoHit(String videoId, VideoType videoType) {
     if (videoHitRepositorySupport.notExistsById(videoId))
       throw new ContentsException(ErrorCode.DB_ERROR, "VideoId doesn't exist in VideoHit Table");
     videoHitRepositorySupport.updateVideoHit(videoId);
@@ -186,7 +186,7 @@ public class VideoService {
   }
 
   @Transactional
-  public SuccessDTO updateVideoHit(String userId, String videoId) throws ParseException {
+  public SuccessDTO updateVideoHit(String userId, String videoId, VideoType videoType) throws ParseException {
     if (videoHitRepositorySupport.notExistsById(videoId))
       throw new ContentsException(ErrorCode.DB_ERROR, "VideoId doesn't exist in VideoHit Table");
     videoHitRepositorySupport.updateVideoHit(videoId);
@@ -195,8 +195,8 @@ public class VideoService {
     // lrsService.saveStatement(lrsService.makeStatement(userId,
     // Long.toString(videoId), LRSService.ACTION_TYPE.enter,
     // LRSService.SOURCE_TYPE.video));
-    lrsapiManager.saveStatementList(
-        Arrays.asList(lrsUtils.makeStatement(userId, videoId, LRSUtils.ACTION_TYPE.enter, LRSUtils.SOURCE_TYPE.video)));
+    lrsapiManager.saveStatementList(Arrays.asList(lrsUtils.makeStatement(userId, videoId, LRSUtils.ACTION_TYPE.enter,
+        videoType.equals(VideoType.ARTICLE) ? LRSUtils.SOURCE_TYPE.article : LRSUtils.SOURCE_TYPE.video)));
     return new SuccessDTO(true);
   }
 

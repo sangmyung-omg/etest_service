@@ -2,14 +2,12 @@ package com.tmax.eTest.Contents.repository.support;
 
 import static com.tmax.eTest.Common.model.wiki.QWiki.wiki;
 import static com.tmax.eTest.Common.model.wiki.QWikiBookmark.wikiBookmark;
-import static com.tmax.eTest.Common.model.wiki.QWikiUkRel.wikiUkRel;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.tmax.eTest.Common.model.wiki.Wiki;
 import com.tmax.eTest.Contents.dto.WikiJoin;
@@ -55,9 +53,10 @@ public class WikiRepositorySupport extends QuerydslRepositorySupport {
   }
 
   private BooleanExpression checkKeyword(String keyword) {
-    return commonUtils.stringNullCheck(keyword) ? null
-        : wiki.title.contains(keyword).or(wiki.wikiUks.any().in(JPAExpressions.selectFrom(wikiUkRel)
-            .where(wikiUkRel.wiki.eq(wiki), wikiUkRel.ukMaster.ukName.contains(keyword))));
+    return commonUtils.stringNullCheck(keyword) ? null : wiki.title.contains(keyword);
+    // .or(wiki.wikiUks.any().in(JPAExpressions.selectFrom(wikiUkRel)
+    // .where(wikiUkRel.wiki.eq(wiki),
+    // wikiUkRel.ukMaster.ukName.contains(keyword))));
   }
 
   private WikiJoin tupleToJoin(Tuple tuple) {

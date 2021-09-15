@@ -23,11 +23,11 @@ public class BookHitRepositorySupport extends QuerydslRepositorySupport {
   }
 
   // 애매한뎅
-  public Boolean notExistsById(Long bookId) {
+  public Boolean notExistsById(String bookId) {
     return commonUtils.objectNullcheck(query.selectOne().from(bookHit).where(bookHit.bookId.eq(bookId)).fetchFirst());
   }
 
-  public Long updateVideoHit(Long bookId) {
+  public Long updateVideoHit(String bookId) {
     return query.update(bookHit).set(bookHit.hit, bookHit.hit.add(1)).where(bookHit.bookId.eq(bookId)).execute();
   }
 }

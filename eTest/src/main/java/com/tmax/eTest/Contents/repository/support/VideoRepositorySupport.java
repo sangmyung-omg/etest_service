@@ -59,12 +59,12 @@ public class VideoRepositorySupport extends QuerydslRepositorySupport {
   }
 
   public Video findVideoById(String videoId) {
-    return query.selectFrom(video).where(idEq(videoId)).fetchOne();
+    return query.selectFrom(video).where(idEq(videoId)).fetchFirst();
   }
 
   public VideoJoin findVideoByUserAndId(String userId, String videoId) {
     return tupleToJoin(query.select(video, videoBookmark.userUuid).from(video)
-        .leftJoin(video.videoBookmarks, videoBookmark).on(userEq(userId)).where(idEq(videoId)).fetchOne());
+        .leftJoin(video.videoBookmarks, videoBookmark).on(userEq(userId)).where(idEq(videoId)).fetchFirst());
   }
 
   public List<Video> findVideosByCurriculum(Long curriculumId, SortType sort, String keyword) {

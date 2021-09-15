@@ -1,7 +1,5 @@
 package com.tmax.eTest.Contents.dto;
 
-import java.util.List;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -19,6 +17,6 @@ public class WikiDTO {
   private String summary;
   private String source;
   private Boolean bookmark;
-  private List<String> uks;
+  // private List<String> uks;
 
 }

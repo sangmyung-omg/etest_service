@@ -30,8 +30,9 @@ public class Wiki {
   private String summary;
   private String source;
 
-  @OneToMany(fetch = FetchType.LAZY, mappedBy = "wiki", cascade = CascadeType.ALL, orphanRemoval = true)
-  private Set<WikiUkRel> wikiUks = new LinkedHashSet<WikiUkRel>();
+  // @OneToMany(fetch = FetchType.LAZY, mappedBy = "wiki", cascade =
+  // CascadeType.ALL, orphanRemoval = true)
+  // private Set<WikiUkRel> wikiUks = new LinkedHashSet<WikiUkRel>();
 
   @OneToMany(fetch = FetchType.LAZY, mappedBy = "wiki", cascade = CascadeType.ALL, orphanRemoval = true)
   private Set<WikiBookmark> wikiBookmarks = new LinkedHashSet<WikiBookmark>();

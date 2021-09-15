@@ -67,6 +67,26 @@ public class VideoController {
         HttpStatus.OK);
   }
 
+  @PostMapping("/videos/{video_id}/hit")
+  public ResponseEntity<Object> updateVideoHit(@PathVariable("video_id") String videoId,
+      @RequestParam(value = "videoType", required = true) VideoService.VideoType videoType, HttpServletRequest request)
+      throws ParseException {
+    log.info("---updateVideoHit---");
+    String userId = jwtUtils.getUserId(request);
+    return new ResponseEntity<>(commonUtils.stringNullCheck(userId) ? videoService.updateVideoHit(videoId, videoType)
+        : videoService.updateVideoHit(userId, videoId, videoType), HttpStatus.OK);
+  }
+
+  @PostMapping("/videos/{video_id}/quit")
+  public ResponseEntity<Object> quitVideo(@PathVariable("video_id") String videoId,
+      @RequestParam(value = "duration", required = true) Integer duration, HttpServletRequest request)
+      throws ParseException {
+    log.info("---quitVideo---");
+    String userId = jwtUtils.getUserId(request);
+    return new ResponseEntity<>(commonUtils.stringNullCheck(userId) ? videoService.quitVideo(videoId, duration)
+        : videoService.quitVideo(userId, videoId, duration), HttpStatus.OK);
+  }
+
   @GetMapping("/videos/bookmark")
   public ResponseEntity<Object> getBookmarkVideoList(
       @RequestParam(value = "curriculumId", required = false) Long curriculumId,
@@ -77,25 +97,6 @@ public class VideoController {
     if (commonUtils.stringNullCheck(userId))
       throw new ContentsException(ErrorCode.USER_ERROR);
     return new ResponseEntity<>(videoService.getBookmarkVideoList(userId, curriculumId, sort, keyword), HttpStatus.OK);
-  }
-
-  @PostMapping("/videos/{id}/hit")
-  public ResponseEntity<Object> updateVideoHit(@PathVariable("id") String videoId, HttpServletRequest request)
-      throws ParseException {
-    log.info("---updateVideoHit---");
-    String userId = jwtUtils.getUserId(request);
-    return new ResponseEntity<>(commonUtils.stringNullCheck(userId) ? videoService.updateVideoHit(videoId)
-        : videoService.updateVideoHit(userId, videoId), HttpStatus.OK);
-  }
-
-  @PostMapping("/videos/{id}/quit")
-  public ResponseEntity<Object> quitVideo(@PathVariable("id") String videoId,
-      @RequestParam(value = "duration", required = true) Integer duration, HttpServletRequest request)
-      throws ParseException {
-    log.info("---quitVideo---");
-    String userId = jwtUtils.getUserId(request);
-    return new ResponseEntity<>(commonUtils.stringNullCheck(userId) ? videoService.quitVideo(videoId, duration)
-        : videoService.quitVideo(userId, videoId, duration), HttpStatus.OK);
   }
 
   @PutMapping("/videos/{video_id}/bookmark")

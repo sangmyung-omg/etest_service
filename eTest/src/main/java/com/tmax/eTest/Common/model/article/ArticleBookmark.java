@@ -46,12 +46,12 @@ public class ArticleBookmark implements Persistable<ArticleBookmarkId> {
   @Transient
   private ArticleBookmarkId articleBookmarkId;
 
-  // @Transient
-  // private CommonUtils commonUtils;
+  @Transient
+  private CommonUtils commonUtils = new CommonUtils();
 
   @Override
   public ArticleBookmarkId getId() {
-    return new CommonUtils().objectNullcheck(articleBookmarkId)
+    return commonUtils.objectNullcheck(articleBookmarkId)
         ? articleBookmarkId = new ArticleBookmarkId(this.userUuid, this.articleId)
         : articleBookmarkId;
   }

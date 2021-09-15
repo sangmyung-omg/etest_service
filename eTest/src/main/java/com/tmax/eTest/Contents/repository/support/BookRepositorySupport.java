@@ -29,13 +29,17 @@ public class BookRepositorySupport extends QuerydslRepositorySupport {
     this.query = query;
   }
 
-  public List<Book> findBooks(String keyword) {
-    return query.selectFrom(book).where(checkKeyword(keyword)).orderBy().fetch();
+  public Book findBookById(String bookId) {
+    return query.selectFrom(book).where(idEq(bookId)).fetchFirst();
   }
 
-  public BookJoin findBookByUserAndId(String userId, Long bookId) {
+  public BookJoin findBookByUserAndId(String userId, String bookId) {
     return tupleToJoin(query.select(book, bookBookmark.userUuid).from(book).leftJoin(book.bookBookmarks, bookBookmark)
-        .on(userEq(userId)).where(idEq(bookId)).fetchOne());
+        .on(userEq(userId)).where(idEq(bookId)).fetchFirst());
+  }
+
+  public List<Book> findBooks(String keyword) {
+    return query.selectFrom(book).where(checkKeyword(keyword)).orderBy().fetch();
   }
 
   public List<BookJoin> findBooksByUser(String userId, String keyword) {
@@ -52,7 +56,7 @@ public class BookRepositorySupport extends QuerydslRepositorySupport {
     return commonUtils.stringNullCheck(userId) ? null : bookBookmark.userUuid.eq(userId);
   }
 
-  private BooleanExpression idEq(Long bookId) {
+  private BooleanExpression idEq(String bookId) {
     return commonUtils.objectNullcheck(bookId) ? null : book.bookId.eq(bookId);
   }
 

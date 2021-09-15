@@ -46,7 +46,12 @@ public class BookService {
   @Autowired
   private LRSAPIManager lrsapiManager;
 
-  public BookDTO getBook(String userId, Long bookId) {
+  public BookDTO getBook(String bookId) {
+    Book book = bookRepositorySupport.findBookById(bookId);
+    return convertBookToDTO(book);
+  }
+
+  public BookDTO getBook(String userId, String bookId) {
     BookJoin book = bookRepositorySupport.findBookByUserAndId(userId, bookId);
     return convertBookJoinToDTO(book);
   }
@@ -67,7 +72,7 @@ public class BookService {
   }
 
   @Transactional
-  public SuccessDTO insertBookmarkBook(String userId, Long bookId) {
+  public SuccessDTO insertBookmarkBook(String userId, String bookId) {
     BookBookmarkId bookBookmarkId = new BookBookmarkId(userId, bookId);
     BookBookmark bookBookmark = new BookBookmark(userId, bookId);
     if (bookBookmarkRepository.existsById(bookBookmarkId))
@@ -79,7 +84,7 @@ public class BookService {
   }
 
   @Transactional
-  public SuccessDTO deleteBookmarkBook(String userId, Long bookId) {
+  public SuccessDTO deleteBookmarkBook(String userId, String bookId) {
     BookBookmarkId bookBookmarkId = new BookBookmarkId(userId, bookId);
     bookBookmarkRepository.delete(bookBookmarkRepository.findById(bookBookmarkId).orElseThrow(
         () -> new ContentsException(ErrorCode.DB_ERROR, "BookBookmark doesn't exist in BookBookmark Table")));
@@ -88,7 +93,7 @@ public class BookService {
   }
 
   @Transactional
-  public SuccessDTO updateBookHit(Long bookId) {
+  public SuccessDTO updateBookHit(String bookId) {
     if (bookHitRepositorySupport.notExistsById(bookId))
       throw new ContentsException(ErrorCode.DB_ERROR, "BookId doesn't exist in BookHit Table");
     bookHitRepositorySupport.updateVideoHit(bookId);
@@ -97,19 +102,26 @@ public class BookService {
   }
 
   @Transactional
-  public SuccessDTO updateBookHit(String userId, Long bookId) throws ParseException {
+  public SuccessDTO updateBookHit(String userId, String bookId) throws ParseException {
     if (bookHitRepositorySupport.notExistsById(bookId))
       throw new ContentsException(ErrorCode.DB_ERROR, "BookId doesn't exist in BookHit Table");
     bookHitRepositorySupport.updateVideoHit(bookId);
 
-    lrsapiManager.saveStatementList(Arrays.asList(lrsUtils.makeStatement(userId, Long.toString(bookId),
+    lrsapiManager.saveStatementList(Arrays.asList(lrsUtils.makeStatement(userId, bookId,
         LRSUtils.ACTION_TYPE.enter, LRSUtils.SOURCE_TYPE.textbook)));
 
     return new SuccessDTO(true);
   }
 
-  public SuccessDTO quitBook(String userId, Long bookId, Integer duration) throws ParseException {
-    lrsapiManager.saveStatementList(Arrays.asList(lrsUtils.makeStatement(userId, Long.toString(bookId),
+  public SuccessDTO quitBook(String bookId, Integer duration) {
+    // lrsapiManager.saveStatementList(Arrays.asList(lrsUtils.makeStatement(userId,
+    // Long.toString(bookId),
+    // LRSUtils.ACTION_TYPE.quit, LRSUtils.SOURCE_TYPE.textbook, duration)));
+    return new SuccessDTO(true);
+  }
+
+  public SuccessDTO quitBook(String userId, String bookId, Integer duration) throws ParseException {
+    lrsapiManager.saveStatementList(Arrays.asList(lrsUtils.makeStatement(userId, bookId,
         LRSUtils.ACTION_TYPE.quit, LRSUtils.SOURCE_TYPE.textbook, duration)));
     return new SuccessDTO(true);
   }

@@ -29,13 +29,13 @@ public class BookBookmark implements Persistable<BookBookmarkId> {
   @Id
   private String userUuid;
   @Id
-  private Long bookId;
+  private String bookId;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "bookId", insertable = false, updatable = false, nullable = true)
   private Book book;
 
-  public BookBookmark(String userUuid, Long bookId) {
+  public BookBookmark(String userUuid, String bookId) {
     this.userUuid = userUuid;
     this.bookId = bookId;
   }
@@ -46,13 +46,12 @@ public class BookBookmark implements Persistable<BookBookmarkId> {
   @Transient
   private BookBookmarkId bookBookmarkId;
 
-  // @Transient
-  // private CommonUtils commonUtils;
+  @Transient
+  private CommonUtils commonUtils = new CommonUtils();
 
   @Override
   public BookBookmarkId getId() {
-    return new CommonUtils().objectNullcheck(bookBookmarkId)
-        ? bookBookmarkId = new BookBookmarkId(this.userUuid, this.bookId)
+    return commonUtils.objectNullcheck(bookBookmarkId) ? bookBookmarkId = new BookBookmarkId(this.userUuid, this.bookId)
         : bookBookmarkId;
   }
 

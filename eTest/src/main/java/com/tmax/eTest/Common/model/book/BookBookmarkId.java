@@ -11,5 +11,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class BookBookmarkId implements Serializable {
   private String userUuid;
-  private Long bookId;
+  private String bookId;
 }
