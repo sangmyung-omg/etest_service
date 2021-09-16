@@ -191,7 +191,8 @@ public class MiniTestRecordService {
 																					   probId.toString(),
 																					   statement.getIsCorrect() == 1 ? "true": "false",
 																					   quesTxtList.size() > 0 ? quesTxtList.get(0) : null,
-																					   prob.getDifficulty()
+																					   prob.getDifficulty(),
+																					   prob.getIntention()
 																					   ));
 												  })
 												  .collect(Collectors.toList());
