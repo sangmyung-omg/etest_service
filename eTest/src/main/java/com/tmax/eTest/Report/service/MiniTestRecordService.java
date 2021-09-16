@@ -79,6 +79,7 @@ public class MiniTestRecordService {
 	private PartDataDTO buildPartData(JsonArray mastery, String partname){
 		PartDataDTO output = buildPartData(mastery);
 		output.setPartName(partname);
+		output.setPercentage( (long)sndCalculator.calculatePercentage(PartMapper.sndCalcTypeMap.get(partname), output.getScore().intValue() ) );
 		return output;
 	}
 
@@ -129,7 +130,7 @@ public class MiniTestRecordService {
 
 		return PartDataDTO.builder()
 							.score(score).ukInfo(ukInfo)
-							.percentage((long)sndCalculator.calculateForMiniTest((double)score))
+							// .percentage((long)sndCalculator.calculatePercentage(PartMapper.sndCalcTypeMap.get(), )))
 							.build();
 	}
 
