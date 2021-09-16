@@ -40,8 +40,8 @@ import com.tmax.eTest.LRS.util.LRSAPIManager;
 @Slf4j
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @RestController
-@RequestMapping(path = "/contents" + "/v1")
-public class AnswerControllerV1 {
+@RequestMapping(path = "/contents" + "/v2")
+public class AnswerControllerV2 {
 	
 	@Autowired
 	@Qualifier("AnswerServicesV1")
@@ -198,9 +198,66 @@ public class AnswerControllerV1 {
 		return output;
 	}
 
+	@GetMapping(value="/problems/{setId}/solution/temp1", produces = "application/json; charset=utf-8")
+	public ResponseEntity<Object> problemTemp1(@PathVariable("setId") String setId) throws Exception{
+		log.info("> solution logic start!");
+		Map<String, Object> result = new HashMap<String, Object>();
+		log.info("Set ID : " + setId);
+
+		// prepare for LRS GETStatement input
+		GetStatementInfoDTO input = new GetStatementInfoDTO();
+		input.setContainExtension(Arrays.asList(setId));
+
+		log.info("Getting LRS statement list......");
+		List<StatementDTO> lrsQuery = lrsApiManager.getStatementList(input);
+
+		List<Integer> probIdList = new ArrayList<Integer>();
+		Map<Integer, List<String>> probAnswerMap = new HashMap<Integer, List<String>>();
+		
+		// LRS의 TIMESTAMP를 기준으로 정렬된 statement들 (알아서 order by timestamp asc 으로 오나봄)
+		for (StatementDTO dto : lrsQuery) {
+			Integer probId = Integer.parseInt(dto.getSourceId());
+			// 문제 푼 순서대로 probId 저장. (-> 이게 문제 풀이 페이지에서의 1번, 2번, ..., 20 or 30번 등)
+			if (!probIdList.contains(probId)) {
+				probIdList.add(probId);
+
+				// user_answer format
+				String answer = dto.getUserAnswer();
+				if (answer.contains("[") && answer.contains("]")) {
+					answer.replace("[", "");
+					answer.replace("]", "");
+				}
+				// mupltiple answer check
+				if (answer.contains(",")) {
+					probAnswerMap.put(probId, Arrays.asList(dto.getUserAnswer().split(",")));
+				} else {
+					probAnswerMap.put(probId, Arrays.asList(dto.getUserAnswer()));
+				}
+			}
+		}
+		log.info("probIdList : " + probIdList.toString());
+
+		List<CustomizedSolutionDTO> solutions = new ArrayList<CustomizedSolutionDTO>();
+		try {
+			Map<Integer, CustomizedSolutionDTO> data = answerServices.getMultipleSolutions(probIdList);
+			log.info("Solution queryResult length : " + Integer.toString(data.size()));
+			for (Integer probId : probIdList) {
+				data.get(probId).setUserAnswer(probAnswerMap.get(probId));
+				solutions.add(data.get(probId));
+			}
+		}catch(Exception e) {
+			result.put("resultMessage", "error : "+e.getMessage());
+		}
+		
+		result.put("resultMessage", "Successfully returned");
+		result.put("solutions", solutions);
+		return new ResponseEntity<>(result, HttpStatus.OK);
+	}
+
 	// 종료 시 LRS Statement 등록
 	@PostMapping(value="/quit", produces = "application/json; charset=utf-8")
 	public ResponseEntity<Object> insertQuitStatement(HttpServletRequest request, @RequestBody AnswerInputDTO inputDto) {
+		log.info("> Quit logic start!");
 		Map<String, Object> result = new HashMap<String, Object>();
 		String userId = "";
 		List<StatementDTO> lrsbody = new ArrayList<StatementDTO>();	
@@ -275,6 +332,5 @@ public class AnswerControllerV1 {
 			result.put("resultMessage", "error: " + e.getMessage());
 			return new ResponseEntity<>(result, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-
 	}
 }

@@ -67,24 +67,6 @@ public class UserInfoController {
 			return new ResponseEntity<>(result, HttpStatus.NON_AUTHORITATIVE_INFORMATION);
 		}
 
-		// String header = request.getHeader("Authorization");
-		// if (header == null) {																// 비회원일 때 토큰 null
-		// 	log.info("header.Authorization is null. No token given.");
-		// 	result.put("resultMessage", "header.Authorization is null. No token given.");
-		// 	return new ResponseEntity<>(result, HttpStatus.UNAUTHORIZED);
-		// } else {																			// 회원이면 토큰 파싱하여 유저 아이디 꺼냄
-		// 	String token = request.getHeader("Authorization").replace("Bearer ","");
-		// 	try {
-		// 		Map<String, Object> parseInfo = jwtTokenUtil.getUserParseInfo(token);
-		// 		userUuid = parseInfo.get("userUuid").toString();
-		// 		log.info("User UUID from header token : " + userUuid);
-		// 	} catch (Exception e) {
-		// 		log.info("error : cannot parse jwt token, " + e.getMessage());
-		// 		result.put("error", e.getMessage());
-		// 		return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-		// 	}
-		// }
-
 		String resultMessage = userInfoService.updateValidatedUserInfo(userUuid, NRUuid);
 
 		result.put("resultMessage", resultMessage);
