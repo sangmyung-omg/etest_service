@@ -1780,8 +1780,8 @@ insert into "ETEST"."UK_REL" ("BASE_UK_ID", "PRE_UK_ID", "RELATION_REFERENCE" ) 
 ------- End of ETEST.UK_REL -------------- Begin of ETEST.PART-------
 
 insert into "ETEST"."PART" ("PART_ID", "PART_NAME", "ORDER_NUM", "PROBLEM_COUNT" ) values (1, '금융투자 이해&금융투자 기본', 1, 4);
-insert into "ETEST"."PART" ("PART_ID", "PART_NAME", "ORDER_NUM", "PROBLEM_COUNT" ) values (2, '금융투자상품 - 주식', 2, 4);
-insert into "ETEST"."PART" ("PART_ID", "PART_NAME", "ORDER_NUM", "PROBLEM_COUNT" ) values (3, '금융투자상품 가치평가', 3, 4);
+insert into "ETEST"."PART" ("PART_ID", "PART_NAME", "ORDER_NUM", "PROBLEM_COUNT" ) values (2, '금융투자상품 - 주식', 2, 6);
+insert into "ETEST"."PART" ("PART_ID", "PART_NAME", "ORDER_NUM", "PROBLEM_COUNT" ) values (3, '금융투자상품 가치평가', 3, 2);
 insert into "ETEST"."PART" ("PART_ID", "PART_NAME", "ORDER_NUM", "PROBLEM_COUNT" ) values (4, '금융투자상품 보유관리', 4, 4);
 insert into "ETEST"."PART" ("PART_ID", "PART_NAME", "ORDER_NUM", "PROBLEM_COUNT" ) values (5, '리스크관리 및 행동편향', 5, 4);
 
