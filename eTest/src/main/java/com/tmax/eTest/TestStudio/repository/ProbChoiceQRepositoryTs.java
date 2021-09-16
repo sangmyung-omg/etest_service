@@ -1,5 +1,7 @@
 package com.tmax.eTest.TestStudio.repository;
 
+import java.util.List;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
@@ -26,6 +28,16 @@ public class ProbChoiceQRepositoryTs {
 
 		QProblemChoice qProblemChoice = QProblemChoice.problemChoice;
 		Long count = queryFactory.delete(qProblemChoice).where(qProblemChoice.probIDOnly.eq(probID)).execute();
+
+		return count;
+	}
+	
+	public Long probChoiceDeleteByProbIdAndChoiceNum(Integer probID, List<Long> choiceNumList) {
+
+		QProblemChoice qProblemChoice = QProblemChoice.problemChoice;
+		Long count = queryFactory.delete(qProblemChoice)
+				.where(qProblemChoice.probIDOnly.eq(probID), qProblemChoice.choiceNum.in(choiceNumList) )
+				.execute();
 
 		return count;
 	}

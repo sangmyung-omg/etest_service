@@ -25,6 +25,7 @@ import com.tmax.eTest.Common.model.problem.DiagnosisProblem;
 import com.tmax.eTest.Common.model.problem.ProblemChoice;
 import com.tmax.eTest.Common.model.uk.ProblemUKRelation;
 import com.tmax.eTest.TestStudio.controller.component.TestProblemApiComponentTs;
+import com.tmax.eTest.TestStudio.dto.problems.base.BaseProbChoiceDTO;
 import com.tmax.eTest.TestStudio.dto.problems.base.BaseTestProblemSetDTO;
 import com.tmax.eTest.TestStudio.dto.problems.in.GetProblemDTOIn;
 import com.tmax.eTest.TestStudio.dto.problems.in.PostTestProblemDTOIn;
@@ -286,6 +287,37 @@ public class TestControllerETest {
 			e.printStackTrace();
 			return null;
 		}
+	}
+	
+	
+	@GetMapping("/collectTest")
+	public ResponseEntity<String> feffTest(
+			) {
+		
+		try {
+			List<Long> PC_CN=
+					probChoiceServiceETest.findAllByProbId(1L).stream()
+//						.map( x-> Long.valueOf(x.getChoiceNum()) )
+						.map( x-> x.getChoiceNum() )
+						.collect(Collectors.toList());
+			
+			for(Long i: PC_CN) {
+				System.out.println(i);
+			}
+
+//			Long j = 1L;
+			long j = 1;
+			if(PC_CN.contains(j)) {
+				System.out.println("contains");
+			}
+			
+			String output = "ok";
+			return new ResponseEntity<>(output, HttpStatus.ACCEPTED);
+		} catch(Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<>("no", HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+
 	}
 	
 }

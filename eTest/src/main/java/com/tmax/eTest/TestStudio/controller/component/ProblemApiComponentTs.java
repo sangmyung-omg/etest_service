@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TimeZone;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
@@ -88,6 +89,55 @@ public class ProblemApiComponentTs {
 					//
 					if(baseProblemSetDTO.getProbChoices()!=null) {
 						if(!baseProblemSetDTO.getProbChoices().isEmpty()) {
+							
+							List<ProblemChoice> PCDB = probChoiceServiceETest.findAllByProbId(LongProbId);
+							
+							List<Long> PC_CN=
+									probChoiceServiceETest.findAllByProbId(LongProbId).stream()
+//										.map( x-> Long.valueOf(x.getChoiceNum()) )
+										.map( x-> x.getChoiceNum() )
+										.collect(Collectors.toList());
+							
+							for(BaseProbChoiceDTO PC : baseProblemSetDTO.getProbChoices()) {
+								
+								if( PC_CN.contains( Long.parseLong(PC.getChoiceNum())  ) ){
+									//업데이트
+									probChoiceServiceETest.probChoiceUpdate_single(userID, PC, LongProbId);
+									//PC_CN 에서 cn 제거
+									PC_CN.remove( Long.parseLong(PC.getChoiceNum()) );
+								}else {
+									//pc 생성
+									ProblemChoice problemChoice = new ProblemChoice();
+//									Problem problemTemp = new Problem();
+//									problemTemp.setProbID(problem.getProbID());
+									problemChoice.setProbID(problemServiceETest.findOne(LongProbId).get());
+	//									problemChoice.setProbID(problemTemp);
+									problemChoice.setChoiceNum( Long.parseLong( PC.getChoiceNum() ) );
+									UkMaster ukMasterTemp = new UkMaster();
+									if( PC.getUkID() ==null ) {
+										ukMasterTemp.setUkId( null );
+									}else {
+										ukMasterTemp.setUkId(Integer.parseInt( PC.getUkID() ) );
+									}
+									if(true) {
+	//									throw new Exception("testExceptino"); //todo: delete rollback test
+	//									ukMasterTemp.setUkId(Integer.parseInt( PC.getUkID() ) );
+									}
+	//									problemChoice.setUkId(ukServiceETest.findOneByUKId( Long.parseLong(PC.getUkID()) ));
+									problemChoice.setUkId(ukMasterTemp);
+									if(PC.getChoiceScore()!=null) {
+										problemChoice.setChoiceScore( Integer.parseInt( PC.getChoiceScore() ) );
+									}
+									probChoiceServiceETest.probChoiceCreate(problemChoice);
+								}
+								
+								//남은 pc_cn 에 해당하는 것 제거  
+								probChoiceServiceETest.probChoiceDeleteAllByProbIdAndChoiceNum(LongProbId, PC_CN);
+						
+							}
+							
+							////////////////////
+							/*
 							probChoiceServiceETest.probChoiceDeleteAllByProbId(LongProbId);
 							for(BaseProbChoiceDTO PC : baseProblemSetDTO.getProbChoices()) {
 								
@@ -115,6 +165,7 @@ public class ProblemApiComponentTs {
 								probChoiceServiceETest.probChoiceCreate(problemChoice);
 								
 							}
+							*/
 						}
 					}
 					//

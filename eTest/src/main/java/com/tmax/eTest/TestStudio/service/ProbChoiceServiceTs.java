@@ -70,20 +70,62 @@ public class ProbChoiceServiceTs {
 			if(probChoiceRepositoryETest.findById( compositeKey ).isPresent()) {
 				problemChoice = probChoiceRepositoryETest.findById( compositeKey ).get();
 			}else {
-				throw new NoDataExceptionTs("ProblemChoice","("+LongProbId.toString()+","+requestInfo.getChoiceNum()+")");
+//				throw new NoDataExceptionTs("ProblemChoice","("+LongProbId.toString()+","+requestInfo.getChoiceNum()+")");
+				continue;
 			}
 //			if(requestInfo.getChoiceNum()!=null)
 //				problemChoice.setChoiceNum( Integer.parseInt( requestInfo.getChoiceNum() ) );
 			
+			UkMaster temp = new UkMaster();
 			if(requestInfo.getUkID()!=null) {
-				UkMaster temp = new UkMaster();
 				temp.setUkId( Integer.parseInt( requestInfo.getUkID() ) );
 				problemChoice.setUkId( temp );
 //				problemChoice.setUkIDOnly( Integer.parseInt( requestInfo.getUkID() ) );
+			}else {
+				problemChoice.setUkId( null );
 			}
-			if(requestInfo.getChoiceScore()!=null)
+			
+			if(requestInfo.getChoiceScore()!=null) {
 				problemChoice.setChoiceScore( Integer.parseInt( requestInfo.getChoiceScore() ) );
+			}else {
+				problemChoice.setChoiceScore( null );
+			}
 		}
+		return "ok";
+	}
+	
+	public String probChoiceUpdate_single(String userId, BaseProbChoiceDTO requestInfo, Long LongProbId ) throws Exception {
+		//id not null 일경우면 update
+		if(requestInfo==null) return null;
+	
+		if(requestInfo.getChoiceNum() == null) return null;
+		
+		ProblemChoiceCompositeKey compositeKey = new ProblemChoiceCompositeKey();
+		compositeKey.setProbID( LongProbId );
+		compositeKey.setChoiceNum( Integer.parseInt( requestInfo.getChoiceNum() ) );
+		ProblemChoice problemChoice = new ProblemChoice();
+		if(probChoiceRepositoryETest.findById( compositeKey ).isPresent()) {
+			problemChoice = probChoiceRepositoryETest.findById( compositeKey ).get();
+		}else {
+//			throw new NoDataExceptionTs("ProblemChoice","("+LongProbId.toString()+","+requestInfo.getChoiceNum()+")");
+			return null;
+		}
+		
+		UkMaster temp = new UkMaster();
+		if(requestInfo.getUkID()!=null) {
+			temp.setUkId( Integer.parseInt( requestInfo.getUkID() ) );
+			problemChoice.setUkId( temp );
+//			problemChoice.setUkIDOnly( Integer.parseInt( requestInfo.getUkID() ) );
+		}else {
+			problemChoice.setUkId( null );
+		}
+		
+		if(requestInfo.getChoiceScore()!=null) {
+			problemChoice.setChoiceScore( Integer.parseInt( requestInfo.getChoiceScore() ) );
+		}else {
+			problemChoice.setChoiceScore( null );
+		}
+		
 		return "ok";
 	}
 	
@@ -93,6 +135,11 @@ public class ProbChoiceServiceTs {
 	 */
 	public String probChoiceDeleteAllByProbId(Long problemId) {
 		probChoiceQRepositoryETest.probChoiceDeleteByProbId( problemId.intValue() ); 
+		return "ok";
+	}
+	
+	public String probChoiceDeleteAllByProbIdAndChoiceNum(Long problemId, List<Long> choiceNumList) {
+		probChoiceQRepositoryETest.probChoiceDeleteByProbIdAndChoiceNum( problemId.intValue(), choiceNumList ); 
 		return "ok";
 	}
 	
