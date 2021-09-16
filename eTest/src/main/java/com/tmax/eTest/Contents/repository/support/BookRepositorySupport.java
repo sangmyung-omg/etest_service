@@ -61,7 +61,7 @@ public class BookRepositorySupport extends QuerydslRepositorySupport {
   }
 
   private BooleanExpression checkKeyword(String keyword) {
-    return commonUtils.stringNullCheck(keyword) ? null : book.title.contains(keyword);
+    return commonUtils.stringNullCheck(keyword) ? null : book.title.containsIgnoreCase(keyword);
   }
 
   private BookJoin tupleToJoin(Tuple tuple) {

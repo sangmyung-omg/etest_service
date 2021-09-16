@@ -43,7 +43,7 @@ import lombok.extern.slf4j.Slf4j;
 public class VideoService {
 
   public enum VideoType {
-    YOUTUBE, SELF, ARTICLE
+    YOUTUBE, SELF, VIDEO, ARTICLE
   }
 
   private final String YOUTUBE_TYPE = "youtu";
@@ -132,8 +132,8 @@ public class VideoService {
     RecommendInfo[] basics = mapper.readValue(basicStr, RecommendInfo[].class);
     RecommendInfo[] types = mapper.readValue(typeStr, RecommendInfo[].class);
     RecommendInfo[] advanceds = mapper.readValue(advancedStr, RecommendInfo[].class);
-    return Stream.of(basics, types, advanceds).flatMap(Arrays::stream).filter(e -> e.getType().equals("video"))
-        .map(e -> e.getId()).collect(Collectors.toList());
+    return Stream.of(basics, types, advanceds).flatMap(Arrays::stream)
+        .filter(e -> e.getType().equals(VideoType.VIDEO.name())).map(e -> e.getId()).collect(Collectors.toList());
   }
 
   public ListDTO.Video getBookmarkVideoList(String userId, Long curriculumId, SortType sort, String keyword) {
