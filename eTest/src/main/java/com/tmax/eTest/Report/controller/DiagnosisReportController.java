@@ -50,16 +50,15 @@ public class DiagnosisReportController {
 	
 
 	@Deprecated
-	@PutMapping(value="/saveResult/{probSetId}", produces = "application/json; charset=utf-8")
+	@GetMapping(value="/saveResult/{probSetId}", produces = "application/json; charset=utf-8")
 	public boolean diagnosisResult(
 			HttpServletRequest request,
 			@PathVariable("probSetId") String probSetId) throws Exception{
-		
 		String id = getUserIDFromRequest(request);
 		
 		boolean output = selfDiagnosisReportService.saveDiagnosisResult(id, probSetId);
-		
-		return output;
+//		selfDiagnosisReportService.test();
+		return true;
 	}
 	
 	@DeleteMapping(value="/record", produces = "application/json; charset=utf-8")

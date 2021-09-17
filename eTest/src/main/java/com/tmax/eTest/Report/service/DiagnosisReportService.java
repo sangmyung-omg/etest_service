@@ -1,10 +1,12 @@
  package com.tmax.eTest.Report.service;
 
 import java.sql.Timestamp;
+import java.text.ParseException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -75,6 +77,23 @@ public class DiagnosisReportService {
 	@Autowired
 	DiagnosisRecommend recommendGenerator;
 	
+//	public void test()
+//	{
+//		GetStatementInfoDTO dto = GetStatementInfoDTO.builder()
+//				.dateFromObj(Timestamp.valueOf("2021-09-01 09:00:00.0"))
+//				.dateToObj(Timestamp.valueOf("2021-09-25 09:00:00.0") )
+//				.build();
+//		
+//		try {
+//			List<StatementDTO> list = lrsAPIManager.getStatementList(dto);
+//			log.info(list.size());
+//			log.info(list.toString());
+//		} catch (ParseException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//	}
+	
 	public boolean saveDiagnosisResult(
 			String id, 
 			String probSetId) throws Exception
@@ -92,7 +111,7 @@ public class DiagnosisReportService {
 		List<StatementDTO> diagnosisProbStatements = getStatementDiagnosisProb(probSetId);
 		
 		if(userId == null)
-			if(diagnosisProbStatements.size() < 0)
+			if(diagnosisProbStatements.size() <= 0)
 				throw new ReportBadRequestException("Nonmember's ProbSetId is not available. "+probSetId);
 			else
 			{

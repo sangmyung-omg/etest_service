@@ -3,14 +3,20 @@ package com.tmax.eTest.LRS.model;
 import org.springframework.data.jpa.domain.Specification;
 
 import com.tmax.eTest.LRS.dto.GetStatementInfoDTO;
+import com.tmax.eTest.LRS.util.LRSUtil;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.persistence.criteria.Path;
 
+import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,13 +55,26 @@ public class StatementSpecs {
                     root.get("actionType"),
                     builder));
             
-            if(searchInfo.getDateFrom() != null 
+            
+            if(searchInfo.getDateFromObj() != null 
+                || searchInfo.getDateToObj() != null)
+            	results.add(getPredByDateObj(
+                        searchInfo.getDateFromObj(),
+                        searchInfo.getDateToObj(),
+                        root,
+                        builder));
+            else if(searchInfo.getDateFrom() != null 
             || searchInfo.getDateTo() != null)
-                results.add(getPredByDate(
-                    searchInfo.getDateFrom(),
-                    searchInfo.getDateTo(),
+            {
+            	Timestamp dateFromObj = LRSUtil.timeStringToTimestampObj(searchInfo.getDateFrom());
+            	Timestamp dateToObj = LRSUtil.timeStringToTimestampObj(searchInfo.getDateTo());
+            	
+                results.add(getPredByDateObj(
+            		dateFromObj,
+            		dateToObj,
                     root,
                     builder));
+            }
             
             if(searchInfo.getSourceTypeList() != null)
                 results.add(getPredByStrList(
@@ -73,13 +92,15 @@ public class StatementSpecs {
             	results.add(builder.equal(root.get("isDeleted"), 0));
             
             if(isAsc)
-            	query.orderBy(builder.asc(root.get("timestamp")));
+            	query.orderBy(builder.asc(root.get("statementDate")));
             else
-            	query.orderBy(builder.desc(root.get("timestamp")));
+            	query.orderBy(builder.desc(root.get("statementDate")));
 
             return builder.and(results.toArray(new Predicate[0]));
         });
     }
+    
+  
     
     private static Predicate getContainPredByStrList(
             List<String> strList,
@@ -116,6 +137,23 @@ public class StatementSpecs {
         CriteriaBuilder builder)
     {
     	Path<String> path = root.get("timestamp");
+    	
+        if(dateFrom != null && dateTo != null)
+            return builder.between(path, dateFrom, dateTo);
+        else if(dateFrom != null)
+            return builder.greaterThanOrEqualTo(path, dateFrom);
+        else // dateTo != null
+            return builder.lessThanOrEqualTo(path, dateTo);
+    }
+    
+ // between or greaterThan or lessThan command
+    private static Predicate getPredByDateObj(
+        Timestamp dateFrom,
+        Timestamp dateTo, 
+        Root<Statement> root, 
+        CriteriaBuilder builder)
+    {
+    	Path<Timestamp> path = root.get("statementDate");
     	
         if(dateFrom != null && dateTo != null)
             return builder.between(path, dateFrom, dateTo);

@@ -1,5 +1,6 @@
 package com.tmax.eTest.LRS.dto;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,8 +15,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class GetStatementInfoDTO {
 	public List<String> actionTypeList;
+	@Deprecated
 	public String dateFrom;
+	@Deprecated
 	public String dateTo;
+	
+	public Timestamp dateFromObj;
+	public Timestamp dateToObj;
 	public Integer recentStatementNum;
 	public List<String> sourceTypeList;
 	public List<String> userIdList;

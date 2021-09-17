@@ -13,6 +13,10 @@ import lombok.extern.log4j.Log4j2;
 @Log4j2
 public class SNDCalculator {
 	
+	private final int MIN_PERCENT = 1;
+	private final int MAX_PERCENT = 100;
+	
+	
 	public enum Type{
         DIAG_GI("gi"),
         DIAG_RISK("diag_risk"),
@@ -65,7 +69,7 @@ public class SNDCalculator {
 		
 	}
 
-	
+	@Deprecated
 	public int calculateForMiniTest(double ukAvgScore)
 	{
 		return calculateForConf90Percent(0, 100, ukAvgScore);
@@ -90,13 +94,15 @@ public class SNDCalculator {
 		
 		int result = tempResult.intValue();
 		
+		// lower percentage => upper percentage
+		result = MAX_PERCENT - result;
+		
 		// clamp 0 ~ 100 range
-		result = (result < 0)? 0 
-				: (result > 100) ? 100 
+		result = (result < MIN_PERCENT)? MIN_PERCENT 
+				: (result > MAX_PERCENT) ? MAX_PERCENT 
 				: result;
 		
-		// lower percentage => upper percentage
-		result = 100 - result;
+		
 		
 		return result;
 	}
