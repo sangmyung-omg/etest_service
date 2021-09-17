@@ -92,9 +92,9 @@ public class StatementSpecs {
             	results.add(builder.equal(root.get("isDeleted"), 0));
             
             if(isAsc)
-            	query.orderBy(builder.asc(root.get("timestamp")));
+            	query.orderBy(builder.asc(root.get("statementDate")));
             else
-            	query.orderBy(builder.desc(root.get("timestamp")));
+            	query.orderBy(builder.desc(root.get("statementDate")));
 
             return builder.and(results.toArray(new Predicate[0]));
         });
