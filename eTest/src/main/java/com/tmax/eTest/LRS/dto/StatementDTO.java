@@ -1,5 +1,7 @@
 package com.tmax.eTest.LRS.dto;
 
+import java.sql.Timestamp;
+
 import com.tmax.eTest.LRS.model.Statement;
 
 import io.swagger.annotations.ApiModelProperty;
@@ -26,7 +28,10 @@ public class StatementDTO {
 	private String sourceId;
 
 	@ApiModelProperty(name = "timestamp", dataType = "String", example = "2021-05-27T15:35:52+09:00", value = "해당 활동이 일어난 시간. ISO 8601 Format.", required = true)
+	@Deprecated
 	private String timestamp;
+	
+	private Timestamp statementDate;
 
 	@ApiModelProperty(name = "platform", dataType = "String", example = "WAPL Math", value = "해당 활동이 일어난 Platform 이름")
 	private String platform;
@@ -58,5 +63,6 @@ public class StatementDTO {
 		this.duration = dao.getDuration();
 		this.extension = dao.getExtension();
 		this.isCorrect = dao.getIsCorrect();
+		this.statementDate = dao.getStatementDate();
 	}
 }
