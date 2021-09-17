@@ -10,7 +10,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.tmax.eTest.Common.model.problem.Problem;
 import com.tmax.eTest.Common.model.problem.ProblemChoice;
+import com.tmax.eTest.Common.model.problem.ProblemChoiceCompositeKey;
+import com.tmax.eTest.Common.model.uk.ProbUKCompositeKey;
 import com.tmax.eTest.Common.model.uk.ProblemUKRelation;
+import com.tmax.eTest.Common.model.uk.UkMaster;
 import com.tmax.eTest.TestStudio.dto.problems.base.BaseProbChoiceDTO;
 import com.tmax.eTest.TestStudio.dto.problems.base.BaseProbUKRelDTO;
 import com.tmax.eTest.TestStudio.dto.problems.base.BaseProblemDTO;
@@ -56,10 +59,44 @@ public class ProbUKRelServiceTs {
 	}
 	
 	/**
+	 * 업데이트
+	 */
+	
+	public String probUKRelCreateUpdate_single(String userId, BaseProbUKRelDTO requestInfo, Long LongProbId ) throws Exception {
+		//id not null 일경우면 update
+		if(requestInfo==null) return null;
+	
+		if(requestInfo.getUkID() == null) return null;
+		
+		ProbUKCompositeKey compositeKey = new ProbUKCompositeKey();
+		compositeKey.setProbID( LongProbId );
+		compositeKey.setUkId( Integer.parseInt( requestInfo.getUkID() ) );
+		ProblemUKRelation problemUKRelation = new ProblemUKRelation();
+		if(probUKRelRepositoryETest.findById( compositeKey ).isPresent()) {
+			problemUKRelation = probUKRelRepositoryETest.findById( compositeKey ).get();
+		}else {
+//			throw new NoDataExceptionTs("ProblemUKRelation","("+LongProbId.toString()+","+requestInfo.getUkID()+")");
+			return null;
+		}
+		
+		UkMaster temp = new UkMaster();	
+		temp.setUkId( Integer.parseInt( requestInfo.getUkID() ) );
+		problemUKRelation.setUkId( temp );
+		
+		return "ok";
+	}
+	
+	
+	/**
 	 *  삭제
 	 */
 	public String probUKRelDeleteAllByProbId(Long problemId) {
 		probUKRelQRepositoryETest.probUKRelDeleteAllByProbId( problemId.intValue() ); 
+		return "ok";
+	}
+	
+	public String probUKRelDeleteAllByProbIdAndUkIDs(Long problemId, List<Long> ukIDList) {
+		probUKRelQRepositoryETest.probUKRelDeleteByProbIdAndUkIDs( problemId.intValue(), ukIDList ); 
 		return "ok";
 	}
 

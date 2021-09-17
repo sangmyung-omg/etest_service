@@ -37,4 +37,16 @@ public class ProbUKRelQRepositoryTs {
 		return count;
 	}
 	
+	public Long probUKRelDeleteByProbIdAndUkIDs(Integer probID, List<Long> ukIDList) {
+
+		QProblemUKRelation qProblemUKRelation = QProblemUKRelation.problemUKRelation;
+		Long count = queryFactory.delete(qProblemUKRelation)
+				.where(qProblemUKRelation.probIDOnly.eq(probID), qProblemUKRelation.ukIDOnly.longValue().in(ukIDList) )
+				.execute();
+
+		return count;
+	}
+	
+	
+	
 }

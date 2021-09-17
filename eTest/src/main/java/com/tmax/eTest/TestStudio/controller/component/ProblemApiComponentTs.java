@@ -90,8 +90,6 @@ public class ProblemApiComponentTs {
 					if(baseProblemSetDTO.getProbChoices()!=null) {
 						if(!baseProblemSetDTO.getProbChoices().isEmpty()) {
 							
-							List<ProblemChoice> PCDB = probChoiceServiceETest.findAllByProbId(LongProbId);
-							
 							List<Long> PC_CN=
 									probChoiceServiceETest.findAllByProbId(LongProbId).stream()
 //										.map( x-> Long.valueOf(x.getChoiceNum()) )
@@ -100,90 +98,82 @@ public class ProblemApiComponentTs {
 							
 							for(BaseProbChoiceDTO PC : baseProblemSetDTO.getProbChoices()) {
 								
+								if( PC.getChoiceNum() == null ) continue;
+								
 								if( PC_CN.contains( Long.parseLong(PC.getChoiceNum())  ) ){
-									//업데이트
+									
 									probChoiceServiceETest.probChoiceUpdate_single(userID, PC, LongProbId);
-									//PC_CN 에서 cn 제거
+									
 									PC_CN.remove( Long.parseLong(PC.getChoiceNum()) );
+									
 								}else {
-									//pc 생성
+									
 									ProblemChoice problemChoice = new ProblemChoice();
 //									Problem problemTemp = new Problem();
 //									problemTemp.setProbID(problem.getProbID());
+//									problemChoice.setProbID(problemTemp);
 									problemChoice.setProbID(problemServiceETest.findOne(LongProbId).get());
-	//									problemChoice.setProbID(problemTemp);
 									problemChoice.setChoiceNum( Long.parseLong( PC.getChoiceNum() ) );
+									
 									UkMaster ukMasterTemp = new UkMaster();
 									if( PC.getUkID() ==null ) {
-										ukMasterTemp.setUkId( null );
+										problemChoice.setUkId( null );
 									}else {
 										ukMasterTemp.setUkId(Integer.parseInt( PC.getUkID() ) );
+										problemChoice.setUkId(ukMasterTemp);
+//										problemChoice.setUkId(ukServiceETest.findOneByUKId( Long.parseLong(PC.getUkID()) ).get());
 									}
-									if(true) {
-	//									throw new Exception("testExceptino"); //todo: delete rollback test
-	//									ukMasterTemp.setUkId(Integer.parseInt( PC.getUkID() ) );
-									}
-	//									problemChoice.setUkId(ukServiceETest.findOneByUKId( Long.parseLong(PC.getUkID()) ));
-									problemChoice.setUkId(ukMasterTemp);
-									if(PC.getChoiceScore()!=null) {
+									
+									if(PC.getChoiceScore()==null) {
+										problemChoice.setChoiceScore( null );
+									}else {
 										problemChoice.setChoiceScore( Integer.parseInt( PC.getChoiceScore() ) );
 									}
 									probChoiceServiceETest.probChoiceCreate(problemChoice);
 								}
 								
-								//남은 pc_cn 에 해당하는 것 제거  
-								probChoiceServiceETest.probChoiceDeleteAllByProbIdAndChoiceNum(LongProbId, PC_CN);
-						
 							}
+							for(Long i : PC_CN) {
+								System.out.println(i);
+							}
+
+							probChoiceServiceETest.probChoiceDeleteAllByProbIdAndChoiceNum(LongProbId, PC_CN);
 							
-							////////////////////
-							/*
-							probChoiceServiceETest.probChoiceDeleteAllByProbId(LongProbId);
-							for(BaseProbChoiceDTO PC : baseProblemSetDTO.getProbChoices()) {
-								
-								ProblemChoice problemChoice = new ProblemChoice();
-//									Problem problemTemp = new Problem();
-//									problemTemp.setProbID(problem.getProbID());
-								problemChoice.setProbID(problemServiceETest.findOne(LongProbId).get());
-//									problemChoice.setProbID(problemTemp);
-								problemChoice.setChoiceNum( Long.parseLong( PC.getChoiceNum() ) );
-								UkMaster ukMasterTemp = new UkMaster();
-								if( PC.getUkID() ==null ) {
-									ukMasterTemp.setUkId( null );
-								}else {
-									ukMasterTemp.setUkId(Integer.parseInt( PC.getUkID() ) );
-								}
-								if(true) {
-//									throw new Exception("testExceptino"); //todo: delete rollback test
-//									ukMasterTemp.setUkId(Integer.parseInt( PC.getUkID() ) );
-								}
-//									problemChoice.setUkId(ukServiceETest.findOneByUKId( Long.parseLong(PC.getUkID()) ));
-								problemChoice.setUkId(ukMasterTemp);
-								if(PC.getChoiceScore()!=null) {
-									problemChoice.setChoiceScore( Integer.parseInt( PC.getChoiceScore() ) );
-								}
-								probChoiceServiceETest.probChoiceCreate(problemChoice);
-								
-							}
-							*/
 						}
 					}
-					//
+					//	
 					if(baseProblemSetDTO.getProbUKRels()!=null) {
 						if(!baseProblemSetDTO.getProbUKRels().isEmpty()) {
-							probUKRelServiceETest.probUKRelDeleteAllByProbId(LongProbId);
+							
+							List<Long> PUR_UI=				
+									probUKRelServiceETest.findAllWUKByProbId(LongProbId).stream()
+										.map( x -> x.getUkId().getUkId().longValue())
+										.collect(Collectors.toList());
+							
 							for(BaseProbUKRelDTO PUR : baseProblemSetDTO.getProbUKRels()) {
 								
-								ProblemUKRelation problemUKRelation = new ProblemUKRelation();
-								problemUKRelation.setProbID( problemServiceETest.findOne(LongProbId).get() );
-								UkMaster ukMasterTemp = new UkMaster();
-								ukMasterTemp.setUkId(Integer.parseInt( PUR.getUkID() ) );
-//									problemUKRelation.setUkId( ukServiceETest.findOneByUKId( Long.parseLong(PUR.getUkID()) ) );
-								problemUKRelation.setUkId(ukMasterTemp);							
-
-								probUKRelServiceETest.probUKRelCreate(problemUKRelation);
+								if( PUR.getUkID() == null ) continue;
+								
+								if( PUR_UI.contains( Long.parseLong(PUR.getUkID())  ) ){
+								
+//									probUKRelServiceETest.probUKRelCreateUpdate_single(userID, PUR, LongProbId);
+								
+									PUR_UI.remove( Long.parseLong(PUR.getUkID()) );
+									
+								}else {
+								
+									ProblemUKRelation problemUKRelation = new ProblemUKRelation();
+									problemUKRelation.setProbID(problemServiceETest.findOne(LongProbId).get());
+									UkMaster ukMasterTemp = new UkMaster();
+									ukMasterTemp.setUkId(Integer.parseInt( PUR.getUkID() ) );
+									problemUKRelation.setUkId(ukMasterTemp);
+									probUKRelServiceETest.probUKRelCreate(problemUKRelation);
+								}
 								
 							}
+
+							probUKRelServiceETest.probUKRelDeleteAllByProbIdAndUkIDs(LongProbId, PUR_UI);		
+		
 						}
 					}
 					// 		

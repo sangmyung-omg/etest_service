@@ -1,5 +1,6 @@
 package com.tmax.eTest.Common.model.uk;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
@@ -29,5 +30,11 @@ public class ProblemUKRelation{
 	@ManyToOne
 	@JoinColumn(name="UK_ID")
 	private UkMaster ukId;
+	
+	@Column(name = "PROB_ID", insertable = false, updatable = false)
+	private Integer probIDOnly;
+	
+	@Column(name = "UK_ID", insertable = false, updatable = false)
+	private Integer ukIDOnly;
 	
 }
