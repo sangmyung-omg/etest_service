@@ -406,7 +406,7 @@ public class MiniTestRecordService {
 		MiniTestRecordDTO result =  MiniTestRecordDTO.builder()
 								 .userName(userData.getNickname())
 								 .totalScore(report.getAvgUkMastery().intValue())
-								 .totalPercentage(sndCalculator.calculateForMiniTest((double)report.getAvgUkMastery().intValue()))
+								 .totalPercentage(sndCalculator.calculatePercentage(SNDCalculator.Type.MINI_TOTAL, report.getAvgUkMastery().intValue()))
 								 .partInfo(partInfo)
 								 .partInfoReadable(partInfoReadable)
 								 .problemLowLevelInfo(lowInfo)
