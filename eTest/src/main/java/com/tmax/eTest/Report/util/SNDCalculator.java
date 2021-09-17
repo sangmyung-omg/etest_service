@@ -100,7 +100,6 @@ public class SNDCalculator {
 		
 		return result;
 	}
-
 	
 	private int calculateForConf90Percent(double min, double max, double rawX)
 	{

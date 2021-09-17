@@ -19,7 +19,9 @@ import com.tmax.eTest.Report.dto.minitest.PartInfoDTO;
 import com.tmax.eTest.Report.dto.minitest.PartDataDTO;
 
 import com.tmax.eTest.Common.repository.uk.UkMasterRepo;
+import com.tmax.eTest.Common.repository.user.UserMasterRepo;
 import com.tmax.eTest.Common.model.uk.UkMaster;
+import com.tmax.eTest.Common.model.user.UserMaster;
 
 import java.util.Optional;
 import java.util.Arrays;
@@ -67,6 +69,8 @@ public class MiniTestRecordService {
 	@Autowired private MinitestReportRepo reportRepo;
 
 	@Autowired private UkMasterRepo ukMasterRepo;
+
+	@Autowired private UserMasterRepo userMasterRepo;
 
 
 	private static final int PICK_ALARM_CNT_THRESHOLD = 3;
@@ -191,7 +195,8 @@ public class MiniTestRecordService {
 																					   probId.toString(),
 																					   statement.getIsCorrect() == 1 ? "true": "false",
 																					   quesTxtList.size() > 0 ? quesTxtList.get(0) : null,
-																					   prob.getDifficulty()
+																					   prob.getDifficulty(),
+																					   prob.getIntention()
 																					   ));
 												  })
 												  .collect(Collectors.toList());
@@ -356,10 +361,21 @@ public class MiniTestRecordService {
 		//TEMP comment template
 		String commentTemplate = String.format("미니진단을 통해 분석된 지식점수에요.\n진단자 평균대비 %s 점수를 받으셨네요.\n이제 상세 분야별로 나의 지식 점수를 확인해보세요.\n우선적으로 학습해야하는 분야를 알 수 있습니다.",
 											   report.getAvgUkMastery().intValue() > COMMENT_HIGH_LOW_SPLIT_THRESHOLD_SCORE ? "높은" : "낮은");
+		
+		UserMaster userData = report.getUser();
+		if(userData == null){ //fallback get from user master
+			log.warn("user data not retrieved from minireport join call. Fetching directly from user_master. {}", report.toString());
+			Optional<UserMaster> data = userMasterRepo.findById(report.getUserUuid());
+			userData = data.isPresent() ? data.get() : null;
 
+			//If still null
+			if(userData == null){
+				log.warn("user [{}] not found in user_master. using null as nickname", report.getUserUuid());
+			}
+		}
 		
 		MiniTestRecordDTO result =  MiniTestRecordDTO.builder()
-								 .userName(report.getUser() != null ? report.getUser().getNickname() : null)
+								 .userName(userData.getNickname())
 								 .totalScore(report.getAvgUkMastery().intValue())
 								 .totalPercentage(sndCalculator.calculateForMiniTest((double)report.getAvgUkMastery().intValue()))
 								 .partInfo(partInfo)
