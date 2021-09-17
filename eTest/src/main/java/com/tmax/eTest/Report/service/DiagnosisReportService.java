@@ -111,7 +111,7 @@ public class DiagnosisReportService {
 		List<StatementDTO> diagnosisProbStatements = getStatementDiagnosisProb(probSetId);
 		
 		if(userId == null)
-			if(diagnosisProbStatements.size() < 0)
+			if(diagnosisProbStatements.size() <= 0)
 				throw new ReportBadRequestException("Nonmember's ProbSetId is not available. "+probSetId);
 			else
 			{
