@@ -133,9 +133,6 @@ public class ProblemApiComponentTs {
 								}
 								
 							}
-							for(Long i : PC_CN) {
-								System.out.println(i);
-							}
 
 							probChoiceServiceETest.probChoiceDeleteAllByProbIdAndChoiceNum(LongProbId, PC_CN);
 							
