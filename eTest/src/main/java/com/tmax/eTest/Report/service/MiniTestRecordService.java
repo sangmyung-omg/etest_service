@@ -31,10 +31,13 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.List;
 import java.util.ArrayList;
+import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.Set;
 import java.util.Collections;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import java.sql.Timestamp;
 
 import java.lang.reflect.Type;
 
@@ -141,10 +144,36 @@ public class MiniTestRecordService {
 	private List<List<String>> createProblemInfo(List<StatementDTO> statementList, String userId){
 		//Order lrs by time
 		try{
-			Collections.sort(statementList, (a,b)->ZonedDateTime.parse(a.getTimestamp())
-												.compareTo(ZonedDateTime.parse(b.getTimestamp())) );
+			Collections.sort(statementList, (a,b)->{
+				//Default => user statement_date
+				Timestamp timestampA = a.getStatementDate();
+				Timestamp timestampB = b.getStatementDate();
+
+				//Fall back to timestamp strings
+				if(timestampA == null || timestampB == null){
+					String stringTStampA = a.getTimestamp();
+					String stringTStampB = b.getTimestamp();
+
+					//if both seems like Zoned time data
+					if(stringTStampA.endsWith("Z") && stringTStampB.endsWith("Z")){
+						return ZonedDateTime.parse(stringTStampA).compareTo(ZonedDateTime.parse(stringTStampB));
+					}
+
+					
+					//Prune "Z" at the end if exists
+					log.info("presuming local timestamp for both cases, {} {}", stringTStampA, stringTStampB);
+					stringTStampA = stringTStampA.replace("Z", "");
+					stringTStampB = stringTStampB.replace("Z", "");
+
+					return LocalDateTime.parse(stringTStampA).compareTo(LocalDateTime.parse(stringTStampB));
+				}
+
+
+				//best case comparision
+				return timestampA.compareTo(timestampB);
+			});
 		}
-		catch(Exception e){log.error("Timestamp sort failed. will use unsorted lrs list");}
+		catch(Exception e){log.error("Timestamp sort failed. will use unsorted lrs list. {}", e.getMessage());}
 
 		//Find all prob info in lrs
 		Set<Integer> probIdSet = statementList.stream().parallel()
