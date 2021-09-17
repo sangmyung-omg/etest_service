@@ -1,8 +1,8 @@
 package com.tmax.eTest.Contents.job;
 
-import java.sql.Date;
+import java.sql.Timestamp;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -92,9 +92,9 @@ public class StatJobConfiguration extends DefaultBatchConfigurer {
     return stepBuilderFactory.get("statStep").transactionManager(jpaTransactionManager())
         .tasklet((contribution, chunkContext) -> {
 
-          // Date date = Date.valueOf(LocalDate.now());
-          String nowDate = chunkContext.getStepContext().getJobParameters().get("nowDate").toString();
-          String tomorrowDate = LocalDate.parse(nowDate, DateTimeFormatter.ISO_DATE).plusDays(1).toString();
+          LocalDate now = LocalDate.parse(chunkContext.getStepContext().getJobParameters().get("now").toString());
+          Timestamp nowDate = Timestamp.valueOf(now.atStartOfDay());
+          Timestamp tomorrowDate = Timestamp.valueOf(now.plusDays(1).atStartOfDay());
           log.info("Job Date: " + nowDate);
 
           // lrsService.init("/StatementList");
@@ -110,7 +110,7 @@ public class StatJobConfiguration extends DefaultBatchConfigurer {
               .collect(Collectors.groupingBy(e -> e.getSourceType(), Collectors.counting()));
           log.info("StateMent Size : " + counterMap.size());
 
-          Date date = Date.valueOf(nowDate);
+          Date date = new Date(nowDate.getTime());
           if (!hitStatRepository.existsByStatDate(date))
             hitStatRepository.save(HitStat.builder().statDate(date).build());
 

@@ -32,7 +32,7 @@ public class StatJobScheduler {
   public void runJob() {
 
     Map<String, JobParameter> confMap = new HashMap<String, JobParameter>();
-    confMap.put("nowDate", new JobParameter(LocalDate.now().toString()));
+    confMap.put("now", new JobParameter(LocalDate.now().toString()));
     confMap.put("time", new JobParameter(System.currentTimeMillis()));
     JobParameters jobParameters = new JobParameters(confMap);
     try {

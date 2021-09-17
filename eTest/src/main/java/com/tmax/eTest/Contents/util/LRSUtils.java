@@ -1,5 +1,6 @@
 package com.tmax.eTest.Contents.util;
 
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
@@ -54,11 +55,11 @@ public class LRSUtils {
         .userIdList(userIdList).build();
   }
 
-  public GetStatementInfoDTO makeGetStatement(String dateFrom, String dateTo) {
+  public GetStatementInfoDTO makeGetStatement(Timestamp dateFrom, Timestamp dateTo) {
     log.info("DateFrom: " + dateFrom + " DateTo: " + dateTo);
     List<String> actionTypeList = Arrays.asList(ACTION_TYPE.enter.toString());
     List<String> sourceTypeList = Stream.of(SOURCE_TYPE.values()).map(Enum::name).collect(Collectors.toList());
     return GetStatementInfoDTO.builder().actionTypeList(actionTypeList).sourceTypeList(sourceTypeList)
-        .dateFrom(dateFrom).dateTo(dateTo).build();
+        .dateFromObj(dateFrom).dateToObj(dateTo).build();
   }
 }

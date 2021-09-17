@@ -118,5 +118,4 @@ public class VideoController {
       throw new ContentsException(ErrorCode.USER_ERROR);
     return new ResponseEntity<>(videoService.deleteBookmarkVideo(userId, videoId), HttpStatus.OK);
   }
-
 }
