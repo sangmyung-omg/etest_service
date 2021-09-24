@@ -9,7 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.tmax.eTest.Common.model.problem.Problem;
-import com.tmax.eTest.Contents.dto.CustomizedSolutionDTO;
+import com.tmax.eTest.Contents.dto.answer.CustomizedSolutionDTO;
+import com.tmax.eTest.Contents.dto.answer.Temp1SolutionDTO;
 import com.tmax.eTest.Contents.exception.problem.NoDataException;
 import com.tmax.eTest.Contents.repository.ProblemChoiceRepository;
 import com.tmax.eTest.Contents.repository.ProblemRepository;
@@ -62,6 +63,10 @@ public class AnswerServicesV0 implements AnswerServicesBase {
 	}
 
 	public Map<Integer, CustomizedSolutionDTO> getMultipleSolutions(List<Integer> probIdList) {
-		return new HashMap<Integer, CustomizedSolutionDTO>();
+		return null;
+	}
+
+	public Map<Integer, Temp1SolutionDTO> getParsedMultipleSolutions(List<Integer> probIdLisT) {
+		return null;
 	}
 }

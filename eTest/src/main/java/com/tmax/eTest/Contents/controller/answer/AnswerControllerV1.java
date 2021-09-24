@@ -24,7 +24,7 @@ import io.netty.handler.codec.http.HttpRequest;
 import lombok.extern.slf4j.Slf4j;
 
 import com.tmax.eTest.Auth.jwt.JwtTokenUtil;
-import com.tmax.eTest.Contents.dto.CustomizedSolutionDTO;
+import com.tmax.eTest.Contents.dto.answer.CustomizedSolutionDTO;
 import com.tmax.eTest.Contents.dto.problem.AnswerInputDTO;
 import com.tmax.eTest.Contents.service.AnswerServicesBase;
 import com.tmax.eTest.LRS.dto.GetStatementInfoDTO;

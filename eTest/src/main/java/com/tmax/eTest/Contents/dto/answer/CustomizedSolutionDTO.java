@@ -1,4 +1,4 @@
-package com.tmax.eTest.Contents.dto;
+package com.tmax.eTest.Contents.dto.answer;
 
 import java.util.List;
 

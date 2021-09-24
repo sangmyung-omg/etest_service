@@ -24,7 +24,8 @@ import io.netty.handler.codec.http.HttpRequest;
 import lombok.extern.slf4j.Slf4j;
 
 import com.tmax.eTest.Auth.jwt.JwtTokenUtil;
-import com.tmax.eTest.Contents.dto.CustomizedSolutionDTO;
+import com.tmax.eTest.Contents.dto.answer.CustomizedSolutionDTO;
+import com.tmax.eTest.Contents.dto.answer.Temp1SolutionDTO;
 import com.tmax.eTest.Contents.dto.problem.AnswerInputDTO;
 import com.tmax.eTest.Contents.service.AnswerServicesBase;
 import com.tmax.eTest.LRS.dto.GetStatementInfoDTO;
@@ -237,13 +238,16 @@ public class AnswerControllerV2 {
 		}
 		log.info("probIdList : " + probIdList.toString());
 
-		List<CustomizedSolutionDTO> solutions = new ArrayList<CustomizedSolutionDTO>();
+		List<Temp1SolutionDTO> solutions = new ArrayList<Temp1SolutionDTO>();
 		try {
-			Map<Integer, CustomizedSolutionDTO> data = answerServices.getMultipleSolutions(probIdList);
+			Map<Integer, Temp1SolutionDTO> data = answerServices.getParsedMultipleSolutions(probIdList);
 			log.info("Solution queryResult length : " + Integer.toString(data.size()));
 			for (Integer probId : probIdList) {
 				data.get(probId).setUserAnswer(probAnswerMap.get(probId));
 				solutions.add(data.get(probId));
+
+				// 컴포넌트 분리
+				
 			}
 		}catch(Exception e) {
 			result.put("resultMessage", "error : "+e.getMessage());
@@ -251,6 +255,7 @@ public class AnswerControllerV2 {
 		
 		result.put("resultMessage", "Successfully returned");
 		result.put("solutions", solutions);
+		log.info(result.toString());
 		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 
