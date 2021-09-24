@@ -23,8 +23,8 @@ import com.tmax.eTest.Contents.dto.problem.ComponentDTO;
 import com.tmax.eTest.Contents.exception.problem.NoDataException;
 import com.tmax.eTest.Contents.repository.ProblemChoiceRepository;
 import com.tmax.eTest.Contents.repository.ProblemRepository;
-import com.tmax.eTest.Contents.util.ImgFileUtils;
 import com.tmax.eTest.LRS.dto.StatementDTO;
+import com.tmax.eTest.TestStudio.controller.component.ImageFileServerApiComponentTs;
 
 /**
  * Improve logics from CBT and Adjust to new API requirements
@@ -43,7 +43,7 @@ public class AnswerServicesV1 implements AnswerServicesBase {
 	ProblemChoiceRepository probChoiceRepo;
 
 	@Autowired
-	ImgFileUtils imgfileUtils;
+	ImageFileServerApiComponentTs imgFileApi;
 	
 	public Integer evaluateIfCorrect(Integer probId, List<StatementDTO> lrsbody) throws Exception {
 		String userAnswer = lrsbody.get(0).getUserAnswer();
@@ -168,9 +168,9 @@ public class AnswerServicesV1 implements AnswerServicesBase {
 							// ["a", "b", "c", ... ] 의 형태라 가정.
 							dataList = Arrays.asList(data.substring(2, data.length()-2).split("\",\""));
 							List<String> temp = new ArrayList<String>();
-							if (type.contains("IMAGE")) {
+							if (type.contains("IMAGE")) {					// 이미지 컴포넌트 : array of 이미지 파일명
 								for (String img_name : dataList) {
-									String sb = imgfileUtils.getImgFileServiceComponent(probId, img_name);
+									String sb = imgFileApi.getImgFileServiceComponent(new Long(probId), img_name);
 									temp.add(sb);
 								}
 								dataList = temp;
@@ -186,10 +186,9 @@ public class AnswerServicesV1 implements AnswerServicesBase {
 				solutionInfo.setSolution(componentList);
 				solutionMap.put(dto.getProbID(), solutionInfo);
 			} catch (Exception e) {
-				log.info(e.getMessage());
+				log.error("error: " + e.getMessage());
 			}
 		}
-		log.info(solutionMap.toString());
 		return solutionMap;
 	}
 
