@@ -81,4 +81,21 @@ public class ImageControllerTs {
 		}		
 	}	
 	
+	@GetMapping("/test-studio/image-route-directory")
+	public ResponseEntity<String> ImageList(
+			
+			) throws Exception {
+	
+		try {
+
+			return new ResponseEntity<>( imageFileServerApiComponentETest.getDirPath(), HttpStatus.OK );
+		
+		} catch (Exception e) {
+			
+			e.printStackTrace(); 
+			log.error(e.getMessage());
+			throw e;
+		}		
+	}
+	
 }

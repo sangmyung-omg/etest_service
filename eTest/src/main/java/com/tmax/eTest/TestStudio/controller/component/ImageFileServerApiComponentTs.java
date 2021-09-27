@@ -61,8 +61,8 @@ public class ImageFileServerApiComponentTs {
 			if(imgMFileList.size()<1) {
 				throw new Exception("no-imageData");
 			}
-			System.out.println(getDirPath());
-			System.out.println(pathUtilTs.getDirPath());
+//			System.out.println(getDirPath());
+//			System.out.println(pathUtilTs.getDirPath());
 			//tmp경로 생성
 //			File tmpDir = new File(dirPath + File.separator + "tmp");
 			File tmpDir = new File(getDirPath() + File.separator + "tmp");
@@ -192,9 +192,9 @@ public class ImageFileServerApiComponentTs {
 			}
 			
 			Path pathFrom = Paths.get(fromString);
-			System.out.println(from.getAbsolutePath());
+//			System.out.println(from.getAbsolutePath());
 			Path pathTo = Paths.get(toString);	
-			System.out.println(to.getAbsolutePath());
+//			System.out.println(to.getAbsolutePath());
 //			Files.move(pathFrom, pathTo);
 			Files.move(pathFrom, pathTo, StandardCopyOption.REPLACE_EXISTING);
 			return true;
@@ -329,7 +329,7 @@ public class ImageFileServerApiComponentTs {
 						if(src == null) continue;
 
 						File imgFile = new File(dirPath + File.separator + probIDtoString + File.separator + src);
-						System.out.println(imgFile.toString());	
+//						System.out.println(imgFile.toString());	
 						if(imgFile.exists()) {
 							imgFile.delete();
 							System.out.println("파일 삭제 prob: " + probIDtoString+", src: "+imgFile.getName());
