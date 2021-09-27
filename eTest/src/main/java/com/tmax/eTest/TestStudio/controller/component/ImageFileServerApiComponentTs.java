@@ -464,25 +464,28 @@ public class ImageFileServerApiComponentTs {
 	
 	
 	public GetProblemImageDTOOut ImageListComponent(
-//			String probIdStr
+			String probIdStr
 //			List<Long> probIdList
-			List<String> strProbIdList
+//			List<String> strProbIdList
 			) throws Exception{
 		
-//		String[] strProbIdList = probIdStr.replace(" ","").split(",");
+		if(probIdStr==null || probIdStr.isBlank() ) return null;
+		
+		String[] strProbIdList = probIdStr.replace(" ","").split(",");
 		
 //		if(probIdList==null || probIdList.isEmpty()) return null;
 		
-		if(strProbIdList==null || strProbIdList.isEmpty()) return null;
+//		if(strProbIdList==null || strProbIdList.isEmpty() ) return null;
 		
 		 List<BaseProblemIDandImageSrcsDTO> outputBase = new ArrayList<BaseProblemIDandImageSrcsDTO>();
 		
 		for(String strProbId : strProbIdList) {
 //	    for(Long probId : probIdList) {
 //	    	String strProbId = probId.toString();
+			
 			File folder = new File(pathUtilTs.getDirPath() + File.separator + strProbId);
 			if( folder.exists()) {
-
+				System.out.println("AbsolutePath of the folder : "+folder.getAbsolutePath());
 				List<String> srcList = new ArrayList<String>();
 				
 				for(String src:  folder.list() ) {

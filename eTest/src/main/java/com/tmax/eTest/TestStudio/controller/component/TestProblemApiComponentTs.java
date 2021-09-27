@@ -266,6 +266,7 @@ public class TestProblemApiComponentTs {
 			GetTestProblemDTOOut output = new GetTestProblemDTOOut( new ArrayList<BaseTestProblemSetDTO>() );
 
 			// set : probId []
+			if(probIdStr==null || probIdStr.isBlank() ) return null;
 			String[] strProbIdList = probIdStr.replace(" ","").split(",");
 			
 				for(String strProbId : strProbIdList) {

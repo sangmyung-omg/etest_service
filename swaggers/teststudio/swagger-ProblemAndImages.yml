@@ -215,7 +215,8 @@ paths:
         400:
           description: bad input parameter
 # 
-  /test-studio/ImageSrc:
+  # /test-studio/ImageSrc:
+  /test-studio/ImageSrc/{userID}/{probIDs}:
     get:
       tags:
       - teststudio
@@ -223,10 +224,25 @@ paths:
       description:  
         문제의 이미지 src(이름) 정보를 가져옵니다.
       parameters:
-      - in: body
+      - name: userID
+        in: path
+        description: 사용자 아이디
         required: true
         schema:
-              $ref: '#/definitions/GetProblemDTOIn'
+          type: string
+          format: string
+      - name: probIDs
+        in: path
+        description: 문제IDs String (format ex = 1, 2, 3)
+        required: true
+        schema:
+          type: string
+          format: string
+      # parameters:
+      # - in: body
+      #   required: true
+      #   schema:
+      #         $ref: '#/definitions/GetProblemDTOIn'
       responses:
         200:
           description: success

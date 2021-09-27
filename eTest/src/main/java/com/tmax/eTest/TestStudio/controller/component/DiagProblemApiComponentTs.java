@@ -70,6 +70,7 @@ public class DiagProblemApiComponentTs {
 		GetDiagProblemDTOOut output = new GetDiagProblemDTOOut( new ArrayList<BaseDiagProblemSetDTO>() );
 
 		// set : probId []
+		if(probIdStr==null || probIdStr.isBlank() ) return null;
 		String[] strProbIdList = probIdStr.replace(" ","").split(",");
 		
 			for(String strProbId : strProbIdList) {

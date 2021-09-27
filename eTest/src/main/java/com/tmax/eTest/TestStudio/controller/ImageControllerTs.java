@@ -1,6 +1,7 @@
 package com.tmax.eTest.TestStudio.controller;
 
 
+import java.io.File;
 import java.io.IOException;
 
 import java.util.List;
@@ -10,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -64,14 +66,17 @@ public class ImageControllerTs {
 		}		
 	}	
 	
-	@GetMapping("/test-studio/ImageSrc")
+//	@GetMapping("/test-studio/ImageSrc")
+	@GetMapping(value="/test-studio/ImageSrc/{userID}/{probIDs}")
 	public ResponseEntity<GetProblemImageDTOOut> ImageList(
-			@RequestBody GetProblemDTOIn request
+//			@RequestBody GetProblemDTOIn request
+			@PathVariable("userID") String userID,
+			@PathVariable("probIDs") String probIDs
 			) throws Exception {
 	
 		try {
 
-			return new ResponseEntity<>( imageFileServerApiComponentETest.ImageListComponent(request.getProbIDs()), HttpStatus.OK );
+			return new ResponseEntity<>( imageFileServerApiComponentETest.ImageListComponent(probIDs), HttpStatus.OK );
 		
 		} catch (Exception e) {
 			
@@ -87,14 +92,19 @@ public class ImageControllerTs {
 			) throws Exception {
 	
 		try {
-
-			return new ResponseEntity<>( imageFileServerApiComponentETest.getDirPath(), HttpStatus.OK );
+			File folder = new File(imageFileServerApiComponentETest.getDirPath());
+			return new ResponseEntity<>( folder.getAbsolutePath(), HttpStatus.OK );
 		
 		} catch (Exception e) {
 			
-			e.printStackTrace(); 
-			log.error(e.getMessage());
-			throw e;
+			try {
+				return new ResponseEntity<>( imageFileServerApiComponentETest.getDirPath(), HttpStatus.OK );
+			}catch(Exception e_) {
+				e_.printStackTrace(); 
+				log.error(e_.getMessage());
+				throw e_;
+			}
+			
 		}		
 	}
 	
