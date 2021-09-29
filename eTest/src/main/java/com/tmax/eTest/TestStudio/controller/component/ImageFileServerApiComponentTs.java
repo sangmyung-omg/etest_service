@@ -469,7 +469,8 @@ public class ImageFileServerApiComponentTs {
 //			List<String> strProbIdList
 			) throws Exception{
 		
-		if(probIdStr==null || probIdStr.isBlank() ) return null;
+//		if(probIdStr==null || probIdStr.isBlank() ) return null; // java 11
+		if(probIdStr==null) return null;
 		
 		String[] strProbIdList = probIdStr.replace(" ","").split(",");
 		
@@ -482,9 +483,9 @@ public class ImageFileServerApiComponentTs {
 		for(String strProbId : strProbIdList) {
 //	    for(Long probId : probIdList) {
 //	    	String strProbId = probId.toString();
-			
+	
 			File folder = new File(pathUtilTs.getDirPath() + File.separator + strProbId);
-			if( folder.exists()) {
+			if( folder.exists() && strProbId !="") {
 				System.out.println("AbsolutePath of the folder : "+folder.getAbsolutePath());
 				List<String> srcList = new ArrayList<String>();
 				
