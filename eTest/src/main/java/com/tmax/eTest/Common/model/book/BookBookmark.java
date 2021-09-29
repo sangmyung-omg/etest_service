@@ -31,14 +31,14 @@ public class BookBookmark implements Persistable<BookBookmarkId> {
   @Id
   private String bookId;
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "bookId", insertable = false, updatable = false, nullable = true)
-  private Book book;
-
   public BookBookmark(String userUuid, String bookId) {
     this.userUuid = userUuid;
     this.bookId = bookId;
   }
+
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "bookId", insertable = false, updatable = false, nullable = true)
+  private Book book;
 
   @Transient
   private boolean isNew = true;

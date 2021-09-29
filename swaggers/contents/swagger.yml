@@ -1046,6 +1046,10 @@ components:
         videoType:
           type: string
           description: YOUTBUE(유튜브 영상)/SELF(자체 제작)/ARTICLE(아티클)
+        source:
+          type: string
+        description:
+          type: string
         uks:
           type: array
           items:
@@ -1059,6 +1063,17 @@ components:
       properties:
         recommended:
           type: boolean
+        recommendDate:
+          type: string
+        riskScore:
+          type: integer
+          description: 위험대응 점수
+        investScore:
+          type: integer
+          description: 행동편향 점수
+        knowledgeScore:
+          type: integer
+          description: 지식이해 점수
         size: 
           type: integer
         videos:

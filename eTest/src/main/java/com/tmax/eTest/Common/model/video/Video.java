@@ -41,9 +41,10 @@ public class Video {
   private String codeSet;
   private String type;
   private String related;
+  private String description;
 
   @ManyToOne(fetch = FetchType.EAGER)
-  @JoinColumn(name = "curriculumId", insertable = false, updatable = false)
+  @JoinColumn(name = "curriculumId", insertable = false, updatable = false, nullable = true)
   private VideoCurriculum videoCurriculum;
 
   @OneToOne(fetch = FetchType.EAGER)
@@ -51,11 +52,11 @@ public class Video {
   private VideoHit videoHit;
 
   @OneToMany(fetch = FetchType.LAZY, mappedBy = "video", cascade = CascadeType.ALL, orphanRemoval = true)
-  private Set<VideoUkRel> videoUks = new LinkedHashSet<VideoUkRel>();
-
-  @OneToMany(fetch = FetchType.LAZY, mappedBy = "video", cascade = CascadeType.ALL, orphanRemoval = true)
   private Set<VideoBookmark> videoBookmarks = new LinkedHashSet<VideoBookmark>();
 
-  @OneToMany(fetch = FetchType.LAZY, mappedBy = "video", cascade = CascadeType.ALL, orphanRemoval = true)
+  @OneToMany(fetch = FetchType.EAGER, mappedBy = "video", cascade = CascadeType.ALL, orphanRemoval = true)
+  private Set<VideoUkRel> videoUks = new LinkedHashSet<VideoUkRel>();
+
+  @OneToMany(fetch = FetchType.EAGER, mappedBy = "video", cascade = CascadeType.ALL, orphanRemoval = true)
   private Set<VideoHashtag> videoHashtags = new LinkedHashSet<VideoHashtag>();
 }

@@ -1,20 +1,25 @@
 package com.tmax.eTest.Contents.service;
 
 import java.io.IOException;
+import java.sql.Timestamp;
 import java.text.ParseException;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.tmax.eTest.Common.model.meta.MetaCodeMaster;
 import com.tmax.eTest.Common.model.report.DiagnosisReport;
 import com.tmax.eTest.Common.model.video.Video;
 import com.tmax.eTest.Common.model.video.VideoBookmark;
 import com.tmax.eTest.Common.model.video.VideoBookmarkId;
 import com.tmax.eTest.Common.model.video.VideoCurriculum;
 import com.tmax.eTest.Common.repository.video.VideoBookmarkRepository;
+import com.tmax.eTest.Contents.dto.CodeSet;
 import com.tmax.eTest.Contents.dto.ListDTO;
 import com.tmax.eTest.Contents.dto.RecommendInfo;
 import com.tmax.eTest.Contents.dto.SortType;
@@ -25,6 +30,7 @@ import com.tmax.eTest.Contents.dto.VideoJoin;
 import com.tmax.eTest.Contents.exception.ContentsException;
 import com.tmax.eTest.Contents.exception.ErrorCode;
 import com.tmax.eTest.Contents.repository.support.DiagnosisReportRepositorySupport;
+import com.tmax.eTest.Contents.repository.support.MetaCodeMasterRepositorySupport;
 import com.tmax.eTest.Contents.repository.support.VideoCurriculumRepositorySupport;
 import com.tmax.eTest.Contents.repository.support.VideoHitRepositorySupport;
 import com.tmax.eTest.Contents.repository.support.VideoRepositorySupport;
@@ -48,6 +54,8 @@ public class VideoService {
 
   private final String YOUTUBE_TYPE = "youtu";
 
+  private static HashMap<String, String> sourceMap = new HashMap<String, String>();
+
   @Autowired
   private VideoCurriculumRepositorySupport videoCurriculumRepositorySupport;
 
@@ -59,6 +67,9 @@ public class VideoService {
 
   @Autowired
   private VideoBookmarkRepository videoBookmarkRepository;
+
+  @Autowired
+  private MetaCodeMasterRepositorySupport metaCodeMasterRepositorySupport;
 
   @Autowired
   private LRSUtils lrsUtils;
@@ -93,18 +104,23 @@ public class VideoService {
   }
 
   public ListDTO.Video getVideoList(String userId, Long curriculumId, SortType sort, String keyword) {
+    log.info("===========================================================");
     List<VideoJoin> videos = videoRePositorySupport.findVideosByUserAndCurriculum(userId, curriculumId, sort, keyword);
+    log.info("==========================================================");
     return convertVideoJoinToDTO(videos);
   }
 
   public ListDTO.Video getRecommendVideoList(String userId, Long curriculumId, String keyword) throws IOException {
-    List<String> recommendVideos = getDiagnosisRecommendVideoList(userId);
+    DiagnosisReport diagnosisReport = diagnosisReportRepositorySupport.findDiagnosisReportByUser(userId);
+    List<String> recommendVideos = getDiagnosisRecommendVideoList(diagnosisReport);
     Boolean recommended = !commonUtils.objectNullcheck(recommendVideos);
 
     List<VideoJoin> videos = videoRePositorySupport.findVideosByUserAndCurriculum(userId, curriculumId,
         SortType.RECOMMEND, keyword);
-    return recommended ? convertVideoJoinToDTO(filtering(videos, recommendVideos), recommended)
-        : convertVideoJoinToDTO(videos, recommended);
+    return recommended
+        ? convertVideoJoinToDTO(filtering(videos, recommendVideos), recommended, diagnosisReport.getDiagnosisDate(),
+            diagnosisReport.getRiskScore(), diagnosisReport.getInvestScore(), diagnosisReport.getKnowledgeScore())
+        : convertVideoJoinToDTO(videos, recommended, null, null, null, null);
   }
 
   private List<VideoJoin> filtering(List<VideoJoin> videoJoins, List<String> recommends) {
@@ -113,10 +129,9 @@ public class VideoService {
     return Stream.concat(videoMap.get(true).stream(), videoMap.get(false).stream()).collect(Collectors.toList());
   }
 
-  private List<String> getDiagnosisRecommendVideoList(String userId) throws IOException {
-    DiagnosisReport diagnosisReport = diagnosisReportRepositorySupport.findDiagnosisReportByUser(userId);
+  private List<String> getDiagnosisRecommendVideoList(DiagnosisReport diagnosisReport) throws IOException {
     if (commonUtils.objectNullcheck(diagnosisReport)) {
-      log.info("Diagnosis Report doesn't contain " + userId);
+      log.info("Diagnosis Report doesn't contain user");
       return null;
     }
     String basicStr = diagnosisReport.getRecommendBasicList();
@@ -125,7 +140,7 @@ public class VideoService {
     ObjectMapper mapper = new ObjectMapper();
     if (commonUtils.stringNullCheck(basicStr) || commonUtils.stringNullCheck(typeStr)
         || commonUtils.stringNullCheck(advancedStr)) {
-      log.info("Diagnosis Report By " + userId + " isn't recommended");
+      log.info("Diagnosis Report not recommended");
       return null;
     }
 
@@ -222,6 +237,7 @@ public class VideoService {
             : !commonUtils.stringNullCheck(video.getVideoSrc()) && video.getVideoSrc().contains(YOUTUBE_TYPE)
                 ? VideoType.YOUTUBE.toString()
                 : VideoType.SELF.toString())
+        .source(getSource(video.getCodeSet())).description(video.getDescription())
         .uks(video.getVideoUks().stream().map(videoUks -> videoUks.getUkMaster().getUkName())
             .collect(Collectors.toList()))
         .hashtags(video.getVideoHashtags().stream().map(videoHashtags -> videoHashtags.getHashtag().getName())
@@ -230,7 +246,7 @@ public class VideoService {
   }
 
   public ListDTO.Video convertVideoToDTO(List<Video> videos) {
-    return new ListDTO.Video(null, videos.size(),
+    return new ListDTO.Video(videos.size(),
         videos.stream().map(video -> this.convertVideoToDTO(video)).collect(Collectors.toList()));
   }
 
@@ -244,6 +260,7 @@ public class VideoService {
             : !commonUtils.stringNullCheck(video.getVideoSrc()) && video.getVideoSrc().contains(YOUTUBE_TYPE)
                 ? VideoType.YOUTUBE.toString()
                 : VideoType.SELF.toString())
+        .source(getSource(video.getCodeSet())).description(video.getDescription())
         .uks(video.getVideoUks().stream().map(videoUks -> videoUks.getUkMaster().getUkName())
             .collect(Collectors.toList()))
         .hashtags(video.getVideoHashtags().stream().map(videoHashtags -> videoHashtags.getHashtag().getName())
@@ -252,12 +269,15 @@ public class VideoService {
   }
 
   public ListDTO.Video convertVideoJoinToDTO(List<VideoJoin> videoJoins) {
-    return new ListDTO.Video(null, videoJoins.size(),
+    return new ListDTO.Video(videoJoins.size(),
         videoJoins.stream().map(videoJoin -> this.convertVideoJoinToDTO(videoJoin)).collect(Collectors.toList()));
   }
 
-  public ListDTO.Video convertVideoJoinToDTO(List<VideoJoin> videoJoins, Boolean recommended) {
-    return new ListDTO.Video(recommended, videoJoins.size(),
+  public ListDTO.Video convertVideoJoinToDTO(List<VideoJoin> videoJoins, Boolean recommended, Timestamp diagnosisDate,
+      Integer riskScore, Integer investScore, Integer knowledgeScore) {
+    return new ListDTO.Video(recommended,
+        diagnosisDate.toLocalDateTime().toLocalDate().format(DateTimeFormatter.ISO_LOCAL_DATE), riskScore, investScore,
+        knowledgeScore, videoJoins.size(),
         videoJoins.stream().map(videoJoin -> this.convertVideoJoinToDTO(videoJoin)).collect(Collectors.toList()));
   }
 
@@ -268,4 +288,35 @@ public class VideoService {
             .collect(Collectors.toList()));
   }
 
+  private String getSource(String codeSetStr) {
+    final String PREFIX_SOURCE_NAME = "콘텐츠 제작기관";
+
+    if (commonUtils.stringNullCheck(codeSetStr)) {
+      log.info("Meta Code Null Error");
+      return null;
+    }
+
+    ObjectMapper mapper = new ObjectMapper();
+    CodeSet codeSet = null;
+    try {
+      codeSet = mapper.readValue(codeSetStr, CodeSet.class);
+    } catch (IOException e) {
+      log.info("Meta Code Json Error: " + e.getMessage());
+      return null;
+    }
+    String sourceId = null;
+    for (String codeId : codeSet.getCodes()) {
+      if (codeId.contains(PREFIX_SOURCE_NAME)) {
+        sourceId = codeId;
+        break;
+      }
+    }
+    // if (sourceMap.containsKey(sourceId))
+    // return sourceMap.get(sourceId);
+
+    MetaCodeMaster metaCodeMaster = metaCodeMasterRepositorySupport.findMetaCodeById(sourceId);
+    String sourceName = metaCodeMaster.getCodeName();
+    // sourceMap.put(sourceId, sourceName);
+    return sourceName;
+  }
 }

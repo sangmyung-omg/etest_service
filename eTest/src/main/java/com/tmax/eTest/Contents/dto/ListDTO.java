@@ -19,8 +19,17 @@ public class ListDTO {
   @AllArgsConstructor
   public static class Video {
     private Boolean recommended;
+    private String recommendDate;
+    private Integer riskScore;
+    private Integer investScore;
+    private Integer knowledgeScore;
     private int size;
     private List<VideoDTO> videos;
+
+    public Video(int size, List<VideoDTO> videos) {
+      this.size = size;
+      this.videos = videos;
+    }
   }
 
   @Data

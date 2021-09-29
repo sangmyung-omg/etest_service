@@ -20,11 +20,11 @@ public class VideoHashtag {
   @Id
   private Long hashtagId;
 
-  @ManyToOne(fetch = FetchType.LAZY)
+  @ManyToOne(fetch = FetchType.EAGER)
   @JoinColumn(name = "videoId", insertable = false, updatable = false, nullable = true)
   private Video video;
 
-  @ManyToOne(fetch = FetchType.LAZY)
+  @ManyToOne(fetch = FetchType.EAGER)
   @JoinColumn(name = "hashtagId", insertable = false, updatable = false, nullable = true)
   private Hashtag hashtag;
 

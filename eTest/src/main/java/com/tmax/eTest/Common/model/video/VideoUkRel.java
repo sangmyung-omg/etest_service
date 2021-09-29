@@ -22,11 +22,11 @@ public class VideoUkRel {
   @Id
   private Long ukId;
 
-  @ManyToOne(fetch = FetchType.LAZY)
+  @ManyToOne(fetch = FetchType.EAGER)
   @JoinColumn(name = "videoId", insertable = false, updatable = false, nullable = true)
   private Video video;
 
-  @ManyToOne(fetch = FetchType.LAZY)
+  @ManyToOne(fetch = FetchType.EAGER)
   @JoinColumn(name = "ukId", insertable = false, updatable = false, nullable = true)
   private UkMaster ukMaster;
 }
