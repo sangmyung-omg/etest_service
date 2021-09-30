@@ -74,16 +74,16 @@ public class VideoRepositorySupport extends QuerydslRepositorySupport {
 
   public List<VideoJoin> findVideosByUserAndCurriculum(String userId, Long curriculumId, SortType sort,
       String keyword) {
-    return tupleToJoin(query.select(video, videoBookmark.userUuid).from(video)
-        .leftJoin(video.videoBookmarks, videoBookmark).on(userEq(userId)).where(curriculumEq(curriculumId))
+    return tupleToJoin(query.select(video, videoBookmark.userUuid).from(video).leftJoin(video.videoBookmarks)
+        .fetchJoin().leftJoin(video.videoBookmarks, videoBookmark).on(userEq(userId)).where(curriculumEq(curriculumId))
         .where(checkKeyword(keyword)).orderBy(getVideoSortedColumn(sort)).fetch());
   }
 
   public List<VideoJoin> findBookmarkVideosByUserAndCurriculum(String userId, Long curriculumId, SortType sort,
       String keyword) {
-    return tupleToJoin(query.select(video, videoBookmark.userUuid).from(video).join(video.videoBookmarks).fetchJoin()
-        .join(video.videoBookmarks, videoBookmark).where(userEq(userId), curriculumEq(curriculumId))
-        .where(checkKeyword(keyword)).orderBy(getVideoSortedColumn(sort)).fetch());
+    return tupleToJoin(query.select(video, videoBookmark.userUuid).from(video).join(video.videoBookmarks, videoBookmark)
+        .where(userEq(userId), curriculumEq(curriculumId)).where(checkKeyword(keyword))
+        .orderBy(getVideoSortedColumn(sort)).fetch());
   }
 
   private BooleanExpression userEq(String userId) {

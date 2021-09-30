@@ -54,8 +54,8 @@ public class BookRepositorySupport extends QuerydslRepositorySupport {
   }
 
   public List<BookJoin> findBookmarkBooksByUser(String userId, String keyword) {
-    return tupleToJoin(query.select(book, bookBookmark.userUuid).from(book).join(book.bookBookmarks).fetchJoin()
-        .join(book.bookBookmarks, bookBookmark).where(userEq(userId)).where(checkKeyword(keyword)).orderBy().fetch());
+    return tupleToJoin(query.select(book, bookBookmark.userUuid).from(book).join(book.bookBookmarks, bookBookmark)
+        .where(userEq(userId)).where(checkKeyword(keyword)).orderBy().fetch());
   }
 
   private BooleanExpression userEq(String userId) {
