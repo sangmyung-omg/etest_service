@@ -36,7 +36,7 @@ public class VideoBookmark implements Persistable<VideoBookmarkId> {
     this.videoId = videoId;
   }
 
-  @ManyToOne(fetch = FetchType.LAZY)
+  @ManyToOne(fetch = FetchType.EAGER)
   @JoinColumn(name = "videoId", insertable = false, updatable = false, nullable = true)
   private Video video;
 

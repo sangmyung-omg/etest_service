@@ -37,8 +37,8 @@ public class BookRepositorySupport extends QuerydslRepositorySupport {
   }
 
   public BookJoin findBookByUserAndId(String userId, String bookId) {
-    return tupleToJoin(query.select(book, bookBookmark.userUuid).from(book).leftJoin(book.bookBookmarks).fetchJoin()
-        .leftJoin(book.bookBookmarks, bookBookmark).on(userEq(userId)).where(idEq(bookId)).fetchOne());
+    return tupleToJoin(query.select(book, bookBookmark.userUuid).from(book).leftJoin(book.bookBookmarks, bookBookmark)
+        .on(userEq(userId)).where(idEq(bookId)).fetchOne());
   }
 
   public List<Book> findBooks(String keyword) {
@@ -49,8 +49,8 @@ public class BookRepositorySupport extends QuerydslRepositorySupport {
     log.info(Long.toString(query.select(book, bookBookmark.userUuid).from(book)
         .leftJoin(book.bookBookmarks, bookBookmark).on(userEq(userId)).where(checkKeyword(keyword)).fetchCount()));
 
-    return tupleToJoin(query.select(book, bookBookmark.userUuid).from(book).leftJoin(book.bookBookmarks).fetchJoin()
-        .leftJoin(book.bookBookmarks, bookBookmark).on(userEq(userId)).where(checkKeyword(keyword)).orderBy().fetch());
+    return tupleToJoin(query.select(book, bookBookmark.userUuid).from(book).leftJoin(book.bookBookmarks, bookBookmark)
+        .on(userEq(userId)).where(checkKeyword(keyword)).orderBy().fetch());
   }
 
   public List<BookJoin> findBookmarkBooksByUser(String userId, String keyword) {

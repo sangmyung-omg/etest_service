@@ -104,9 +104,7 @@ public class VideoService {
   }
 
   public ListDTO.Video getVideoList(String userId, Long curriculumId, SortType sort, String keyword) {
-    log.info("===========================================================");
     List<VideoJoin> videos = videoRePositorySupport.findVideosByUserAndCurriculum(userId, curriculumId, sort, keyword);
-    log.info("==========================================================");
     return convertVideoJoinToDTO(videos);
   }
 

@@ -51,7 +51,7 @@ public class Video {
   @JoinColumn(name = "videoId")
   private VideoHit videoHit;
 
-  @OneToMany(fetch = FetchType.LAZY, mappedBy = "video", cascade = CascadeType.ALL, orphanRemoval = true)
+  @OneToMany(fetch = FetchType.EAGER, mappedBy = "video", cascade = CascadeType.ALL, orphanRemoval = true)
   private Set<VideoBookmark> videoBookmarks = new LinkedHashSet<VideoBookmark>();
 
   @OneToMany(fetch = FetchType.EAGER, mappedBy = "video", cascade = CascadeType.ALL, orphanRemoval = true)
