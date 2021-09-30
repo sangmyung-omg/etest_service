@@ -339,9 +339,9 @@ public class MiniTestRecordService {
 		//Problem info build
  		List<List<String>> problemInfoTotal = createProblemInfo(statementList, userId);
 
-		List<List<String>> lowInfo = problemInfoTotal.stream().filter(info -> info.get(info.size()-1).equals("하")).collect(Collectors.toList());
-		List<List<String>> midInfo = problemInfoTotal.stream().filter(info -> info.get(info.size()-1).equals("중")).collect(Collectors.toList());
-		List<List<String>> highInfo = problemInfoTotal.stream().filter(info -> info.get(info.size()-1).equals("상")).collect(Collectors.toList());
+		List<List<String>> lowInfo = problemInfoTotal.stream().filter(info -> info.get(info.size()-2).equals("하")).collect(Collectors.toList());
+		List<List<String>> midInfo = problemInfoTotal.stream().filter(info -> info.get(info.size()-2).equals("중")).collect(Collectors.toList());
+		List<List<String>> highInfo = problemInfoTotal.stream().filter(info -> info.get(info.size()-2).equals("상")).collect(Collectors.toList());
 
 		//Create stats
 		Map<String, Object> problemCorrectInfo = new HashMap<>();
