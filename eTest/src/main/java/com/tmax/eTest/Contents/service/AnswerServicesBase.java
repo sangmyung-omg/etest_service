@@ -1,11 +1,10 @@
 package com.tmax.eTest.Contents.service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import com.tmax.eTest.Contents.dto.answer.CustomizedSolutionDTO;
-import com.tmax.eTest.Contents.dto.answer.Temp1SolutionDTO;
+import com.tmax.eTest.Contents.dto.answer.SolutionDTO;
 import com.tmax.eTest.LRS.dto.StatementDTO;
 
 public interface AnswerServicesBase {
@@ -17,5 +16,5 @@ public interface AnswerServicesBase {
 
     public Map<Integer, CustomizedSolutionDTO> getMultipleSolutions(List<Integer> probIdList);
 
-    public Map<Integer, Temp1SolutionDTO> getParsedMultipleSolutions(List<Integer> probIdLisT);
+    public Map<Integer, SolutionDTO> getParsedMultipleSolutions(List<Integer> probIdLisT);
 }
