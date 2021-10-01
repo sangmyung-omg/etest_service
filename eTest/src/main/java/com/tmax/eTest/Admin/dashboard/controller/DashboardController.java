@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.*;
 
 @RestController
-@RequestMapping("admin")
+@RequestMapping("submaster")
 public class DashboardController {
     @Autowired
     private DashboardService dashboardService;
@@ -30,20 +30,18 @@ public class DashboardController {
     @Autowired
     private LRSAPIManager lrsapiManager;
 
-    @GetMapping("dashboard/overall")
+    @PostMapping("/dashboard/overall")
     public ResponseEntity<DashboardOverallDTO> getOverallCards
-            (@RequestBody(required = false) FilterDTO filterDTO){
+            (@RequestBody FilterDTO filterDTO){
         Integer diagnosis = dashboardService.getDiagnosis(filterDTO).size();
         Integer minitest = dashboardService.getMinitest(filterDTO).size();
-        Integer userIncrease = dashboardService.getUserIncrease(filterDTO).size();
-        Integer userDelete = dashboardService.getUserDelete(filterDTO).size();
+        Integer userRegister = dashboardService.getUserRegister(filterDTO).size();
         Integer totalAccessUser = dashboardService.getAccessor(filterDTO).size();
+        Integer userTotal = dashboardService.getUserAll();
         return ResponseEntity.ok(DashboardOverallDTO.builder()
                 .totalAccessUser(totalAccessUser)
-                .userIncrease(userIncrease)
-//                .userRegistered()
-                .userDeleted(userDelete)
-//                .userTotal()
+                .userRegistered(userRegister)
+                .userTotal(userTotal)
                 .diagnosisTotal(diagnosis + minitest)
                 .diagnosis(diagnosis)
                 .minitest(minitest)
@@ -55,14 +53,15 @@ public class DashboardController {
         int result = dashboardService.getAccessor(filterDTO).size();
         return new CMRespDto<>(200, "success", result);
     }
-    @PostMapping("/dashboard/user/increase")
-    public CMRespDto<?> getUserIncrease (@RequestBody FilterDTO filterDTO){
-        int result = dashboardService.getUserIncrease(filterDTO).size();
+    @PostMapping("/dashboard/user/register")
+    public CMRespDto<?> getUserRegister (@RequestBody FilterDTO filterDTO){
+        int result = dashboardService.getUserRegister(filterDTO).size();
         return new CMRespDto<>(200, "success", result);
     }
-    @PostMapping("/dashboard/user/delete")
-    public CMRespDto<?> getUserDelete (@RequestBody FilterDTO filterDTO){
-        int result = dashboardService.getUserDelete(filterDTO).size();
+
+    @GetMapping("/dashboard/user/all")
+    public CMRespDto<?> getUserAll (){
+        int result = dashboardService.getUserAll();
         return new CMRespDto<>(200, "success", result);
     }
 }

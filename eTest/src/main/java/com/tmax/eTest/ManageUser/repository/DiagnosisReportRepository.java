@@ -8,6 +8,8 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 
+
+@Repository("ManageUserDiagnosisReportRepository")
 public interface DiagnosisReportRepository extends JpaRepository<DiagnosisReport, DiagnosisReportKey> {
     List<DiagnosisReport> findByUserUuid(String user_uuid);
     List<DiagnosisReport> findAllByUserUuid(String user_uuid);
