@@ -30,11 +30,7 @@ public class DiagnosisRecordDetailDTO {
 	Map<String, String> mainCommentInfo = new HashMap<>();
 	List<Object> detailCommentInfo = new ArrayList<>();
 	
-	// 문제 정보
-	Map<String, Object> problemCorrectInfo = new HashMap<>();
-	List<List<String>> problemHighLevelInfo = new ArrayList<>();
-	List<List<String>> problemMiddleLevelInfo = new ArrayList<>();
-	List<List<String>> problemLowLevelInfo = new ArrayList<>();
+	List<List<String>> scoreInfo = new ArrayList<>();
 
 	public void initForDummy()
 	{
@@ -61,26 +57,6 @@ public class DiagnosisRecordDetailDTO {
 		
 		detailCommentInfo.add(riskCommentInfo);
 		detailCommentInfo.add(investInfo);
-		
-		problemCorrectInfo.put("allCorr", 3);
-		problemCorrectInfo.put("allProb", 6);
-		problemCorrectInfo.put("high", "1/2");
-		problemCorrectInfo.put("middle", "1/2");
-		problemCorrectInfo.put("low", "1/2");
-
-		List<String> probInfo = new ArrayList<>();
-		probInfo.add("문제 Index");
-		probInfo.add("21");//문제 UUID
-		probInfo.add("정오답 여부(true or false)");
-		probInfo.add("문제 내용");
-		probInfo.add("난이도");
-		
-		problemHighLevelInfo.add(probInfo);
-		problemHighLevelInfo.add(probInfo);
-		problemMiddleLevelInfo.add(probInfo);
-		problemMiddleLevelInfo.add(probInfo);
-		problemLowLevelInfo.add(probInfo);
-		problemLowLevelInfo.add(probInfo);
 	}
 	
 	

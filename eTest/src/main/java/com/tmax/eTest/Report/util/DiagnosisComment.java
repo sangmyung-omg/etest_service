@@ -1,21 +1,23 @@
 package com.tmax.eTest.Report.util;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.stereotype.Component;
 
+import com.tmax.eTest.Common.model.report.DiagnosisReport;
+import com.tmax.eTest.Report.util.DiagnosisUtil.InvestProfile;
+import com.tmax.eTest.Report.util.DiagnosisUtil.InvestTracing;
+import com.tmax.eTest.Report.util.DiagnosisUtil.KnowledgeSection;
+import com.tmax.eTest.Report.util.DiagnosisUtil.KnowledgeSubSection;
+import com.tmax.eTest.Report.util.DiagnosisUtil.RiskProfile;
+import com.tmax.eTest.Report.util.DiagnosisUtil.RiskTracing;
+
 @Component
 public class DiagnosisComment {
-	
-	final public static String TOTAL_RES_KEY = "totalResult";
-	final public static String RISK_FID_KEY = "riskFidelity";
-	final public static String DECISION_MAKING_KEY = "decisionMaking";
-	final public static String INVEST_KNOWLEDGE_KEY = "investKnowledge";
-	final public static String SIMILAR_TYPE_KEY = "similarType";
-	final public static String SELF_DIAG_TYPE_KEY = "selfDiagType";
 	
 	public Map<String, String> makeRiskMainComment(int profileScore, int tracingScore)
 	{
@@ -59,8 +61,14 @@ public class DiagnosisComment {
 		return result;
 	}
 	
-	public List<Object> makeRiskDetailComment(int profileScore, int tracingScore)
+	public List<Object> makeRiskDetailComment(DiagnosisReport report)
 	{
+		int profileScore = report.getRiskProfileScore();				
+		int tracingScore = report.getRiskTracingScore();
+		
+		int profLevelScore = (int)((report.getRiskLevelScore() - 3) / 9. * 100 );
+		int profCapaScore = (int)((report.getRiskCapaScore() - 2) / 6. * 100);
+		
 		String[] profileMainList = {"높은 수익률을 추구하는 공격투자형", 
 				"너무 큰 위험도 너무 작은 위험도 추구하지 않는, 중립투자형", 
 				"손실을 최소화 하며 안정적 수익을 추구하는 안정투자형"};
@@ -93,15 +101,35 @@ public class DiagnosisComment {
 		Map<String, Object> profileCommentInfo = new HashMap<>();
 		Map<String, Object> tracingCommentInfo = new HashMap<>();
 		
+		List<List<String>> profileDetailScore = new ArrayList<>();
+		profileDetailScore.add(Arrays.asList(RiskProfile.LEVEL.toString(), String.valueOf(profLevelScore)));
+		profileDetailScore.add(Arrays.asList(RiskProfile.CAPACITY.toString(), String.valueOf(profCapaScore)));
+
+		List<List<String>> tracingDetailScore = new ArrayList<>();
+		tracingDetailScore.add(Arrays.asList(
+				RiskTracing.STOCK_PERIOD.toString(), 
+				String.valueOf(report.getRiskInvestPeriodScore()*25)));
+		tracingDetailScore.add(Arrays.asList(
+				RiskTracing.STOCK_RATIO.toString(), 
+				String.valueOf(report.getRiskStockRatioScore()*25)));
+		tracingDetailScore.add(Arrays.asList(
+				RiskTracing.STOCK_NUM.toString(), 
+				String.valueOf(report.getRiskStockNumScore()*25)));
+		tracingDetailScore.add(Arrays.asList(
+				RiskTracing.STOCK_PREFER.toString(), 
+				String.valueOf(report.getRiskStockPreferScore()*25)));
+		
 		profileCommentInfo.put("name", "투자위험 태도");
 		profileCommentInfo.put("main", profileMainList[profileIdx]);
 		profileCommentInfo.put("detail", profileDetailList[profileIdx]);
 		profileCommentInfo.put("score", stretchProfileScore);
+		profileCommentInfo.put("detailScoreList", profileDetailScore);
 		
 		tracingCommentInfo.put("name", "투자 방법");
 		tracingCommentInfo.put("main", tracingMainList[tracingIdx]);
 		tracingCommentInfo.put("detail", tracingDetailList[tracingIdx]);
 		tracingCommentInfo.put("score", stretchTracingScore);
+		tracingCommentInfo.put("detailScoreList", tracingDetailScore);
 		
 		result.add(profileCommentInfo);
 		result.add(tracingCommentInfo);
@@ -188,8 +216,11 @@ public class DiagnosisComment {
 		return result;
 	}
 	
-	public List<Object> makeInvestDetailComment(int profileScore, int tracingScore)
+	public List<Object> makeInvestDetailComment(DiagnosisReport report)
 	{
+
+		int profileScore = report.getInvestProfileScore(); 
+		int tracingScore = report.getInvestTracingScore();
 		
 		String[] profileMainList = {
 				"객관적이고 이성적인 투자를 지향하는 투자자", 
@@ -220,6 +251,39 @@ public class DiagnosisComment {
 		int stretchProfileScore = (int)((profileScore - 20) / 25.f * 100);
 		int stretchTracingScore = (int)((tracingScore - 17) / 38.f * 100);
 		
+		List<List<String>> profileDetailScore = new ArrayList<>();
+		
+		profileDetailScore.add(Arrays.asList(
+				InvestProfile.BIAS_ANCHOR.toString(), 
+				String.valueOf((report.getInvestAnchorScore() * 10))));
+		profileDetailScore.add(Arrays.asList(
+				InvestProfile.BIAS_SELF.toString(), 
+				String.valueOf((report.getInvestSelfScore() * 10))));
+		profileDetailScore.add(Arrays.asList(
+				InvestProfile.BIAS_LOSS.toString(), 
+				String.valueOf((report.getInvestLossScore() * 10))));
+		profileDetailScore.add(Arrays.asList(
+				InvestProfile.BIAS_CONFIRM.toString(), 
+				String.valueOf((report.getInvestConfirmScore() * 10))));
+		profileDetailScore.add(Arrays.asList(
+				InvestProfile.BIAS_CROWN.toString(), 
+				String.valueOf((report.getInvestCrownScore() * 10))));
+		
+		List<List<String>> tracingDetailScore = new ArrayList<>();
+		
+		tracingDetailScore.add(Arrays.asList(
+				InvestTracing.RULE_METHOD.toString(), 
+				String.valueOf((report.getInvestMethodScore() * 10))));
+		tracingDetailScore.add(Arrays.asList(
+				InvestTracing.RULE_SELL.toString(), 
+				String.valueOf((report.getInvestSellScore() * 10))));
+		tracingDetailScore.add(Arrays.asList(
+				InvestTracing.RULE_PORTFOLIO.toString(), 
+				String.valueOf((report.getInvestPortfolioScore() * 10))));
+		tracingDetailScore.add(Arrays.asList(
+				InvestTracing.RULE_INFO.toString(), 
+				String.valueOf((report.getInvestInfoScore() * 10))));
+		
 		List<Object> result = new ArrayList<>();
 		
 		Map<String, Object> profileCommentInfo = new HashMap<>();
@@ -229,11 +293,13 @@ public class DiagnosisComment {
 		profileCommentInfo.put("main", profileMainList[profileIdx]);
 		profileCommentInfo.put("detail", profileDetailList[profileIdx]);
 		profileCommentInfo.put("score", stretchProfileScore);
+		profileCommentInfo.put("detailScoreList", profileDetailScore);
 		
 		tracingCommentInfo.put("name", "투자원칙");
 		tracingCommentInfo.put("main", tracingMainList[tracingIdx]);
 		tracingCommentInfo.put("detail", tracingDetailList[tracingIdx]);
 		tracingCommentInfo.put("score", stretchTracingScore);
+		tracingCommentInfo.put("detailScoreList", tracingDetailScore);
 		
 		result.add(profileCommentInfo);
 		result.add(tracingCommentInfo);
@@ -247,12 +313,10 @@ public class DiagnosisComment {
 		int[] rankMinValue = {80, 60, 0};
 		int knowledgeScoreIdx = rankMinValue.length - 1;
 		
-//		String[] knowledgeMain = {
-//				"당신은 매매방법이나 종목을 분석하는 방법 등 투자지식의 기본적인 사항을 알고 있고 자신만의 투자방법도 갖추고 있습니다."
-//				+ "많은 노력이 필요하겠지만 더 많은 경험과 공부를 이어간다면 나만의 원칙을 가진 성공적인 투자자가 될 수 있습니다.", 
-//				"당신은 매매방법이나 종목을 분석하는 방법 등 투자지식의 기본적인 사항들은 알고 있는 것으로 보입니다."
-//				+ "많은 노력이 필요하겠지만 더 많은 경험과 공부를 이어간다면 나만의 원칙을 가진 성공적인 투자자로 성장할 가능성이 높습니다.", 
-//				"당신은 아직 투자지식에 익숙하지 않을 가능성이 높습니다. 시장과 산업동향, 주식 투자의 기본 등 꼼꼼하고 꾸준하게 공부하는 투자자가 결국에는 오래 투자할 수 있습니다."};
+		String[] knowledgeMain = {
+				"우수", 
+				"보통", 
+				"부족"};
 		String[] knowledgeDetail = {
 				"당신은 매매방법이나 종목을 분석하는 방법 등 투자지식의 기본적인 사항을 알고 있고 자신만의 투자방법도 갖추고 있습니다. 많은 노력이 필요하겠지만 더 많은 경험과 공부를 이어간다면 나만의 원칙을 가진 성공적인 투자자가 될 수 있습니다.",
 				"당신은 매매방법이나 종목을 분석하는 방법 등 투자지식의 기본적인 사항들은 알고 있는 것으로 보입니다. 많은 노력이 필요하겠지만 더 많은 경험과 공부를 이어간다면 나만의 원칙을 가진 성공적인 투자자로 성장할 가능성이 높습니다.",
@@ -265,18 +329,20 @@ public class DiagnosisComment {
 				break;
 			}
 		
-//		result.put("main", knowledgeMain[knowledgeScoreIdx]);
+		result.put("main", knowledgeMain[knowledgeScoreIdx]);
 		result.put("detail", knowledgeDetail[knowledgeScoreIdx]);
 		
 		return result;
 	}
 	
 	public List<Object> makeKnowledgeDetailComment(
-			int basicScore, 
-			int typeScore,
-			int changeScore,
-			int sellScore)
+			DiagnosisReport report)
 	{
+		int basicScore = report.getKnowledgeCommonScore();
+		int typeScore = report.getKnowledgeTypeScore();
+		int changeScore = report.getKnowledgeChangeScore();
+		int sellScore = report.getKnowledgeSellScore();
+		
 		List<Object> result = new ArrayList<>();
 		
 		String[] basicCommentList = {
@@ -290,7 +356,7 @@ public class DiagnosisComment {
 		Map<String, Object> commonCommentInfo = new HashMap<>();
 		Map<String, Object> actualCommentInfo = new HashMap<>();
 		int stretchCommonScore = (int) (basicScore / 22.f * 100);
-		int stretchActualScore = (int) ((typeScore + changeScore + sellScore) / 72.f * 100);
+		int stretchActualScore = (int) ((typeScore + changeScore + sellScore) / 72. * 100);
 		int[] rankMinValue = {80, 60, 0};
 		
 		int commonIdx = rankMinValue.length -1;
@@ -308,17 +374,43 @@ public class DiagnosisComment {
 				actualIdx = i;
 				break;
 			}
+		
+		List<List<String>> commonDetailScore = new ArrayList<>();
+		
+		commonDetailScore.add(Arrays.asList(
+				KnowledgeSubSection.BASIC.toString(), 
+				String.valueOf(report.getKnowledgeCommonBasic() * 10)));
+		commonDetailScore.add(Arrays.asList(
+				KnowledgeSubSection.INVEST_RULE.toString(), 
+				String.valueOf(report.getKnowledgeCommonRule() * 10)));
+		commonDetailScore.add(Arrays.asList(
+				KnowledgeSubSection.PROFIT_GUARANTEED.toString(), 
+				String.valueOf(report.getKnowledgeCommonProfit() * 10)));
+		
+		List<List<String>> actualDetailScore = new ArrayList<>();
+		
+		actualDetailScore.add(Arrays.asList(
+				KnowledgeSection.PRICE_CHANGE.toString(), 
+				String.valueOf((int)(changeScore / 24. * 100))));
+		actualDetailScore.add(Arrays.asList(
+				KnowledgeSection.SELL_WAY.toString(), 
+				String.valueOf((int)(sellScore / 24. * 100))));
+		actualDetailScore.add(Arrays.asList(
+				KnowledgeSection.TYPE_SELECT.toString(), 
+				String.valueOf((int)(typeScore / 24. * 100))));
 				
 		
 		commonCommentInfo.put("name", "투자 기초");
 		//commonCommentInfo.put("main", "");
 		commonCommentInfo.put("detail", basicCommentList[commonIdx]);
 		commonCommentInfo.put("score", stretchCommonScore);
+		commonCommentInfo.put("detailScoreList", commonDetailScore);
 		
 		actualCommentInfo.put("name", "투자 실전");
 		//actualCommentInfo.put("main", "");
 		actualCommentInfo.put("detail", actualCommentList[actualIdx]);
 		actualCommentInfo.put("score", stretchActualScore);
+		actualCommentInfo.put("detailScoreList", actualDetailScore);
 		
 		result.add(commonCommentInfo);
 		result.add(actualCommentInfo);
@@ -326,6 +418,8 @@ public class DiagnosisComment {
 		return result;
 	}
 	
+	
+	@Deprecated
 	public List<String> makeSimilarTypeInfo(int riskScore, int investScore, int knowledgeScore) {
 		List<String> res = new ArrayList<>();
 		

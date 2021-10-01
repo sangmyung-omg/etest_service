@@ -1,7 +1,6 @@
 package com.tmax.eTest.Report.service;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,16 +12,15 @@ import org.springframework.stereotype.Service;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.tmax.eTest.LRS.dto.GetStatementInfoDTO;
 import com.tmax.eTest.LRS.dto.StatementDTO;
 import com.tmax.eTest.LRS.util.LRSAPIManager;
 import com.tmax.eTest.Report.dto.DiagnosisRecordMainDTO;
 import com.tmax.eTest.Report.dto.RecommendVideoDTO;
 import com.tmax.eTest.Report.exception.ReportBadRequestException;
 import com.tmax.eTest.Report.util.SNDCalculator;
+import com.tmax.eTest.Report.util.StateAndProbProcess;
 import com.tmax.eTest.Report.util.DiagnosisComment;
 import com.tmax.eTest.Common.model.report.DiagnosisReport;
-import com.tmax.eTest.Common.model.report.DiagnosisReportKey;
 import com.tmax.eTest.Common.model.video.Video;
 import com.tmax.eTest.Common.model.video.VideoBookmarkId;
 import com.tmax.eTest.Common.repository.report.DiagnosisReportRepo;
@@ -47,6 +45,8 @@ public class DiagnosisMainRecordService {
 	VideoRepository videoRepo;
 	@Autowired
 	VideoBookmarkRepository videoBookmarkRepo;
+	@Autowired
+	StateAndProbProcess probProcessor;
 
 	@Autowired
 	DiagnosisComment commentGenerator;
@@ -70,12 +70,12 @@ public class DiagnosisMainRecordService {
 			if(reportOpt.isPresent())
 			{
 				DiagnosisReport report = reportOpt.get();
-				List<StatementDTO> statements = getDiagnosisInfo(probSetId);
+				List<StatementDTO> KnowledgeStatements = probProcessor.getDiagnosisKnowledgeProbInfo(probSetId);
 				
-				if(statements.size() < 0 && id == null)
+				if(KnowledgeStatements.size() < 0 && id == null)
 					throw new ReportBadRequestException("Nonmember's probSetId not available in getDiagnosisRecordMain. " + probSetId);
 				else
-					userId = statements.get(0).getUserId();
+					userId = KnowledgeStatements.get(0).getUserId();
 				
 				Map<String, Integer> percentList = new HashMap<>();
 				percentList.put("gi", 
@@ -86,11 +86,6 @@ public class DiagnosisMainRecordService {
 					sndCalculator.calculatePercentage(SNDCalculator.Type.DIAG_INVEST, report.getInvestScore()));
 				percentList.put("knowledge", 
 					sndCalculator.calculatePercentage(SNDCalculator.Type.DIAG_KNOWLEDGE, report.getKnowledgeScore()));
-				
-				List<String> similarTypeInfo = commentGenerator.makeSimilarTypeInfo(
-						report.getRiskScore(), 
-						report.getInvestScore(), 
-						report.getKnowledgeScore());
 				
 				String nickName = "비회원";
 				
@@ -106,8 +101,9 @@ public class DiagnosisMainRecordService {
 						report, 
 						percentList, 
 						getRecommendVideoMap(userId, report),
-						similarTypeInfo,
-						getIsAlarm(statements),
+						getCommentInfo(report),
+						getProbInfo(KnowledgeStatements),
+						getIsAlarm(KnowledgeStatements),
 						nickName);
 			}
 			else
@@ -117,6 +113,39 @@ public class DiagnosisMainRecordService {
 		return result;
 	}
 	
+	private Map<String, Object> getProbInfo(List<StatementDTO> knowledgeProbStatement)
+	{
+		Map<String, Object> probInfos = new HashMap<>();
+		
+		try {
+			probInfos = probProcessor.getProbInfoInRecordDTO(knowledgeProbStatement);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return probInfos;
+	}
+	
+	private Map<String, String> getCommentInfo(DiagnosisReport report)
+	{
+		Map<String, String> result = new HashMap<>();
+		
+		Map<String, String> riskMainComment = commentGenerator.makeRiskMainComment(
+				report.getRiskProfileScore(), 
+				report.getRiskTracingScore());
+		Map<String, String> investMainComment = commentGenerator.makeInvestMainComment(
+				report.getInvestProfileScore(), 
+				report.getInvestTracingScore());
+		Map<String, String> knowledgeMainComment = commentGenerator.makeKnowledgeMainComment(
+				report.getKnowledgeScore());
+		
+		result.put("risk", riskMainComment.get("main"));
+		result.put("invest", investMainComment.get("main"));
+		result.put("knowledge", knowledgeMainComment.get("main"));
+		
+		return result;
+	}
 	
 	private Map<String, List<RecommendVideoDTO>> getRecommendVideoMap(String userId, DiagnosisReport report) throws Exception
 	{
@@ -222,46 +251,12 @@ public class DiagnosisMainRecordService {
 			{
 				log.info("Statement Extension Json Parse Fail in getIsAlarm - "+extJsonStr);
 			}
-			
-			
 		}
 		
 		if(checkAlarm >= 3)
 			result = true;
 		
 		return result;
-	}
-	
-	
-	
-	private List<StatementDTO> getDiagnosisInfo(String probSetId) 
-			throws Exception {
-
-		GetStatementInfoDTO input = new GetStatementInfoDTO();
-		
-		if (probSetId != null)
-			input.pushExtensionStr(probSetId);
-		input.pushActionType("submit");
-		input.pushSourceType("diagnosis");
-		input.pushSourceType("diagnosis_pattern");
-		
-		List<StatementDTO> result = new ArrayList<>();
-		
-		try
-		{
-			result = lrsAPIManager.getStatementList(input);
-		}
-		catch(Exception e)
-		{
-			throw new ReportBadRequestException("Exception in Diagnosis Report, get statement part.", e);
-		}
-		
-		log.info(result.size()+"    "+result.toString());
-		
-
-		return result;
-
-	}
-	
+	}	
 
 }
