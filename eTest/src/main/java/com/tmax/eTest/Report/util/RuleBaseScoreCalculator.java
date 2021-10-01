@@ -236,7 +236,7 @@ public class RuleBaseScoreCalculator {
 		res.put(ScoreKey.RISK_TRACING.toString(), riskTracingScore);
 		res.put(ScoreKey.RISK_PROFILE.toString(), riskProfileScore);
 		res.put(RiskProfile.CAPACITY.toString(), riskCapaScore);
-		res.put(RiskProfile.LEVEL.toString(), riskProfileScore);
+		res.put(RiskProfile.LEVEL.toString(), riskLevelScore);
 
 		return res;
 	}

@@ -73,8 +73,6 @@ public class DiagnosisRecommend {
 				DiagnosisCurriculum curriculum = prob.getDiagnosisInfo().getCurriculum();
 				String sectionName = curriculum.getSection();
 				
-				log.info(prob.getProbID()+" "+prob.getDiagnosisInfo().getCurriculumId()+" "+sectionName);
-				
 				if(sectionName.equals(KnowledgeSection.BASIC.toString()))
 					commonProbChoiceInfo.add(probInfo);
 				else if(sectionName.equals(KnowledgeSection.TYPE_SELECT.toString()))
