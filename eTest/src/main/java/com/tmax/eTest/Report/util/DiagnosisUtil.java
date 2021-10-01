@@ -150,8 +150,8 @@ public class DiagnosisUtil {
 	// Knowledge Detail
 	
 	public enum KnowledgeSection{
-		BASIC("투자 기초"),
-		TYPE_SELECT("종목 고르기"),
+		BASIC("투자기초"),
+		TYPE_SELECT("종목고르기"),
 		PRICE_CHANGE("가격 변동 특징"),
 		SELL_WAY("매매방법");
 		
