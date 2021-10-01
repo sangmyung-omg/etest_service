@@ -55,16 +55,21 @@ public class FileController {
       mimeType = "application/octet-stream";
     log.info("MimeType: " + mimeType);
 
+    // System.out.println("Executable: " + file.canExecute());
+    // System.out.println("Readable: " + file.canRead());
+    // System.out.println("Writable: " + file.canWrite());
+
     // Path path = Paths.get(downloadFile.getAbsolutePath());
     // ByteArrayResource resource = new ByteArrayResource(Files.readAllBytes(path));
 
-    // return ResponseEntity.ok().header("Content-Disposition", "attachment;
-    // filename=" + filename)
-    // .contentLength(downloadFile.length()).contentType(MediaType.parseMediaType(mimeType)).body(resource);
+    // return
+    // ResponseEntity.ok().contentLength(downloadFile.length()).contentType(MediaType.parseMediaType(mimeType))
+    // .body(resource);
 
     response.setContentType(mimeType);
     response.setContentLength(fileSize);
-    response.setHeader("Content-Disposition", "attachment; filename=" + filename);
+    // response.setHeader("Content-Disposition", "attachment; filename=" +
+    // filename);
 
     // start download stream
     StreamUtils.copy(inputStream, response.getOutputStream());
