@@ -21,95 +21,7 @@ tags:
   description: 이해도 모델 업데이트 관련
 
 paths:
-  /contents/v0/problems/{probId}:
-    get:
-      tags:
-        - Problem
-      summary: 문제 정보 받아오기
-      description: 문제 정보를 받아옵니다.
-      parameters:
-        - $ref: "#/components/parameters/probId"
-      responses:
-        200:
-          description: OK
-          content:
-            json:
-              schema:
-                type: object
-                example:
-                  message: Successfully returned
-                  data:
-                    answerType: 'MULTIPLE_CHOICE'
-                    question: '[{"data":"시중금리의 변화로 <보기>의 (    ) 안에 들어갈 말을 순서대로 올바르게 나열한 것은?","type":"QUESTION_TEXT"},{"data":"경기하락예상 → (       ),\n통화긴축정책 → (       ),\n확장적 재정정책 → (       ),\n주식시장 상승 → (       )","type":"PREFACED_EXAMPLE_BOX_TEXT","dateType":"text","preface":"null"},{"type":"MULTIPLE_CHOICE_TEXT","dateType":"text","data":["금리 하락, 상승, 상승, 상승","금리 하락, 하락, 상승, 상승","금리 하락, 상승, 하락, 상승","금리 하락, 상승, 하락, 하락"]}]'
-                    difficulty: 상/중/하
-        400:
-          description: Data not found
-          content:
-            json:
-              schema:
-                type: object
-                example:
-                  message: 'Failed: {id}에 해당하는 데이터가 없습니다'
-                  data: {}
-  /contents/v1/problems/{probId}/temp0:
-    get:
-      tags:
-        - Problem
-      summary: 파싱된 문제 정보 받아오기
-      description: 문제 정보를 받아옵니다.
-      parameters:
-        - $ref: "#/components/parameters/probId"
-      responses:
-        200:
-          description: data의 각 필드들은 그 문제에 존재하지 않는 컴포넌트이면 빈 리스트로 반환
-          content:
-            json:
-              schema:
-                type: object
-                example:
-                  message: "Successfully returned"
-                  answerType: MULTIPLE_CHOICE
-                  componentTypeList: 
-                    - "QUESTION_TEXT"
-                    - "EXAMPLE_BOX_TEXT"
-                    - "QUESTION_TEXT"
-                    - "MULTIPLE_CHOICE_TEXT"
-                  questionText: 
-                    - 일차방정식의 풀이 과정은 다음과 같다.
-                    - 다음 중 올바른 설명은?
-                  exampleBoxText:
-                    - 미지수 x를 포함하는 항은 좌변, 이외의 모든 항은 우변으로 이항한다.
-                    - 좌변과 우변의 항을 정리한다.
-                    - x의 값을 구한다.
-                  multipleChoiceText: 
-                    - (가)의 과정에서 ${x/2}는 좌변으로 이항한다.
-                    - (나)의 과정에서 좌변과 우변은 각각 한 개의 항으로만 이루어진다.
-                    - (다)의 과정에서 x는 좌변에만 위치해야 한다.
-                  questionImage:
-                    - "assets/img_1.png"
-                  multipleChoiceImage:
-                    - "assets/img_2.png"
-                    - "assets/img_3.png"
-                    - "assets/img_4.png"
-                    - "assets/img_5.png"
-                    - "assets/img_6.png"
-                  exampleBoxImage:
-                    - "assets/img_7.png"
-                    - "assets/img_8.png"
-                    - "assets/img_9.png"
-                  preface: (가)
-                  shortAnswerText: 1
-                  difficulty: 상/중/하
-        400:
-          description: Data not found
-          content:
-            json:
-              schema:
-                type: object
-                example:
-                  message: 'Failed: {id}에 해당하는 데이터가 없습니다'
-                  data: {}
-  /contents/v1/problems/{probId}/temp1:
+  /contents/v1/problems/{probId}:
     get:
       tags:
         - Problem
@@ -171,23 +83,7 @@ paths:
             json:
               schema:
                 $ref: "#/components/schemas/answerCheckResult"
-  /contents/v1/problems/{setId}/solution:
-    get:
-      tags:
-        - Problem
-      summary: 해설 받아오기
-      description: 특정 진단 세트 ID 에 해당하는 풀이 이력을 조회해서, 문제 해설과 유저가 선택한 정답 정보 반환
-      parameters:
-        # - $ref: "#/components/parameters/probIds"
-        - $ref: "#/components/parameters/setId"
-      responses:
-        200:
-          description: OK
-          content:
-            json:
-              schema:
-                $ref: "#/components/schemas/solutionResult"
-  /contents/v2/problems/{setId}/solution/temp1:
+  /contents/v2/problems/{setId}/solution:
     get:
       tags:
         - Problem
@@ -202,34 +98,6 @@ paths:
             json:
               schema:
                 $ref: "#/components/schemas/parsedSolutionResult"
-  /contents/v0/problems/error/report:
-    post:
-      tags:
-        - Problem
-      summary : DB에 오류 보고 저장하기
-      description : 문제 번호와 유저 아이디, 신고 유형, 오류에 대한 설명을 DB에 저장합니다.
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              example:
-                problem_id: "문제 아이디"
-                id: "유저 아이디"
-                report_type: "신고 유형(QUESTION_ERROR/PASSAGE_ERROR)"
-                report_text: "신고 내용"
-
-  
-      responses:
-        200:
-          description: Successfully saved
-          content:
-            json:
-              schema:
-                type: object
-                example:
-                  message: success
   /contents/v2/quit:
     post:
       tags:
@@ -247,7 +115,6 @@ paths:
             json:
               schema:
                 $ref: "#/components/schemas/answerCheckResult"
-        
   /test/v1/diagnosis:
     get:
       tags: [Test]

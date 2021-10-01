@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.tmax.eTest.Common.model.problem.Problem;
 import com.tmax.eTest.Contents.dto.answer.CustomizedSolutionDTO;
-import com.tmax.eTest.Contents.dto.answer.Temp1SolutionDTO;
+import com.tmax.eTest.Contents.dto.answer.SolutionDTO;
 import com.tmax.eTest.Contents.exception.problem.NoDataException;
 import com.tmax.eTest.Contents.repository.ProblemChoiceRepository;
 import com.tmax.eTest.Contents.repository.ProblemRepository;
@@ -66,7 +66,7 @@ public class AnswerServicesV0 implements AnswerServicesBase {
 		return null;
 	}
 
-	public Map<Integer, Temp1SolutionDTO> getParsedMultipleSolutions(List<Integer> probIdLisT) {
+	public Map<Integer, SolutionDTO> getParsedMultipleSolutions(List<Integer> probIdLisT) {
 		return null;
 	}
 }

@@ -18,7 +18,7 @@ import org.json.simple.JSONObject;
 
 import com.tmax.eTest.Common.model.problem.Problem;
 import com.tmax.eTest.Contents.dto.answer.CustomizedSolutionDTO;
-import com.tmax.eTest.Contents.dto.answer.Temp1SolutionDTO;
+import com.tmax.eTest.Contents.dto.answer.SolutionDTO;
 import com.tmax.eTest.Contents.dto.problem.ComponentDTO;
 import com.tmax.eTest.Contents.exception.problem.NoDataException;
 import com.tmax.eTest.Contents.repository.ProblemChoiceRepository;
@@ -120,12 +120,12 @@ public class AnswerServicesV1 implements AnswerServicesBase {
 		return solutionMap;
 	}
 
-	public Map<Integer, Temp1SolutionDTO> getParsedMultipleSolutions(List<Integer> probIdList) {
+	public Map<Integer, SolutionDTO> getParsedMultipleSolutions(List<Integer> probIdList) {
 		log.info("Getting multiple solution infos......");
 		List<Problem> probList = problemRepo.findByProbIDIn(probIdList);
-		Map<Integer, Temp1SolutionDTO> solutionMap = new HashMap<Integer, Temp1SolutionDTO>();
+		Map<Integer, SolutionDTO> solutionMap = new HashMap<Integer, SolutionDTO>();
 		for (Problem dto : probList) {
-			Temp1SolutionDTO solutionInfo = new Temp1SolutionDTO();
+			SolutionDTO solutionInfo = new SolutionDTO();
 			int probId = dto.getProbID();
 			solutionInfo.setProbId(probId);
 			solutionInfo.setMaterial(dto.getSource());

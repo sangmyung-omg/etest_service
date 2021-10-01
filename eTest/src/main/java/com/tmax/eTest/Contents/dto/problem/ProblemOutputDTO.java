@@ -5,7 +5,7 @@ import java.util.List;
 import lombok.Data;
 
 @Data
-public class Temp1ProblemOutputDTO {
+public class ProblemOutputDTO {
     private String message;
     private String answerType;
     private List<ComponentDTO> components;

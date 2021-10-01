@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.tmax.eTest.Common.model.problem.Problem;
 import com.tmax.eTest.Common.model.report.DiagnosisReport;
 
 import lombok.Data;
@@ -25,16 +24,20 @@ public class DiagnosisRecordMainDTO {
 
 	// 점수 관련
 	Map<String, Object> scoreInfo = new HashMap<>();
-	List<String> similarTypeInfo = new ArrayList<>();
 
-	// Video 관련
-	Map<String, List<RecommendVideoDTO>> video = new HashMap<>();
+	// 문제 정보
+	Map<String, Object> problemCorrectInfo = new HashMap<>();
+	List<List<String>> problemHighLevelInfo = new ArrayList<>();
+	List<List<String>> problemMiddleLevelInfo = new ArrayList<>();
+	List<List<String>> problemLowLevelInfo = new ArrayList<>();
 	
+	@SuppressWarnings("unchecked")
 	public boolean pushInfoByReport(
 			DiagnosisReport report, 
 			Map<String, Integer> percentageInfo,
 			Map<String, List<RecommendVideoDTO>> recVideoMap,
-			List<String> similarTypeInfo,
+			Map<String, String> commentInfo,
+			Map<String, Object> probInfos,
 			boolean isAlarm,
 			String nickName)
 	{
@@ -43,27 +46,33 @@ public class DiagnosisRecordMainDTO {
 		giScore = report.getGiScore();
 		giPercentage = percentageInfo.get("gi");
 		
-		Map<String, Integer> riskScoreInfo = new HashMap<>();
-		Map<String, Integer> investScoreInfo = new HashMap<>();
-		Map<String, Integer> knowledgeScoreInfo = new HashMap<>();
+		Map<String, Object> riskScoreInfo = new HashMap<>();
+		Map<String, Object> investScoreInfo = new HashMap<>();
+		Map<String, Object> knowledgeScoreInfo = new HashMap<>();
 		
 		riskScoreInfo.put("score", report.getRiskScore());
 		riskScoreInfo.put("percentage", percentageInfo.get("risk"));
+		riskScoreInfo.put("comment", commentInfo.get("risk"));
 		
 		investScoreInfo.put("score", report.getInvestScore());
 		investScoreInfo.put("percentage", percentageInfo.get("invest"));
+		investScoreInfo.put("comment", commentInfo.get("invest"));
 		
 		knowledgeScoreInfo.put("score", report.getKnowledgeScore());
 		knowledgeScoreInfo.put("percentage", percentageInfo.get("knowledge"));
+		knowledgeScoreInfo.put("comment", commentInfo.get("knowledge"));
 		
 		scoreInfo.put("risk", riskScoreInfo);
 		scoreInfo.put("invest", investScoreInfo);
 		scoreInfo.put("knowledge", knowledgeScoreInfo);
 		
-		this.similarTypeInfo = similarTypeInfo;
 		this.alarm = isAlarm;
 		this.userName = nickName;
-		this.video = recVideoMap;
+		
+		problemCorrectInfo = (Map<String, Object>) probInfos.get("problemCorrectInfo");
+		problemHighLevelInfo = (List<List<String>>) probInfos.get("problemHighLevelInfo");
+		problemMiddleLevelInfo = (List<List<String>>) probInfos.get("problemMiddleLevelInfo");
+		problemLowLevelInfo = (List<List<String>>) probInfos.get("problemLowLevelInfo");
 		
 		if(giScore <= 70)
 			this.giComment = "자가진단을 통해 분석된 GI 지수에요. 아는만큼 길이 보이는 법입니다. "
@@ -97,26 +106,6 @@ public class DiagnosisRecordMainDTO {
 		scoreInfo.put("risk", riskScoreInfo);
 		scoreInfo.put("invest", investScoreInfo);
 		scoreInfo.put("knowledge", knowledgeScoreInfo);
-		
-		similarTypeInfo.add("15%");
-		similarTypeInfo.add("5종목");
-		similarTypeInfo.add("40%");
-		
-		List<RecommendVideoDTO> recList = new ArrayList<>();
-		RecommendVideoDTO recDto = new RecommendVideoDTO();
-		recDto.setBookmark(false);
-		recDto.setHit(30);
-		recDto.setTitle("더미 비디오");
-		recDto.setTotalTime(75.f);
-		recDto.setVideoSrcUrl("dummySrcUrl");
-		recDto.setTitle("dummyTitle");
-		recDto.setThumbnailUrl("dummyThumbUrl");
-		
-		recList.add(recDto);
-		
-		video.put("basic", recList);
-		video.put("type", recList);
-		video.put("advanced", recList);
 		
 		return true;
 	}

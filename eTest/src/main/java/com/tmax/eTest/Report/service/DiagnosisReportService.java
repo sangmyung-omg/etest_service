@@ -33,6 +33,15 @@ import com.tmax.eTest.Report.util.RuleBaseScoreCalculator;
 import com.tmax.eTest.Report.util.SNDCalculator;
 import com.tmax.eTest.Report.util.DiagnosisComment;
 import com.tmax.eTest.Report.util.DiagnosisRecommend;
+import com.tmax.eTest.Report.util.DiagnosisUtil;
+import com.tmax.eTest.Report.util.DiagnosisUtil.InvestProfile;
+import com.tmax.eTest.Report.util.DiagnosisUtil.InvestTracing;
+import com.tmax.eTest.Report.util.DiagnosisUtil.KnowledgeSection;
+import com.tmax.eTest.Report.util.DiagnosisUtil.KnowledgeSubSection;
+import com.tmax.eTest.Report.util.DiagnosisUtil.RiskProfile;
+import com.tmax.eTest.Report.util.DiagnosisUtil.RiskTracing;
+import com.tmax.eTest.Report.util.DiagnosisUtil.ScoreKey;
+import com.tmax.eTest.Report.util.DiagnosisUtil.TendencySection;
 import com.tmax.eTest.Report.util.StateAndProbProcess;
 import com.tmax.eTest.Report.util.TritonAPIManager;
 import com.tmax.eTest.Report.util.UKScoreCalculator;
@@ -76,23 +85,6 @@ public class DiagnosisReportService {
 	SNDCalculator sndCalculator;
 	@Autowired
 	DiagnosisRecommend recommendGenerator;
-	
-//	public void test()
-//	{
-//		GetStatementInfoDTO dto = GetStatementInfoDTO.builder()
-//				.dateFromObj(Timestamp.valueOf("2021-09-01 09:00:00.0"))
-//				.dateToObj(Timestamp.valueOf("2021-09-25 09:00:00.0") )
-//				.build();
-//		
-//		try {
-//			List<StatementDTO> list = lrsAPIManager.getStatementList(dto);
-//			log.info(list.size());
-//			log.info(list.toString());
-//		} catch (ParseException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//	}
 	
 	public boolean saveDiagnosisResult(
 			String id, 
@@ -215,42 +207,57 @@ public class DiagnosisReportService {
 			float avgUkMastery)
 	{
 		
-
 		int investItemNum = 0, stockRatio = 0, investPeriod = 0;
 		
-		int[] investItemNumList = {2, 5, 7, 10};
-		int[] investStockRatioList = {5, 20, 40, 55};
+		int[] investItemNumList = {16, 11, 5, 2};
+		int[] investStockRatioList = {20, 40, 60, 80};
 		
-		if(scoreMap.get(RuleBaseScoreCalculator.STOCK_NUM_ANS) != null
-				&& scoreMap.get(RuleBaseScoreCalculator.STOCK_NUM_ANS) < investItemNumList.length)
-			investItemNum = investItemNumList[scoreMap.get(RuleBaseScoreCalculator.STOCK_NUM_ANS)];
+		if(scoreMap.get(RiskTracing.STOCK_NUM.toString()) != null
+				&& scoreMap.get(RiskTracing.STOCK_NUM.toString()) < investItemNumList.length)
+			investItemNum = investItemNumList[scoreMap.get(RiskTracing.STOCK_NUM.toString())];
 		
-		if(scoreMap.get(RuleBaseScoreCalculator.STOCK_RATIO_ANS) != null
-				&& scoreMap.get(RuleBaseScoreCalculator.STOCK_RATIO_ANS) < investStockRatioList.length)
-			stockRatio = investStockRatioList[scoreMap.get(RuleBaseScoreCalculator.STOCK_RATIO_ANS)];
+		if(scoreMap.get(RiskTracing.STOCK_RATIO.toString()) != null
+				&& scoreMap.get(RiskTracing.STOCK_RATIO.toString()) < investStockRatioList.length)
+			stockRatio = investStockRatioList[scoreMap.get(RiskTracing.STOCK_RATIO.toString())];
 		
-		if(scoreMap.get(RuleBaseScoreCalculator.STOCK_PERIOD_ANS) != null)
-			investPeriod = scoreMap.get(RuleBaseScoreCalculator.STOCK_PERIOD_ANS);
+		if(scoreMap.get(RiskTracing.STOCK_PERIOD.toString()) != null)
+			investPeriod = scoreMap.get(RiskTracing.STOCK_PERIOD.toString());
 		
 		DiagnosisReport report = DiagnosisReport.builder()
 				.diagnosisId((probSetId == null)
 						? UUID.randomUUID().toString()
 						: probSetId)
 				.userUuid(id)
-				.giScore(scoreMap.get(RuleBaseScoreCalculator.GI_SCORE_KEY))
-				.riskScore(scoreMap.get(RuleBaseScoreCalculator.RISK_SCORE))
-				.riskProfileScore(scoreMap.get(RuleBaseScoreCalculator.RISK_PROFILE_SCORE))
-				.riskTracingScore(scoreMap.get(RuleBaseScoreCalculator.RISK_TRACING_SCORE))
-				.riskLevelScore(scoreMap.get(RuleBaseScoreCalculator.RISK_PROFILE_LEVEL))
-				.riskCapaScore(scoreMap.get(RuleBaseScoreCalculator.RISK_PROFILE_CAPA))
-				.investScore(scoreMap.get(RuleBaseScoreCalculator.INVEST_SCORE))
-				.investProfileScore(scoreMap.get(RuleBaseScoreCalculator.INVEST_PROFILE))
-				.investTracingScore(scoreMap.get(RuleBaseScoreCalculator.INVEST_TRACING))
-				.knowledgeScore(scoreMap.get(RuleBaseScoreCalculator.KNOWLEDGE_SCORE))
-				.knowledgeCommonScore(scoreMap.get(RuleBaseScoreCalculator.KNOWLEDGE_COMMON))
-				.knowledgeChangeScore(scoreMap.get(RuleBaseScoreCalculator.KNOWLEDGE_CHANGE))
-				.knowledgeSellScore(scoreMap.get(RuleBaseScoreCalculator.KNOWLEDGE_SELL))
-				.knowledgeTypeScore(scoreMap.get(RuleBaseScoreCalculator.KNOWLEDGE_TYPE))
+				.giScore(scoreMap.get(ScoreKey.GI.toString()))
+				.riskScore(scoreMap.get(ScoreKey.RISK.toString()))
+				.riskProfileScore(scoreMap.get(ScoreKey.RISK_PROFILE.toString()))
+				.riskLevelScore(scoreMap.get(RiskProfile.LEVEL.toString()))
+				.riskCapaScore(scoreMap.get(RiskProfile.CAPACITY.toString()))
+				.riskTracingScore(scoreMap.get(ScoreKey.RISK_TRACING.toString()))
+				.riskInvestPeriodScore(scoreMap.get(RiskTracing.STOCK_PERIOD.toString()))
+				.riskStockRatioScore(scoreMap.get(RiskTracing.STOCK_RATIO.toString()))
+				.riskStockNumScore(scoreMap.get(RiskTracing.STOCK_NUM.toString()))
+				.riskStockPreferScore(scoreMap.get(RiskTracing.STOCK_PREFER.toString()))
+				.investScore(scoreMap.get(ScoreKey.INVEST.toString()))
+				.investProfileScore(scoreMap.get(TendencySection.INVEST_PROFILE.toString()))
+				.investAnchorScore(scoreMap.get(InvestProfile.BIAS_ANCHOR.toString()))				/// 임시
+				.investSelfScore(scoreMap.get(InvestProfile.BIAS_SELF.toString()))
+				.investLossScore(scoreMap.get(InvestProfile.BIAS_LOSS.toString()))
+				.investConfirmScore(scoreMap.get(InvestProfile.BIAS_CONFIRM.toString()))
+				.investCrownScore(scoreMap.get(InvestProfile.BIAS_CROWN.toString()))
+				.investTracingScore(scoreMap.get(TendencySection.INVEST_TRACING.toString()))
+				.investMethodScore(scoreMap.get(InvestTracing.RULE_METHOD.toString()))
+				.investSellScore(scoreMap.get(InvestTracing.RULE_SELL.toString()))
+				.investPortfolioScore(scoreMap.get(InvestTracing.RULE_PORTFOLIO.toString()))
+				.investInfoScore(scoreMap.get(InvestTracing.RULE_INFO.toString()))
+				.knowledgeScore(scoreMap.get(ScoreKey.KNOWLEDGE.toString()))
+				.knowledgeCommonScore(scoreMap.get(KnowledgeSection.BASIC.toString()))
+				.knowledgeCommonBasic(scoreMap.get(KnowledgeSubSection.BASIC.toString()))
+				.knowledgeCommonProfit(scoreMap.get(KnowledgeSubSection.PROFIT_GUARANTEED.toString()))
+				.knowledgeCommonRule(scoreMap.get(KnowledgeSubSection.INVEST_RULE.toString()))
+				.knowledgeChangeScore(scoreMap.get(KnowledgeSection.PRICE_CHANGE.toString()))
+				.knowledgeSellScore(scoreMap.get(KnowledgeSection.SELL_WAY.toString()))
+				.knowledgeTypeScore(scoreMap.get(KnowledgeSection.TYPE_SELECT.toString()))
 				.recommendBasicList(recommendLists.get(0).toString())
 				.recommendAdvancedList(recommendLists.get(1).toString())
 				.recommendTypeList(recommendLists.get(2).toString())
