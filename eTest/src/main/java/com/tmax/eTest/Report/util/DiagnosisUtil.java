@@ -78,7 +78,7 @@ public class DiagnosisUtil {
 	
 	// Risk Profile Detail
 	public enum RiskProfile{
-		CAPACITY("리스크 수용크기"),
+		CAPACITY("리스크 감내역량"),
 		LEVEL("리스크 감내수준");
 		
 		private String value;
