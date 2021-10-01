@@ -69,13 +69,13 @@ public class RuleBaseScoreCalculator {
 				String chapter = curriculum.getChapter();
 				String section = curriculum.getSection();
 				String subSection = curriculum.getSubSection();
-				int ansScore = getProbScoreByAnswerNum(prob, probInfo.getSecond());
 				
 				if(chapter.equals(Chapter.KNOWLEDGE.toString()))
 				{
 					if(section.equals(KnowledgeSection.BASIC.toString()))
 					{
 						knowledgeBasicProb.add(probInfo);
+						int ansScore = getKnowledgeCommonScore(probInfo);
 						res.put(subSection, ansScore);
 					}
 					else if(section.equals(KnowledgeSection.TYPE_SELECT.toString()))
@@ -89,10 +89,11 @@ public class RuleBaseScoreCalculator {
 				}
 				else // 성향
 				{
+					int ansScore = getProbScoreByAnswerNum(prob, probInfo.getSecond());
 					if(section.equals(TendencySection.RISK_TRACING.toString()))
 						riskTracingProb.add(probInfo);
 					else if(section.equals(TendencySection.RISK_PROFILE.toString()))
-						if(curriculum.getSubSection().equals("리스크 감내역량"))
+						if(curriculum.getSubSection().equals(RiskProfile.CAPACITY.toString()))
 							riskPatiProb.add(probInfo);
 						else
 							riskLevelProb.add(probInfo);
@@ -154,6 +155,41 @@ public class RuleBaseScoreCalculator {
 	
 		
 		return res;
+	}
+	
+	private int getKnowledgeCommonScore(Pair<Problem, Integer> probInfo)
+	{
+		int result = 0;
+		
+		int scoreMap[] = 
+			{8, 6, 4, // 정답
+			5, 3, 2}; // 오답
+
+		Problem prob = probInfo.getFirst();
+		int choice = probInfo.getSecond();
+		
+		JsonArray solution = JsonParser.parseString(prob.getSolution()).getAsJsonArray();
+		
+		for(int i = 0; i < solution.size(); i++)
+		{
+			JsonObject jo = solution.get(i).getAsJsonObject();
+			
+			if(jo.get("type") != null && jo.get("data") != null &&
+				jo.get("type").getAsString().equals("MULTIPLE_CHOICE_CORRECT_ANSWER"))
+			{
+				
+				int answer = jo.get("data").getAsInt();
+				int idx = choice == answer ? 0 : 3;
+				idx += prob.getDifficulty().equals("상") ? 0 
+					: prob.getDifficulty().equals("중") ? 1 
+					: 2;					// 하
+				
+				result = scoreMap[idx];
+				break;
+			}
+		}
+		
+		return result;
 	}
 	
 	private int getProbScoreByAnswerNum(Problem prob, int answerNum)
@@ -232,37 +268,10 @@ public class RuleBaseScoreCalculator {
 	private int calculateKnowledgePartScore(List<Pair<Problem, Integer>> probList)
 	{
 		int result = 0;
-		int scoreMap[] = 
-			{8, 6, 4, // 정답
-			5, 3, 2}; // 오답
 		
 		for(Pair<Problem, Integer> probInfo : probList)
 		{
-			Problem prob = probInfo.getFirst();
-			int choice = probInfo.getSecond();
-			
-			JsonArray solution = JsonParser.parseString(prob.getSolution()).getAsJsonArray();
-			
-			for(int i = 0; i < solution.size(); i++)
-			{
-				JsonObject jo = solution.get(i).getAsJsonObject();
-				
-				if(jo.get("type") != null && jo.get("data") != null &&
-					jo.get("type").getAsString().equals("MULTIPLE_CHOICE_CORRECT_ANSWER"))
-				{
-					
-					int answer = jo.get("data").getAsInt();
-					int idx = choice == answer ? 0 : 3;
-					idx += prob.getDifficulty().equals("상") ? 0 
-						: prob.getDifficulty().equals("중") ? 1 
-						: 2;					// 하
-					
-					result += scoreMap[idx];
-					
-					break;
-				}
-				
-			}
+			result += getKnowledgeCommonScore(probInfo);
 		}
 		
 		return result;
