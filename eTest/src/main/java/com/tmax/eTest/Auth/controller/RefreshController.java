@@ -57,12 +57,13 @@ public class RefreshController {
                     Optional<UserMaster> userMasterOptional = userRepository.findByEmail(email);
                     UserMaster userMaster = userMasterOptional.get();
                     refreshTokenFromDb = userMasterOptional.get().getRefreshToken();
+                    log.info("rtfrom db: " + refreshTokenFromDb);
                 } catch (IllegalArgumentException e) {
                     log.warn("illegal argument!!");
                 }
                 //둘이 일치하고 만료도 안됐으면 재발급 해주기.
                 if (refreshToken.equals(refreshTokenFromDb) && !jwtTokenUtil.isTokenExpired(refreshToken)) {
-                    Optional<UserMaster> userMasterOptional = userRepository.findByEmail(email);
+                    Optional<UserMaster> userMasterOptional  = userRepository.findByEmail(email);
                     UserMaster userMaster = userMasterOptional.get();
                     PrincipalDetails principal = PrincipalDetails.create(userMaster);
                     String newToken =  jwtTokenUtil.generateAccessToken(principal);

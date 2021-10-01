@@ -19,14 +19,14 @@ public class RequestMapper {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "REQUEST_MAPPER_SEQ_GENERATOR")
     private Long id;
 
-    @Column(name = "method")
-    private String method;
+    @Column(name = "post_method")
+    private String postMethod;
 
-    @Column(name = "controller")
-    private String controller;
+    @Column(name = "request_url")
+    private String requestUrl;
 
-    @Column(name = "name")
-    private String name;
+    @Column(name = "parameter")
+    private String parameter;
 
     @Column(name = "menu")
     private String menu;

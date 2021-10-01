@@ -44,7 +44,7 @@ public class JwtCommonAuthorizationFilter extends BasicAuthenticationFilter {
         // If header does not contain BEARER or is null delegate to Spring impl and exit
         if (header == null || !header.startsWith("Bearer")) {
 
-            logger.info("header가 null이 아니거나 Bearer type이 아닙니다"+header);
+            logger.info("header가 null이거나 Bearer type이 아닙니다"+header);
             chain.doFilter(request, response);
             return;
         }
@@ -56,17 +56,18 @@ public class JwtCommonAuthorizationFilter extends BasicAuthenticationFilter {
     }
 
     private Authentication getUsernamePasswordAuthentication(HttpServletRequest request) {
-        String userUuid = null;
+        String email = null;
         String token = request.getHeader("Authorization")
                 .replace("Bearer ",""); //Bear 다음에 한칸 뛰어야한다
         if (token != null) {
             try {
                 Map<String, Object> parseInfo = jwtTokenUtil.getUserParseInfo(token);
-                userUuid = (String)parseInfo.get("userUuid");
+                email = (String)parseInfo.get("email");
+
             } catch (ExpiredJwtException e) {
             }
-            if (userUuid != null) {
-                Optional<UserMaster> userMasterOptional = userRepository.findByUserUuid(userUuid);
+            if (email != null) {
+                Optional<UserMaster> userMasterOptional = userRepository.findByEmail(email);
                 UserMaster userMaster = userMasterOptional.get();
                 PrincipalDetails principalDetails = PrincipalDetails.create(userMaster);
                 UsernamePasswordAuthenticationToken authentication =

@@ -35,6 +35,13 @@ public class DiagnosisReportRepository extends UserFilterRepository {
                 .fetch();
     }
 
+    // user가 아니라 Diagnosis의 invest period로 filter
+    public BooleanExpression investmentExperienceFilter(int investmentExperience) {
+        if (investmentExperience == 0) {
+            return null;
+        }
+        return diagnosisReport.investPeriod.eq(investmentExperience);
+    }
     private BooleanExpression dateFilter(Timestamp dateFrom, Timestamp dateTo){
         if (dateFrom == null & dateTo == null){
             return null;
