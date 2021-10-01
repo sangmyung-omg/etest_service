@@ -56,18 +56,17 @@ public class JwtCommonAuthorizationFilter extends BasicAuthenticationFilter {
     }
 
     private Authentication getUsernamePasswordAuthentication(HttpServletRequest request) {
-        String email = null;
+        String userUuid = null;
         String token = request.getHeader("Authorization")
                 .replace("Bearer ",""); //Bear 다음에 한칸 뛰어야한다
         if (token != null) {
             try {
                 Map<String, Object> parseInfo = jwtTokenUtil.getUserParseInfo(token);
-                email = (String)parseInfo.get("email");
-
+                userUuid = (String)parseInfo.get("userUuid");
             } catch (ExpiredJwtException e) {
             }
-            if (email != null) {
-                Optional<UserMaster> userMasterOptional = userRepository.findByEmail(email);
+            if (userUuid != null) {
+                Optional<UserMaster> userMasterOptional = userRepository.findByUserUuid(userUuid);
                 UserMaster userMaster = userMasterOptional.get();
                 PrincipalDetails principalDetails = PrincipalDetails.create(userMaster);
                 UsernamePasswordAuthenticationToken authentication =
