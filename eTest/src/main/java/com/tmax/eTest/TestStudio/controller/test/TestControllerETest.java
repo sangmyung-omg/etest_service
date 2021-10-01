@@ -323,6 +323,17 @@ public class TestControllerETest {
 //
 //	}
 //	
+//  파씽 테스트
+//	String test = "[{\"data\": \"'삼성전자 우'에 대한 설명으로 가장 거리가 먼 것은?\", \"type\": \"QUESTION_TEXT\"}, {\"type\": \"MULTIPLE_CHOICE_TEXT\", \"dataType\": \"text\", \"data\": [\"“삼성전자 우”는 삼성전자 주식 중 우선주를 의미한다\", \"“삼성전자 우”를 보유한 주주는 주주총회에 참석하여 안건에 대해 투표할 수 있다\", \"“삼성전자 우”를 보유한 주주는 보통주 주주보다 이익배당에서 우선 순위에 있다\", \"“삼성전자 우”는 보통주보다 일반적으로 배당률이 높은 편이다\"]}]";
+//	JSONParser jsonParser = new JSONParser();
+//	JSONArray jsonArray = (JSONArray) jsonParser.parse(test);
+//	JSONObject jsonObj = (JSONObject) jsonArray.get(1);
+//	String printStr= ( (ArrayList<String>) jsonObj.get("data") ).get(0);
+//	System.out.println( printStr );
+//	JSONObject jsonObj0 = (JSONObject) jsonArray.get(0);
+//	String printStr0= ( String ) jsonObj0.get("data")  ;
+//	System.out.println( printStr0 );
+//	
 //	
 //	
 ///////////////////////////////////////////////////////////////////

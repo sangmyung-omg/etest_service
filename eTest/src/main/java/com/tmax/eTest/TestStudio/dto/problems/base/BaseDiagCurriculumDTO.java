@@ -15,7 +15,7 @@ public class BaseDiagCurriculumDTO {
 	private String section;
 	private String subSection;
 	private String subject;
-	private String setType;
+//	private String setType;    //21.10.01 정책상 제외
 	private String status;
 
 }
