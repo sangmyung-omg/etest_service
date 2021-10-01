@@ -1,9 +1,6 @@
 package com.tmax.eTest.Auth.service;
 
-import com.tmax.eTest.Auth.dto.CMRespDto;
-import com.tmax.eTest.Auth.dto.PrincipalDetails;
-import com.tmax.eTest.Auth.dto.SignUpRequestDto;
-import com.tmax.eTest.Auth.dto.Role;
+import com.tmax.eTest.Auth.dto.*;
 import com.tmax.eTest.Auth.repository.UserRepository;
 import com.tmax.eTest.Common.model.user.UserMaster;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,5 +65,16 @@ public class AuthService {
         userRepository.delete(userMasterOptional.get());
         return "True";
     }
+
+    @Transactional
+    public CMRespDto<?> modifyUserInfo(PrincipalDetails principalDetails, ModifyUserInfoDto modifyUserInfoDto){
+        Optional<UserMaster> userMasterOptional = userRepository.findByUserUuid(principalDetails.getUserUuid());
+        UserMaster userMaster = userMasterOptional.get();
+        userMaster.setNickname(modifyUserInfoDto.getNickname());
+        userMaster.setBirthday(modifyUserInfoDto.getBirthday());
+        userMaster.setEmail(modifyUserInfoDto.getEmail());
+        userMaster.setGender(modifyUserInfoDto.getGender());
+        return new CMRespDto<>(200,"회원정보 수정 성공","성공");
+    };
 
 }
