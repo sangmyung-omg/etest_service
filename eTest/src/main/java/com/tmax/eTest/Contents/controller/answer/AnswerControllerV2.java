@@ -20,12 +20,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.netty.handler.codec.http.HttpRequest;
 import lombok.extern.slf4j.Slf4j;
 
 import com.tmax.eTest.Auth.jwt.JwtTokenUtil;
-import com.tmax.eTest.Contents.dto.answer.CustomizedSolutionDTO;
-import com.tmax.eTest.Contents.dto.answer.Temp1SolutionDTO;
+import com.tmax.eTest.Contents.dto.answer.SolutionDTO;
 import com.tmax.eTest.Contents.dto.problem.AnswerInputDTO;
 import com.tmax.eTest.Contents.service.AnswerServicesBase;
 import com.tmax.eTest.LRS.dto.GetStatementInfoDTO;
@@ -144,62 +142,6 @@ public class AnswerControllerV2 {
 	}
 
 	@GetMapping(value="/problems/{setId}/solution", produces = "application/json; charset=utf-8")
-	public Map<String, Object> problem(@PathVariable("setId") String setId) throws Exception{
-		log.info("> solution logic start!");
-		Map<String, Object> output = new HashMap<String, Object>();
-		log.info("Set ID : " + setId);
-
-		// prepare for LRS GETStatement input
-		GetStatementInfoDTO input = new GetStatementInfoDTO();
-		input.setContainExtension(Arrays.asList(setId));
-
-		log.info("Getting LRS statement list......");
-		List<StatementDTO> lrsQuery = lrsApiManager.getStatementList(input);
-
-		List<Integer> probIdList = new ArrayList<Integer>();
-		Map<Integer, List<String>> probAnswerMap = new HashMap<Integer, List<String>>();
-		
-		// LRS의 TIMESTAMP를 기준으로 정렬된 statement들 (알아서 order by timestamp asc 으로 오나봄)
-		for (StatementDTO dto : lrsQuery) {
-			Integer probId = Integer.parseInt(dto.getSourceId());
-			// 문제 푼 순서대로 probId 저장. (-> 이게 문제 풀이 페이지에서의 1번, 2번, ..., 20 or 30번 등)
-			if (!probIdList.contains(probId)) {
-				probIdList.add(probId);
-
-				// user_answer format
-				String answer = dto.getUserAnswer();
-				if (answer.contains("[") && answer.contains("]")) {
-					answer.replace("[", "");
-					answer.replace("]", "");
-				}
-				// mupltiple answer check
-				if (answer.contains(",")) {
-					probAnswerMap.put(probId, Arrays.asList(dto.getUserAnswer().split(",")));
-				} else {
-					probAnswerMap.put(probId, Arrays.asList(dto.getUserAnswer()));
-				}
-			}
-		}
-		log.info("probIdList : " + probIdList.toString());
-
-		List<CustomizedSolutionDTO> solutions = new ArrayList<CustomizedSolutionDTO>();
-		try {
-			Map<Integer, CustomizedSolutionDTO> data = answerServices.getMultipleSolutions(probIdList);
-			log.info("Solution queryResult length : " + Integer.toString(data.size()));
-			for (Integer probId : probIdList) {
-				data.get(probId).setUserAnswer(probAnswerMap.get(probId));
-				solutions.add(data.get(probId));
-			}
-		}catch(Exception e) {
-			output.put("resultMessage", "error : "+e.getMessage());
-		}
-		
-		output.put("resultMessage", "Successfully returned");
-		output.put("solutions", solutions);
-		return output;
-	}
-
-	@GetMapping(value="/problems/{setId}/solution/temp1", produces = "application/json; charset=utf-8")
 	public ResponseEntity<Object> problemTemp1(@PathVariable("setId") String setId) throws Exception{
 		log.info("> solution logic start!");
 		Map<String, Object> result = new HashMap<String, Object>();
@@ -238,9 +180,9 @@ public class AnswerControllerV2 {
 		}
 		log.info("probIdList : " + probIdList.toString());
 
-		List<Temp1SolutionDTO> solutions = new ArrayList<Temp1SolutionDTO>();
+		List<SolutionDTO> solutions = new ArrayList<SolutionDTO>();
 		try {
-			Map<Integer, Temp1SolutionDTO> data = answerServices.getParsedMultipleSolutions(probIdList);
+			Map<Integer, SolutionDTO> data = answerServices.getParsedMultipleSolutions(probIdList);
 			log.info("Solution queryResult length : " + Integer.toString(data.size()));
 			for (Integer probId : probIdList) {
 				data.get(probId).setUserAnswer(probAnswerMap.get(probId));

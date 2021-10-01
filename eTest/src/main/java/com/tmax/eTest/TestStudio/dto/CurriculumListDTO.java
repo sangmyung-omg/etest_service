@@ -21,7 +21,7 @@ public class CurriculumListDTO {
 		this.chapter = c.getChapter();
 		this.section = c.getSection();
 		this.subSection = c.getSubSection();
-		this.setType = c.getSetType();
+		// this.setType = c.getSetType();
 		this.subject = c.getSubject();
 		this.status = c.getStatus();
 	}

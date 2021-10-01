@@ -15,8 +15,7 @@ import com.tmax.eTest.Common.model.error_report.ErrorReport;
 import com.tmax.eTest.Common.model.problem.Problem;
 import com.tmax.eTest.Common.model.problem.ProblemChoice;
 import com.tmax.eTest.Contents.dto.problem.ProblemDTO;
-import com.tmax.eTest.Contents.dto.problem.Temp0ProblemOutputDTO;
-import com.tmax.eTest.Contents.dto.problem.Temp1ProblemOutputDTO;
+import com.tmax.eTest.Contents.dto.problem.ProblemOutputDTO;
 import com.tmax.eTest.Contents.exception.problem.NoDataException;
 import com.tmax.eTest.Contents.exception.problem.UnavailableTypeException;
 import com.tmax.eTest.Contents.repository.DiagnosisProblemRepository;
@@ -143,11 +142,7 @@ public class ProblemServicesV0 implements ProblemServicesBase {
 		return "success";
 	}
 
-	public Temp1ProblemOutputDTO getProblemInfo(Integer probId) throws Exception {
-		return null;
-	}
-
-	public Temp0ProblemOutputDTO getParsedProblemInfo(Integer probId) throws Exception {
+	public ProblemOutputDTO getProblemInfo(Integer probId) throws Exception {
 		return null;
 	}
 }
