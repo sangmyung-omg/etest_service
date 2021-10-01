@@ -31,17 +31,37 @@ public class DiagnosisReport {
 	private Integer giScore;
 	
 	private Integer riskScore;
+	
 	private Integer riskProfileScore;
+	private Integer riskInvestPeriodScore;
+	private Integer riskStockRatioScore;
+	private Integer riskStockNumScore;
+	private Integer riskStockPreferScore;
+	
 	private Integer riskTracingScore;
 	private Integer riskLevelScore;
 	private Integer riskCapaScore;
 	
 	private Integer investScore;
+	
 	private Integer investProfileScore;
+	private Integer investAnchorScore;
+	private Integer investSelfScore;
+	private Integer investLossScore;
+	private Integer investConfirmScore;
+	private Integer investCrownScore;
+	
 	private Integer investTracingScore;
+	private Integer investMethodScore;
+	private Integer investSellScore;
+	private Integer investPortfolioScore;
+	private Integer investInfoScore;
 	
 	private Integer knowledgeScore;
 	private Integer knowledgeCommonScore;
+	private Integer knowledgeCommonProfit;
+	private Integer knowledgeCommonBasic;
+	private Integer knowledgeCommonRule;
 	private Integer knowledgeTypeScore;
 	private Integer knowledgeChangeScore;
 	private Integer knowledgeSellScore;

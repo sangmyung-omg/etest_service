@@ -19,6 +19,10 @@ import com.tmax.eTest.Common.model.problem.Problem;
 import com.tmax.eTest.Common.model.video.Video;
 import com.tmax.eTest.Common.repository.video.VideoRepository;
 import com.tmax.eTest.Report.exception.ReportBadRequestException;
+import com.tmax.eTest.Report.util.DiagnosisUtil.AnswerKey;
+import com.tmax.eTest.Report.util.DiagnosisUtil.KnowledgeSection;
+import com.tmax.eTest.Report.util.DiagnosisUtil.ScoreKey;
+import com.tmax.eTest.Report.util.DiagnosisUtil.TendencySection;
 
 import lombok.extern.log4j.Log4j2;
 
@@ -54,8 +58,8 @@ public class DiagnosisRecommend {
 	{
 		List<JsonArray> result = new ArrayList<>();
 		
-		List<Pair<Problem, Integer>> basicProbChoiceInfo = new ArrayList<>();
-		List<Pair<Problem, Integer>> knowledgeTypeProb = new ArrayList<>();
+		List<Pair<Problem, Integer>> commonProbChoiceInfo = new ArrayList<>();
+		List<Pair<Problem, Integer>> typeSelectProbChoiceInfo = new ArrayList<>();
 		List<Pair<Problem, Integer>> changeProbChoiceInfo = new ArrayList<>();
 		List<Pair<Problem, Integer>> sellProbChoiceInfo = new ArrayList<>();
 		
@@ -67,32 +71,23 @@ public class DiagnosisRecommend {
 			if(prob.getDiagnosisInfo() != null && prob.getDiagnosisInfo().getCurriculum() != null)
 			{
 				DiagnosisCurriculum curriculum = prob.getDiagnosisInfo().getCurriculum();
+				String sectionName = curriculum.getSection();
 				
-				switch(curriculum.getSection())
-				{
-				case DiagnosisUtil.SEC_INVEST_BASIC:
-					basicProbChoiceInfo.add(probInfo);
-					break;
-				case DiagnosisUtil.SEC_CHOICE_STOCK:
-					knowledgeTypeProb.add(probInfo);
-					break;
-				case DiagnosisUtil.SEC_PRICE_CHANGE:
+				if(sectionName.equals(KnowledgeSection.BASIC.toString()))
+					commonProbChoiceInfo.add(probInfo);
+				else if(sectionName.equals(KnowledgeSection.TYPE_SELECT.toString()))
+					typeSelectProbChoiceInfo.add(probInfo);
+				else if(sectionName.equals(KnowledgeSection.PRICE_CHANGE.toString()))
 					changeProbChoiceInfo.add(probInfo);
-					break;
-				case DiagnosisUtil.SEC_SELL_WAY:
+				else if(sectionName.equals(KnowledgeSection.SELL_WAY.toString()))
 					sellProbChoiceInfo.add(probInfo);
-					break;
-				default:
-					//log.info("probDivideAndCalculateScores section invalid : " + curriculum.getSubSection());
-					break;
-				}
 			}
 			else
 				log.info("probDivideAndCalculateScores prob not have diagnosisInfo : " + prob.toString());
 		}
 		
-		result.add(getBasicRecommend(basicProbChoiceInfo));
-		result.add(getAdvancedRecommend(knowledgeTypeProb, changeProbChoiceInfo, sellProbChoiceInfo));
+		result.add(getBasicRecommend(commonProbChoiceInfo));
+		result.add(getAdvancedRecommend(typeSelectProbChoiceInfo, changeProbChoiceInfo, sellProbChoiceInfo));
 		result.add(getTypeRecommend(scoreMap));
 		
 		return result;
@@ -104,8 +99,8 @@ public class DiagnosisRecommend {
 		
 		List<JsonObject> resultBucket = new ArrayList<>();
 		
-		int riskProfileScore = scoreMap.get(RuleBaseScoreCalculator.RISK_PROFILE_SCORE);
-		int riskTracingScore = scoreMap.get(RuleBaseScoreCalculator.RISK_TRACING_SCORE);
+		int riskProfileScore = scoreMap.get(ScoreKey.RISK_PROFILE.toString());
+		int riskTracingScore = scoreMap.get(ScoreKey.RISK_TRACING.toString());
 		int riskProfileTypeIdx = (riskProfileScore >= 15)? 0
 				:(riskProfileScore >= 11)? 1
 				:2;
@@ -114,11 +109,11 @@ public class DiagnosisRecommend {
 				:2;
 		
 		resultBucket.addAll(getInvestTypeRecommend(
-				scoreMap.get(RuleBaseScoreCalculator.INVEST_SCORE),
-				scoreMap.get(RuleBaseScoreCalculator.INVEST_TRACING),
+				scoreMap.get(ScoreKey.INVEST.toString()),
+				scoreMap.get(TendencySection.INVEST_TRACING.toString()),
 				riskProfileTypeIdx,
 				riskTracingTypeIdx,
-				scoreMap.get(RuleBaseScoreCalculator.RISK_ANSWER_2_KEY)));
+				scoreMap.get(AnswerKey.RISK_2.toString())));
 		resultBucket.addAll(getRiskTypeRecommend(riskProfileTypeIdx, riskTracingTypeIdx));
 		
 		return makeRandomResult(resultBucket);
