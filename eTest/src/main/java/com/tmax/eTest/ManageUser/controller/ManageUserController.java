@@ -1,5 +1,6 @@
 package com.tmax.eTest.ManageUser.controller;
 
+import com.tmax.eTest.Auth.dto.PrincipalDetails;
 import com.tmax.eTest.Common.model.report.DiagnosisReport;
 import com.tmax.eTest.ManageUser.model.dto.UserInfoDTO;
 import com.tmax.eTest.ManageUser.model.dto.UserPopupDTO;
@@ -10,14 +11,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.ParseException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping(value = "/manageUser",produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "master/manageUser",produces = MediaType.APPLICATION_JSON_VALUE)
 public class ManageUserController {
 
     protected final Log LOGGER = LogFactory.getLog(getClass());
@@ -62,7 +65,8 @@ public class ManageUserController {
 
     // TODO
     @RequestMapping(value = "/user/bookmarkPopup", method = RequestMethod.GET)
-    public ResponseEntity<?> getUserBookmarkPopupData() {
+    public ResponseEntity<?> getUserBookmarkPopupData(@RequestParam(value="user_uuid") String user_uuid){
+
         return ResponseEntity.accepted().body("bookmarkPopup");
     }
 

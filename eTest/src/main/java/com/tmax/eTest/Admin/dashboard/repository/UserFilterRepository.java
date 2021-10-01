@@ -6,12 +6,9 @@ import com.tmax.eTest.Auth.dto.Gender;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.sql.Timestamp;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 import static com.tmax.eTest.Common.model.user.QUserMaster.userMaster;
-import static com.tmax.eTest.Common.model.report.QDiagnosisReport.diagnosisReport;
 
 public class UserFilterRepository {
     private final Logger logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
@@ -31,7 +28,7 @@ public class UserFilterRepository {
         if (investmentExperience == 0 ){
             return null;
         }
-        return diagnosisReport.investPeriod.eq(investmentExperience);
+        return userMaster.investPeriod.eq(investmentExperience);
     }
 
 

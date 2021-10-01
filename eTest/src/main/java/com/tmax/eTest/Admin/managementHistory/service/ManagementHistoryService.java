@@ -1,5 +1,6 @@
 package com.tmax.eTest.Admin.managementHistory.service;
 
+import com.tmax.eTest.Admin.managementHistory.dto.DownloadServiceDTO;
 import com.tmax.eTest.Admin.managementHistory.model.ManagementHistory;
 import com.tmax.eTest.Admin.managementHistory.model.RequestMapper;
 import com.tmax.eTest.Admin.managementHistory.repository.ManagementHistoryRepository;
@@ -7,10 +8,12 @@ import com.tmax.eTest.Admin.managementHistory.repository.RequestMapperRepository
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class ManagementHistoryService {
     private final ManagementHistoryRepository managementHistoryRepository;
     private final RequestMapperRepository requestMapperRepository;
@@ -39,7 +42,11 @@ public class ManagementHistoryService {
         return requestMapperRepository.findAll();
     }
 
-    public RequestMapper getRequestMapper (String method, String controller, String name){
-        return requestMapperRepository.findByMethodAndControllerAndName(method, controller, name);
+    public RequestMapper getRequestMapper (String postMethod, String requestUrl, String parameter){
+        return requestMapperRepository.findByPostMethodAndRequestUrlAndParameter(postMethod, requestUrl, parameter);
+    }
+
+    public DownloadServiceDTO downloadReasonPopup(DownloadServiceDTO downloadServiceDTO) {
+        return downloadServiceDTO;
     }
 }
