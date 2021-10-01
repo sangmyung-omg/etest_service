@@ -23,10 +23,10 @@ public class VideoUkRel {
   private Long ukId;
 
   @ManyToOne(fetch = FetchType.EAGER)
-  @JoinColumn(name = "videoId", insertable = false, updatable = false, nullable = true)
+  @JoinColumn(name = "videoId", insertable = false, updatable = false)
   private Video video;
 
   @ManyToOne(fetch = FetchType.EAGER)
-  @JoinColumn(name = "ukId", insertable = false, updatable = false, nullable = true)
+  @JoinColumn(name = "ukId", insertable = false, updatable = false)
   private UkMaster ukMaster;
 }

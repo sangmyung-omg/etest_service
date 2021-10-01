@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.tmax.eTest.Common.model.book.Book;
 import com.tmax.eTest.Contents.dto.BookJoin;
@@ -32,30 +33,36 @@ public class BookRepositorySupport extends QuerydslRepositorySupport {
     this.query = query;
   }
 
-  public Book findBookById(String bookId) {
-    return query.selectFrom(book).where(idEq(bookId)).fetchOne();
+  public JPAQuery<Book> multipleFetchJoin() {
+    return query.select(book).from(book).join(book.bookHit).fetchJoin();
   }
 
-  public BookJoin findBookByUserAndId(String userId, String bookId) {
-    return tupleToJoin(query.select(book, bookBookmark.userUuid).from(book).leftJoin(book.bookBookmarks, bookBookmark)
-        .on(userEq(userId)).where(idEq(bookId)).fetchOne());
+  public JPAQuery<Tuple> multipleBookmarkFetchJoin() {
+    return query.select(book, bookBookmark.userUuid).from(book).join(book.bookHit).fetchJoin()
+        .leftJoin(book.bookBookmarks, bookBookmark).fetchJoin();
+  }
+
+  public Book findBookById(String bookId) {
+    return multipleFetchJoin().where(idEq(bookId)).distinct().fetchOne();
   }
 
   public List<Book> findBooks(String keyword) {
-    return query.selectFrom(book).where(checkKeyword(keyword)).orderBy().fetch();
+    return multipleFetchJoin().where(checkKeyword(keyword)).orderBy().distinct().fetch();
+  }
+
+  public BookJoin findBookByUserAndId(String userId, String bookId) {
+    return tupleToJoin(multipleBookmarkFetchJoin().leftJoin(book.bookBookmarks, bookBookmark).on(userEq(userId))
+        .where(idEq(bookId)).fetch().stream().distinct().collect(Collectors.toList()).get(0));
   }
 
   public List<BookJoin> findBooksByUser(String userId, String keyword) {
-    log.info(Long.toString(query.select(book, bookBookmark.userUuid).from(book)
-        .leftJoin(book.bookBookmarks, bookBookmark).on(userEq(userId)).where(checkKeyword(keyword)).fetchCount()));
-
-    return tupleToJoin(query.select(book, bookBookmark.userUuid).from(book).leftJoin(book.bookBookmarks, bookBookmark)
-        .on(userEq(userId)).where(checkKeyword(keyword)).orderBy().fetch());
+    return tupleToJoin(multipleBookmarkFetchJoin().leftJoin(book.bookBookmarks, bookBookmark).on(userEq(userId))
+        .where(checkKeyword(keyword)).orderBy().fetch().stream().distinct().collect(Collectors.toList()));
   }
 
   public List<BookJoin> findBookmarkBooksByUser(String userId, String keyword) {
-    return tupleToJoin(query.select(book, bookBookmark.userUuid).from(book).join(book.bookBookmarks, bookBookmark)
-        .where(userEq(userId)).where(checkKeyword(keyword)).orderBy().fetch());
+    return tupleToJoin(multipleBookmarkFetchJoin().join(book.bookBookmarks, bookBookmark).where(userEq(userId))
+        .where(checkKeyword(keyword)).orderBy().fetch().stream().distinct().collect(Collectors.toList()));
   }
 
   private BooleanExpression userEq(String userId) {

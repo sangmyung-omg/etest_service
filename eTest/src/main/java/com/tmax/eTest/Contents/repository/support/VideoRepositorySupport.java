@@ -1,5 +1,7 @@
 package com.tmax.eTest.Contents.repository.support;
 
+import static com.tmax.eTest.Common.model.uk.QUkMaster.ukMaster;
+import static com.tmax.eTest.Common.model.video.QHashtag.hashtag;
 import static com.tmax.eTest.Common.model.video.QVideo.video;
 import static com.tmax.eTest.Common.model.video.QVideoBookmark.videoBookmark;
 import static com.tmax.eTest.Common.model.video.QVideoHashtag.videoHashtag;
@@ -13,6 +15,7 @@ import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPAExpressions;
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.tmax.eTest.Common.model.video.Video;
 import com.tmax.eTest.Contents.dto.SortType;
@@ -58,32 +61,45 @@ public class VideoRepositorySupport extends QuerydslRepositorySupport {
     }
   }
 
-  public Video findVideoById(String videoId) {
-    return query.selectFrom(video).where(idEq(videoId)).fetchOne();
+  public JPAQuery<Video> multipleFetchJoin() {
+    return query.select(video).from(video).join(video.videoCurriculum).fetchJoin().join(video.videoHit).fetchJoin()
+        .leftJoin(video.videoHashtags, videoHashtag).fetchJoin().leftJoin(videoHashtag.hashtag, hashtag).fetchJoin()
+        .leftJoin(video.videoUks, videoUkRel).fetchJoin().leftJoin(videoUkRel.ukMaster, ukMaster).fetchJoin();
   }
 
-  public VideoJoin findVideoByUserAndId(String userId, String videoId) {
-    return tupleToJoin(query.select(video, videoBookmark.userUuid).from(video)
-        .leftJoin(video.videoBookmarks, videoBookmark).on(userEq(userId)).where(idEq(videoId)).fetchOne());
+  public JPAQuery<Tuple> multipleBookmarkFetchJoin() {
+    return query.select(video, videoBookmark.userUuid).from(video).join(video.videoCurriculum).fetchJoin()
+        .join(video.videoHit).fetchJoin().leftJoin(video.videoHashtags, videoHashtag).fetchJoin()
+        .leftJoin(videoHashtag.hashtag, hashtag).fetchJoin().leftJoin(video.videoUks, videoUkRel).fetchJoin()
+        .leftJoin(videoUkRel.ukMaster, ukMaster).fetchJoin().leftJoin(video.videoBookmarks, videoBookmark).fetchJoin();
+  }
+
+  public Video findVideoById(String videoId) {
+    return multipleFetchJoin().where(idEq(videoId)).distinct().fetchOne();
   }
 
   public List<Video> findVideosByCurriculum(Long curriculumId, SortType sort, String keyword) {
-    return query.selectFrom(video).where(curriculumEq(curriculumId)).where(checkKeyword(keyword))
-        .orderBy(getVideoSortedColumn(sort)).fetch();
+    return multipleFetchJoin().where(curriculumEq(curriculumId)).where(checkKeyword(keyword))
+        .orderBy(getVideoSortedColumn(sort)).distinct().fetch();
+  }
+
+  public VideoJoin findVideoByUserAndId(String userId, String videoId) {
+    return tupleToJoin(multipleBookmarkFetchJoin().leftJoin(video.videoBookmarks, videoBookmark).on(userEq(userId))
+        .where(idEq(videoId)).fetch().stream().distinct().collect(Collectors.toList()).get(0));
   }
 
   public List<VideoJoin> findVideosByUserAndCurriculum(String userId, Long curriculumId, SortType sort,
       String keyword) {
-    return tupleToJoin(query.select(video, videoBookmark.userUuid).from(video)
-        .leftJoin(video.videoBookmarks, videoBookmark).on(userEq(userId)).where(curriculumEq(curriculumId))
-        .where(checkKeyword(keyword)).orderBy(getVideoSortedColumn(sort)).fetch());
+    return tupleToJoin(multipleBookmarkFetchJoin().leftJoin(video.videoBookmarks, videoBookmark).on(userEq(userId))
+        .where(curriculumEq(curriculumId)).where(checkKeyword(keyword)).orderBy(getVideoSortedColumn(sort)).fetch()
+        .stream().distinct().collect(Collectors.toList()));
   }
 
   public List<VideoJoin> findBookmarkVideosByUserAndCurriculum(String userId, Long curriculumId, SortType sort,
       String keyword) {
-    return tupleToJoin(query.select(video, videoBookmark.userUuid).from(video).join(video.videoBookmarks, videoBookmark)
+    return tupleToJoin(multipleBookmarkFetchJoin().join(video.videoBookmarks, videoBookmark)
         .where(userEq(userId), curriculumEq(curriculumId)).where(checkKeyword(keyword))
-        .orderBy(getVideoSortedColumn(sort)).fetch());
+        .orderBy(getVideoSortedColumn(sort)).fetch().stream().distinct().collect(Collectors.toList()));
   }
 
   private BooleanExpression userEq(String userId) {
@@ -95,7 +111,7 @@ public class VideoRepositorySupport extends QuerydslRepositorySupport {
   }
 
   private BooleanExpression curriculumEq(Long curriculumId) {
-    return commonUtils.objectNullcheck(curriculumId) ? null : video.curriculumId.eq(curriculumId);
+    return commonUtils.objectNullcheck(curriculumId) ? null : video.videoCurriculum.curriculumId.eq(curriculumId);
   }
 
   private BooleanExpression checkKeyword(String keyword) {

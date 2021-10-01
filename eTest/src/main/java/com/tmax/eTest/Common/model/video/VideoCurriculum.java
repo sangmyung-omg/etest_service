@@ -20,6 +20,6 @@ public class VideoCurriculum {
   private Long curriculumId;
   private String subject;
 
-  @OneToMany(fetch = FetchType.EAGER, mappedBy = "videoCurriculum", cascade = CascadeType.ALL, orphanRemoval = true)
+  @OneToMany(fetch = FetchType.LAZY, mappedBy = "videoCurriculum", cascade = CascadeType.ALL, orphanRemoval = true)
   private Set<Video> videos = new LinkedHashSet<Video>();
 }

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -53,8 +54,6 @@ public class VideoService {
   }
 
   private final String YOUTUBE_TYPE = "youtu";
-
-  private static HashMap<String, String> sourceMap = new HashMap<String, String>();
 
   @Autowired
   private VideoCurriculumRepositorySupport videoCurriculumRepositorySupport;
@@ -243,9 +242,28 @@ public class VideoService {
         .build();
   }
 
+  public VideoDTO convertVideoToDTO(Video video, String source) {
+    return VideoDTO.builder().videoId(video.getVideoId()).videoSrc(video.getVideoSrc()).title(video.getTitle())
+        .imgSrc(video.getImgSrc()).subject(video.getVideoCurriculum().getSubject()).totalTime(video.getTotalTime())
+        .startTime(video.getStartTime()).endTime(video.getEndTime()).hit(video.getVideoHit().getHit())
+        .createDate(video.getCreateDate().toString())
+        .videoType(video.getType().equals(VideoType.ARTICLE.name()) ? video.getType()
+            : !commonUtils.stringNullCheck(video.getVideoSrc()) && video.getVideoSrc().contains(YOUTUBE_TYPE)
+                ? VideoType.YOUTUBE.toString()
+                : VideoType.SELF.toString())
+        .source(source).description(video.getDescription())
+        .uks(video.getVideoUks().stream().map(videoUks -> videoUks.getUkMaster().getUkName())
+            .collect(Collectors.toList()))
+        .hashtags(video.getVideoHashtags().stream().map(videoHashtags -> videoHashtags.getHashtag().getName())
+            .collect(Collectors.toList()))
+        .build();
+  }
+
   public ListDTO.Video convertVideoToDTO(List<Video> videos) {
-    return new ListDTO.Video(videos.size(),
-        videos.stream().map(video -> this.convertVideoToDTO(video)).collect(Collectors.toList()));
+    Map<String, String> sourceMap = getSources(
+        videos.stream().map(video -> video.getCodeSet()).collect(Collectors.toList()));
+    return new ListDTO.Video(videos.size(), videos.stream()
+        .map(video -> this.convertVideoToDTO(video, sourceMap.get(video.getCodeSet()))).collect(Collectors.toList()));
   }
 
   public VideoDTO convertVideoJoinToDTO(VideoJoin videoJoin) {
@@ -266,17 +284,44 @@ public class VideoService {
         .build();
   }
 
+  public VideoDTO convertVideoJoinToDTO(VideoJoin videoJoin, String source) {
+    Video video = videoJoin.getVideo();
+    return VideoDTO.builder().videoId(video.getVideoId()).videoSrc(video.getVideoSrc()).title(video.getTitle())
+        .imgSrc(video.getImgSrc()).subject(video.getVideoCurriculum().getSubject()).totalTime(video.getTotalTime())
+        .startTime(video.getStartTime()).endTime(video.getEndTime()).hit(video.getVideoHit().getHit())
+        .createDate(video.getCreateDate().toString()).bookmark(!commonUtils.stringNullCheck(videoJoin.getUserUuid()))
+        .videoType(video.getType().equals(VideoType.ARTICLE.name()) ? video.getType()
+            : !commonUtils.stringNullCheck(video.getVideoSrc()) && video.getVideoSrc().contains(YOUTUBE_TYPE)
+                ? VideoType.YOUTUBE.toString()
+                : VideoType.SELF.toString())
+        .source(source).description(video.getDescription())
+        .uks(video.getVideoUks().stream().map(videoUks -> videoUks.getUkMaster().getUkName())
+            .collect(Collectors.toList()))
+        .hashtags(video.getVideoHashtags().stream().map(videoHashtags -> videoHashtags.getHashtag().getName())
+            .collect(Collectors.toList()))
+        .build();
+  }
+
   public ListDTO.Video convertVideoJoinToDTO(List<VideoJoin> videoJoins) {
+    Map<String, String> sourceMap = getSources(
+        videoJoins.stream().map(videoJoin -> videoJoin.getVideo().getCodeSet()).collect(Collectors.toList()));
     return new ListDTO.Video(videoJoins.size(),
-        videoJoins.stream().map(videoJoin -> this.convertVideoJoinToDTO(videoJoin)).collect(Collectors.toList()));
+        videoJoins.stream()
+            .map(videoJoin -> this.convertVideoJoinToDTO(videoJoin, sourceMap.get(videoJoin.getVideo().getCodeSet())))
+            .collect(Collectors.toList()));
   }
 
   public ListDTO.Video convertVideoJoinToDTO(List<VideoJoin> videoJoins, Boolean recommended, Timestamp diagnosisDate,
       Integer riskScore, Integer investScore, Integer knowledgeScore) {
-    return new ListDTO.Video(recommended,
-        diagnosisDate.toLocalDateTime().toLocalDate().format(DateTimeFormatter.ISO_LOCAL_DATE), riskScore, investScore,
-        knowledgeScore, videoJoins.size(),
-        videoJoins.stream().map(videoJoin -> this.convertVideoJoinToDTO(videoJoin)).collect(Collectors.toList()));
+    ListDTO.Video videoDTO = convertVideoJoinToDTO(videoJoins);
+    videoDTO.setRecommended(recommended);
+    if (recommended) {
+      videoDTO.setRecommendDate(diagnosisDate.toLocalDateTime().toLocalDate().format(DateTimeFormatter.ISO_LOCAL_DATE));
+      videoDTO.setRiskScore(riskScore);
+      videoDTO.setInvestScore(investScore);
+      videoDTO.setKnowledgeScore(knowledgeScore);
+    }
+    return videoDTO;
   }
 
   public ListDTO.Curriculum convertVideoCurriculumToDTO(List<VideoCurriculum> curriculums) {
@@ -309,12 +354,43 @@ public class VideoService {
         break;
       }
     }
-    // if (sourceMap.containsKey(sourceId))
-    // return sourceMap.get(sourceId);
 
     MetaCodeMaster metaCodeMaster = metaCodeMasterRepositorySupport.findMetaCodeById(sourceId);
     String sourceName = metaCodeMaster.getCodeName();
-    // sourceMap.put(sourceId, sourceName);
     return sourceName;
+  }
+
+  private Map<String, String> getSources(List<String> codeSetStrs) {
+    final String PREFIX_SOURCE_NAME = "콘텐츠 제작기관";
+
+    ObjectMapper mapper = new ObjectMapper();
+    HashMap<String, String> sourceMap = new HashMap<String, String>();
+    ArrayList<String> sourceIds = new ArrayList<String>();
+    for (String codeSetStr : codeSetStrs) {
+      if (commonUtils.stringNullCheck(codeSetStr)) {
+        log.info("Meta Code Null Error");
+        continue;
+      }
+      CodeSet codeSet = null;
+      try {
+        codeSet = mapper.readValue(codeSetStr, CodeSet.class);
+      } catch (IOException e) {
+        log.info(codeSetStr + " Meta Code Json Error | " + e.getMessage());
+        continue;
+      }
+      String sourceId = null;
+      for (String codeId : codeSet.getCodes()) {
+        if (codeId.contains(PREFIX_SOURCE_NAME)) {
+          sourceId = codeId;
+          break;
+        }
+      }
+      sourceIds.add(sourceId);
+    }
+
+    Map<String, String> metaCodeMap = metaCodeMasterRepositorySupport.findMetaCodeMapByIds(sourceIds);
+    for (int i = 0; i < codeSetStrs.size(); i++)
+      sourceMap.put(codeSetStrs.get(i), metaCodeMap.get(sourceIds.get(i)));
+    return sourceMap;
   }
 }

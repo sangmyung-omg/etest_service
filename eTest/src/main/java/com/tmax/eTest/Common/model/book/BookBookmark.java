@@ -36,7 +36,7 @@ public class BookBookmark implements Persistable<BookBookmarkId> {
     this.bookId = bookId;
   }
 
-  @ManyToOne(fetch = FetchType.LAZY)
+  @ManyToOne(fetch = FetchType.EAGER)
   @JoinColumn(name = "bookId", insertable = false, updatable = false, nullable = true)
   private Book book;
 

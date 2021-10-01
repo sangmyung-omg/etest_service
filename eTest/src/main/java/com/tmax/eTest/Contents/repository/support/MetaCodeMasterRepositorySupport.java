@@ -2,6 +2,10 @@ package com.tmax.eTest.Contents.repository.support;
 
 import static com.tmax.eTest.Common.model.meta.QMetaCodeMaster.metaCodeMaster;
 
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.tmax.eTest.Common.model.meta.MetaCodeMaster;
@@ -28,7 +32,17 @@ public class MetaCodeMasterRepositorySupport extends QuerydslRepositorySupport {
     return query.selectFrom(metaCodeMaster).where(idEq(metaCodeId)).fetchOne();
   }
 
-  private BooleanExpression idEq(String metaCodeId) {
-    return commonUtils.objectNullcheck(metaCodeId) ? null : metaCodeMaster.metaCodeId.eq(metaCodeId);
+  public Map<String, String> findMetaCodeMapByIds(List<String> metaCodeIds) {
+    return query.selectFrom(metaCodeMaster).where(idEq(metaCodeIds)).fetch().stream()
+        .collect(Collectors.toMap(MetaCodeMaster::getMetaCodeId, MetaCodeMaster::getCodeName));
   }
+
+  private BooleanExpression idEq(String metaCodeId) {
+    return commonUtils.stringNullCheck(metaCodeId) ? null : metaCodeMaster.metaCodeId.eq(metaCodeId);
+  }
+
+  private BooleanExpression idEq(List<String> metaCodeIds) {
+    return commonUtils.objectNullcheck(metaCodeIds) ? null : metaCodeMaster.metaCodeId.in(metaCodeIds);
+  }
+
 }
