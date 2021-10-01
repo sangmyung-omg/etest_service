@@ -184,6 +184,13 @@ public class AuthController {
         }
         return new CMRespDto<>(200,"로그아웃 성공",text);
     }
+
+    @PostMapping("/user/modifyUserInfo")
+    @Transactional
+    public CMRespDto<?> modifyUserInfo(@AuthenticationPrincipal PrincipalDetails principalDetails, @RequestBody ModifyUserInfoDto modifyUserInfoDto) {
+        authService.modifyUserInfo(principalDetails, modifyUserInfoDto);
+        return new CMRespDto<>(200, "성공", "성공");
+    }
 }
 
 
