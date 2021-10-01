@@ -46,10 +46,10 @@ public class DiagnosisRecommend {
 	final List<String> Q6_RELATED = Arrays.asList(
 			"질문6-1","질문6-2","질문6-3","질문6-4","질문6-5","질문6-6","질문6-7");
 	
-	final int[] INVEST_BASIC_CURR_ID = {13, 14, 15};
-	final int[] CHOICE_STOCK_CURR_ID = {16, 17, 18};
-	final int[] PRICE_CHANGE_CURR_ID = {19, 20, 21};
-	final int[] SELL_WAY_CURR_ID = {22, 23, 24};
+	final int[] INVEST_BASIC_CURR_ID = {16, 17, 18};
+	final int[] CHOICE_STOCK_CURR_ID = {19, 20, 21};
+	final int[] PRICE_CHANGE_CURR_ID = {22, 23, 24};
+	final int[] SELL_WAY_CURR_ID = {25, 26, 27};
 	
 	public List<JsonArray> getRecommendLists(
 			List<Pair<Problem, Integer>> choiceAndProbInfo,
@@ -72,6 +72,8 @@ public class DiagnosisRecommend {
 			{
 				DiagnosisCurriculum curriculum = prob.getDiagnosisInfo().getCurriculum();
 				String sectionName = curriculum.getSection();
+				
+				log.info(prob.getProbID()+" "+prob.getDiagnosisInfo().getCurriculumId()+" "+sectionName);
 				
 				if(sectionName.equals(KnowledgeSection.BASIC.toString()))
 					commonProbChoiceInfo.add(probInfo);
