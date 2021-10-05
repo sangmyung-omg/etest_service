@@ -27,6 +27,7 @@ public class MinitestReportRepository extends UserFilterRepository {
                 .from(minitestReport)
                 .join(userMaster).on(userMaster.userUuid.eq(minitestReport.userUuid))
                 .where(
+                        investmentExperienceFilter(filterQueryDTO.getInvestmentExperience()),
                         dateFilter(filterQueryDTO.getDateFrom(), filterQueryDTO.getDateTo()),
                         genderFilter(filterQueryDTO.getGender()),
                         ageGroupFilter(filterQueryDTO.getAgeGroupLowerBound(), filterQueryDTO.getAgeGroupUpperBound())

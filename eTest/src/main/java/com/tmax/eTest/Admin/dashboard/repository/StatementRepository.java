@@ -36,6 +36,7 @@ public class StatementRepository extends UserFilterRepository {
                 .from(statement)
                 .innerJoin(userMaster).on(statement.userId.eq(userMaster.userUuid))
                 .where(
+                        investmentExperienceFilter(filterQueryDTO.getInvestmentExperience()),
                         dateFilter(filterQueryDTO.getDateFrom(), filterQueryDTO.getDateTo()),
                         genderFilter(filterQueryDTO.getGender()),
                         ageGroupFilter(filterQueryDTO.getAgeGroupLowerBound(), filterQueryDTO.getAgeGroupUpperBound())

@@ -9,6 +9,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
@@ -21,6 +22,7 @@ public class UserInfoDTO {
     @Builder
     public static class UserInfo{
         String userUuid;
+        LocalDateTime createDate;
         String nickname;
         AuthProvider provider;
         Boolean event_sms_agreement; //isMarketing???
@@ -55,10 +57,22 @@ public class UserInfoDTO {
         }
     }
 
+    @Data
+    @Builder
+    public static class LRSInfo{
+        Integer totalVisitCount;
+        String averageActiveTime;
+        Integer noActivityDays;
+
+    }
+
+
+
     //TODO LRSinfo
 
     UserInfo userInfo;
     DiagnosisInfo diagnosisInfo;
     MinitestInfo minitestInfo;
     ContentsInfo contentsInfo;
+    LRSInfo lrsInfo;
 }

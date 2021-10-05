@@ -4,6 +4,7 @@ import com.tmax.eTest.Admin.dashboard.dto.FilterQueryDTO;
 import com.tmax.eTest.Admin.dashboard.dto.FilterDTO;
 import com.tmax.eTest.Admin.dashboard.repository.*;
 import com.tmax.eTest.Auth.dto.Gender;
+import com.tmax.eTest.Auth.repository.UserRepository;
 import com.tmax.eTest.Common.model.report.DiagnosisReport;
 import com.tmax.eTest.Common.model.report.MinitestReport;
 import com.tmax.eTest.Common.model.user.UserMaster;
@@ -21,7 +22,9 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class DashboardService {
-
+    @Autowired
+    @Qualifier("AU-UserRepository")
+    private UserRepository userRepository;
     @Autowired
     @Qualifier(value ="AD-StatementRepository")
     private final StatementRepository statementRepository;
@@ -30,7 +33,6 @@ public class DashboardService {
     private final DiagnosisReportRepository diagnosisReportRepository;
     private final MinitestReportRepository minitestReportRepository;
     private final UserCreateTimeRepository userCreateTimeRepository;
-    private final UserDeleteTimeRepository userDeleteTimeRepository;
     public FilterQueryDTO filterQueryBuilder(FilterDTO filterDTO) {
         FilterQueryDTO filterQueryDTO = FilterQueryDTO.builder()
                 .gender(filterDTO.getGender())
@@ -60,12 +62,14 @@ public class DashboardService {
         return statementRepository.filter(filterQueryBuilder(filterDTO));
     }
 
-    public List<UserMaster> getUserIncrease(FilterDTO filterDTO) {
+    public List<Statement> getUserRegister(FilterDTO filterDTO) {
         return userCreateTimeRepository.filter(filterQueryBuilder(filterDTO));
     }
-    public List<UserMaster> getUserDelete(FilterDTO filterDTO) {
-        return userDeleteTimeRepository.filter(filterQueryBuilder(filterDTO));
+
+    public int getUserAll() {
+        return userRepository.findAll().size();
     }
+
 }
 
 
