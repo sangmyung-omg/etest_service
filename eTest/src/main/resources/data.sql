@@ -3973,3 +3973,12 @@ insert into "ETEST"."VIDEO_HASHTAG" ("VIDEO_ID", "HASHTAG_ID") values ('CV202120
 ------- End of ETEST.VIDEO-------
 ------- End of ETEST.VIDEO_HIT-------
 ------- End of ETEST.VIDEO_HASHTAG-------
+
+------- Start of ETEST.BOOK-------
+------- Start of ETEST.BOOK_HIT-------
+
+insert into "ETEST"."BOOK" ("BOOK_ID", "BOOK_SRC", "TITLE", "CREATE_DATE", "IMG_SRC", "DESCRIPTION", "CREATOR_ID") values ('CB1', 'books/CB1/index.html', '알고하는 금융투자', '2021/10/05', 'books/CB1/CB1_Thumbnail.jpg', '경제적 자유를 위한 나의 투자, 어떻게 할 것인가?', '금융투자협회');
+insert into "ETEST"."BOOK_HIT" ("BOOK_ID", "HIT") values ('CB1', 0);
+
+------- End of ETEST.BOOK-------
+------- End of ETEST.BOOK_HIT-------

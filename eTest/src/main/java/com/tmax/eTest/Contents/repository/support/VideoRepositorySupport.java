@@ -52,7 +52,7 @@ public class VideoRepositorySupport extends QuerydslRepositorySupport {
       case "DATE":
         return querydslUtils.getSortedColumn(Order.ASC, video, "createDate");
       case "HIT":
-        return querydslUtils.getSortedColumn(Order.DESC, video.videoHit, "hit");
+        return querydslUtils.getSortedColumn(Order.DESC, video, "videoHit.hit");
       case "RECOMMEND":
       case "SEQUENCE":
         return querydslUtils.getSortedColumn(Order.ASC, video, "sequence");
@@ -62,7 +62,7 @@ public class VideoRepositorySupport extends QuerydslRepositorySupport {
   }
 
   public JPAQuery<Video> multipleFetchJoin() {
-    return query.select(video).from(video).join(video.videoCurriculum).fetchJoin().join(video.videoHit).fetchJoin()
+    return query.select(video).from(video).join(video.videoCurriculum).fetchJoin().leftJoin(video.videoHit).fetchJoin()
         .leftJoin(video.videoHashtags, videoHashtag).fetchJoin().leftJoin(videoHashtag.hashtag, hashtag).fetchJoin()
         .leftJoin(video.videoUks, videoUkRel).fetchJoin().leftJoin(videoUkRel.ukMaster, ukMaster).fetchJoin();
   }
