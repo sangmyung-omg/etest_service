@@ -117,8 +117,7 @@ public class DiagnosisDetailRecordService {
 						SNDCalculator.Type.DIAG_RISK, 
 						report.getRiskScore()))
 				.mainCommentInfo(commentGenerator.makeRiskMainComment(
-						report.getRiskProfileScore(), 
-						report.getRiskTracingScore()))
+						report))
 				.detailCommentInfo(commentGenerator.makeRiskDetailComment(
 						report))
 				.build();

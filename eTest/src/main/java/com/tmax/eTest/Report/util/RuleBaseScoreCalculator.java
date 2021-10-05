@@ -79,7 +79,7 @@ public class RuleBaseScoreCalculator {
 						
 						// 주의. 성향 section의 투자원칙과 지식 Sub_section의 투자기초-투자원칙 이 같은 naming이여서 구분을 위함.
 						// ScoreMap에서만 적용.
-						res.put(subSection+"K", ansScore);
+						res.put("투자지식-"+subSection, ansScore);
 					}
 					else if(section.equals(KnowledgeSection.TYPE_SELECT.toString()))
 						knowledgeTypeProb.add(probInfo);

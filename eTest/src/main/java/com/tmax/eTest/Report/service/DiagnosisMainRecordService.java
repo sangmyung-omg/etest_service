@@ -132,8 +132,7 @@ public class DiagnosisMainRecordService {
 		Map<String, String> result = new HashMap<>();
 		
 		Map<String, String> riskMainComment = commentGenerator.makeRiskMainComment(
-				report.getRiskProfileScore(), 
-				report.getRiskTracingScore());
+				report);
 		Map<String, String> investMainComment = commentGenerator.makeInvestMainComment(
 				report.getInvestProfileScore(), 
 				report.getInvestTracingScore());

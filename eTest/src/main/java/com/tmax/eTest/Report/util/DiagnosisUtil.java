@@ -177,6 +177,9 @@ public class DiagnosisUtil {
 			this.value = value;
 		}
 		
+		public final String toStringForScoreMap(){
+			return "투자지식-"+this.value;
+		}
 		public final String toString() {
 			return this.value;
 		}

@@ -19,82 +19,140 @@ import com.tmax.eTest.Report.util.DiagnosisUtil.RiskTracing;
 @Component
 public class DiagnosisComment {
 	
-	public Map<String, String> makeRiskMainComment(int profileScore, int tracingScore)
+	public Map<String, String> makeRiskMainComment(DiagnosisReport report)
 	{
 		String[] riskType = {
-				"주력종목 위주의 공격형 투자자",
-				"주력종목 위주의 공격형 투자자",
-				"여러종목에 분산 투자하는 공격형 투자자",
-				"주력종목 위주의 안정추구 투자자",
-				"하이브리드형 투자자",
-				"여러종목에 분산 투자하는 공격형 투자자",
-				"주력종목 위주의 안정추구 투자자",
-				"분산투자하는 안정형 투자자",
-				"분산투자하는 안정형 투자자"};
-		String[] riskMainComment = {
-				"\"주력종목 위주의 공격형 투자자\"는 위험을 감수하면서 특정 종목에 집중투자하는 경향을 보입니다. 집중투자는 높은 수익률을 기대할 수 있지만 그만큼 리스크도 감수해야 합니다. 투자기간을 단기적으로 설정하는 경향이 있는데, 시장의 흐름과 경기변화를 민감하게 파악하고 분석하는 자세가 필요합니다.",
-				"\"주력종목 위주의 공격형 투자자\"는 위험을 감수하면서 특정 종목에 집중투자하는 경향을 보입니다. 집중투자는 높은 수익률을 기대할 수 있지만 그만큼 리스크도 감수해야 합니다. 투자기간을 단기적으로 설정하는 경향이 있는데, 시장의 흐름과 경기변화를 민감하게 파악하고 분석하는 자세가 필요합니다.",
-				"\"여러종목에 분산 투자하는 공격형 투자자\"는 위험을 감수하면서 높은 수익률을 추구하고 여러 종목에 분산하여 투자하는 경향을 보입니다. 저평가된 주식을 골라 고평가되기 전에 파는 가치투자를 선호하기도 합니다. 리스크를 감수하는 성향으로 고위험 종목 투자가 늘어갈 수 있기 때문에, 늘 수익률을 점검하고 조정하는 태도를 갖는게 필요합니다.",
-				
-				"\"주력종목 위주의 안정추구 투자자\"는 손실위험을 최소화하는 안정적인 투자를 선호하며, 확실하다고 판단하는특정 종족 중심으로 투자하는 경향이 있습니다. 기업안정성이 높은 우량주 위주의 투자를 선호하기도 합니다. 손실을 최소화하려는 성향 때문에 가격 변동이 커졌을때 흔들릴 가능성이 있습니다. 투자한 종목의 시장 현황과 기업 상황을 지속적으로 분석하여 변수를 미리 준비한다면 더욱 안정적인 투자에 도움이 될 수 있습니다.",
-				"\"하이브리드형 투자자\"는 공격적일때는 공격적으로, 보수적일때는 보수적으로 상황에 맞게 투자방법을 결정하는 경향이 있습니다. 대체로 내가 감당할 수 있는 범위 내에서 투자하는 것을 선호하며, 나의 위험성향과 실제 투자 방식이 상당부분 일치하기 때문에 주변 사람들이 봤을때는 안정적으로 투자하는 사람으로 보이기도 합니다.",
-				"\"여러종목에 분산 투자하는 공격형 투자자\"는 위험을 감수하면서 높은 수익률을 추구하고 여러 종목에 분산하여 투자하는 경향을 보입니다. 저평가된 주식을 골라 고평가되기 전에 파는 가치투자를 선호하기도 합니다. 리스크를 감수하는 성향으로 고위험 종목 투자가 늘어갈 수 있기 때문에, 늘 수익률을 점검하고 조정하는 태도를 갖는게 필요합니다.",
-				
-				"\"주력종목 위주의 안정추구 투자자\"는 손실위험을 최소화하는 안정적인 투자를 선호하며, 확실하다고 판단하는특정 종족 중심으로 투자하는 경향이 있습니다. 기업안정성이 높은 우량주 위주의 투자를 선호하기도 합니다. 손실을 최소화하려는 성향 때문에 가격 변동이 커졌을때 흔들릴 가능성이 있습니다. 투자한 종목의 시장 현황과 기업 상황을 지속적으로 분석하여 변수를 미리 준비한다면 더욱 안정적인 투자에 도움이 될 수 있습니다.",
-				"\"분산투자하는 안정형 투자자\"는 리스크를 짊어지기 보다 손실을 최소화하여 안정적 수익을 추구하며, 분산투자를 선호하는 경향이 있습니다. 기대수익률이 낮더라도 미래 원금보전이 확실한 종목과 상품에 안정감을 느낍니다. 분산투자를 하는 이유도 위험을 줄이려는 목적이 크며, 기업안정성이 높은 우량주 위주로 투자하는 성향을 보입니다.",
-				"\"분산투자하는 안정형 투자자\"는 리스크를 짊어지기 보다 손실을 최소화하여 안정적 수익을 추구하며, 분산투자를 선호하는 경향이 있습니다. 기대수익률이 낮더라도 미래 원금보전이 확실한 종목과 상품에 안정감을 느낍니다. 분산투자를 하는 이유도 위험을 줄이려는 목적이 크며, 기업안정성이 높은 우량주 위주로 투자하는 성향을 보입니다."};
+				"투자위험을 회피하면서 안전수익을 추구하는 투자자",
+				"투자위험을 회피하지만 고수익을 추구하는 투자자",
+				"투자위험을 감내하지만 안전수익을 추구하는 투자자",
+				"투자위험을 감내하면서 고수익을 추구하는 투자자"};
 		Map<String, String> result = new HashMap<>();
 		
-		int profileIdx = (profileScore >= 15) ? 0 	// 리스크 선호형
-				: (profileScore >= 11) ? 1			// 리스크 중립형
-				: 2;								// 리스크 회피형
+		int profileIdx = (report.getRiskLevelScore() < 8) ? 0 : 1;			// 11~13 Question 3 ~ 7 / 8 ~ 12
+		int tracingIdx = (report.getRiskStockRatioScore() < 3) ? 0 : 1;		// 2 Question 1,2 / 3,4
+		int typeIdx = profileIdx * 2 + tracingIdx;
 		
-		int tracingIdx = (tracingScore >= 12) ? 0	// 집중 투자형
-				: (tracingScore >= 9) ? 1			// 중간 투자형
-				: 2;								// 분산 투자형
+		String riskComment = "";
 		
-		int finalIdx = profileIdx * 3 + tracingIdx;
+		String[] investRiskComment = {
+			"원금손실 등 투자에서 발생하는 위험은 피하는 투자자이며, 자신의 재무능력과 투자위험 간에 균형을 맞추려는 경향이 있습니다.",
+			"원금손실 등 투자에서 발생하는 위험은 피하는 투자자이며, 투자 과정에서 심각한 실수나 손실을 줄이는 것에 중점을 두는 경향이 있습니다.",
+			"원금손실 등 투자에서 발생하는 위험은 피하는 투자자이지만, 때로는 수익을 내기 위해서 기꺼이 투자위험을 감수하려는 경향이 있습니다.",
+			"투자위험은 적극적으로 수용하거나 감내하는 투자자이며, 자신의 재무능력과 투자위험 간에 균형을 맞추려는 경향이 있습니다.",
+			"투자위험은 적극적으로 수용하거나 감내하는 투자자이며, 특히 투자수익을 내기 위하여 높은 투자위험을 감수하려는 경향이 있습니다.",
+			"투자위험은 적극적으로 수용하거나 감내하는 투자자이며, 특히 투자수익을 내기 위하여 높은 투자위험을 감수하려는 경향이 매우 많습니다."
+		};
+		String[] investMethodComment = {
+			"투자는 느리더라도 꾸준한 것이 중요하다고 생각하며, 우량주 및 블루칩 등 안정성이 높은 자산에 집중투자하는 경향이 있습니다.",
+			"투자는 느리더라도 꾸준한 것이 중요하다고 생각하며, 성장성이 높은 자산에 집중투자하는 경향이 있습니다.",
+			"투자는 느리더라도 꾸준한 것이 중요하다고 생각하며, 우량주 및 블루칩 등 안정성이 높은 자산에 분산투자하는 경향이 있습니다.",
+			"투자는 느리더라도 꾸준한 것이 중요하다고 생각하며, 성장성이 높은 자산에 분산투자하는 경향이 있습니다.",
+			"투자성과로 높은 수익률을 추구하며, 우량주 및 블루칩 등 안정성이 높은 자산에 집중투자하는 경향이 있습니다.",
+			"투자성과로 높은 수익률을 추구하며, 성장성이 높은 자산에 집중투자하는 경향이 있습니다.",
+			"투자성과로 높은 수익률을 추구하며, 우량주 및 블루칩 등 안정성이 높은 자산에 분산투자하는 경향이 있습니다.",
+			"투자성과로 높은 수익률을 추구하며, 성장성이 높은 자산에 분산투자하는 경향이 있습니다."
+		};
+		String[] combiComment = {
+				"투자방법 및 금융상품 선택 시 투자위험에 노출되는 것을 선호하지 않아 낮은 수익률로 자신의 투자방법을 심심한 투자로 여길 수 있습니다.",
+				"자신에게 맞는 낮은 수익률의 포트폴리오 구성으로 높은 수익률에 유혹을 느낄 수도 있습니다.",
+				"자신의 위험성향과 실제 투자방식이 상당부분 일치하여 주변 사람들에게 안정감 있게 투자하는 것으로 보일 수 있습니다.",
+				"스스로 여러 종목을 관리하기 어렵다면 펀드 등과 같은 투자상품을 고려하는 것도 방법일 수 있습니다.",
+				"투자위험을 회피하는 성향 때문에 가격변동이 커졌을 때 심리적으로 흔들릴 수 있어 투자종목을 선택할 때는 충분히 분석하고 고민할 필요가 있습니다.",
+				"저위험을 선호하는 성향과 고수익을 추구하는 투자방법간의 차이로 투자 후 계속 주식앱을 보면서 불편감을 느낄 수 있습니다.",
+				"투자된 자본에 대한 수익을 복리화하는 과정이 시작되었다고 할 수 있습니다.",
+				"투자성과는 고수익을 추구하며 매우 공격적으로 투자하는 방법을 선택하고 있을 수 있습니다.",
+				"주식투자를 고려할 수 도 있지만, 원금이 보장되거나 국채 등 안정적인 투자를 고려해 보는 것도 좋습니다.",
+				"종목에 대한 정확한 분석을 전제로 본인의 상황을 이해하고 투자원칙을 수립하는 것이 중요합니다.",
+				"투자수익률이 낮더라도 원금보장이 확실한 금융상품 선택에서 편안함을 느낄 수 있습니다.",
+				"투자에 들이는 시간과 노력이 적은 투자자는 자산관리사 등 \"전문가\"의 도움을 받는 것도 방법일 수 있습니다.",
+				"자신의 위험회피 성향과 다른 고수익을 추구하는 집중투자를 선택하여 그로 인하여 증가하는 리스크를 감수해야 합니다.",
+				"투자손실을 최소화하려는 성향 때문에 가격 변동이 커졌을 때 심리적으로 흔들릴 가능성이 있습니다.",
+				"저평가된 주식을 매수하여 제 가치에 매도하기 위해서는 기업의 가치평가 방법을 습득하는 곳에 관심을 가져 볼 필요가 있습니다.",
+				"고수익/고위험의 종목투자가 늘어갈 수 있으니 수시로 확인할 필요가 있습니다. ",
+				"투자기간은 비교적 단기간으로 설정하고 예상수익률이 높다면 위험이 높은 상품을 집중적으로 선택하기도 합니다.",
+				"성장하고 있는 또는 성장할 것으로 예상되는 주식에 집중투자하고 있기 때문에 옥석을 가려 투자하는 능력이 핵심입니다.",
+				"싼 주식과 고속성장기업의 조합을 찾아서 투자하려고 하고 이를 위해서는 그에 해당하는 우수기업 리스트를 미리 작성해 볼 필요가 있습니다.",
+				"성장하고 있는 또는 성장할 것으로 예상되는 주식에 분산투자하고 있기 때문에 옥석을 가려 투자하는 능력이 핵심입니다.",
+				"투자기간은 비교적 단기간으로 설정하고 예상수익률이 높다면 위험이 높은 상품을 집중적으로 선택하기도 합니다.",
+				"성장하고 있는 또는 성장할 것으로 예상되는 주식에 집중투자하고 있기 때문에 옥석을 가려 투자하는 능력이 핵심입니다.",
+				"기업의 가치 변화를 꼼꼼히 체크해야 합니다. 기업가치의 변화는 매분기 발표되는 실적보고서를 통해서 확인할 수 있습니다.",
+				"성장하고 있는 또는 성장할 것으로 예상되는 주식에 분산투자하고 있기 때문에 옥석을 가려 투자하는 능력이 핵심입니다.",
+				"주식시장에서 저평가된 가격에 사서 가치가 반영되는 동안 오래 기다릴 수 있어 대출 등 신용거래를 해서는 안 됩니다.",
+				"적은 수의 종목 수익률을 관리하기 때문에 수익폭이 매우 클 수 있지만 한 종목에서 발생할 수 있는 리스크가 크다는 것을 인지해야 합니다. ",
+				"고위험을 선호하는 성향과 안전수익을 추구하는 투자방법간의 차이로 큰 수익이 나지 않는다고 생각할 수 있습니다.",
+				"고위험을 선호하는 성향과 안전수익을 추구하는 투자방법간의 차이로 큰 수익이 나지 않는다고 생각할 수 있어 펀드, ETF 등 간접투자도 고려해 볼만 합니다.",
+				"자신의 위험성향과 실제 투자방식이 상당부분 일치하여 큰 수익을 가져올 수도 있지만 반대로 손실을 볼 확률도 높습니다.",
+				"자신의 위험성향과 실제 투자방식이 상당부분 일치하여 큰 수익을 가져올 수도 있지만 반대로 손실을 볼 확률도 높아 기업의 가치변화를 꼼꼼히 체크할 필요가 있습니다.",
+				"자신의 위험성향과 실제 투자방식이 상당부분 일치하고 변동성이 큰 시장 상황에서도 잘 견딜 수 있으며 투자성과를 내기 위해서는 장기투자가 필요할 수 있습니다.",
+				"자신의 위험성향과 실제 투자방식이 상당부분 일치하고 투자하려는 종목은 늘 고평가 논란에 시달릴 수 있으니 옥석을 잘 가릴 필요가 있습니다.",
+				"시장점유율이 높고 위험변수가 적은 기업에 투자해야 수익률을 높일 수 있어 시장대표주, 1등 기업 등에 투자를 고려해 보는 것도 좋습니다.",
+				"미래 기대되는 영업이익을 예상하고 그 가치를 평가하여야 하므로 투자리스크가 큰 편이어서 어떤 새로운 기술이 적용되는지, 미래사회는 어떻게 바뀔지 등에 관심을 가져야 한다.",
+				"주가는 변동성이 크지 않으며, 배당도 많이 주는 안정적인 주식에 투자하여 투자성과에 조바심이 날 수 있습니다.",
+				"높은 수익을 추구하기 위해 글로벌 시장에도 적극적인 투자를 고래해 보는 것도 좋습니다.",
+				"하이리스크-하이리턴을 선호하여 큰 수익을 가져올 수도 있지만 반대로 손실을 볼 확률도 높습니다.",
+				"하이리스크-하이리턴을 선호하고 주식시장에 큰 영향을 주는 상황에 집중하니 시장의 흐름을 민감하게 파악하고 분석하는 자세가 필요합니다.",
+				"하이리스크-하이리턴을 선호하니, 기업의 가치와 낮은 주가의 차이인 안전마진을 확보하는 노력이 필요합니다.",
+				"하이리스크-하이리턴을 선호하여 큰 수익을 가져올 수도 있지만 반대로 손실을 볼 확률도 높아 기업의 가치변화를 꼼꼼히 체크할 필요가 있습니다.",
+				"시장점유율이 높고 위험변수가 적은 기업에 투자해야 수익률을 높일 수 있어 시장대표주, 1등 기업 등에 투자를 고려해 보는 것도 좋습니다.",
+				"미래 기대되는 영업이익을 예상하고 그 가치를 평가하여야 하므로 투자리스크가 큰 편이어서 어떤 새로운 기술이 적용되는지, 미래사회는 어떻게 바뀔지 등에 관심을 가져야 한다.",
+				"저PER주 투자 등 주가는 변동성이 크지 않으며, 배당도 많이 주는 안정적인 주식에 투자하여 투자성과에 조바심이 날 수 있습니다.",
+				"높은 수익을 추구하기 위해 글로벌 시장에도 적극적인 투자를 고래해 보는 것도 좋습니다.",
+				"하이리스크-하이리턴을 선호하여 큰 수익을 가져올 수도 있지만 반대로 손실을 볼 확률도 높으니 기업가치가 훼손됨을 확인하게 되면 과감한 리밸런싱도 필요할 수 있습니다.",
+				"하이리스크-하이리턴을 선호하고 주식시장에 큰 영향을 주는 상황에 집중하니 시장의 흐름을 민감하게 파악하고 분석하는 자세가 필요합니다.",
+				"하이리스크-하이리턴을 선호하니, 기업의 가치와 낮은 주가의 차이인 안전마진을 확보하는 노력이 필요합니다.",
+				"하이리스크-하이리턴을 선호하여 큰 수익을 가져올 수도 있지만 반대로 손실을 볼 확률도 높아 기업의 가치변화를 꼼꼼히 체크할 필요가 있습니다."
+		};
 		
-		result.put("main", riskType[finalIdx]);
-		result.put("detail", riskMainComment[finalIdx]);
+		///
+		int levelCapaDiff = report.getRiskLevelScore() - report.getRiskCapaScore();
+		int investRiskComIdx = 0;
+		if(profileIdx == 0)
+			investRiskComIdx += (Math.abs(levelCapaDiff) < 3 ) ? 0	// -2 ~ 2
+				: (levelCapaDiff > 0) ? 1							// 3, 4, 5
+				: 2;												// -3, -4, -5
+		else
+			investRiskComIdx += (levelCapaDiff > -3 ) ? 3				// 0 ~ -2
+					: (levelCapaDiff > -8) ? 4							// -3 ~ -7
+					: 5;												// -8 ~ -10
+		
+		riskComment += investRiskComment[investRiskComIdx] + " ";
+
+		
+		///
+		
+		int stockNumIdx = (report.getRiskStockNumScore() < 3) ? 0 : 1;		// number 3 question
+		int preferNumIdx = (report.getRiskStockPreferScore() < 3) ? 0 : 1;	// number 4 question
+		int investMethodComIdx = tracingIdx * 4 + stockNumIdx * 2 + preferNumIdx;
+		
+		riskComment += investMethodComment[investMethodComIdx] + " ";
+		
+		///
+		
+		riskComment += combiComment[investRiskComIdx * 8 + investMethodComIdx] + " ";
+		
+		///
+		
+		result.put("main", riskType[typeIdx]);
+		result.put("detail", riskComment);
 		
 		return result;
 	}
 	
 	public List<Object> makeRiskDetailComment(DiagnosisReport report)
 	{
-		int profileScore = report.getRiskProfileScore();				
-		int tracingScore = report.getRiskTracingScore();
+		int profLevelScore = (int)((report.getRiskLevelScore()) / 12. * 100 );
+		int profCapaScore = (int)((report.getRiskCapaScore()) / 8. * 100);
 		
-		int profLevelScore = (int)((report.getRiskLevelScore() - 3) / 9. * 100 );
-		int profCapaScore = (int)((report.getRiskCapaScore() - 2) / 6. * 100);
+		int stretchProfileScore = (int)((report.getRiskProfileScore() - 5) / 15.f * 100);
+		int stretchTracingScore = (int)((report.getRiskTracingScore() - 4) / 12.f * 100);
 		
-		String[] profileMainList = {"높은 수익률을 추구하는 공격투자형", 
-				"너무 큰 위험도 너무 작은 위험도 추구하지 않는, 중립투자형", 
-				"손실을 최소화 하며 안정적 수익을 추구하는 안정투자형"};
+		String[] profileMainList = {"투자위험 회피형 투자자", 
+				"투자위험 감내형 투자자"};
 		String[] tracingMainList = {
-				"주력 종목 위주로 집중형 투자자", 
-				"집중할때는 집중, 분산할때는 분산! 중간형 투자자", 
-				"계란은 여러 바구니에, 분산형 투자자"};
+				"안전수익 추구형 투자자", 
+				"고수익 추구형 투자자"};
 		
-		String[] profileDetailList = {
-				"당신은 손실 위험을 감수하면서 높은 수익률을 추구하는 공격투자형 입니다. 예상 수익이 높다고 판단하면, 위험이 있는 상품에 투자를 하거나 주식의 특정 종족에 집중하여 투자를 하는 경향도 있습니다. 공격투자형은 한 두번 투자에 성공하면 자기확신 편향에 빠지기 쉽고 위험에 둔감해 질수 있기 때문에, 항상 본인의 투자상황을 점검해야 합니다. 하루하루 수익률에 일희일비하지 않고 확고한 투자원칙을 기반으로 투자를 한다면 원하는 목표에 가까워질 수 있습니다.",
-				"당신은 리스크 중립형으로 위험을 적당하게 수용하고 인내하는 투자자입니다. 투자에는 그에 상응하는 투자위험이 있음을 인식하며 예적금보다는 높은 수익률을 추구합니다. 리스크 중립형 투자자는 지금 하고 있는 투자방법이 자신에게 익숙한지 확인해볼 필요가 있습니다. 투자 후 계속 주식앱을 보며 불안에 떨고 있다면 안정투자형에 가깝고, 만족스럽지 못한 수익에 밤잠을 설치면 공격투자형에 가깝습니다. 어느때는 안정투자형, 어떤 때는 공격적투자형에 가까울 수 있기 때문에, 투자방법을 수시로 조정할 수 있도록 준비도 필요합니다.",
-				"당신은 손실을 최소화하고 안정적인 수익률을 추구하는 안정형 투자자 입니다. 안정형 투자자는 주식투자를 고려할 수도 있지만, 원금은 보장하거나 원금을 부분 보장하는 국고채, 통안채, RP 등 안정적인 투자상품을 고려해보는 것도 좋습니다. 경험부족으로 인한 불안으로 안정적 투자를 고려한다면 투자이론 공부와 경험을 쌓아가면서 본인에게 맞는 투자방법을 찾는 것도 좋은 방법이 될 수 있습니다."};
-		String[] tracingDetailList = {
-				"당신은 적은 종목의 수를 보유하면서 높은 수익률을 추구하는 집중 투자를 하고 있을 확률이 큽니다. 집중투자는 적은 종목의 수익률에 의존하기 때문에 수익폭이 매우 큰 특징이 있습니다. 집중투자는 관리해야하는 종목 수가 상대적으로 적지만 한 종목 한 종목에서 발생할 수 있는 리스크가 크다는 것을 인지하고 투자 종목을 선택할 때 충분히 분석하고 고민해야 합니다.",
-				"당신은 집중할때는 집중하고 분산할때는 분산하는 하이브리드형 투자자에 가깝습니다. 분산 투자와 집중 투자 중 무엇이 더 좋은 투자인지에 대한 정답이 있는 것은 아닙니다. 하지만 공통적으로는 종목에 대한 정확한 분석과 시장 상황에 대한 높은 이해를 전제로 본인의 상황을 이해하고 투자원칙을 수립하는 것이 중요합니다. 분산 투자와 집중 투자 중 본인에게 더욱 맞는 방법을 찾아 투자를 이어간다면 원하는 목표에 더욱 가까워질 수 있습니다.", 
-				"당신은 특정 종목 몇 개에 집중하기 보다는 최대한 분산하여 투자하면서 위험을 줄이는 투자성향을 가지고 있습니다. 경기민감주와 경기와 무관한 업종을 섞어서 담는 등 업종을 분산하거나 국내 뿐만 아니라 해외주식에도 투자하면서 지역을 분산하기도 합니다. 단순히 비슷한 여러 종목에 투자하는 것이 아니라 업종이나 지역이 다양한 종목을 분산하여 투자함으로서 개별종목 하나하나의 위험을 줄이고 원하는 수익률을 실현하기 위한 노력이 필요합니다. 스스로 여러 종목을 분석하고 관리하기 어렵다면 펀드 등 투자상품을 고려하는 것도 방법일 수 있습니다."};
-		int profileIdx = (profileScore >= 15) ? 0 	// 리스크 선호형
-				: (profileScore >= 11) ? 1			// 리스크 중립형
-				: 2;								// 리스크 회피형
 		
-		int tracingIdx = (tracingScore >= 12) ? 0	// 집중 투자형
-				: (tracingScore >= 9) ? 1			// 중간 투자형
-				: 2;								// 분산 투자형
-		
-		int stretchProfileScore = (int)((profileScore - 5) / 15.f * 100);
-		int stretchTracingScore = (int)((tracingScore - 4) / 12.f * 100);
 		
 		List<Object> result = new ArrayList<>();
 		
@@ -120,14 +178,18 @@ public class DiagnosisComment {
 				String.valueOf(report.getRiskStockPreferScore()*25)));
 		
 		profileCommentInfo.put("name", "투자위험 태도");
-		profileCommentInfo.put("main", profileMainList[profileIdx]);
-		profileCommentInfo.put("detail", profileDetailList[profileIdx]);
+		profileCommentInfo.put("main", (report.getRiskLevelScore() < 8)
+				?profileMainList[0]
+				:profileMainList[1]);
+		profileCommentInfo.put("detail", "");
 		profileCommentInfo.put("score", stretchProfileScore);
 		profileCommentInfo.put("detailScoreList", profileDetailScore);
 		
 		tracingCommentInfo.put("name", "투자 방법");
-		tracingCommentInfo.put("main", tracingMainList[tracingIdx]);
-		tracingCommentInfo.put("detail", tracingDetailList[tracingIdx]);
+		tracingCommentInfo.put("main", (report.getRiskStockRatioScore() < 3)
+				? tracingMainList[0]
+				: tracingMainList[1]);
+		tracingCommentInfo.put("detail", "");
 		tracingCommentInfo.put("score", stretchTracingScore);
 		tracingCommentInfo.put("detailScoreList", tracingDetailScore);
 		
@@ -280,9 +342,9 @@ public class DiagnosisComment {
 		int knowledgeScoreIdx = rankMinValue.length - 1;
 		
 		String[] knowledgeMain = {
-				"우수", 
-				"보통", 
-				"부족"};
+				"기초와 실전 지식을 갖춘 준비된 투자자", 
+				"투자지식의 기초는 알고있는 투자자", 
+				"투자기초부터 탄탄한 학습이 필요한 투자자"};
 		String[] knowledgeDetail = {
 				"당신은 매매방법이나 종목을 분석하는 방법 등 투자지식의 기본적인 사항을 알고 있고 자신만의 투자방법도 갖추고 있습니다. 많은 노력이 필요하겠지만 더 많은 경험과 공부를 이어간다면 나만의 원칙을 가진 성공적인 투자자가 될 수 있습니다.",
 				"당신은 매매방법이나 종목을 분석하는 방법 등 투자지식의 기본적인 사항들은 알고 있는 것으로 보입니다. 많은 노력이 필요하겠지만 더 많은 경험과 공부를 이어간다면 나만의 원칙을 가진 성공적인 투자자로 성장할 가능성이 높습니다.",
@@ -311,35 +373,11 @@ public class DiagnosisComment {
 		
 		List<Object> result = new ArrayList<>();
 		
-		String[] basicCommentList = {
-				"당신은 투자기초 영역에 대한 지식을 갖추고 있습니다. 투자 시작을 위한 기본적인 준비는 되어 있는 것으로 보입니다.", 
-				"당신은 투자에 관심을 가지고 기본적인 지식은 알고 있는 것으로 보입니다. 수익과 위험의 개념, 장기투자와 단기투자의 차이점 등 어렴풋이 알고 있는 개념들을 명확히 학습할 필요가 있습니다.",
-				"배당금이 뭐지? 주식이랑 채권이랑 어떻게 다르고 또 펀드랑은 뭐가 다른거지? 투자지식에 아직은 생소한게 많아 보입니다. 기초적인 것 부터 하나씩 공부하다 보면 하루가 다르게 실력이 상승할 수 있습니다."};
-		String[] actualCommentList = {
-				"딩신은 투자실전에 대한 기본적인 지식을 갖추고 있습니다. 꾸준한 공부와 쌓여가는 경험을 통해 똑똑하고 안전한 투자를 이어가세요.", 
-				"딩신은 투자실전에 대한 기본적인 지식을 갖추고 있습니다. 재무재표를 분석하는 방법, 시장을 분석하는 방법 등 다양한 주제의 학습을 이어가면서 본인만의 무기를 늘려가세요.", 
-				"투자를 위해선 종목을 어떻게 골라야 하는지, 가격이 왜 변동하는지 등 실전적인 지식들이 필요합니다. 결코 늦지 않았습니다. 꾸준한 학습을 통해 투자 실력의 토대를 쌓으세요."};
 		Map<String, Object> commonCommentInfo = new HashMap<>();
 		Map<String, Object> actualCommentInfo = new HashMap<>();
 		int stretchCommonScore = (int) (basicScore / 22.f * 100);
 		int stretchActualScore = (int) ((typeScore + changeScore + sellScore) / 72. * 100);
 		int[] rankMinValue = {80, 60, 0};
-		
-		int commonIdx = rankMinValue.length -1;
-		int actualIdx = rankMinValue.length -1;
-		
-		for(int i = 0; i < rankMinValue.length; i++)
-			if(stretchCommonScore >= rankMinValue[i])
-			{
-				commonIdx = i;
-				break;
-			}
-		for(int i = 0; i < rankMinValue.length; i++)
-			if(stretchActualScore >= rankMinValue[i])
-			{
-				actualIdx = i;
-				break;
-			}
 		
 		List<List<String>> commonDetailScore = new ArrayList<>();
 		
@@ -368,13 +406,13 @@ public class DiagnosisComment {
 		
 		commonCommentInfo.put("name", "투자 기초");
 		//commonCommentInfo.put("main", "");
-		commonCommentInfo.put("detail", basicCommentList[commonIdx]);
+		commonCommentInfo.put("detail", "");
 		commonCommentInfo.put("score", stretchCommonScore);
 		commonCommentInfo.put("detailScoreList", commonDetailScore);
 		
 		actualCommentInfo.put("name", "투자 실전");
 		//actualCommentInfo.put("main", "");
-		actualCommentInfo.put("detail", actualCommentList[actualIdx]);
+		actualCommentInfo.put("detail", "");
 		actualCommentInfo.put("score", stretchActualScore);
 		actualCommentInfo.put("detailScoreList", actualDetailScore);
 		
