@@ -137,7 +137,9 @@ public class DiagnosisMainRecordService {
 				report.getInvestProfileScore(), 
 				report.getInvestTracingScore());
 		Map<String, String> knowledgeMainComment = commentGenerator.makeKnowledgeMainComment(
-				report.getKnowledgeScore());
+				report.getKnowledgeScore(),
+				null,
+				null);
 		
 		result.put("risk", riskMainComment.get("main"));
 		result.put("invest", investMainComment.get("main"));

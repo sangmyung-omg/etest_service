@@ -2,13 +2,17 @@ package com.tmax.eTest.Report.util;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.stereotype.Component;
 
+import com.tmax.eTest.Common.model.problem.Problem;
 import com.tmax.eTest.Common.model.report.DiagnosisReport;
+import com.tmax.eTest.LRS.dto.StatementDTO;
 import com.tmax.eTest.Report.util.DiagnosisUtil.InvestProfile;
 import com.tmax.eTest.Report.util.DiagnosisUtil.InvestTracing;
 import com.tmax.eTest.Report.util.DiagnosisUtil.KnowledgeSection;
@@ -16,7 +20,10 @@ import com.tmax.eTest.Report.util.DiagnosisUtil.KnowledgeSubSection;
 import com.tmax.eTest.Report.util.DiagnosisUtil.RiskProfile;
 import com.tmax.eTest.Report.util.DiagnosisUtil.RiskTracing;
 
+import lombok.extern.log4j.Log4j2;
+
 @Component
+@Log4j2
 public class DiagnosisComment {
 	
 	public Map<String, String> makeRiskMainComment(DiagnosisReport report)
@@ -335,20 +342,91 @@ public class DiagnosisComment {
 		return result;
 	}
 	
-	public Map<String, String> makeKnowledgeMainComment(int knowledgeScore)
+	public Map<String, String> makeKnowledgeMainComment(
+			int knowledgeScore,
+			List<Problem> probList,
+			List<StatementDTO> statementForDetail)
 	{
-		Map<String, String> result = new HashMap<>();
-		int[] rankMinValue = {80, 60, 0};
-		int knowledgeScoreIdx = rankMinValue.length - 1;
-		
 		String[] knowledgeMain = {
 				"기초와 실전 지식을 갖춘 준비된 투자자", 
 				"투자지식의 기초는 알고있는 투자자", 
 				"투자기초부터 탄탄한 학습이 필요한 투자자"};
-		String[] knowledgeDetail = {
-				"당신은 매매방법이나 종목을 분석하는 방법 등 투자지식의 기본적인 사항을 알고 있고 자신만의 투자방법도 갖추고 있습니다. 많은 노력이 필요하겠지만 더 많은 경험과 공부를 이어간다면 나만의 원칙을 가진 성공적인 투자자가 될 수 있습니다.",
-				"당신은 매매방법이나 종목을 분석하는 방법 등 투자지식의 기본적인 사항들은 알고 있는 것으로 보입니다. 많은 노력이 필요하겠지만 더 많은 경험과 공부를 이어간다면 나만의 원칙을 가진 성공적인 투자자로 성장할 가능성이 높습니다.",
-				"당신은 아직 투자지식에 익숙하지 않을 가능성이 높습니다. 시장과 산업동향, 주식 투자의 기본 등 꼼꼼하고 꾸준하게 공부하는 투자자가 결국에는 오래 투자할 수 있습니다. 투자와 친해지기 위한 첫걸음을 떼세요. 한 걸음 한 걸음 내딛는다면 소중한 자산이 될 겁니다."};
+		String[] knowledgeDetailCorrList = {
+				"높은 수익률 제안에 의심을 품을 줄 알고 있습니다.",
+				"수익대비위험 개념에 대해 잘 알고 있습니다.",
+				"주식투자의 개념/원리에 대해 알고 있습니다.",
+				"주식투자에서 수익을 낼 수 있는 가장 적합한 장기투자 방법에 대한 지식을 가지고 있습니다.",
+				"투자위험과 회피방법인 분산투자에 대해 이해하고 있습니다.", 
+				"명확한 투자목표와 그를 위해 선택하는 금융상품의 특징을 이해하고 있습니다.",
+				"기업의 본질가치 산정 방식에 대해 잘 알고 있습니다.",
+				"기업의 사업가치 개념 중 영업이익, 어닝에 대해 잘 알고 있습니다.",
+				"기업의 안전가치 측정 방법(부채비율)에 대해 잘 알고 있습니다.",
+				"시장가치 한계에 대해 잘 알고 있습니다.",
+				"주가배수 개념에 대해 잘 알고 있습니다.",
+				"시가총액의 개념에 대해서 잘 알고 있습니다.",  
+				"종목고르기를 위한 종합적인 지식을 갖추고 있습니다.",
+				"배당 성격 및 의미에 대해서 잘 알고 있습니다.",
+				"배당의 개념에 대해서 잘 알고 있습니다.",
+				"주식의 발행물량이 주가에 미치는 영향에 대해 잘 알고 있습니다.",
+				"주식의 종류에 따른 가격변동요인에 대해 잘 알고 있습니다.",
+				"주식의 단기적인 가격 변동 요인에 대해 잘 알고 있습니다.",
+				"기업이 속한 산업의 상황이 주가에 미치는 영향에 대해 잘 알고 있습니다.",
+				"기업의 역량이 주가변동에 미치는 영향에 대해 잘 알고 있습니다.",
+				"기업의 실적이 주가변동에 미치는 영향에 대해 잘 알고 있습니다.",
+				"원자재 가격변화가 주식 가격변화에 미치는 영향에 대해 잘 알고 있습니다.",
+				"경기 변화가 주식 가격변화에 미치는 영향에 대해 잘 알고 있습니다.",
+				"금리 변화가 주식 가격변화에 미치는 영향에 대해 잘 알고 있습니다.",
+				"주식 투자에 있어 공시 보는 방법에 대해 잘 알고 있습니다.",
+				"주식 투자의 손익 계산에 대해 잘 알고 있습니다.",
+				"주식의 주문, 결제 방법에 대해 잘 알고 있습니다.",
+				"현재 형성된 주식의 가격에 대해 잘 이해하고 있습니다.",
+				"여러 가지의 주식 가격에 대한 설명을 잘 이해하고 있습니다.",
+				"과거부터 이어지는 주가의 흐름에 대해 잘 이해하고 있습니다.",
+				"매매전략(분할매수, 분할매도)에 대해 잘 이해하고 있습니다.",
+				"주식 거래 시에 발생하는 세금과 수수료에 대해 잘 알고 있습니다.",
+				"기술적 분석의 기초에 대해 잘 알고 있습니다."
+		};
+		String[] knowledgeDetailWrongList = {
+				"높은 수익률 제안에 의심을 품고 일고의 가치도 없다는 것을 알아야 합니다.",
+				"하이리스크 vs. 하이리턴과 같은 수익대비위험 개념에 대해 학습할 필요가 있습니다.",
+				"기업에 투자한다는 주식투자의 개념/원리에 대해서도 더 알아보기 바랍니다.",  
+				"주식투자에서 수익을 낼 수 있는 가장 적합한 장기투자 방법에 대한 이해가 부족하군요. 스노볼효과와 복리 효과에 대한 학습이 필요합니다.",
+				"투자위험과 회피방법인 분산투자에 대한 이해가 필요합니다.", 
+				"명확한 투자목표와 그를 위해 선택하는 금융상품의 특징을 이해해야 합니다.",
+				"기업의 본질가치 산정 방식에 대해 학습이 필요합니다.",
+				"기업의 사업가치 개념에 대해서도 알아보세요.",
+				"기업의 안전가치 측정 방법(부채비율)에 대해서도 알아보세요.",
+				"시장가치 한계에 대해서 추가적인 학습이 필요합니다.",
+				"주가배수 개념에 대해서도 다시 확인하시기 바랍니다.",
+				"시가총액의 개념에 대해서도 다시 확인하시기 바랍니다.",
+				"종목고르기를 위한 개발 지식의 종합적인 판단력을 더 길러보기 바랍니다.",
+				"배당 성격 및 의미에 대해서 더 공부해 보세요.",
+				"배당의 개념에 대해서 더 공부해 보세요.",
+				"주식의 발행물량이 주가에 미치는 영향에 대해 더 알아보시기 바랍니다.",
+				"주식의 종류에 따른 가격변동요인에 대해 더 알아보시기 바랍니다.",
+				"주식의 단기적인 가격 변동 요인에 대해 더 알아보시기 바랍니다.",
+				"기업이 속한 산업의 상황이 주가에 미치는 영향에 대해 더 알아보시기 바랍니다.",
+				"기업의 역량이 주가변동에 미치는 영향에 대해 더 알아보시기 바랍니다.",
+				"기업의 실적이 주가변동에 미치는 영향에 대해 더 알아보시기 바랍니다.",
+				"원자재 가격변화가 주식 가격변화에 미치는 영향에 대해 더 알아보시기 바랍니다.",
+				"경기 변화가 주식 가격변화에 미치는 영향에 대해 더 알아보시기 바랍니다.",
+				"금리 변화가 주식 가격변화에 미치는 영향에 대해 더 알아보시기 바랍니다.",
+				"주식 투자에 있어 공시 보는 방법에 대해 더 알아보시기 바랍니다.",
+				"주식 투자의 손익 계산에 대해 더 알아보시기 바랍니다.",
+				"주식의 주문, 결제 방법에 대해 더 알아보시기 바랍니다.",
+				"현재 형성된 주식의 가격에 대해 더 알아보시기 바랍니다.",
+				"여러 가지의 주식 가격에 대한 설명을 더 알아보시기 바랍니다.",
+				"과거부터 이어지는 주가의 흐름에 대해 더 알아보시기 바랍니다.",
+				"매매전략(분할매수, 분할매도)에 대해 더 알아보시기 바랍니다.",
+				"주식 거래 시에 발생하는 세금과 수수료에 대해 더 알아보시기 바랍니다.",
+				"기술적 분석의 기초에 대해 더 알아보시기 바랍니다."
+		};
+		
+		Map<String, String> result = new HashMap<>();
+		int[] rankMinValue = {80, 60, 0};
+		int knowledgeScoreIdx = rankMinValue.length - 1;
+		
+		String knowledgeDetail = "";
 		
 		for(int i = 0; i < rankMinValue.length; i++)
 			if(knowledgeScore >= rankMinValue[i])
@@ -357,8 +435,57 @@ public class DiagnosisComment {
 				break;
 			}
 		
+		// make detail comment
+		if(probList != null && statementForDetail != null)
+		{
+			int minCurriCulumId = 999;
+			
+			Collections.sort(probList, new Comparator<Problem>() {
+				@Override
+				public int compare(Problem o1, Problem o2) {
+					if(o1.getDiagnosisInfo().getCurriculumId() < o2.getDiagnosisInfo().getCurriculumId())
+						return -1;
+					else if(o1.getDiagnosisInfo().getCurriculumId() > o2.getDiagnosisInfo().getCurriculumId())
+						return 1;
+					return 0;
+				}
+			});
+			
+			for(Problem prob : probList)
+				minCurriCulumId = (minCurriCulumId > prob.getDiagnosisInfo().getCurriculumId()) 
+					? prob.getDiagnosisInfo().getCurriculumId() 
+					: minCurriCulumId;
+			
+			for(Problem prob : probList)
+			{
+				boolean isCorrect = false;
+				int diffIdx = prob.getDifficulty().equals("상") ? 0
+						: prob.getDifficulty().equals("중") ? 1
+						: 2;
+				int probOrderIdx = prob.getDiagnosisInfo().getCurriculumId() - minCurriCulumId; // 16 == 지식 첫 문제 Curriculum ID
+
+				for(StatementDTO state : statementForDetail)
+					if(Integer.parseInt(state.getSourceId()) == prob.getProbID())
+					{
+						isCorrect = state.getIsCorrect() == 1;
+						break;
+					}
+				
+				int detIdx = 0;
+				
+				if(probOrderIdx == 1)
+					detIdx = (diffIdx == 0) ? 0 : 1;
+				else if(probOrderIdx > 1)
+					detIdx = 3 + (probOrderIdx - 2) * 3 + diffIdx;
+				
+				knowledgeDetail += (isCorrect) ? knowledgeDetailCorrList[detIdx] + " "
+						:knowledgeDetailWrongList[detIdx] + " ";
+			}
+		}
+		
+		
 		result.put("main", knowledgeMain[knowledgeScoreIdx]);
-		result.put("detail", knowledgeDetail[knowledgeScoreIdx]);
+		result.put("detail", knowledgeDetail);
 		
 		return result;
 	}
@@ -377,7 +504,6 @@ public class DiagnosisComment {
 		Map<String, Object> actualCommentInfo = new HashMap<>();
 		int stretchCommonScore = (int) (basicScore / 22.f * 100);
 		int stretchActualScore = (int) ((typeScore + changeScore + sellScore) / 72. * 100);
-		int[] rankMinValue = {80, 60, 0};
 		
 		List<List<String>> commonDetailScore = new ArrayList<>();
 		

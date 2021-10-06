@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class StatementDTO {
+public class StatementDTO implements Comparable<StatementDTO>{
 	@ApiModelProperty(name = "userId", dataType = "String", example = "test_user_id", value = "유저의 ID(JWT or 일반 String 값)", required = true)
 	private String userId;
 
@@ -64,5 +64,13 @@ public class StatementDTO {
 		this.extension = dao.getExtension();
 		this.isCorrect = dao.getIsCorrect();
 		this.statementDate = dao.getStatementDate();
+	}
+
+	// 날자별 정렬
+	@Override
+	public int compareTo(StatementDTO o) {
+		// TODO Auto-generated method stub
+	
+		return statementDate.compareTo(o.getStatementDate());
 	}
 }

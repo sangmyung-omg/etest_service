@@ -2,6 +2,7 @@ package com.tmax.eTest.Report.service;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -9,7 +10,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-
+import com.tmax.eTest.Common.model.problem.Problem;
 import com.tmax.eTest.Common.model.report.DiagnosisReport;
 import com.tmax.eTest.Common.repository.report.DiagnosisReportRepo;
 import com.tmax.eTest.Contents.repository.ProblemRepository;
@@ -95,13 +96,20 @@ public class DiagnosisDetailRecordService {
 			DiagnosisReport report,
 			List<StatementDTO> knowledgeProbStatement) throws Exception
 	{
+		List<Integer> probIdList = new ArrayList<>();
+		
+		for(StatementDTO state : knowledgeProbStatement)
+			probIdList.add(Integer.parseInt(state.getSourceId()));
+		
+		List<Problem> probList = problemRepo.findAllById(probIdList);		
+		
 		DiagnosisRecordDetailDTO result = DiagnosisRecordDetailDTO.builder()
 				.score(report.getKnowledgeScore())
 				.percentage(sndCalculator.calculatePercentage(
 						SNDCalculator.Type.DIAG_KNOWLEDGE, 
 						report.getKnowledgeScore()))
 				.mainCommentInfo(commentGenerator.makeKnowledgeMainComment(
-						report.getKnowledgeScore()))
+						report.getKnowledgeScore(), probList, knowledgeProbStatement))
 				.detailCommentInfo(commentGenerator.makeKnowledgeDetailComment(report))
 				.build();
 		log.info(result.toString());
