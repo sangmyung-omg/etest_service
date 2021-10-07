@@ -1,5 +1,6 @@
 package com.tmax.eTest.Common.model.video;
 
+import java.math.BigInteger;
 import java.sql.Date;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -37,7 +38,7 @@ public class Video {
   private Date createDate;
   private Date registerDate;
   private Date endDate;
-  private Long sequence;
+  private BigInteger sequence;
   private String codeSet;
   private String type;
   private String related;
