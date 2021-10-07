@@ -30,7 +30,6 @@ public class UserCreateTimeRepository extends UserFilterRepository {
                 .join(userMaster).on(userMaster.userUuid.eq(statement.userId))
                 .where(
                         dateFilter(filterQueryDTO.getDateFrom(), filterQueryDTO.getDateTo()),
-                        genderFilter(filterQueryDTO.getGender()),
                         ageGroupFilter(filterQueryDTO.getAgeGroupLowerBound(), filterQueryDTO.getAgeGroupUpperBound()),
                         statement.actionType.eq("register"),
                         statement.sourceType.eq("application")

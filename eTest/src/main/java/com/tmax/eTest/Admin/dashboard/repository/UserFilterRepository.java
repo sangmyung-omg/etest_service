@@ -13,11 +13,7 @@ import static com.tmax.eTest.Common.model.user.QUserMaster.userMaster;
 public class UserFilterRepository {
     private final Logger logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
 
-    public BooleanExpression genderFilter(String gender){
-        if (gender == null)
-            return null;
-        return userMaster.gender.eq(Gender.valueOf(gender));
-    }
+
 
     public BooleanExpression ageGroupFilter(LocalDate ageGroupLowerBound, LocalDate ageGroupUpperBound){
         if (ageGroupLowerBound == null & ageGroupUpperBound == null)
