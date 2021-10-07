@@ -221,8 +221,11 @@ public class DiagnosisMainRecordService {
 			{
 				// find bookmark fail do nothing.
 			}
-						
-			result.add(new RecommendVideoDTO(videoInfoOpt.get(), hit, isBookmark));
+					
+			if(videoInfoOpt.isPresent())
+				result.add(new RecommendVideoDTO(videoInfoOpt.get(), hit, isBookmark));
+			else
+				log.info("Can not find Video => ID : "+recVideoId);
 		}
 		
 		return result;
