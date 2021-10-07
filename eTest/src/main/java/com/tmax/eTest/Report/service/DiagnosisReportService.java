@@ -125,53 +125,53 @@ public class DiagnosisReportService {
 		// 5. get recommend info
 		List<JsonArray> recommendInfo = recommendGenerator.getRecommendLists(probAndUserChoice, scoreMap);
 		
-		// Rule Based 점수들 산출
-		Map<String, List<Object>> probInfoForTriton = stateAndProbProcess.makeInfoForTriton(diagnosisProbStatements, probList);
-		TritonResponseDTO tritonResponse = tritonAPIManager.getUnderstandingScoreInTriton(probInfoForTriton);
-		TritonDataDTO embeddingData = null;
-		TritonDataDTO masteryData = null;
-		
-		if(tritonResponse != null)
-		{
-			for (TritonDataDTO dto : tritonResponse.getOutputs()) {
-				if (dto.getName().equals("Embeddings")) {
-					embeddingData = dto;
-				} else if (dto.getName().equals("Mastery")) {
-					masteryData = dto;
-				}
-			}
-	
-			if (embeddingData != null && masteryData != null) {
-				Map<Integer, UkMaster> usedUkMap =stateAndProbProcess.makeUsedUkMap(probList);
-				Map<Integer, Float> ukScoreMap = ukScoreCalculator.makeUKScoreMap(masteryData);
+//		// Rule Based 점수들 산출
+//		Map<String, List<Object>> probInfoForTriton = stateAndProbProcess.makeInfoForTriton(diagnosisProbStatements, probList);
+//		TritonResponseDTO tritonResponse = tritonAPIManager.getUnderstandingScoreInTriton(probInfoForTriton);
+//		TritonDataDTO embeddingData = null;
+//		TritonDataDTO masteryData = null;
+//		
+//		if(tritonResponse != null)
+//		{
+//			for (TritonDataDTO dto : tritonResponse.getOutputs()) {
+//				if (dto.getName().equals("Embeddings")) {
+//					embeddingData = dto;
+//				} else if (dto.getName().equals("Mastery")) {
+//					masteryData = dto;
+//				}
+//			}
+//	
+//			if (embeddingData != null && masteryData != null) {
+//				Map<Integer, UkMaster> usedUkMap =stateAndProbProcess.makeUsedUkMap(probList);
+//				Map<Integer, Float> ukScoreMap = ukScoreCalculator.makeUKScoreMap(masteryData);
 				
 				//[파트이름, 스코어 등급(A~F), 스코어 점수]
-				List<List<String>> partScoreList = ukScoreCalculator.makePartScore(usedUkMap, ukScoreMap);
+//				List<List<String>> partScoreList = ukScoreCalculator.makePartScore(usedUkMap, ukScoreMap);
 				
-				Collections.sort(partScoreList, new Comparator<List<String>>() {
-					@Override
-					public int compare(List<String> o1, List<String> o2) {
-						// TODO Auto-generated method stub
-						return o1.get(2).compareTo(o2.get(2));
-					}
-				});
-				
-				float partAvgScore = 0;
-				
-				for(int i = 0; i < partScoreList.size(); i++)
-				{
-					List<String> partScoreInfo = partScoreList.get(i);
-					int partScore = Integer.parseInt(partScoreInfo.get(2));
-					partAvgScore += partScore;
-				}
-				
-				if(partScoreList.size() > 0)
-					partAvgScore /= partScoreList.size();
-				saveDiagnosisReport(userId, probSetId, scoreMap, recommendInfo, partAvgScore);
-				
-			}
-		}
-		
+//				Collections.sort(partScoreList, new Comparator<List<String>>() {
+//					@Override
+//					public int compare(List<String> o1, List<String> o2) {
+//						// TODO Auto-generated method stub
+//						return o1.get(2).compareTo(o2.get(2));
+//					}
+//				});
+//				
+//				float partAvgScore = 0;
+//				
+//				for(int i = 0; i < partScoreList.size(); i++)
+//				{
+//					List<String> partScoreInfo = partScoreList.get(i);
+//					int partScore = Integer.parseInt(partScoreInfo.get(2));
+//					partAvgScore += partScore;
+//				}
+//				
+//				if(partScoreList.size() > 0)
+//					partAvgScore /= partScoreList.size();
+				saveDiagnosisReport(userId, probSetId, scoreMap, recommendInfo, 0);
+//				
+//			}
+//		}
+//		
 		return result;
 	}
 	
