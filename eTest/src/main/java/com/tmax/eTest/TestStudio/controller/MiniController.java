@@ -31,12 +31,8 @@ public class MiniController {
 			@RequestParam(value = "orderOption", defaultValue = "ascending") String orderOption,
 			@RequestParam(value = "pageNo", defaultValue = "0") int pageNo,
 			@RequestParam(value = "pageCount", defaultValue = "20") int pageCount) {
-		try {
 			return new ResponseEntity<>(miniRepository.searchMiniProblems(partId, keyword, order, orderOption, PageRequest.of(pageNo, pageCount))
 					.getContent().stream().map(MiniProblemListDTO::new).collect(Collectors.toList()), HttpStatus.OK);
-		}catch (Exception e) {
-			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-		}
 	}
 
 }

@@ -313,9 +313,6 @@ definitions:
       subSection:
         type: string
         example: "보유 주식 수"
-      setType:
-        type: string
-        example: "A"
       subject:
         type: string
         example: "잘못된 기준점에 의한 의사결정 판단"

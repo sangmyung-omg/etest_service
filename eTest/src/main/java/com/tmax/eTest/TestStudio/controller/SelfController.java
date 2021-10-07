@@ -24,11 +24,7 @@ public class SelfController {
 
 	@GetMapping("test-studio/problems/self")
 	public ResponseEntity<List<SelfProblemListDTO>> SelfProblemList(@RequestParam(value = "curriculumId") Integer curriculumId) {
-		try {
-			return new ResponseEntity<>(selfRepository.findByCurriculum_CurriculumId(curriculumId).stream().map(SelfProblemListDTO::new).collect(Collectors.toList()), HttpStatus.OK);
-		} catch (Exception e) {
-			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-		}
+		return new ResponseEntity<>(selfRepository.findByCurriculum_CurriculumId(curriculumId).stream().map(SelfProblemListDTO::new).collect(Collectors.toList()), HttpStatus.OK);
 	}
 
 }

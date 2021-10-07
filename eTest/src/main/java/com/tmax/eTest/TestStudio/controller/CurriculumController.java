@@ -2,8 +2,7 @@ package com.tmax.eTest.TestStudio.controller;
 
 import java.util.List;
 
-import javax.validation.Valid;
-
+import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -28,19 +27,15 @@ public class CurriculumController {
 
 	@GetMapping("test-studio/curriculum")
 	public ResponseEntity<List<CurriculumListDTO>> CurriculumList() {
-		try {
-			return new ResponseEntity<>(curriculumService.read(), HttpStatus.OK);
-		}catch (Exception e) {
-			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-		}
+		return new ResponseEntity<>(curriculumService.read(), HttpStatus.OK);
 	}
 
 	@PatchMapping("test-studio/curriculum/{id}")
-	public ResponseEntity<String> CurriculumPost(@PathVariable("id") Integer id, @RequestBody @Valid PartRequest request) {
+	public ResponseEntity<String> CurriculumPost(@PathVariable("id") Integer id, @RequestBody PartRequest request) {
 		try {
 			curriculumService.update(id, request.getStatus());
 			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-		}catch (Exception e) {
+		}catch (DataAccessException e) {
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 	}

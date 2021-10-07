@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.validation.Valid;
 
+import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -30,11 +31,7 @@ public class PartController {
 
 	@GetMapping("test-studio/part")
 	public ResponseEntity<List<PartListDTO>> PartList() {
-		try {
-			return new ResponseEntity<>(partService.read(), HttpStatus.OK);
-		}catch (Exception e) {
-			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-		}
+		return new ResponseEntity<>(partService.read(), HttpStatus.OK);
 	}
 	
 	@PostMapping("test-studio/part")
@@ -42,7 +39,7 @@ public class PartController {
 		try {
 			partService.create(request.name, request.order, request.count);
 			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-		}catch (Exception e) {
+		}catch (DataAccessException e) {
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 	}
@@ -52,7 +49,7 @@ public class PartController {
 		try {
 			partService.update(id, request.getName(), request.getOrder(), request.getCount());
 			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-		}catch (Exception e) {
+		}catch (DataAccessException e) {
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 	}
@@ -62,7 +59,7 @@ public class PartController {
 		try {
 			partService.delete(id);
 			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-		}catch (Exception e) {
+		}catch (DataAccessException e) {
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 	}

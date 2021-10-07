@@ -23,11 +23,7 @@ public class UKController {
 
 	@GetMapping("test-studio/uk")
 	public ResponseEntity<List<UKListDTO>> UKList() {
-		try {
-			return new ResponseEntity<>(ukMasterRepo.findAll().stream().map(UKListDTO::new).collect(Collectors.toList()), HttpStatus.OK);
-		}catch (Exception e) {
-			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-		}
+		return new ResponseEntity<>(ukMasterRepo.findAll().stream().map(UKListDTO::new).collect(Collectors.toList()), HttpStatus.OK);
 	}
 
 }
