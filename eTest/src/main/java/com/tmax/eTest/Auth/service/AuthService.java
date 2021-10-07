@@ -209,5 +209,14 @@ public class AuthService {
         }
         return new CMRespDto<>(200,"로그아웃 성공",text);
     }
+    @Transactional
+    public CMRespDto<?> modifyUserInfo(PrincipalDetails principalDetails, ModifyUserInfoDto modifyUserInfoDto){
+        Optional<UserMaster> userMasterOptional = userRepository.findByUserUuid(principalDetails.getUserUuid());
+        UserMaster userMaster = userMasterOptional.get();
+        userMaster.setNickname(modifyUserInfoDto.getNickname());
+        userMaster.setBirthday(modifyUserInfoDto.getBirthday());
+        userMaster.setEmail(modifyUserInfoDto.getEmail());
+        return new CMRespDto<>(200,"회원정보 수정 성공","성공");
+    };
 
 }
