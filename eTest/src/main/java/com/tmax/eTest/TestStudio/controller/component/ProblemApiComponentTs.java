@@ -74,7 +74,7 @@ public class ProblemApiComponentTs {
 	 */
 	public String updateBasicProblemcomponent(BaseProblemSetDTO baseProblemSetDTO, String userID  ) throws Exception{
 				
-		try {
+//		try {
 			if(baseProblemSetDTO != null) {
 				
 				Long LongProbId = Long.parseLong(baseProblemSetDTO.getProblem().getProbID());
@@ -206,10 +206,10 @@ public class ProblemApiComponentTs {
 			}
 					
 			return "success";
-		}catch(IOException e) {
-			log.info("IOException occurred");
-			throw e;
-		}
+//		}catch(IOException e) {
+//			log.info("IOException occurred");
+//			throw e;
+//		}
 
 	}
 

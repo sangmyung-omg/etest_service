@@ -66,7 +66,7 @@ public class DiagProblemApiComponentTs {
 //			List<Long> probIdList
 //			List<String> strProbIdList
 			) throws Exception{
-		try {
+//		try {
 		//
 		
 			GetDiagProblemDTOOut output = new GetDiagProblemDTOOut( new ArrayList<BaseDiagProblemSetDTO>() );
@@ -161,14 +161,14 @@ public class DiagProblemApiComponentTs {
 				return output;
 		
 		//
-		}catch(IOException e) {
-			log.info("IOException occurred");
-			throw e;
-		}
-		catch(NoDataExceptionTs e) {
-			log.info("NoDataExceptionTs occurred");
-			 throw e;	
-		}
+//		}catch(IOException e) {
+//			log.info("IOException occurred");
+//			throw e;
+//		}
+//		catch(NoDataExceptionTs e) {
+//			log.info("NoDataExceptionTs occurred");
+//			 throw e;	
+//		}
 		
 	}
 	
@@ -178,7 +178,7 @@ public class DiagProblemApiComponentTs {
 	 * request form, isDiagProb(Boolean) 받아 문제 update, ProbUpdateResponse반환
 	 */
 	public String updateProblemcomponent(PutDiagProblemDTOIn request) throws Exception{
-		try {
+//		try {
 						
 			// 문제 n개 업데이트
 
@@ -200,10 +200,10 @@ public class DiagProblemApiComponentTs {
 			imageFileServerApiComponentETest.deleteImgTempFolerOfUserIDServiceComponent(request.getUserID());
 			
 			return "success";
-		}catch(NoDataExceptionTs e) {
-			log.info("NoDataExceptionTs occurred");
-			 throw e;	
-		}
+//		}catch(NoDataExceptionTs e) {
+//			log.info("NoDataExceptionTs occurred");
+//			 throw e;	
+//		}
 	}
 	
 	
@@ -212,7 +212,7 @@ public class DiagProblemApiComponentTs {
 	 * 
 	 */
 	public String updateDiagCurrStatus(PutDiagCurrStatusDTOIn request) throws Exception{
-		try {
+//		try {
 						
 			// 문제 n개 업데이트
 			Long idx = -1L;
@@ -230,10 +230,10 @@ public class DiagProblemApiComponentTs {
 			}
 	
 			return "success";
-		}catch(IOException e) {
-			log.info("IOException occurred");
-			throw e;
-		}
+//		}catch(IOException e) {
+//			log.info("IOException occurred");
+//			throw e;
+//		}
 	}
 	
 	

@@ -128,7 +128,7 @@ public class ImageFileServerApiComponentTs {
 						fos.write(data);
 						fos.flush();
 					} catch (IOException e) {
-						log.info("IOException occurred");
+						log.info("IOException occurred while writing data");
 						throw e;
 					}finally {
 						fos.close();
@@ -177,7 +177,7 @@ public class ImageFileServerApiComponentTs {
 	 */
 	public Boolean assignImgFileServiceComponent(String userID, Long probID, String src ) throws IOException{
 		
-		try {
+//		try {
 			String dirPath = getDirPath(); 
 			if(userID == null || probID == null || src == null) return false;
 			// 파일 경로 변경
@@ -202,11 +202,11 @@ public class ImageFileServerApiComponentTs {
 //			Files.move(pathFrom, pathTo);
 			Files.move(pathFrom, pathTo, StandardCopyOption.REPLACE_EXISTING);
 			return true;
-		} catch (IOException e) {
-			log.info("IOException occurred");
-			throw e;
-//			return false;
-		}
+//		} catch (IOException e) {
+//			log.info("IOException occurred");
+//			throw e;
+////			return false;
+//		}
 		
 	
 	}
@@ -214,7 +214,7 @@ public class ImageFileServerApiComponentTs {
 	// List로 받아 경로 변경
 	public Boolean assignImgFileListServiceComponent(String userID, Long probID, List<String> srcList) throws IOException, CustomExceptionTs {
 		
-		try {
+//		try {
 				Boolean isSuccess = true;
 				
 				if(srcList != null){
@@ -239,10 +239,10 @@ public class ImageFileServerApiComponentTs {
 				}
 				
 				return isSuccess;
-			}catch (IOException e) {
-				log.info("IOException occurred");
-				throw e;
-			}
+//			}catch (IOException e) {
+//				log.info("IOException occurred");
+//				throw e;
+//			}
 		
 	}
 	
@@ -430,14 +430,14 @@ public class ImageFileServerApiComponentTs {
 		FileInputStream fis = null;
 		StringBuffer sb = null;
 		
-		try {
+//		try {
 			String dirPath = getDirPath();
 			fis = new FileInputStream(dirPath + File.separator + Long.toString(probId) + File.separator + src);
-		} catch (FileNotFoundException e) {
-			log.info("FileNotFoundException occurred");	
-			throw e;
-//			return null;
-		}
+//		} catch (FileNotFoundException e) {
+//			log.info("FileNotFoundException occurred");	
+//			throw e;
+////			return null;
+//		}
 		
 		byte[] buf = new byte[BUFFER_SIZE];
 		int len = 0;
@@ -456,7 +456,7 @@ public class ImageFileServerApiComponentTs {
 			}
 			
 		} catch (IOException e) {
-			log.info("IOException occurred");
+			log.info("IOException occurred while encoding Base64");
 			throw e;
 //			return null;
 		} finally {

@@ -76,7 +76,7 @@ public class TestProblemApiComponentTs {
 	
 	public List<List<Long>> CreateProblemComponet(PostTestProblemDTOIn request) throws Exception {
 		
-		try {
+//		try {
 			
 			List<List<Long>> result = new ArrayList<List<Long>>();
 			
@@ -108,8 +108,9 @@ public class TestProblemApiComponentTs {
 				problem.setDifficulty(requestInfo.getDifficulty());
 				problem.setCategory(requestInfo.getCategory());
 				problem.setImgSrc(requestInfo.getImgSrc());
-				if(requestInfo.getTimeRecommendation()!=null)
+				if( ! (requestInfo.getTimeRecommendation()==null||requestInfo.getTimeRecommendation()==""||requestInfo.getTimeRecommendation()==" ") ){
 					problem.setTimeReco(Long.parseLong( requestInfo.getTimeRecommendation() ) );
+				}
 //				problem.setCreatorId(requestInfo.getCreatorID());
 //				problem.setCreateDate(requestInfo.getCreateDate());
 //				problem.setValiatorID(requestInfo.getValidatorID());
@@ -247,10 +248,10 @@ public class TestProblemApiComponentTs {
 			
 			return result;
 			
-		}catch(IOException e) {
-			log.info("IOException occurred");
-			throw e;
-		}
+//		}catch(IOException e) {
+//			log.info("IOException occurred");
+//			throw e;
+//		}
 	}
 	
 	
@@ -265,7 +266,7 @@ public class TestProblemApiComponentTs {
 //			List<String> strProbIdList
 			) throws Exception {
 		
-		try {
+//		try {
 			GetTestProblemDTOOut output = new GetTestProblemDTOOut( new ArrayList<BaseTestProblemSetDTO>() );
 
 			// set : probId []
@@ -364,13 +365,13 @@ public class TestProblemApiComponentTs {
 					
 				}
 				return output;
-		}catch(IOException e) {
-			log.info("IOException occurred");
-			throw e;
-		}catch(NoDataExceptionTs e) {
-			log.info("NoDataExceptionTs occurred");
-			throw e;
-		}
+//		}catch(IOException e) {
+//			log.info("IOException occurred");
+//			throw e;
+//		}catch(NoDataExceptionTs e) {
+//			log.info("NoDataExceptionTs occurred");
+//			throw e;
+//		}
 
 	}
 	
@@ -380,7 +381,7 @@ public class TestProblemApiComponentTs {
 	 * 
 	 */
 	public String updateProblemcomponent(PutTestProblemDTOIn request) throws Exception{
-		try {
+//		try {
 					
 			// 문제 n개 업데이트
 
@@ -406,10 +407,10 @@ public class TestProblemApiComponentTs {
 			imageFileServerApiComponentETest.deleteImgTempFolerOfUserIDServiceComponent(request.getUserID());
 			
 			return "success";
-		}catch(IOException e) {
-			log.info("IOException occurred");
-			throw e;
-		}
+//		}catch(IOException e) {
+//			log.info("IOException occurred");
+//			throw e;
+//		}
 	}
 	
 	/**
@@ -418,7 +419,7 @@ public class TestProblemApiComponentTs {
 	 */
 	public String updateTestProbStatus(PutTestProbStatusDTOIn request) throws Exception{
 	
-		try {	
+//		try {	
 			// 문제 n개 업데이트
 			Long idx = -1L;
 			if(request.getUserID() == null || request.getProbID() ==null) return null;
@@ -431,10 +432,10 @@ public class TestProblemApiComponentTs {
 				throw new CustomExceptionTs(ErrorCodeEnumTs.INVALID_STATUS_RESOURCE);
 
 			}
-		}catch(IOException e) {
-			log.info("IOException occurred");
-			throw e;
-		}
+//		}catch(IOException e) {
+//			log.info("IOException occurred");
+//			throw e;
+//		}
 	
 	}
 	
@@ -449,7 +450,7 @@ public class TestProblemApiComponentTs {
 			List<String> strProbIdList
 			) throws Exception {
 		
-		try {
+//		try {
 			
 //			if(userId==null || probIdList==null || probIdList.isEmpty() ) return null;
 			if(userId==null || strProbIdList==null || strProbIdList.isEmpty() ) return null;
@@ -469,10 +470,10 @@ public class TestProblemApiComponentTs {
 			imageFileServerApiComponentETest.deleteImgTempFolerOfUserIDServiceComponent(userId);
 			return "success";
 			
-		}catch(IOException e) {
-			log.info("IOException occurred");
-			throw e;
-		}
+//		}catch(IOException e) {
+//			log.info("IOException occurred");
+//			throw e;
+//		}
 		
 	}
 
