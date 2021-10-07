@@ -1,6 +1,7 @@
 package com.tmax.eTest.TestStudio.controller.component;
 
 import java.io.File;
+import java.io.IOException;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -72,7 +73,8 @@ public class ProblemApiComponentTs {
 	 * 
 	 */
 	public String updateBasicProblemcomponent(BaseProblemSetDTO baseProblemSetDTO, String userID  ) throws Exception{
-					
+				
+		try {
 			if(baseProblemSetDTO != null) {
 				
 				Long LongProbId = Long.parseLong(baseProblemSetDTO.getProblem().getProbID());
@@ -204,6 +206,10 @@ public class ProblemApiComponentTs {
 			}
 					
 			return "success";
+		}catch(IOException e) {
+			log.info("IOException occurred");
+			throw e;
+		}
 
 	}
 

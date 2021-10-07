@@ -57,18 +57,7 @@ public class TestProblemControllerTs {
 			CreateProblem(
 			@RequestBody PostTestProblemDTOIn request
 			) throws Exception {
-		
-		try {
-			
-//			//0804s
-//			GetProblemDTOOutProblems problems = 
-//					new GetProblemDTOOutProblems("1000", "test","test","test","test","test","test",
-//							10L,"test",new Date(20201020),"test",new Date(20201020),"test",new Date(20201020)
-//							,"test","test","test","test");
-//			List<GetProblemDTOOutProblems> LP = new ArrayList<GetProblemDTOOutProblems>();
-//			LP.add(problems);
-//			GetTestProblemDTOOut request = new GetTestProblemDTOOut( LP, "1" );
-			//0804e
+
 			List<Long> probIdList = new ArrayList<Long>();
 			List<Long> skipIdxList = new ArrayList<Long>();
 			List<Long> imgFailProbIdList = new ArrayList<Long>();
@@ -110,11 +99,6 @@ public class TestProblemControllerTs {
 //					new GetProblemDTOOut("200","success",probIdStrList);
 			return new ResponseEntity<>(res, HttpStatus.OK);
 			
-		}catch (Exception e) {
-			e.printStackTrace();
-			log.error(e.getMessage());
-			throw e;
-		}
 	}
 	
 	
@@ -131,8 +115,6 @@ public class TestProblemControllerTs {
 			@PathVariable("userID") String userID,
 			@PathVariable("probIDs") String probIDs
 			) throws Exception {
-		
-		try {
 			
 //			if(request.getProbIDs().isEmpty()) {
 			if(probIDs == null) {
@@ -145,12 +127,6 @@ public class TestProblemControllerTs {
 
 			return new ResponseEntity<>( res, HttpStatus.OK );
 			
-		} catch(Exception e) {
-			e.printStackTrace();
-			log.error(e.getMessage());
-			throw e;
-
-		}
 	}
 	
 	/**
@@ -161,34 +137,21 @@ public class TestProblemControllerTs {
 	public ResponseEntity<String> updateProblems(
 			@RequestBody PutTestProblemDTOIn request) throws Exception {
 		
-		try {
 			String res = testProblemApiComponent.updateProblemcomponent(request);
 
 				return new ResponseEntity<>( res, HttpStatus.OK );
 
 			
-		}catch(Exception e) {
-			 e.printStackTrace();
-			 log.error(e.getMessage());
-			 throw e;	
-		}
 	}
 	
 	@PutMapping("/test-studio/TestProbStatus")
 	public ResponseEntity<String> updateTestProbStatus(
 			@RequestBody PutTestProbStatusDTOIn request) throws Exception {
 		
-		try {
 			String res = testProblemApiComponent.updateTestProbStatus(request);
 
 				return new ResponseEntity<>( res, HttpStatus.OK );
 
-			
-		}catch(Exception e) {
-			e.printStackTrace();
-			log.error(e.getMessage());
-			throw e;
-		}
 	}
 	
 	/**
@@ -198,17 +161,11 @@ public class TestProblemControllerTs {
 	@DeleteMapping("/test-studio/TestProblems")
 	public ResponseEntity<String> delete(@RequestBody DeleteProblemDTOIn request) throws Exception {
 		
-		try {
 			String res = testProblemApiComponent.deleteProbComponent(request.getUserID(), request.getProbIDs() );
 
 				return new ResponseEntity<>( res, HttpStatus.OK );
 
 			
-		}catch(Exception e) {
-			 e.printStackTrace(); 
-			 log.error(e.getMessage());
-			 throw e;
-		}
 	}
 
 }

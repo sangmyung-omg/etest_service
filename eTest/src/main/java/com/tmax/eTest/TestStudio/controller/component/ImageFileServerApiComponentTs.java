@@ -102,7 +102,7 @@ public class ImageFileServerApiComponentTs {
 				if( !destDir.exists() ){
 					destDir.mkdirs();
 				}
-				System.out.println(destDir.toString());
+//				System.out.println(destDir.toString());
 				
 				// 이미지 저장
 				for(MultipartFile imgMFile : imgMFileList) {
@@ -118,25 +118,28 @@ public class ImageFileServerApiComponentTs {
 					try {
 						fos = new FileOutputStream(destDir.toString() + File.separator + imgMFile.getOriginalFilename());
 					} catch (FileNotFoundException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-						throw new Exception("FileOutputStream 초기화에 실패했습니다.");
+						log.info("FileOutputStream 초기화에 실패했습니다.");
+						throw e;
 					}
 					
 					try {
 						byte[] data = imgMFile.getBytes(); 
-						System.out.println("data length: " + data.length);
+//						System.out.println("data length: " + data.length);
 						fos.write(data);
 						fos.flush();
-						fos.close();
 					} catch (IOException e) {
-						e.printStackTrace();
+						log.info("IOException occurred");
+						throw e;
+					}finally {
+						fos.close();
 					}
 					
 					if( alreadyExist ){
-						System.out.println("Success: 이미지 덮어쓰기에 성공하였습니다.");
+//						System.out.println("Success: 이미지 덮어쓰기에 성공하였습니다.");
+						log.info("Success: 이미지 덮어쓰기에 성공하였습니다.");
 					}else{
-						System.out.println("Success: 이미지 업로드에 성공하였습니다.");
+//						System.out.println("Success: 이미지 업로드에 성공하였습니다.");
+						log.info("Success: 이미지 업로드에 성공하였습니다.");
 					}
 					
 				}
@@ -170,8 +173,9 @@ public class ImageFileServerApiComponentTs {
 	
 	/**
 	 * 이미지 파일 경로 변경
+	 * @throws IOException 
 	 */
-	public Boolean assignImgFileServiceComponent(String userID, Long probID, String src ){
+	public Boolean assignImgFileServiceComponent(String userID, Long probID, String src ) throws IOException{
 		
 		try {
 			String dirPath = getDirPath(); 
@@ -199,16 +203,16 @@ public class ImageFileServerApiComponentTs {
 			Files.move(pathFrom, pathTo, StandardCopyOption.REPLACE_EXISTING);
 			return true;
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return false;
+			log.info("IOException occurred");
+			throw e;
+//			return false;
 		}
 		
 	
 	}
 	
 	// List로 받아 경로 변경
-	public Boolean assignImgFileListServiceComponent(String userID, Long probID, List<String> srcList) {
+	public Boolean assignImgFileListServiceComponent(String userID, Long probID, List<String> srcList) throws IOException, CustomExceptionTs {
 		
 		try {
 				Boolean isSuccess = true;
@@ -224,17 +228,19 @@ public class ImageFileServerApiComponentTs {
 							}
 							Boolean assignResult = assignImgFileServiceComponent(userID, probID, src);
 							if(!assignResult){
-								System.out.println("파일 추가 안함: " + src);
+//								System.out.println("파일 추가 안함: " + src);
 								isSuccess = false;
 							}else {
-								System.out.println("파일 추가: " + src);
+//								System.out.println("파일 추가: " + src);
+								log.info("이미지 파일 추가 prob: "+probID+", src: "+src);
 							}
 						}
 					}
 				}
 				
 				return isSuccess;
-			}catch (Exception e) {
+			}catch (IOException e) {
+				log.info("IOException occurred");
 				throw e;
 			}
 		
@@ -245,7 +251,7 @@ public class ImageFileServerApiComponentTs {
 	 */
 	public Boolean deleteImgSrcFileOfProbIDServiceComponent(Long probID){	
 
-		try {
+
 				String dirPath = getDirPath();
 				if(probID ==null) return false;
 				
@@ -257,18 +263,17 @@ public class ImageFileServerApiComponentTs {
 					File[] fileList = folder.listFiles();
 					for( int i=0 ; i<fileList.length ; i ++ ){
 						fileList[i].delete();
-						System.out.println("파일 삭제 prob: " + probIDtoString+"src: "+fileList[i].getName());
+//						System.out.println("파일 삭제 prob: " + probIDtoString+"src: "+fileList[i].getName());
+						log.info("이미지 파일 삭제 prob: " + probIDtoString+", src: "+fileList[i].getName());
 					}
 				}
 			
 			return true;
-		}catch (Exception e) {
-			throw e;
-		}
+
 	}
 	public Boolean deleteImgSrcFolerOfProbIDServiceComponent(Long probID){	
 
-		try {
+
 				String dirPath = getDirPath();
 				if(probID ==null) return false;
 				
@@ -278,20 +283,18 @@ public class ImageFileServerApiComponentTs {
 				
 				if( folder.exists() ){
 					folder. delete();
-					System.out.println("폴더 삭제 : " + dirPath + File.separator + probIDtoString);
+//					System.out.println("폴더 삭제 : " + dirPath + File.separator + probIDtoString);
+					log.info("이미지 폴더 삭제 : " +probIDtoString);
 				}
 			
 			return true;
-		}catch (Exception e) {
-			throw e;
-		}
+
 	}
 	/**
 	 *  userID에 대응한 이미지 저장 tmp폴더내부 데이터 삭제
 	 */
 	public Boolean deleteImgTempFolerOfUserIDServiceComponent(String userID){	
 
-		try {
 				String dirPath = getDirPath();
 				if(userID==null) return false;
 			
@@ -301,21 +304,19 @@ public class ImageFileServerApiComponentTs {
 					File[] fileList = folder.listFiles();
 					for( int i=0 ; i<fileList.length ; i ++ ){
 						fileList[i].delete();
-						System.out.println("파일 삭제 userID: " + userID+", src: "+fileList[i].getName());
+//						System.out.println("파일 삭제 userID: " + userID+", src: "+fileList[i].getName());
+//						log.info("임시 이미지 파일 삭제 userID: " + userID+", src: "+fileList[i].getName());
 					}
 				}
 			
 			return true;
-		}catch (Exception e) {
-			throw e;
-		}
+
 	}
 	/**
 	 * 주어진 probID 이미지 폴더내 imgSrcs에 대응한 이미지 파일 삭제
 	 */
 	public Boolean deleteImgSrcsOfProbIDServiceComponent(Long probID, List<String> imgSrcs){	
 
-		try {
 				String dirPath = getDirPath();
 				if(probID==null) return false;
 				
@@ -332,7 +333,8 @@ public class ImageFileServerApiComponentTs {
 //						System.out.println(imgFile.toString());	
 						if(imgFile.exists()) {
 							imgFile.delete();
-							System.out.println("파일 삭제 prob: " + probIDtoString+", src: "+imgFile.getName());
+//							System.out.println("파일 삭제 prob: " + probIDtoString+", src: "+imgFile.getName());
+							log.info("이미지 파일 삭제 prob: " + probIDtoString+", src: "+imgFile.getName());
 						}
 						
 					}
@@ -342,17 +344,16 @@ public class ImageFileServerApiComponentTs {
 				}
 			
 			return true;
-		}catch (Exception e) {
-			throw e;
-		}
+
 	}
 	
 	
 	
 	/**
 	 * 이미지 파일 JsonObject to String 반환  JsonObject:( key:이미지 파일 이름/value:Base64인코딩 된 이미지 {key1:value1,key2:value2})
+	 * @throws IOException 
 	 */
-	public String getImgByProbIDServiceComponent(Long probId){
+	public String getImgByProbIDServiceComponent(Long probId) throws IOException{
 		String dirPath = getDirPath();
 		if(probId==null) return null;
 		
@@ -381,9 +382,10 @@ public class ImageFileServerApiComponentTs {
 	/**
 	 * norm or dark mode 에 따른
 	 * 이미지 파일 JsonObject to String List반환  JsonObject:( key:이미지 파일 이름/value:Base64인코딩 된 이미지 {key1:value1,key2:value2})
+	 * @throws IOException 
 	 */
 
-	public List<String> getImgJsonToStrListByProbIDServiceComponent(Long probId){
+	public List<String> getImgJsonToStrListByProbIDServiceComponent(Long probId) throws IOException{
 		String dirPath = getDirPath();
 		if(probId==null) return null;
 		
@@ -421,8 +423,9 @@ public class ImageFileServerApiComponentTs {
 	
 	/**
 	 * 이미지 파일 base64 인코딩 후 String 으로 반환
+	 * @throws IOException 
 	 */
-	public String getImgFileServiceComponent(Long probId, String src){
+	public String getImgFileServiceComponent(Long probId, String src) throws IOException, FileNotFoundException{
 		final Integer BUFFER_SIZE = 3 * 1024;
 		FileInputStream fis = null;
 		StringBuffer sb = null;
@@ -431,10 +434,9 @@ public class ImageFileServerApiComponentTs {
 			String dirPath = getDirPath();
 			fis = new FileInputStream(dirPath + File.separator + Long.toString(probId) + File.separator + src);
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			
-			return null;
+			log.info("FileNotFoundException occurred");	
+			throw e;
+//			return null;
 		}
 		
 		byte[] buf = new byte[BUFFER_SIZE];
@@ -452,11 +454,13 @@ public class ImageFileServerApiComponentTs {
 					sb.append(Base64.getEncoder().encodeToString(temp));
 				}
 			}
-			fis.close();
+			
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();		
-			return null;
+			log.info("IOException occurred");
+			throw e;
+//			return null;
+		} finally {
+			fis.close();
 		}
 		
 		return sb.toString();
@@ -486,7 +490,7 @@ public class ImageFileServerApiComponentTs {
 	
 			File folder = new File(pathUtilTs.getDirPath() + File.separator + strProbId);
 			if( folder.exists() && strProbId !="") {
-				System.out.println("AbsolutePath of the folder : "+folder.getAbsolutePath());
+//				System.out.println("AbsolutePath of the folder : "+folder.getAbsolutePath());
 				List<String> srcList = new ArrayList<String>();
 				
 				for(String src:  folder.list() ) {

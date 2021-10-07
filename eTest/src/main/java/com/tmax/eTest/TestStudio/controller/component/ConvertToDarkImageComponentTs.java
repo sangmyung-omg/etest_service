@@ -42,7 +42,7 @@ public class ConvertToDarkImageComponentTs {
             new PngEncoder().withBufferedImage(inputFile).toFile(outputFile); 	// ImageIO.write(inputFile, "png", outputFile); 대체
             return true;
         } catch (Exception e) {
-            e.printStackTrace();
+//            e.printStackTrace();
             return false;
         }
 

@@ -27,7 +27,7 @@ public class DiagProblemServiceTs {
 	 */
 	//id 로 조회
 	
-	public Optional<DiagnosisProblem> findOne(Long probID) throws Exception {
+	public Optional<DiagnosisProblem> findOne(Long probID) throws NoDataExceptionTs {
 		
 		if( diagProblemRepository.findById(probID.intValue()).isPresent() ) {
 			return diagProblemRepository.findById(probID.intValue());

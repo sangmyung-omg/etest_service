@@ -50,7 +50,6 @@ public class DiagProblemControllerTs {
 			@PathVariable("probIDs") String probIDs
 			) throws Exception {
 		
-		try {
 //			System.out.println(request.getProbID());
 			
 			GetDiagProblemDTOOut res = diagProblemApiComponent.diagProblemsGetComponent( 
@@ -60,11 +59,6 @@ public class DiagProblemControllerTs {
 			
 			return new ResponseEntity<>( res, HttpStatus.OK );
 			
-		} catch(Exception e) {
-			e.printStackTrace();
-			log.error(e.getMessage());
-			throw e;
-		}
 	}
 	
 	
@@ -77,34 +71,21 @@ public class DiagProblemControllerTs {
 	public ResponseEntity<String> updateProblems(
 			@RequestBody PutDiagProblemDTOIn request) throws Exception {
 		
-		try {
 			String res = diagProblemApiComponent.updateProblemcomponent(request);
 
 				return new ResponseEntity<>( res, HttpStatus.OK );
 
 			
-		}catch(Exception e) {
-			 e.printStackTrace(); 
-			 log.error(e.getMessage());
-			 throw e;
-		}
 	}
 	
 	@PutMapping("/test-studio/DiagCurrStatus")
 	public ResponseEntity<String> updateDiagCurrStatus(
 			@RequestBody PutDiagCurrStatusDTOIn request) throws Exception {
 		
-		try {
 			String res = diagProblemApiComponent.updateDiagCurrStatus(request);
 
 				return new ResponseEntity<>( res, HttpStatus.OK );
-
-			
-		}catch(Exception e) {
-			 e.printStackTrace(); 
-			 log.error(e.getMessage());
-			 throw e;	
-		}
+		
 	}
 	
 

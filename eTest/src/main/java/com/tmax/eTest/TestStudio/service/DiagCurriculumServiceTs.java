@@ -42,7 +42,7 @@ public class DiagCurriculumServiceTs {
 	 * @throws Exception 
 	 */
 	
-	public String problemUpdate(String userId, BaseDiagCurriculumDTO requestInfo ) throws Exception {
+	public String problemUpdate(String userId, BaseDiagCurriculumDTO requestInfo ) throws NoDataExceptionTs {
 		  
 		//id not null 일경우면 update
 		if(requestInfo.getCurriculumID() ==null) return null;
@@ -72,7 +72,7 @@ public class DiagCurriculumServiceTs {
 		return "ok";
 	}
 	
-	public String currStatusChange(String curriculumId ) throws Exception {
+	public String currStatusChange(String curriculumId ) throws NoDataExceptionTs {
 		  
 		//id not null 일경우면 update
 		if(curriculumId == null) return null;

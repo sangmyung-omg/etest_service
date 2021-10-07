@@ -52,18 +52,9 @@ public class ImageControllerTs {
 			@RequestPart(value="userID") String userId,
 			@RequestPart(value="defaultDarkImg", required=false) String defaultDarkImg
 			) throws Exception {
-	
-		try {
 
 			return new ResponseEntity<>( imageFileServerApiComponentETest.ImageUploadServiceComponent(imgMFileList, userId, defaultDarkImg ), HttpStatus.OK );
-		
-		} catch (Exception e) {
 			
-			e.printStackTrace(); 
-			log.error(e.getMessage());
-			throw e;
-			
-		}		
 	}	
 	
 //	@GetMapping("/test-studio/ImageSrc")
@@ -74,16 +65,8 @@ public class ImageControllerTs {
 			@PathVariable("probIDs") String probIDs
 			) throws Exception {
 	
-		try {
-
 			return new ResponseEntity<>( imageFileServerApiComponentETest.ImageListComponent(probIDs), HttpStatus.OK );
-		
-		} catch (Exception e) {
 			
-			e.printStackTrace(); 
-			log.error(e.getMessage());
-			throw e;
-		}		
 	}	
 	
 	@GetMapping("/test-studio/image-route-directory")
@@ -91,21 +74,21 @@ public class ImageControllerTs {
 			
 			) throws Exception {
 	
-		try {
+//		try {
 			File folder = new File(imageFileServerApiComponentETest.getDirPath());
 			return new ResponseEntity<>( folder.getAbsolutePath(), HttpStatus.OK );
 		
-		} catch (Exception e) {
-			
-			try {
-				return new ResponseEntity<>( imageFileServerApiComponentETest.getDirPath(), HttpStatus.OK );
-			}catch(Exception e_) {
-				e_.printStackTrace(); 
-				log.error(e_.getMessage());
-				throw e_;
-			}
-			
-		}		
+//		} catch (Exception e) {
+//			
+//			try {
+//				return new ResponseEntity<>( imageFileServerApiComponentETest.getDirPath(), HttpStatus.OK );
+//			}catch(Exception e_) {
+//				e_.printStackTrace(); 
+//				log.error(e_.getMessage());
+//				throw e_;
+//			}
+//			
+//		}		
 	}
 	
 }

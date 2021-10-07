@@ -15,8 +15,6 @@ public class InitialConsonantUtilTs {
 	
 	public String InitialConsonantsV2( String jsonStr ) throws Exception{
 		
-		try {
-			
 		     if(jsonStr.length()>2500) {
 		    	 throw new Exception("InitialConsonant: excceed capacity"); // temp
 		     }
@@ -58,10 +56,6 @@ public class InitialConsonantUtilTs {
 			 
 			 return rtName;
 			
-		}catch (Exception e) {
-            throw e;
-		}
-			
 	}
 	
 	/**
@@ -74,7 +68,6 @@ public class InitialConsonantUtilTs {
 
     	char epName;
 
-    	try{
 
     		for (int i=0; i<name.length()&&i<2500; i++){
 
@@ -91,11 +84,6 @@ public class InitialConsonantUtilTs {
 
     		}
 
-    	}catch (Exception e) {
-    		throw e;
-//			throw new Exception("convertName err: "+ name);
-
-		}
 
     	
 //    	System.out.println(rtName);

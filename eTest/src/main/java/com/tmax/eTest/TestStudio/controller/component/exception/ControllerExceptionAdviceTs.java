@@ -31,9 +31,15 @@ public class ControllerExceptionAdviceTs {
     return ErrorResponseTs.toResponseEntity(exception.getErrorCodeEnum());
   }
   
-  @ExceptionHandler
-  public ResponseEntity<GenericError__DTO> basicExceptionProcess(Exception exception) {
-    log.error( exception.getMessage() );
-    return new ResponseEntity<>(new GenericError__DTO(exception.getMessage(),HttpStatus.INTERNAL_SERVER_ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
+  @ExceptionHandler({ NoDataExceptionTs.class })
+  public ResponseEntity<GenericError__DTO> handleCustomException_NoDataExceptionTs(NoDataExceptionTs exception) {
+    log.error( exception.getSecuredMessage() );
+    return new ResponseEntity<>(new GenericError__DTO(exception.getSecuredMessage(),HttpStatus.INTERNAL_SERVER_ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
   }
+  
+//  @ExceptionHandler
+//  public ResponseEntity<GenericError__DTO> basicExceptionProcess(Exception exception) {
+//    log.error( exception.getMessage() );
+//    return new ResponseEntity<>(new GenericError__DTO(exception.getMessage(),HttpStatus.INTERNAL_SERVER_ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
+//  }
 }

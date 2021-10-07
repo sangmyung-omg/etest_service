@@ -1,6 +1,7 @@
 package com.tmax.eTest.TestStudio.controller.component;
 
 import java.io.File;
+import java.io.IOException;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -246,7 +247,8 @@ public class TestProblemApiComponentTs {
 			
 			return result;
 			
-		}catch (Exception e) {
+		}catch(IOException e) {
+			log.info("IOException occurred");
 			throw e;
 		}
 	}
@@ -263,6 +265,7 @@ public class TestProblemApiComponentTs {
 //			List<String> strProbIdList
 			) throws Exception {
 		
+		try {
 			GetTestProblemDTOOut output = new GetTestProblemDTOOut( new ArrayList<BaseTestProblemSetDTO>() );
 
 			// set : probId []
@@ -346,7 +349,7 @@ public class TestProblemApiComponentTs {
 					//
 //					TestProblem testProblem = testProblemServiceETest.findOne( probId );
 					if(findProblem.getTestInfo() ==null) {
-						throw new Exception("TestInfo() ==null");
+						throw new NoDataExceptionTs("TestInfo is null");
 					}
 					TestProblem testProblem = findProblem.getTestInfo();
 					BaseTestProblemDTO baseTestProblemDTO 
@@ -361,6 +364,13 @@ public class TestProblemApiComponentTs {
 					
 				}
 				return output;
+		}catch(IOException e) {
+			log.info("IOException occurred");
+			throw e;
+		}catch(NoDataExceptionTs e) {
+			log.info("NoDataExceptionTs occurred");
+			throw e;
+		}
 
 	}
 	
@@ -396,8 +406,9 @@ public class TestProblemApiComponentTs {
 			imageFileServerApiComponentETest.deleteImgTempFolerOfUserIDServiceComponent(request.getUserID());
 			
 			return "success";
-		}catch(Exception e) {
-			 throw e;
+		}catch(IOException e) {
+			log.info("IOException occurred");
+			throw e;
 		}
 	}
 	
@@ -407,7 +418,7 @@ public class TestProblemApiComponentTs {
 	 */
 	public String updateTestProbStatus(PutTestProbStatusDTOIn request) throws Exception{
 	
-						
+		try {	
 			// 문제 n개 업데이트
 			Long idx = -1L;
 			if(request.getUserID() == null || request.getProbID() ==null) return null;
@@ -420,6 +431,10 @@ public class TestProblemApiComponentTs {
 				throw new CustomExceptionTs(ErrorCodeEnumTs.INVALID_STATUS_RESOURCE);
 
 			}
+		}catch(IOException e) {
+			log.info("IOException occurred");
+			throw e;
+		}
 	
 	}
 	
@@ -454,7 +469,8 @@ public class TestProblemApiComponentTs {
 			imageFileServerApiComponentETest.deleteImgTempFolerOfUserIDServiceComponent(userId);
 			return "success";
 			
-		}catch(Exception e) {
+		}catch(IOException e) {
+			log.info("IOException occurred");
 			throw e;
 		}
 		
