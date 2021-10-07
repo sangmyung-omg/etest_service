@@ -59,7 +59,6 @@ public class ManageUserService {
         return UserPopupDTO.builder()
                 .user_uuid(user.getUserUuid())
                 .nick_name(user.getNickname())
-                .gender(user.getGender())
                 .email(user.getEmail())
                 .birthday(user.getBirthday())
                 .build();
@@ -131,7 +130,6 @@ public class ManageUserService {
                 .createDate(user.getCreateDate())
                 .nickname(user.getNickname())
                 .provider(user.getProvider())
-                .event_sms_agreement(user.getEvent_sms_agreement())
                 .build();
     }
 

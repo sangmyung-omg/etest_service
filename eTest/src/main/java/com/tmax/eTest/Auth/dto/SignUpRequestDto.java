@@ -12,9 +12,6 @@ public class SignUpRequestDto {
 
     private String providerId;
 
-    @Enumerated(EnumType.STRING)
-    private Gender gender;
-
     private String email;
 
     private LocalDate birthday;
