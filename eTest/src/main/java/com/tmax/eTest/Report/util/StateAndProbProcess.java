@@ -30,8 +30,6 @@ import com.tmax.eTest.Common.model.uk.ProblemUKRelation;
 // Statement(LRS 정보) 와 Problem 정보가 필요한 단순 작업 관련 Method들 집합.
 public class StateAndProbProcess {
 	
-	private final Logger logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
-	
 	public final static String UK_LIST_KEY = "ukList";			// List<String>
 	public final static String IS_CORRECT_LIST_KEY = "isCorrectList";// List<String>
 	public final static String DIFF_LIST_KEY = "diffcultyList";	// List<String>
@@ -106,7 +104,7 @@ public class StateAndProbProcess {
 			}
 			catch(Exception e)
 			{
-				logger.info("makeInfoForTriton : "+e.toString()+" id : "+dto.getSourceId()+" error!");
+				log.info("makeInfoForTriton : "+e.toString()+" id : "+dto.getSourceId()+" error!");
 			}
 		}
 		
@@ -197,8 +195,6 @@ public class StateAndProbProcess {
 				isIDExist.put(sourceID, result.size()-1);
 			}
 		}
-		
-		log.info(result.size()+"    "+result.toString());
 		
 
 		return result;

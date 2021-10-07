@@ -1,11 +1,11 @@
 package com.tmax.eTest.Report.util;
 
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Pair;
@@ -455,11 +455,11 @@ public class DiagnosisRecommend {
 				result.add(obj);
 		else
 		{
-			Random rand = new Random();
+			SecureRandom random = new SecureRandom();
 			
 			for(int i = 0; i < 5; i++)
 			{
-				int idx = rand.nextInt(resultBucket.size());
+				int idx = random.nextInt(resultBucket.size());
 				result.add(resultBucket.get(idx));
 				resultBucket.remove(idx);
 			}

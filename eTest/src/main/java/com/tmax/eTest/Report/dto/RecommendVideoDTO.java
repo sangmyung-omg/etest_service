@@ -14,9 +14,9 @@ public class RecommendVideoDTO {
 	String title;
 	String thumbnailUrl;
 	String type;
-	float totalTime;
-	int hit;
-	boolean isBookmark;
+	Float totalTime;
+	Integer hit;
+	Boolean isBookmark;
 	
 	public RecommendVideoDTO(Video videoModel, int hit, boolean isBookmark){
 		setParamByVideoModel(videoModel, hit, isBookmark);
@@ -29,7 +29,8 @@ public class RecommendVideoDTO {
 		this.thumbnailUrl = videoModel.getImgSrc();
 		this.hit = hit;
 		this.isBookmark = isBookmark;
-		this.totalTime = videoModel.getTotalTime();
+		if(videoModel.getTotalTime() != null)
+			this.totalTime = videoModel.getTotalTime();
 		this.type = videoModel.getType();
 	}
 }
