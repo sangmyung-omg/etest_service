@@ -5,12 +5,16 @@ import com.tmax.eTest.Auth.repository.UserRepository;
 import com.tmax.eTest.Common.model.support.Inquiry;
 import com.tmax.eTest.Common.model.support.Inquiry_file;
 import com.tmax.eTest.Common.model.user.UserMaster;
+import com.tmax.eTest.Support.controller.InquiryController;
 import com.tmax.eTest.Support.dto.CreateInquiryDto;
 import com.tmax.eTest.Support.dto.ModifyInquiryDto;
 import com.tmax.eTest.Support.repository.InquiryFileRepository;
 import com.tmax.eTest.Support.repository.InquiryRepository;
 import java.io.IOException;
 import java.nio.file.Files;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,6 +27,7 @@ import java.util.*;
 
 @Service
 public class InquiryService {
+    private static final Logger logger = LoggerFactory.getLogger(InquiryService.class);
 
     @Autowired
     @Qualifier("SU-InquiryRepository")
@@ -66,8 +71,8 @@ public class InquiryService {
                         .build();
                 try {
                     Files.write(imageFilePath, createInquiryDto.getFileList().get(i).getBytes());
-                } catch (Exception e) {
-                    e.printStackTrace();
+                } catch (IOException e) {
+                    logger.debug("File write IOException");
                 }
                 inquiryFileRepository.save(inquiry_file);
             }
@@ -105,8 +110,10 @@ public class InquiryService {
             try {
                 Files.delete(filePath);
             } catch (NoSuchFileException e) {
-            } catch (IOException e) {
-                e.printStackTrace();
+                logger.debug("해당 파일이 없습니다.");
+            }
+            catch (IOException e) {
+                logger.debug("해당 파일이 없습니다.");
             }
         }
         // 기존의 파일 db에서 delete

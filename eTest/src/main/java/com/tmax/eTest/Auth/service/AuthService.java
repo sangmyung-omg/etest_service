@@ -6,6 +6,9 @@ import com.tmax.eTest.Auth.repository.UserRepository;
 import com.tmax.eTest.Common.model.user.UserMaster;
 import com.tmax.eTest.LRS.dto.StatementDTO;
 import com.tmax.eTest.LRS.util.LRSAPIManager;
+import com.tmax.eTest.Support.controller.InquiryController;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,6 +24,7 @@ import java.util.concurrent.TimeUnit;
 
 @Service
 public class AuthService {
+    private static final Logger logger = LoggerFactory.getLogger(AuthService.class);
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
     @Autowired
@@ -38,7 +42,7 @@ public class AuthService {
     LRSAPIManager lrsapiManager;
     @Transactional
     public CMRespDto<?> singUp(SignUpRequestDto signUpRequestDto) {
-            if (!emailDuplicateCheck(signUpRequestDto.getEmail()) && !nickNameDuplicateCheck(signUpRequestDto.getNickname())) {
+        if (!emailDuplicateCheck(signUpRequestDto.getEmail()) && !nickNameDuplicateCheck(signUpRequestDto.getNickname())) {
                 UserMaster userMaster = UserMaster.builder()
                         .nickname(signUpRequestDto.getNickname())
                         .email(signUpRequestDto.getEmail())
@@ -124,7 +128,7 @@ public class AuthService {
         try {
             lrsapiManager.saveStatementList(statementDTOList);
         } catch (ParseException e) {
-
+            logger.debug("LRS save error");
         }
         return "True";
     }
