@@ -12,6 +12,8 @@ import com.tmax.eTest.Support.repository.InquiryRepository;
 import com.tmax.eTest.Support.service.InquiryService;
 import io.swagger.models.auth.In;
 import org.apache.tika.Tika;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -38,6 +40,8 @@ import java.util.*;
 
 @RestController
 public class InquiryController {
+    private static final Logger logger = LoggerFactory.getLogger(InquiryController.class);
+
     @Value("${file.path}")
     private String path;
 
@@ -98,8 +102,8 @@ public class InquiryController {
         try {
                 mimeType = tika.detect(filePath);
                 header.add("Content-Type", mimeType);
-        } catch (Exception e) {
-
+        } catch (IOException e) {
+            logger.debug("mime type Error");
         }
 
         Resource resource = new FileSystemResource(filePath);

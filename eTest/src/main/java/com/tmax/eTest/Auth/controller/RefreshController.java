@@ -5,14 +5,18 @@ import com.tmax.eTest.Auth.jwt.JwtTokenUtil;
 import com.tmax.eTest.Auth.repository.UserRepository;
 import com.tmax.eTest.Auth.service.PrincipalDetailsService;
 import com.tmax.eTest.Common.model.user.UserMaster;
+import com.tmax.eTest.Support.service.InquiryService;
 import io.jsonwebtoken.ExpiredJwtException;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -21,6 +25,8 @@ import java.util.Optional;
 @Slf4j
 @RestController
 public class RefreshController {
+    private static final Logger logger = LoggerFactory.getLogger(RefreshController.class);
+
     @Autowired
     @Qualifier("AU-UserRepository")
     private UserRepository userRepository;
@@ -77,8 +83,8 @@ public class RefreshController {
                 map.put("success", false);
                 map.put("msg", "your refresh token does not exist.");
             }
-        } catch (Exception e) {
-            throw e;
+        } catch (IOException e) {
+            logger.debug("access token이나 refresh token이 제대로 안들어옴");
         }
         log.info("m: " + m);
         return map;
