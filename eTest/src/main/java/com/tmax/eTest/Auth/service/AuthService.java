@@ -46,11 +46,8 @@ public class AuthService {
                         .role(Role.USER)
                         .name(signUpRequestDto.getName())
                         .userUuid(UUID.randomUUID().toString())
-                        .gender(signUpRequestDto.getGender())
                         .providerId(signUpRequestDto.getProviderId())
                         .birthday(signUpRequestDto.getBirthday())
-                        .event_sms_agreement(signUpRequestDto.getEvent_sms_agreement())
-                        .account_active(signUpRequestDto.getAccount_active())
                         .older_than_14(true)
                         .service_agreement(true)
                         .collect_info(true)
@@ -144,7 +141,6 @@ public class AuthService {
             Map<String, String> info = new HashMap<>();
             info.put("jwtToken", jwtToken);
             info.put("email", userMaster.getEmail());
-            info.put("gender", userMaster.getGender().toString());
             info.put("birthday", userMaster.getBirthday().toString());
             info.put("nickname", userMaster.getNickname());
             info.put("provider", userMaster.getProvider().toString());
