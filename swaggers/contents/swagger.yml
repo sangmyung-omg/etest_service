@@ -251,7 +251,20 @@ paths:
               schema:
                 type: object
                 example:
-                  isSuccess: true           
+                  isSuccess: true
+  /videos/watch:
+    get:
+      tags:
+        - Video
+      summary : 유저의 시청 영상 리스트 조회
+      description : 유저가 최근 시청한 영상 순서대로 리스트 조회
+      responses:
+        200:
+          description: OK
+          content:
+            json:
+              schema:
+                $ref: '#/components/schemas/VideoListModel'           
   /books:
     get:
       tags:

@@ -14,6 +14,9 @@ import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.CaseBuilder;
+import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -47,20 +50,6 @@ public class VideoRepositorySupport extends QuerydslRepositorySupport {
     this.query = query;
   }
 
-  public OrderSpecifier<?> getVideoSortedColumn(SortType sort) {
-    switch (sort.name()) {
-      case "DATE":
-        return querydslUtils.getSortedColumn(Order.ASC, video, "createDate");
-      case "HIT":
-        return querydslUtils.getSortedColumn(Order.DESC, video, "videoHit.hit");
-      case "RECOMMEND":
-      case "SEQUENCE":
-        return querydslUtils.getSortedColumn(Order.ASC, video, "sequence");
-      default:
-        throw new ContentsException(ErrorCode.TYPE_ERROR, sort.name() + ": type not provided!");
-    }
-  }
-
   public JPAQuery<Video> multipleFetchJoin() {
     return query.select(video).from(video).join(video.videoCurriculum).fetchJoin().leftJoin(video.videoHit).fetchJoin()
         .leftJoin(video.videoHashtags, videoHashtag).fetchJoin().leftJoin(videoHashtag.hashtag, hashtag).fetchJoin()
@@ -88,6 +77,12 @@ public class VideoRepositorySupport extends QuerydslRepositorySupport {
         .where(idEq(videoId)).fetch().stream().distinct().collect(Collectors.toList()).get(0));
   }
 
+  public List<VideoJoin> findVideosByUserAndIds(String userId, List<String> videoIds) {
+    return tupleToJoin(multipleBookmarkFetchJoin().leftJoin(video.videoBookmarks, videoBookmark).on(userEq(userId))
+        .where(idEq(videoIds)).orderBy(getOrderByIds(videoIds)).fetch().stream().distinct()
+        .collect(Collectors.toList()));
+  }
+
   public List<VideoJoin> findVideosByUserAndCurriculum(String userId, Long curriculumId, SortType sort,
       String keyword) {
     return tupleToJoin(multipleBookmarkFetchJoin().leftJoin(video.videoBookmarks, videoBookmark).on(userEq(userId))
@@ -102,12 +97,41 @@ public class VideoRepositorySupport extends QuerydslRepositorySupport {
         .orderBy(getVideoSortedColumn(sort)).fetch().stream().distinct().collect(Collectors.toList()));
   }
 
+  public OrderSpecifier<?> getVideoSortedColumn(SortType sort) {
+    switch (sort.name()) {
+      case "DATE":
+        return querydslUtils.getSortedColumn(Order.ASC, video, "createDate");
+      case "HIT":
+        return querydslUtils.getSortedColumn(Order.DESC, video, "videoHit.hit");
+      case "RECOMMEND":
+      case "SEQUENCE":
+        return querydslUtils.getSortedColumn(Order.ASC, video, "sequence");
+      default:
+        throw new ContentsException(ErrorCode.TYPE_ERROR, sort.name() + ": type not provided!");
+    }
+  }
+
+  public OrderSpecifier<?> getOrderByIds(List<String> videoIds) {
+    CaseBuilder caseBuilder = Expressions.cases();
+    CaseBuilder.Cases<Integer, NumberExpression<Integer>> intermediateBuilder = caseBuilder
+        .when(video.videoId.eq(videoIds.get(0))).then(0);
+    for (int i = 1; i < videoIds.size(); i++) {
+      intermediateBuilder = intermediateBuilder.when(video.videoId.eq(videoIds.get(i))).then(i);
+    }
+    NumberExpression<Integer> order = intermediateBuilder.otherwise(-1);
+    return order.asc();
+  }
+
   private BooleanExpression userEq(String userId) {
     return commonUtils.stringNullCheck(userId) ? null : videoBookmark.userUuid.eq(userId);
   }
 
   private BooleanExpression idEq(String videoId) {
     return commonUtils.objectNullcheck(videoId) ? null : video.videoId.eq(videoId);
+  }
+
+  private BooleanExpression idEq(List<String> videoIds) {
+    return commonUtils.objectNullcheck(videoIds) ? null : video.videoId.in(videoIds);
   }
 
   private BooleanExpression curriculumEq(Long curriculumId) {

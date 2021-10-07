@@ -118,4 +118,13 @@ public class VideoController {
       throw new ContentsException(ErrorCode.USER_ERROR);
     return new ResponseEntity<>(videoService.deleteBookmarkVideo(userId, videoId), HttpStatus.OK);
   }
+
+  @GetMapping("/videos/watch")
+  public ResponseEntity<Object> getWatchedVideoList(HttpServletRequest request) {
+    log.info("---getWatchedVideoList---");
+    String userId = jwtUtils.getUserId(request);
+    if (commonUtils.stringNullCheck(userId))
+      throw new ContentsException(ErrorCode.USER_ERROR);
+    return new ResponseEntity<>(videoService.getWatchVideoList(userId), HttpStatus.OK);
+  }
 }

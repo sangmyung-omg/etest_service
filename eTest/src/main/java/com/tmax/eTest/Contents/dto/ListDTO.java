@@ -30,6 +30,12 @@ public class ListDTO {
       this.size = size;
       this.videos = videos;
     }
+
+    public Video(int size, List<VideoDTO> videos, Boolean recommended) {
+      this.size = size;
+      this.videos = videos;
+      this.recommended = recommended;
+    }
   }
 
   @Data

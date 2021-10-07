@@ -7,6 +7,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -37,6 +38,8 @@ import com.tmax.eTest.Contents.repository.support.VideoHitRepositorySupport;
 import com.tmax.eTest.Contents.repository.support.VideoRepositorySupport;
 import com.tmax.eTest.Contents.util.CommonUtils;
 import com.tmax.eTest.Contents.util.LRSUtils;
+import com.tmax.eTest.LRS.dto.GetStatementInfoDTO;
+import com.tmax.eTest.LRS.dto.StatementDTO;
 import com.tmax.eTest.LRS.util.LRSAPIManager;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -107,17 +110,38 @@ public class VideoService {
     return convertVideoJoinToDTO(videos);
   }
 
+  public ListDTO.Video getWatchVideoList(String userId) {
+    GetStatementInfoDTO lrsGetStatementDTO = lrsUtils.makeGetStatement(userId);
+    List<String> videoIds;
+    try {
+      List<StatementDTO> lrsStatementDTOs = lrsapiManager.getStatementList(lrsGetStatementDTO);
+      videoIds = lrsStatementDTOs.stream().map(lrsStatementDTO -> lrsStatementDTO.getSourceId())
+          .collect(Collectors.toMap(key -> key, value -> value, (oldValue, newValue) -> newValue,
+              () -> new LinkedHashMap<>(16, 0.75f, true)))
+          .values().stream().distinct().sorted((a, b) -> -1).collect(Collectors.toList());
+      if (videoIds.size() == 0)
+        return new ListDTO.Video(0, null);
+    } catch (ParseException e) {
+      throw new ContentsException(ErrorCode.LRS_ERROR);
+    }
+
+    List<VideoJoin> videos = videoRePositorySupport.findVideosByUserAndIds(userId, videoIds);
+    // Collections.sort(videos, Comparator.comparing(item ->
+    // videoIds.indexOf(item.getVideo().getVideoId())));
+    return convertVideoJoinToDTO(videos);
+  }
+
   public ListDTO.Video getRecommendVideoList(String userId, Long curriculumId, String keyword) throws IOException {
     DiagnosisReport diagnosisReport = diagnosisReportRepositorySupport.findDiagnosisReportByUser(userId);
     List<String> recommendVideos = getDiagnosisRecommendVideoList(diagnosisReport);
     Boolean recommended = !commonUtils.objectNullcheck(recommendVideos);
+    if (!recommended)
+      return new ListDTO.Video(0, null, recommended);
 
     List<VideoJoin> videos = videoRePositorySupport.findVideosByUserAndCurriculum(userId, curriculumId,
         SortType.RECOMMEND, keyword);
-    return recommended
-        ? convertVideoJoinToDTO(filtering(videos, recommendVideos), recommended, diagnosisReport.getDiagnosisDate(),
-            diagnosisReport.getRiskScore(), diagnosisReport.getInvestScore(), diagnosisReport.getKnowledgeScore())
-        : convertVideoJoinToDTO(videos, recommended, null, null, null, null);
+    return convertVideoJoinToDTO(filtering(videos, recommendVideos), recommended, diagnosisReport.getDiagnosisDate(),
+        diagnosisReport.getRiskScore(), diagnosisReport.getInvestScore(), diagnosisReport.getKnowledgeScore());
   }
 
   private List<VideoJoin> filtering(List<VideoJoin> videoJoins, List<String> recommends) {
@@ -315,12 +339,10 @@ public class VideoService {
       Integer riskScore, Integer investScore, Integer knowledgeScore) {
     ListDTO.Video videoDTO = convertVideoJoinToDTO(videoJoins);
     videoDTO.setRecommended(recommended);
-    if (recommended) {
-      videoDTO.setRecommendDate(diagnosisDate.toLocalDateTime().toLocalDate().format(DateTimeFormatter.ISO_LOCAL_DATE));
-      videoDTO.setRiskScore(riskScore);
-      videoDTO.setInvestScore(investScore);
-      videoDTO.setKnowledgeScore(knowledgeScore);
-    }
+    videoDTO.setRecommendDate(diagnosisDate.toLocalDateTime().toLocalDate().format(DateTimeFormatter.ISO_LOCAL_DATE));
+    videoDTO.setRiskScore(riskScore);
+    videoDTO.setInvestScore(investScore);
+    videoDTO.setKnowledgeScore(knowledgeScore);
     return videoDTO;
   }
 
@@ -344,7 +366,7 @@ public class VideoService {
     try {
       codeSet = mapper.readValue(codeSetStr, CodeSet.class);
     } catch (IOException e) {
-      log.info("Meta Code Json Error: " + e.getMessage());
+      log.info(codeSetStr + ": Meta Code Json Error ");
       return null;
     }
     String sourceId = null;
@@ -375,7 +397,7 @@ public class VideoService {
       try {
         codeSet = mapper.readValue(codeSetStr, CodeSet.class);
       } catch (IOException e) {
-        log.info(codeSetStr + " Meta Code Json Error | " + e.getMessage());
+        log.info(codeSetStr + ": Meta Code Json Error ");
         continue;
       }
       String sourceId = null;

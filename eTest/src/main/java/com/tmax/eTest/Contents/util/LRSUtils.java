@@ -48,8 +48,16 @@ public class LRSUtils {
         .build();
   }
 
+  public GetStatementInfoDTO makeGetStatement(String userId) {
+    List<String> userIdList = Arrays.asList(userId);
+    List<String> actionTypeList = Arrays.asList(ACTION_TYPE.enter.name());
+    List<String> sourceTypeList = Arrays.asList(SOURCE_TYPE.video.name(), SOURCE_TYPE.article.name());
+    return GetStatementInfoDTO.builder().actionTypeList(actionTypeList).sourceTypeList(sourceTypeList)
+        .userIdList(userIdList).build();
+  }
+
   public GetStatementInfoDTO makeGetStatement(List<String> userIdList) {
-    List<String> actionTypeList = Arrays.asList(ACTION_TYPE.enter.toString());
+    List<String> actionTypeList = Arrays.asList(ACTION_TYPE.enter.name());
     List<String> sourceTypeList = Stream.of(SOURCE_TYPE.values()).map(Enum::name).collect(Collectors.toList());
     return GetStatementInfoDTO.builder().actionTypeList(actionTypeList).sourceTypeList(sourceTypeList)
         .userIdList(userIdList).build();
@@ -57,7 +65,7 @@ public class LRSUtils {
 
   public GetStatementInfoDTO makeGetStatement(Timestamp dateFrom, Timestamp dateTo) {
     log.info("DateFrom: " + dateFrom + " DateTo: " + dateTo);
-    List<String> actionTypeList = Arrays.asList(ACTION_TYPE.enter.toString());
+    List<String> actionTypeList = Arrays.asList(ACTION_TYPE.enter.name());
     List<String> sourceTypeList = Stream.of(SOURCE_TYPE.values()).map(Enum::name).collect(Collectors.toList());
     return GetStatementInfoDTO.builder().actionTypeList(actionTypeList).sourceTypeList(sourceTypeList)
         .dateFromObj(dateFrom).dateToObj(dateTo).build();
