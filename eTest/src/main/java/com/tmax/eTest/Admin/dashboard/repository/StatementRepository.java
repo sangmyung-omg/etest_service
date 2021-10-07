@@ -38,7 +38,6 @@ public class StatementRepository extends UserFilterRepository {
                 .where(
                         investmentExperienceFilter(filterQueryDTO.getInvestmentExperience()),
                         dateFilter(filterQueryDTO.getDateFrom(), filterQueryDTO.getDateTo()),
-                        genderFilter(filterQueryDTO.getGender()),
                         ageGroupFilter(filterQueryDTO.getAgeGroupLowerBound(), filterQueryDTO.getAgeGroupUpperBound())
                 )
                 .fetch();
