@@ -70,7 +70,8 @@ public class InquiryService {
                         .build();
                 try {
                     Files.write(imageFilePath, createInquiryDto.getFileList().get(i).getBytes());
-                } catch (Exception e) {
+                } catch (IOException e) {
+                    logger.debug("File write IOException");
                 }
                 inquiryFileRepository.save(inquiry_file);
             }
