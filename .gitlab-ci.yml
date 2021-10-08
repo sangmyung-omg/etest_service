@@ -46,7 +46,7 @@ gradle-build:
 
 # Spring 빌드 job - War
 gradle-build-war:
-  image: lwieske/java-8
+  image: java:8-jdk
   stage: build
   only:
     - merge_requests # 머지 리퀘스트 일때만 진행

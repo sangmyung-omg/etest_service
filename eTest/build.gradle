@@ -40,7 +40,7 @@ dependencies {
 	// https://mvnrepository.com/artifact/com.auth0/java-jwt
 	implementation group: 'com.auth0', name: 'java-jwt', version: '3.18.1'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
-	// providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'		// for external WAS (Tomcat, JEUS, ...)
+	providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'		// for external WAS (Tomcat, JEUS, ...)
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.junit.platform:junit-platform-launcher'
