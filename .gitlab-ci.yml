@@ -20,7 +20,7 @@ variables:
   REGISTRY_IMAGE_PULL_SECRETS: "hpcd-registry-kofia-registry"
 
 
-# Spring 빌드 job
+# Spring 빌드 job - Jar
 gradle-build:
   image: java:8-jdk
   stage: build
@@ -34,7 +34,7 @@ gradle-build:
     - ./gradlew clean
     - ./gradlew compileQuerydsl
     - chmod +x gradlew
-    - ./gradlew assemble
+    - ./gradlew bootJar
   
   # 빌드 후 생성 파일 첨부 경로
   artifacts:
@@ -43,6 +43,31 @@ gradle-build:
     expire_in: 1 week
   tags:
     - docker # docker gitlab-runner 에서 실행
+
+# Spring 빌드 job - War
+gradle-build-war:
+  image: lwieske/java-8
+  stage: build
+  only:
+    - merge_requests # 머지 리퀘스트 일때만 진행
+  
+  # Spring 빌드 스크립트
+  script:
+    - export GRADLE_USER_HOME=pwd/eTest/.gradle
+    - cd eTest
+    - ./gradlew clean
+    - ./gradlew compileQuerydsl
+    - chmod +x gradlew
+    - ./gradlew bootWar
+  
+  # 빌드 후 생성 파일 첨부 경로
+  artifacts:
+    paths:
+      - eTest/build/libs/*.war
+    expire_in: 1 week
+  tags:
+    - docker # docker gitlab-runner 에서 실행
+
 
 # 도커 이미지 패키징 -> 이미지 푸시 -> 배포 및 이미지 버전 업데이트    
 docker-build:
