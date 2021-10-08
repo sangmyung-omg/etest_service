@@ -1,16 +1,14 @@
 package com.tmax.eTest.TestStudio.dto;
 
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Date;
 
-import org.springframework.util.ObjectUtils;
+import com.querydsl.core.annotations.QueryProjection;
 
-import com.tmax.eTest.Common.model.problem.TestProblem;
-
-import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
-@AllArgsConstructor
 public class MiniProblemListDTO {
 	private Integer id;
 	private String part;
@@ -18,15 +16,17 @@ public class MiniProblemListDTO {
 	private String subject;
 	private String status;
 	private String question;
-	private Date editDate;
+	private ZonedDateTime editDate;
 	
-	public MiniProblemListDTO(TestProblem t) {
-		this.id = t.getProbID();
-		this.part = ObjectUtils.isEmpty(t.getPart()) ? null : t.getPart().getPartName();
-		this.difficulty = t.getProblem().getDifficulty();
-		this.subject = t.getSubject();
-		this.status = t.getStatus();
-		this.question = t.getProblem().getQuestion();
-		this.editDate = ObjectUtils.isEmpty(t.getProblem().getEditDate()) ? t.getProblem().getCreateDate() : t.getProblem().getEditDate();
+	@QueryProjection
+	public MiniProblemListDTO(Integer id, String part, String difficulty, String subject, String status, String question, Date editDate) {
+		this.id = id;
+		this.part = part;
+		this.difficulty = difficulty;
+		this.subject = subject;
+		this.status = status;
+		this.question = question;
+		this.editDate = editDate.toInstant().atZone(ZoneId.of("Asia/Seoul"));
 	}
+
 }
