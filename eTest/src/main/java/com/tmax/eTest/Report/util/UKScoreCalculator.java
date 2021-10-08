@@ -56,7 +56,7 @@ public class UKScoreCalculator {
 					themeSum += Float.parseFloat(scoreStr);
 					themeCount++;
 				}
-				catch(Exception e)
+				catch(NumberFormatException e)
 				{
 					log.info("Error in makeAllThemeAvg. "+ ukInfo.toString());
 				}

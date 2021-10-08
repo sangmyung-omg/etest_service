@@ -21,7 +21,7 @@ public class LRSUtil {
 			timestampObj = new Timestamp(dateFormat.parse(timestampStr).getTime());
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
-			log.info(e.toString());
+			log.info("TimeStamp Convert Fail. In LRSUtil "+ timestampStr);
 		}
 		
 		return timestampObj;

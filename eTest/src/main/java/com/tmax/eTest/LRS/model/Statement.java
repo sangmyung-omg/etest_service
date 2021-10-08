@@ -70,7 +70,7 @@ public class Statement {
 			timestampObj = new Timestamp(dateFormat.parse(timestampStr).getTime());
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
-			log.info(e.toString());
+			log.info("TimeStamp Convert Fail. In Statement "+ timestampStr);
 		}
 		
 		return timestampObj;
@@ -98,15 +98,8 @@ public class Statement {
         
         this.statementDate = timeStringToTimestampObj(this.timestamp);
         
-        String jwtRes = null;
-        try {
-        	jwtRes = JWTUtil.getJWTPayloadField(dto.getUserId(), "userID");
-        }
-        catch(Exception e)
-        {
-        	System.out.println("StatementDAO - userID is not jwt ID");
-        }
-        
+        String jwtRes = JWTUtil.getJWTPayloadField(dto.getUserId(), "userID");
+    
         this.userId = (jwtRes==null)?dto.getUserId():jwtRes;
         
         if(dto.getSourceId() != null)

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.PatternSyntaxException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -102,9 +103,9 @@ public class StateAndProbProcess {
 				int probId = Integer.parseInt(dto.getSourceId());
 				isCorrectMap.put(probId, dto.getIsCorrect());
 			}
-			catch(Exception e)
+			catch(NumberFormatException e)
 			{
-				log.info("makeInfoForTriton : "+e.toString()+" id : "+dto.getSourceId()+" error!");
+				log.info("Number Format Exception in makeInfoForTriton. id : "+dto.getSourceId()+" error!");
 			}
 		}
 		
@@ -163,15 +164,7 @@ public class StateAndProbProcess {
 		List<StatementDTO> stateResult;
 		Map<String, Integer> isIDExist = new HashMap<>();
 		
-		try
-		{
-			stateResult = lrsAPIManager.getStatementList(input);
-		}
-		catch(Exception e)
-		{
-			throw new ReportBadRequestException("Exception in Diagnosis Report, get statement part.", e);
-		}
-		
+		stateResult = lrsAPIManager.getStatementList(input);
 
 		for(StatementDTO state : stateResult)
 		{
@@ -202,7 +195,7 @@ public class StateAndProbProcess {
 	}
 	
 	// LRS에서 푼 문제 정보를 모아, 관련 정보 생성. (난이도별 문제 맞은 갯수, 해당 문제 정보 등)
-	public Map<String, Object> getProbInfoInRecordDTO(List<StatementDTO> infos) throws Exception
+	public Map<String, Object> getProbInfoInRecordDTO(List<StatementDTO> infos)
 	{
 
 		Map<String, Object> result = new HashMap<>();
@@ -219,7 +212,7 @@ public class StateAndProbProcess {
 				try {
 					int probId = Integer.parseInt(info.getSourceId());
 					probCorrInfo.put(probId, info.getIsCorrect());
-				} catch (Exception e) {
+				} catch (NumberFormatException e) {
 					log.info("Integer decode fail in setProbInfoInRecordDTO " + info.getSourceId());
 				}
 			}
@@ -252,12 +245,12 @@ public class StateAndProbProcess {
 			diffAll[diffIdx]++;
 			
 			List<String> probInfo = new ArrayList<>();
-			
 			String probContent = prob.getQuestion();
 			
-			probContent.replaceAll("\\\"", "\"");
-			
 			try {
+				
+				probContent.replaceAll("\\\"", "\"");
+				
 				JsonArray jsonArr = JsonParser.parseString(probContent).getAsJsonArray();
 				
 				for(int i = 0; i < jsonArr.size(); i++)
@@ -269,10 +262,12 @@ public class StateAndProbProcess {
 						break;
 					}
 				}
-			}
-			catch(Exception e)
-			{
-				log.info("Json parse fail in setProbInfoInRecordDTO. "+probContent +" "+e.toString());
+			} catch(IllegalStateException e) {
+				log.info("Illegal State in setProbInfoInRecordDTO. "+probContent);
+			} catch(ClassCastException e) {
+				log.info("Json parse fail in setProbInfoInRecordDTO. "+probContent);
+			} catch(PatternSyntaxException e) {
+				log.info("Wrong pattern syntax in setProbInfoInRecordDTO. "+probContent);
 			}
 					
 			

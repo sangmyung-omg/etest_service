@@ -276,7 +276,7 @@ public class DiagnosisReportService {
 		
 		try
 		{
-		// 유저 정보 수정.
+			// 유저 정보 수정.
 			Optional<UserMaster> userInfo = userMasterRepo.findById(id);
 			
 			if(userInfo.isPresent())
@@ -288,7 +288,7 @@ public class DiagnosisReportService {
 			else
 				log.info("User Info Not Found in saveDiangosisReport. "+id);
 		} 
-		catch (Exception e)
+		catch (IllegalArgumentException e)
 		{
 			log.info("User Info Not Found in saveDiangosisReport. "+id);
 		}
@@ -310,9 +310,11 @@ public class DiagnosisReportService {
 				probId = Integer.parseInt(statement.getSourceId());
 				answerNum = Integer.parseInt(statement.getUserAnswer());
 			}
-			catch(Exception e)
+			catch(NumberFormatException e)
 			{
-				log.info("getProbAndChoiceInfos : "+e.toString());
+				log.info("Number Format Exception in getProbAndChoiceInfos :"
+						+ " Id - "+statement.getSourceId() 
+						+ " Answer - " +statement.getUserAnswer());
 			}
 			
 			if(probId!= -1 && answerNum != -1)
@@ -340,8 +342,8 @@ public class DiagnosisReportService {
 			try {
 				int probId = Integer.parseInt(dto.getSourceId());
 				probIdList.add(probId);
-			} catch (Exception e) {
-				log.info("getProblemInfos : " + e.toString() + " id : " + dto.getSourceId() + " error!");
+			} catch (NumberFormatException e) {
+				log.info("Number Format Exception in getProblemInfos.  id : " + dto.getSourceId() + " error!");
 			}
 		}
 		probList = problemRepo.findAllById(probIdList);
@@ -371,15 +373,7 @@ public class DiagnosisReportService {
 		List<StatementDTO> stateResult;
 		Map<String, Integer> isIDExist = new HashMap<>();
 		
-		try
-		{
-			stateResult = lrsAPIManager.getStatementList(getStateInfo); 
-		}
-		catch(Exception e)
-		{
-			throw new ReportBadRequestException("Exception in Diagnosis Report, get statement part.", e);
-		}
-		
+		stateResult = lrsAPIManager.getStatementList(getStateInfo); 
 
 		for(StatementDTO state : stateResult)
 		{

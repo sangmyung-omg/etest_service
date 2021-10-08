@@ -191,7 +191,7 @@ public class MiniTestScoreService {
 			result = lrsAPIManager.getStatementList(statementInput);
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
-			log.info("in getMiniTestResultInLRS : "+e.toString());
+			log.info("Parse fail in getMiniTestResultInLRS : "+ statementInput);
 		}
 
 		return result;
@@ -206,9 +206,9 @@ public class MiniTestScoreService {
 				int probId = Integer.parseInt(dto.getSourceId());
 				probIdList.add(probId);
 				probList = problemRepo.findAllById(probIdList);
-			} catch (Exception e) {
+			} catch (NumberFormatException e) {
 				log.info(
-					"getProblemInfos : " + e.toString() + " id : " + dto.getSourceId() + " error!");
+					"Wrong number format in getProblemInfos. id : " + dto.getSourceId() + " error!");
 			}
 		}
 
@@ -234,26 +234,9 @@ public class MiniTestScoreService {
 
 		try {
 			userKnowledgeRepo.saveAll(userKnowledgeSet);
-		} catch (Exception e) {
-			log.info(e.toString());
+		} catch (IllegalArgumentException e) {
+			log.info("Illegal Argument in save user UK Info. " + userKnowledgeSet.toString());
 		}
-	}
-	
-	private void saveUserEmbeddingInfo(String userId, TritonDataDTO embedding)
-	{
-		String userEmbedding = (String) embedding.getData().get(0);
-		UserEmbedding updateEmbedding = new UserEmbedding();
-		updateEmbedding.setUserUuid(userId);
-		updateEmbedding.setUserEmbedding(userEmbedding);
-
-		
-		try {
-			userEmbeddingRepo.save(updateEmbedding);
-		} catch (Exception e) {
-			log.info(e.toString());
-		}
-	}
-
-	
+	}	
 
 }

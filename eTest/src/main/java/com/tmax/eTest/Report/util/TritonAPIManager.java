@@ -19,7 +19,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.JsonParseException;
 import com.tmax.eTest.Report.dto.triton.TritonRequestDTO;
 import com.tmax.eTest.Report.dto.triton.TritonResponseDTO;
 
@@ -56,7 +58,7 @@ public class TritonAPIManager {
 		this.TRITON_ADDR = String.format("http://%s:%s/v2/models/%s/versions/%s/infer", IP, PORT, MODEL_NAME, MODEL_VERSION);
 	}
 	
-	public TritonResponseDTO getInfer(TritonRequestDTO input) throws ParseException {
+	public TritonResponseDTO getInfer(TritonRequestDTO input) {
 		//Create a http timeout handler
 		HttpClient httpClient = HttpClient.create()
 									.option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 5000)
@@ -78,12 +80,13 @@ public class TritonAPIManager {
 		try {
 			payload = new ObjectMapper().writeValueAsString(input);
 		} catch (JsonProcessingException e) {
-            log.info("in getInfer : "+ e.toString());
+            log.info("Json processing exception in getInfer : "+ input);
         }
 		
 		log.info(payload);
 		if(payload != null)
 		{
+			String json = "";
 			try {	
 				Mono<String> info  = webClient.post()
 						  .body(Mono.just(payload), String.class)
@@ -92,10 +95,13 @@ public class TritonAPIManager {
 						  .onStatus(HttpStatus::is5xxServerError, __ -> Mono.error(new Exception("triton 500 error")))
 						  .bodyToMono(String.class);
 				
-				tritonResult = new ObjectMapper().readValue(info.block(), TritonResponseDTO.class);
+				json = info.block();
+				tritonResult = new ObjectMapper().readValue(json, TritonResponseDTO.class);
 				
-	        } catch (Exception e) {
-	        	log.info("in getInfer : "+ e.toString());
+	        } catch (JsonParseException e) {
+	        	log.info("Json parse fail in getInfer : " + json);
+	        } catch (JsonProcessingException e) {
+	        	log.info("Json process fail in getInfer : "+ json);
 	        }
 		}
 		
@@ -118,12 +124,8 @@ public class TritonAPIManager {
 
 		// Triton에 데이터 요청.
 		TritonResponseDTO tritonResponse = null;
-		try {
-			tritonResponse = getInfer(tritonReq);
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			log.info("in getUnderstandingScoreInTriton : "+ e.toString());
-		}
+		tritonResponse = getInfer(tritonReq);
+		
 
 		return tritonResponse;
 	}

@@ -26,6 +26,10 @@ import com.tmax.eTest.Report.service.DiagnosisReportService;
 import com.tmax.eTest.Report.service.DiagnosisVideoService;
 import com.tmax.eTest.Test.service.UserInfoService;
 
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.SignatureException;
+import io.jsonwebtoken.UnsupportedJwtException;
 import lombok.extern.log4j.Log4j2;
 
 @Log4j2
@@ -132,7 +136,16 @@ public class DiagnosisReportController {
 				Map<String, Object> parseInfo = jwtTokenUtil.getUserParseInfo(token);
 				result = parseInfo.get("userUuid").toString();
 				log.info("User UUID from header token : " + result);
-			} catch (Exception e) {
+				
+			} catch (UnsupportedJwtException e) {
+				log.info("error : cannot parse jwt token, " + e.getMessage());
+			} catch (MalformedJwtException  e) {
+				log.info("error : cannot parse jwt token, " + e.getMessage());
+			} catch (SignatureException  e) {
+				log.info("error : cannot parse jwt token, " + e.getMessage());
+			} catch (ExpiredJwtException  e) {
+				log.info("error : cannot parse jwt token, " + e.getMessage());
+			} catch (IllegalArgumentException  e) {
 				log.info("error : cannot parse jwt token, " + e.getMessage());
 			}
 		}

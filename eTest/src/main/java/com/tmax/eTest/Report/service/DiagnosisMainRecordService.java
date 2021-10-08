@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
 import com.tmax.eTest.LRS.dto.StatementDTO;
 import com.tmax.eTest.LRS.util.LRSAPIManager;
@@ -21,6 +23,7 @@ import com.tmax.eTest.Report.util.SNDCalculator;
 import com.tmax.eTest.Report.util.StateAndProbProcess;
 import com.tmax.eTest.Report.util.DiagnosisComment;
 import com.tmax.eTest.Common.model.report.DiagnosisReport;
+import com.tmax.eTest.Common.model.user.UserMaster;
 import com.tmax.eTest.Common.model.video.Video;
 import com.tmax.eTest.Common.model.video.VideoBookmarkId;
 import com.tmax.eTest.Common.repository.report.DiagnosisReportRepo;
@@ -55,7 +58,7 @@ public class DiagnosisMainRecordService {
 
 
 	public DiagnosisRecordMainDTO getDiagnosisRecordMain(
-			String id, 
+			String id, 		// 회원인 경우 ID 가져옴. 비회원일 경우 Null
 			String probSetId) throws Exception {
 		
 		DiagnosisRecordMainDTO result = new DiagnosisRecordMainDTO();
@@ -65,13 +68,15 @@ public class DiagnosisMainRecordService {
 		else
 		{			
 			Optional<DiagnosisReport> reportOpt = diagnosisReportRepo.findById(probSetId);
-			String userId = id;
 			
+			// report 유효 검사
 			if(reportOpt.isPresent())
 			{
+				String userId = id;
 				DiagnosisReport report = reportOpt.get();
 				List<StatementDTO> KnowledgeStatements = probProcessor.getDiagnosisKnowledgeProbInfo(probSetId);
 				
+				// 
 				if(KnowledgeStatements.size() < 0 && id == null)
 					throw new ReportBadRequestException("Nonmember's probSetId not available in getDiagnosisRecordMain. " + probSetId);
 				else
@@ -89,20 +94,26 @@ public class DiagnosisMainRecordService {
 				
 				String nickName = "비회원";
 				
-				try{
-					if(id != null)
-						nickName = userMasterRepo.getById(userId).getNickname();
+				
+				// 회원 ID 유효 검사 및 회원 닉네임 가져오기.
+				// 비회원인 경우 (id == null 인 경우) Pass
+				if(id != null)
+				{
+					UserMaster userMaster = userMasterRepo.getById(userId);
+					
+					if(userMaster != null)
+						nickName = userMaster.getNickname();
+					else
+						throw new ReportBadRequestException("userId unavailable in getDiagnosisRecordMain. "+userId);
 				}
-				catch(Exception e){
-					throw new ReportBadRequestException("userId unavailable in getDiagnosisRecordMain. "+userId, e);
-				}
+		
 				
 				result.pushInfoByReport(
 						report, 
 						percentList, 
 						getRecommendVideoMap(userId, report),
 						getCommentInfo(report),
-						getProbInfo(KnowledgeStatements),
+						probProcessor.getProbInfoInRecordDTO(KnowledgeStatements),
 						getIsAlarm(KnowledgeStatements),
 						nickName);
 			}
@@ -112,20 +123,7 @@ public class DiagnosisMainRecordService {
 
 		return result;
 	}
-	
-	private Map<String, Object> getProbInfo(List<StatementDTO> knowledgeProbStatement)
-	{
-		Map<String, Object> probInfos = new HashMap<>();
-		
-		try {
-			probInfos = probProcessor.getProbInfoInRecordDTO(knowledgeProbStatement);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			log.info("In DiagnosisMainRecordService getProbInfo : "+e.toString());
-		}
-		
-		return probInfos;
-	}
+
 	
 	private Map<String, String> getCommentInfo(DiagnosisReport report)
 	{
@@ -166,9 +164,19 @@ public class DiagnosisMainRecordService {
 			if(!report.getRecommendTypeList().isEmpty())
 				typeJsonArr = JsonParser.parseString(report.getRecommendTypeList()).getAsJsonArray();
 		}
-		catch(Exception e)
+		catch(JsonParseException e)
 		{
-			log.info("in getRecommendVideoMap : "+e.toString());
+			log.info("Json Parse Fail in getRecommendVideoMap. : " 
+				+ report.getRecommendBasicList()
+				+" "+report.getRecommendAdvancedList()
+				+" "+report.getRecommendTypeList());
+		}
+		catch(IllegalStateException e)
+		{
+			log.info("Get Json Array Fail in getRecommendVideoMap. : "	
+				+ report.getRecommendBasicList()
+				+" "+report.getRecommendAdvancedList()
+				+" "+report.getRecommendTypeList());
 		}
 		
 		if(basicJsonArr != null)
@@ -217,7 +225,7 @@ public class DiagnosisMainRecordService {
 				VideoBookmarkId bookmarkId = new VideoBookmarkId(userId, recVideoId);
 				isBookmark = videoBookmarkRepo.existsById(bookmarkId);
 			}
-			catch(Exception e)
+			catch(IllegalArgumentException e)
 			{
 				// find bookmark fail do nothing.
 				log.info("find bookmarkFail");
@@ -252,10 +260,19 @@ public class DiagnosisMainRecordService {
 				if(extObj.get("guessAlarm").getAsBoolean())
 					checkAlarm++;
 			}
-			catch(Exception e)
+			catch(ClassCastException e)
 			{
 				log.info("Statement Extension Json Parse Fail in getIsAlarm - "+extJsonStr);
 			}
+			catch(IllegalStateException e)
+			{
+				log.info("Statement Extension Json Parse Fail in getIsAlarm - "+extJsonStr);
+			}
+			catch(JsonParseException e)
+			{
+				log.info("Statement Extension Json Parse Fail in getIsAlarm - "+extJsonStr);
+			}
+			
 		}
 		
 		if(checkAlarm >= 3)
