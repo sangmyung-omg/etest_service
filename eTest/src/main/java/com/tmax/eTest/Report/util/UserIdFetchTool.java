@@ -1,5 +1,6 @@
 package com.tmax.eTest.Report.util;
 
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
@@ -34,7 +35,7 @@ public class UserIdFetchTool {
 
             return user.get().getUserUuid();
         }
-        catch(Exception e){
+        catch(NoSuchElementException e){
             log.error("Cannot get userID from request header");
             return null;
         }

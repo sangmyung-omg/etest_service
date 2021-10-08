@@ -14,6 +14,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RestController;
 
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -26,6 +28,7 @@ import com.tmax.eTest.Contents.controller.answer.AnswerControllerV1;
 
 @CrossOrigin("*")
 @RestController
+@Slf4j
 public class ReportShareController {
     @Autowired
     private ReportShareService reportShareService;
@@ -70,7 +73,7 @@ public class ReportShareController {
             output = diagnosisDetailRecordService.getDiagnosisRecordDetail(keydata.getUserId(), keydata.getProbSetId(), partName);
         }
         catch(Exception e) {
-            e.printStackTrace();
+            log.error("Cannot get diagnosis record detail info. {} {} {}", keydata.getUserId(), keydata.getProbSetId(), partName);
             return ResponseEntity.internalServerError().body("Cannot get part record detail. " + partName);
         }
 
@@ -91,8 +94,8 @@ public class ReportShareController {
             output = answerControllerV1.problem(keydata.getProbSetId());
         }
         catch(Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.internalServerError().body("Cannot get solution");
+            log.error("Cannot get problem info");
+            return ResponseEntity.internalServerError().body("Cannot get solution from: " + keydata.getProbSetId());
         }
 
         if(output == null)

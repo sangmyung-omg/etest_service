@@ -1,5 +1,6 @@
 package com.tmax.eTest.Report.service;
 
+import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -14,7 +15,10 @@ import com.tmax.eTest.Report.util.AES;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Service
+@Slf4j
 public class ReportShareService {
     @Autowired
     private MiniTestRecordService miniTestRecordService;
@@ -44,7 +48,8 @@ public class ReportShareService {
         try{
             return URLEncoder.encode(encryptedString, StandardCharsets.UTF_8.toString());
         }
-        catch(Exception e){
+        catch(UnsupportedEncodingException e){
+            log.error("Encoding not supported");
             return null;
         }
     }
@@ -78,8 +83,20 @@ public class ReportShareService {
 
             return null;
         }
+        catch(UnsupportedEncodingException e){
+            log.error("Encoding not supported.");
+            return null;
+        }
+        catch(ClassCastException e){
+            log.error("Cannot cast to given field type.");
+            return null;
+        }
+        catch(IllegalStateException e){
+            log.error("Cannot cast to given field type.");
+            return null;
+        }
         catch(Exception e){
-            e.printStackTrace();
+            log.error("Cannot get report data from key.");
             return null;
         }
     }
@@ -101,7 +118,16 @@ public class ReportShareService {
 
             return ReportShareCreateDTO.builder().type(type).userId(userId).probSetId(probSetId).expire(expire).build();
         }
-        catch(Exception e){
+        catch(UnsupportedEncodingException e){
+            log.error("Encoding not supported.");
+            return null;
+        }
+        catch(ClassCastException e){
+            log.error("Cannot cast to given field type.");
+            return null;
+        }
+        catch(IllegalStateException e){
+            log.error("Cannot cast to given field type.");
             return null;
         }
     }
