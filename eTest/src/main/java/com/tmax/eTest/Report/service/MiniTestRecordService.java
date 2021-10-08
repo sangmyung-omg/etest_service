@@ -33,18 +33,21 @@ import java.util.List;
 import java.util.ArrayList;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeParseException;
 import java.util.Set;
 import java.util.Collections;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import java.sql.Timestamp;
-
+import java.text.ParseException;
 import java.lang.reflect.Type;
 
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
+import com.google.gson.JsonSyntaxException;
 import com.google.gson.JsonArray;
 import java.util.stream.StreamSupport;
 
@@ -95,7 +98,7 @@ public class MiniTestRecordService {
 		Type typeLLS = new TypeToken< List<List<String>> >(){}.getType();
 		List<List<String>> ukDataList = null;
 		try{ukDataList =  new Gson().fromJson(mastery, typeLLS);}
-		catch(Exception e){e.printStackTrace(); log.error("mastery parse error {}", mastery.toString()); return null;}
+		catch(JsonSyntaxException e){log.error("mastery parse error {}", mastery.toString()); return null;}
 
 		//Filter invalid entries
 		ukDataList = ukDataList.stream().filter(data -> data.size() == 3).collect(Collectors.toList());
@@ -104,7 +107,7 @@ public class MiniTestRecordService {
 		Set<Integer> ukIdSet = ukDataList.stream().parallel()
 										 .flatMap(data -> {
 											 try{ return Stream.of(Integer.parseInt(data.get(0)));}
-											 catch(Exception e){e.printStackTrace(); log.error("uk id parse error {}", data.toString()); return Stream.empty();}
+											 catch(NumberFormatException e){log.error("uk id parse error {}", data.toString()); return Stream.empty();}
 										 }).collect(Collectors.toSet());
 		Map<Integer, UkMaster> ukDetailMap = ukMasterRepo.findAllById(ukIdSet).stream()
 														 .collect(Collectors.toMap(UkMaster::getUkId, uk -> uk));
@@ -114,14 +117,15 @@ public class MiniTestRecordService {
 				.flatMap(data -> {
 					//3rd element is score --> try float conversion
 					try{return Stream.of( Double.parseDouble(data.get(2)) );}
-					catch(Exception e){log.error("score parse error {}", data); return Stream.empty();}
+					catch(NullPointerException e){log.error("score is null {}", data); return Stream.empty();}
+					catch(NumberFormatException e){log.error("score parse error {}", data); return Stream.empty();}
 				}).reduce(0.0, Double::sum);
 		
 		List<List<String>> ukInfo = ukDataList.stream().parallel()
 											  .flatMap(data -> {
 													Integer ukId = null;
 													try{ukId = Integer.parseInt(data.get(0));}
-													catch(Exception e){log.warn("ukid parse error. {}", data.toString());return Stream.empty();}
+													catch(NumberFormatException e){log.warn("ukid parse error. {}", data.toString());return Stream.empty();}
 
 													UkMaster uk = ukDetailMap.get(ukId);
 													if(uk == null)
@@ -173,14 +177,14 @@ public class MiniTestRecordService {
 				return timestampA.compareTo(timestampB);
 			});
 		}
-		catch(Exception e){log.error("Timestamp sort failed. will use unsorted lrs list. {}", e.getMessage());}
+		catch(DateTimeParseException e){log.error("Timestamp sort failed due to parse error. will use unsorted lrs list. {}", e.getMessage());}
 
 		//Find all prob info in lrs
 		Set<Integer> probIdSet = statementList.stream().parallel()
 									.map(StatementDTO::getSourceId)
 									.flatMap(strId -> {
 										try {return Stream.of(Integer.parseInt(strId));}
-										catch(Exception e){return Stream.empty();} 
+										catch(NumberFormatException e){return Stream.empty();} 
 									})
 									.collect(Collectors.toSet());
 		Map<Integer, Problem> probMap = problemRepo.findAllById(probIdSet).stream().parallel()
@@ -193,7 +197,7 @@ public class MiniTestRecordService {
 												  .flatMap(statement -> {
 														Integer probId = null;
 														try{probId = Integer.parseInt(statement.getSourceId());}
-														catch(Exception e){return Stream.empty();}
+														catch(NumberFormatException e){return Stream.empty();}
 
 														//get question test from question column and diff data
 														Problem prob = probMap.get(probId);
@@ -205,7 +209,7 @@ public class MiniTestRecordService {
 														//Get data with type "QUESTION_TEXT"
 														JsonArray questionDataList = null; 
 														try {questionDataList = JsonParser.parseString(prob.getQuestion()).getAsJsonArray();}
-														catch(Exception e){log.error("question data json invalid for {}", probId); return Stream.empty();}
+														catch(JsonParseException e){log.error("question data json invalid for {}", probId); return Stream.empty();}
 
 														List<String> quesTxtList = 
 																StreamSupport.stream(questionDataList.spliterator(), false)
@@ -250,9 +254,9 @@ public class MiniTestRecordService {
 			ZonedDateTime currTime = null;
 			//Try and inMap's time and curr time
 			try{inMapTime = ZonedDateTime.parse(srcIdStatementMap.get(srcId).getTimestamp());}
-			catch(Exception e){log.warn("Timestamp error in LRS statement {}", srcIdStatementMap.get(srcId).getTimestamp());}
+			catch(DateTimeParseException e){log.warn("Timestamp error in LRS statement {}", srcIdStatementMap.get(srcId).getTimestamp());}
 			try{currTime = ZonedDateTime.parse(statement.getTimestamp());}
-			catch(Exception e){log.warn("Timestamp error in LRS statement {}", statement.getTimestamp());}
+			catch(DateTimeParseException e){log.warn("Timestamp error in LRS statement {}", statement.getTimestamp());}
 
 			//Overwrite with value that has time
 			if(inMapTime == null && currTime != null){
@@ -314,7 +318,7 @@ public class MiniTestRecordService {
 					partInfo.setPartData(entry.getKey(), buildPartData((JsonArray)entry.getValue(), entry.getKey()));
 				});
 			}
-			catch(Exception e){e.printStackTrace(); log.error("uk mastery parse error. {}. {}. {}",userId, probSetId, minitestMastery);}			
+			catch(JsonParseException e){log.error("uk mastery parse error. {}. {}. {}",userId, probSetId, minitestMastery);}			
 		}
 
 		//Get LRS Record
@@ -326,10 +330,10 @@ public class MiniTestRecordService {
 														  .sourceTypeList(Arrays.asList("mini_test_question"))
 														  .build());
 		}
-		catch(Exception e){e.printStackTrace(); return null;}
+		catch(ParseException e){log.warn("lrs api manager failed."); return null;}
 		statementList = statementList.stream().parallel().filter(statement -> {
 											try {if(JsonParser.parseString(statement.getExtension()).getAsJsonObject().get("diagProbSetId").getAsString().equals(probSetId)) return true;}
-											catch(Exception e) {e.printStackTrace(); log.warn("extension parse error");return false;}
+											catch(JsonParseException e) {log.warn("extension parse error");return false;}
 											return false;
 										})
 										.collect(Collectors.toList()); //filter by problem id
@@ -363,15 +367,17 @@ public class MiniTestRecordService {
 								.mapToInt(statement -> {
 									JsonObject extension = null;
 									try{extension = JsonParser.parseString(statement.getExtension()).getAsJsonObject();}
-									catch(Exception e){log.warn("extension can't be parsed. {}", statement.getExtension()); return 0;}
+									catch(JsonParseException e){log.warn("extension can't be parsed. {}", statement.getExtension()); return 0;}
 
 									Integer isGuessInt = null;
 									try{isGuessInt = extension.get("guessAlarm").getAsInt();}
-									catch(Exception e){}
+									catch(ClassCastException e){log.error("extension cast failed.");}
+									catch(IllegalStateException e){log.error("extension state invalid.");}
 
 									Boolean isGuessBool = null;
 									try{isGuessBool = extension.get("guessAlarm").getAsBoolean();}
-									catch(Exception e){}
+									catch(ClassCastException e){log.error("extension cast failed.");}
+									catch(IllegalStateException e){log.error("extension state invalid.");}
 
 									//If both value is null => warn and skip
 									if(isGuessBool == null && isGuessInt == null){
