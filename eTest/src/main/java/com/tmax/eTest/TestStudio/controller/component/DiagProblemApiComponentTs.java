@@ -34,6 +34,7 @@ import com.tmax.eTest.TestStudio.service.ProbUKRelServiceTs;
 import com.tmax.eTest.TestStudio.service.ProblemServiceTs;
 import com.tmax.eTest.TestStudio.service.UKServiceTs;
 import com.tmax.eTest.TestStudio.util.PathUtilTs;
+import com.tmax.eTest.TestStudio.util.TimeUtilTs;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -102,9 +103,9 @@ public class DiagProblemApiComponentTs {
 							findProblem.getDifficulty(), findProblem.getCategory(),
 							findProblem.getImgSrc(),
 							findProblem.getTimeReco()==null? null: findProblem.getTimeReco().toString(),
-							findProblem.getCreatorId(), findProblem.getCreateDate(),
-							findProblem.getValiatorID(), findProblem.getValiateDate(),
-							findProblem.getEditorID(), findProblem.getEditDate(),
+							findProblem.getCreatorId(),  TimeUtilTs.DateToZonedDT_Seoul(findProblem.getCreateDate()),
+							findProblem.getValiatorID(), TimeUtilTs.DateToZonedDT_Seoul(findProblem.getValiateDate()),
+							findProblem.getEditorID(), TimeUtilTs.DateToZonedDT_Seoul(findProblem.getEditDate()),
 							findProblem.getSource(), findProblem.getIntention(),
 							findProblem.getQuestionInitial(),findProblem.getSolutionInitial(),
 							imgJsonObjectNormToString,null,

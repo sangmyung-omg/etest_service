@@ -4,7 +4,9 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -48,6 +50,7 @@ import com.tmax.eTest.TestStudio.service.TestProblemServiceTs;
 import com.tmax.eTest.TestStudio.service.UKServiceTs;
 import com.tmax.eTest.TestStudio.util.InitialConsonantUtilTs;
 import com.tmax.eTest.TestStudio.util.PathUtilTs;
+import com.tmax.eTest.TestStudio.util.TimeUtilTs;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -302,15 +305,26 @@ public class TestProblemApiComponentTs {
 //					String dateResult = sdf.format(findProblem.getCreateDate());
 //					System.out.println(dateResult);
 //					System.out.println(findProblem.getCreateDate().getTime());
+//					System.out.println(findProblem.getEditDate());
+//					System.out.println(findProblem.getEditDate().toGMTString());
+//					System.out.println(findProblem.getEditDate().toLocaleString());
+//					System.out.println(findProblem.getEditDate().toString());
+//					System.out.println(findProblem.getEditDate().toInstant());
+//					System.out.println(  Date.from( findProblem.getEditDate().toInstant() ) );
+//					System.out.println(  Date.from( findProblem.getEditDate().toInstant() ).toInstant() );
+//					System.out.println(  Date.from( findProblem.getEditDate().toInstant() ).toString() );
+//					System.out.println(  findProblem.getEditDate().toInstant().atZone(ZoneId.of("Asia/Seoul")));
+//					System.out.println(  findProblem.getEditDate().toInstant().atZone(ZoneId.systemDefault()));
+//					System.out.println(  TimeUtilTs.DateToZonedDT_Seoul(findProblem.getEditDate()) );
 					BaseProblemDTO collect = new BaseProblemDTO(
 							findProblem.getProbID().toString(), findProblem.getAnswerType(),
 							findProblem.getQuestion(), findProblem.getSolution(),
 							findProblem.getDifficulty(), findProblem.getCategory(),
 							findProblem.getImgSrc(),
 							findProblem.getTimeReco()==null? null: findProblem.getTimeReco().toString(),
-							findProblem.getCreatorId(), findProblem.getCreateDate(),
-							findProblem.getValiatorID(), findProblem.getValiateDate(),
-							findProblem.getEditorID(), findProblem.getEditDate(),
+							findProblem.getCreatorId(),  TimeUtilTs.DateToZonedDT_Seoul(findProblem.getCreateDate()),
+							findProblem.getValiatorID(), TimeUtilTs.DateToZonedDT_Seoul(findProblem.getValiateDate()),
+							findProblem.getEditorID(), TimeUtilTs.DateToZonedDT_Seoul(findProblem.getEditDate()),
 							findProblem.getSource(), findProblem.getIntention(),
 							findProblem.getQuestionInitial(),findProblem.getSolutionInitial(),
 							imgJsonObjectNormToString,null

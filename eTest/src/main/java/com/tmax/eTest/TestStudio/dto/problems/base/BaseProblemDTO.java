@@ -1,6 +1,7 @@
 package com.tmax.eTest.TestStudio.dto.problems.base;
 
 import java.sql.Timestamp;
+import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -23,11 +24,11 @@ public class BaseProblemDTO {
 	private String imgSrc;
 	private String timeRecommendation;
 	private String creatorID;
-	private Date createDate;
+	private ZonedDateTime createDate;
 	private String validatorID;
-	private Date validateDate;
+	private ZonedDateTime validateDate;
 	private String editorID;
-	private Date editDate;
+	private ZonedDateTime editDate;
 	private String source;
 	private String intention;
 	private String questionInitial;
