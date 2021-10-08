@@ -27,6 +27,6 @@ public class MiniProblemListDTO {
 		this.subject = t.getSubject();
 		this.status = t.getStatus();
 		this.question = t.getProblem().getQuestion();
-		this.editDate = t.getProblem().getEditDate();
+		this.editDate = ObjectUtils.isEmpty(t.getProblem().getEditDate()) ? t.getProblem().getCreateDate() : t.getProblem().getEditDate();
 	}
 }
