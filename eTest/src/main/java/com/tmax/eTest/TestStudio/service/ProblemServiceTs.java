@@ -44,7 +44,7 @@ public class ProblemServiceTs {
 	/**
 	 * 문제 생성
 	 */
-	public Problem problemCreate(Problem problem) throws Exception {
+	public Problem problemCreate(Problem problem) {
 		return problemRepository.save( problem );
 		
 	}

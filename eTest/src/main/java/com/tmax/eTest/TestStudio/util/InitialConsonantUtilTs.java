@@ -1,22 +1,27 @@
 package com.tmax.eTest.TestStudio.util;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.springframework.stereotype.Component;
+
+import com.tmax.eTest.TestStudio.controller.component.exception.CustomExceptionTs;
+import com.tmax.eTest.TestStudio.controller.component.exception.ErrorCodeEnumTs;
 
 import lombok.Getter;
 
 @Component
 public class InitialConsonantUtilTs {
 	
-	public String InitialConsonantsV2( String jsonStr ) throws Exception{
+	public String InitialConsonantsV2( String jsonStr ) throws IOException, ParseException{
 		
 		     if(jsonStr.length()>2500) {
-		    	 throw new Exception("InitialConsonant: excceed capacity"); // temp
+		    	 throw new CustomExceptionTs(ErrorCodeEnumTs.EXCEEDED_REQUEST_SIZE);
 		     }
 			
 			 String rtName = "";
@@ -62,7 +67,7 @@ public class InitialConsonantUtilTs {
 	 * 
 	 * 	
 	 */
-	public String InitialConsonants( String name ) throws Exception{
+	public String InitialConsonants( String name ) throws IOException{
 		
     	String rtName = "";
 

@@ -14,7 +14,8 @@ public enum ErrorCodeEnumTs {
     MISMATCH_REFRESH_TOKEN(HttpStatus.BAD_REQUEST, "리프레시 토큰의 유저 정보가 일치하지 않습니다"),
     CANNOT_FOLLOW_MYSELF(HttpStatus.BAD_REQUEST, "자기 자신은 팔로우 할 수 없습니다"),
     INVALID_REQUEST_INPUT(HttpStatus.BAD_REQUEST, "리퀘스트가 필수 형식을 만족하지 않습니다"),
-    EXCEEDED_REQUEST_SIZE(HttpStatus.BAD_REQUEST, "리퀘스트 크기가 한계를 초과하였습니다(참고: REQUEST IMAGE: 50개 이하 )"),
+    EXCEEDED_REQUEST_SIZE(HttpStatus.BAD_REQUEST, "리퀘스트 크기가 한계를 초과하였습니다(참고: REQUEST IMAGE: 50개 이하, Question, Solution 길이제한 확인 )"),
+    
 
     /* 401 UNAUTHORIZED : 인증되지 않은 사용자 */
     INVALID_AUTH_TOKEN(HttpStatus.UNAUTHORIZED, "권한 정보가 없는 토큰입니다"),

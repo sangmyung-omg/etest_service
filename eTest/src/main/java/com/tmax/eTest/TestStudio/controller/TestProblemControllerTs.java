@@ -1,5 +1,6 @@
 package com.tmax.eTest.TestStudio.controller;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -8,6 +9,7 @@ import java.util.stream.Collectors;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -24,6 +26,7 @@ import com.tmax.eTest.Contents.controller.ArticleController;
 import com.tmax.eTest.TestStudio.controller.component.TestProblemApiComponentTs;
 import com.tmax.eTest.TestStudio.controller.component.exception.CustomExceptionTs;
 import com.tmax.eTest.TestStudio.controller.component.exception.ErrorCodeEnumTs;
+import com.tmax.eTest.TestStudio.controller.component.exception.NoDataExceptionTs;
 import com.tmax.eTest.TestStudio.dto.problems.in.DeleteProblemDTOIn;
 import com.tmax.eTest.TestStudio.dto.problems.in.GetProblemDTOIn;
 import com.tmax.eTest.TestStudio.dto.problems.in.PostTestProblemDTOIn;
@@ -48,6 +51,8 @@ public class TestProblemControllerTs {
 	/**
 	 * 등록
 	 * new ResponseEntity<>(probGetResponse, HttpStatus.ACCEPTED);
+	 * @throws ParseException 
+	 * @throws NoDataExceptionTs 
 	 * @throws Exception 
 	 */
 	@PostMapping("/test-studio/TestProblems")
@@ -56,7 +61,7 @@ public class TestProblemControllerTs {
 //			ResponseEntity<String>
 			CreateProblem(
 			@RequestBody PostTestProblemDTOIn request
-			) throws Exception {
+			) throws IOException, NoDataExceptionTs, ParseException {
 
 			List<Long> probIdList = new ArrayList<Long>();
 			List<Long> skipIdxList = new ArrayList<Long>();

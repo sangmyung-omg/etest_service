@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.TimeZone;
 
+import org.json.simple.parser.ParseException;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Service;
@@ -72,9 +73,11 @@ public class TestProblemApiComponentTs {
 	/**
 	 * 문제 생성 problemCreate component
 	 * request form 받아 생성한 문제 id list 반환
+	 * @throws NoDataExceptionTs 
+	 * @throws ParseException 
 	 */
 	
-	public List<List<Long>> CreateProblemComponet(PostTestProblemDTOIn request) throws Exception {
+	public List<List<Long>> CreateProblemComponet(PostTestProblemDTOIn request) throws IOException, NoDataExceptionTs, ParseException {
 		
 //		try {
 			
