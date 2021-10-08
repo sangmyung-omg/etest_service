@@ -20,7 +20,12 @@ public class JWTUtil {
 	
 	        Base64.Decoder decoder = Base64.getUrlDecoder();
 	
-	        String payload = new String(decoder.decode(chunks[1]));
+	        String payload = null;
+	        
+	        if(chunks.length > 1)
+	        	payload = new String(decoder.decode(chunks[1]));
+	        else
+	        	return result;
 	
 	        JsonObject jsonObj = JsonParser.parseString(payload).getAsJsonObject();
 	        
