@@ -186,20 +186,3 @@ public class DiagnosisUtil {
 	}
 
 }
-
-//public void test()
-//{
-//	GetStatementInfoDTO dto = GetStatementInfoDTO.builder()
-//			.dateFromObj(Timestamp.valueOf("2021-09-01 09:00:00.0"))
-//			.dateToObj(Timestamp.valueOf("2021-09-25 09:00:00.0") )
-//			.build();
-//	
-//	try {
-//		List<StatementDTO> list = lrsAPIManager.getStatementList(dto);
-//		log.info(list.size());
-//		log.info(list.toString());
-//	} catch (ParseException e) {
-//		// TODO Auto-generated catch block
-//		e.printStackTrace();
-//	}
-//}

@@ -121,7 +121,7 @@ public class DiagnosisMainRecordService {
 			probInfos = probProcessor.getProbInfoInRecordDTO(knowledgeProbStatement);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.info("In DiagnosisMainRecordService getProbInfo : "+e.toString());
 		}
 		
 		return probInfos;
@@ -168,7 +168,7 @@ public class DiagnosisMainRecordService {
 		}
 		catch(Exception e)
 		{
-			
+			log.info("in getRecommendVideoMap : "+e.toString());
 		}
 		
 		if(basicJsonArr != null)
@@ -220,6 +220,7 @@ public class DiagnosisMainRecordService {
 			catch(Exception e)
 			{
 				// find bookmark fail do nothing.
+				log.info("find bookmarkFail");
 			}
 					
 			if(videoInfoOpt.isPresent())

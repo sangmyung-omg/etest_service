@@ -6,6 +6,10 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 
+import lombok.extern.log4j.Log4j;
+import lombok.extern.log4j.Log4j2;
+
+@Log4j2
 public class LRSUtil {
 
 	public static Timestamp timeStringToTimestampObj(String timestampStr)
@@ -17,7 +21,7 @@ public class LRSUtil {
 			timestampObj = new Timestamp(dateFormat.parse(timestampStr).getTime());
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.info(e.toString());
 		}
 		
 		return timestampObj;

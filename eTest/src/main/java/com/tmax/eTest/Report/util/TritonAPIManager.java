@@ -26,6 +26,7 @@ import com.tmax.eTest.Report.dto.triton.TritonResponseDTO;
 import io.netty.channel.ChannelOption;
 import io.netty.handler.timeout.ReadTimeoutHandler;
 import io.netty.handler.timeout.WriteTimeoutHandler;
+import lombok.extern.log4j.Log4j2;
 import reactor.core.publisher.Mono;
 import reactor.netty.http.client.HttpClient;
 
@@ -34,11 +35,10 @@ import reactor.netty.http.client.HttpClient;
  * 
  * @author sangheonLee
  */
+@Log4j2
 @Component
 @PropertySource("classpath:application.properties")
 public class TritonAPIManager {
-
-	private final Logger logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
 
 	private String TRITON_ADDR = "http://192.168.159.62:18500/v2/models/kt-rule/versions/1/infer";
 	
@@ -52,7 +52,7 @@ public class TritonAPIManager {
 							 @Value("${etest.recommend.masterytriton.modelname}") String MODEL_NAME, 
 							 @Value("${etest.recommend.masterytriton.modelver}") String MODEL_VERSION){
 		
-		logger.info("constructor"  + IP+PORT);
+		log.info("constructor"  + IP+PORT);
 		this.TRITON_ADDR = String.format("http://%s:%s/v2/models/%s/versions/%s/infer", IP, PORT, MODEL_NAME, MODEL_VERSION);
 	}
 	
@@ -78,10 +78,10 @@ public class TritonAPIManager {
 		try {
 			payload = new ObjectMapper().writeValueAsString(input);
 		} catch (JsonProcessingException e) {
-            e.printStackTrace();
+            log.info("in getInfer : "+ e.toString());
         }
 		
-		logger.info(payload);
+		log.info(payload);
 		if(payload != null)
 		{
 			try {	
@@ -95,7 +95,7 @@ public class TritonAPIManager {
 				tritonResult = new ObjectMapper().readValue(info.block(), TritonResponseDTO.class);
 				
 	        } catch (Exception e) {
-	            e.printStackTrace();
+	        	log.info("in getInfer : "+ e.toString());
 	        }
 		}
 		
@@ -122,7 +122,7 @@ public class TritonAPIManager {
 			tritonResponse = getInfer(tritonReq);
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.info("in getUnderstandingScoreInTriton : "+ e.toString());
 		}
 
 		return tritonResponse;

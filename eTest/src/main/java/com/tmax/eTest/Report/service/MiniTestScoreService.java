@@ -191,7 +191,7 @@ public class MiniTestScoreService {
 			result = lrsAPIManager.getStatementList(statementInput);
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.info("in getMiniTestResultInLRS : "+e.toString());
 		}
 
 		return result;
