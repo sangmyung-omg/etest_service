@@ -1,11 +1,14 @@
 package com.tmax.eTest.Auth.service;
 
+import com.tmax.eTest.Auth.controller.AuthController;
 import com.tmax.eTest.Auth.dto.*;
 import com.tmax.eTest.Auth.jwt.JwtTokenUtil;
 import com.tmax.eTest.Auth.repository.UserRepository;
 import com.tmax.eTest.Common.model.user.UserMaster;
 import com.tmax.eTest.LRS.dto.StatementDTO;
 import com.tmax.eTest.LRS.util.LRSAPIManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,6 +24,8 @@ import java.util.concurrent.TimeUnit;
 
 @Service
 public class AuthService {
+    private static final Logger logger = LoggerFactory.getLogger(AuthService.class);
+
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
     @Autowired
@@ -127,15 +132,25 @@ public class AuthService {
     }
     @Transactional
     public CMRespDto<?> login(String providerId, AuthProvider provider,String ip) {
+        logger.debug("providerId is : "+providerId);
+        logger.debug("provider is : "+provider);
+
         System.out.println(ip);
         Optional<UserMaster> userMasterOptional =
                 userRepository.findByProviderIdAndProvider(providerId, provider);
+        logger.debug("userMasterOptional is : " + userMasterOptional);
         if (userMasterOptional.isPresent()) {
+
             UserMaster userMaster = userMasterOptional.get();
+            logger.debug("userMaster is : " + userMaster);
+
             PrincipalDetails principal = PrincipalDetails.create(userMaster);
 
             String jwtToken = jwtTokenUtil.generateAccessToken(principal);
             String refreshToken = jwtTokenUtil.generateRefreshToken(userMaster.getEmail());
+            logger.debug("jwtToken is : " + jwtToken);
+            logger.debug("refreshToken is : " + refreshToken);
+
             userMaster.setRefreshToken(refreshToken);
 
             Map<String, String> info = new HashMap<>();
