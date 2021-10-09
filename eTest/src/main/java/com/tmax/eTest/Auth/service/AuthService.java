@@ -155,6 +155,7 @@ public class AuthService {
             logger.debug("refreshToken is : " + refreshToken);
 
             userMaster.setRefreshToken(refreshToken);
+            logger.debug("userMaster set refreshToken success ");
 
             Map<String, String> info = new HashMap<>();
             info.put("jwtToken", jwtToken);
@@ -178,12 +179,15 @@ public class AuthService {
                     .sourceType("application")
                     .timestamp(text)
                     .build();
+            logger.debug("lrs statementDTO build success");
 
             //LRS에 저장
             List<StatementDTO> statementDTOList = new ArrayList<>();
             statementDTOList.add(statementDTO);
             try {
                 lrsapiManager.saveStatementList(statementDTOList);
+                logger.debug("lrs save success");
+
             } catch (ParseException e) {
                 return new CMRespDto<>(500,"LRS 전송 실패","실패");
             }

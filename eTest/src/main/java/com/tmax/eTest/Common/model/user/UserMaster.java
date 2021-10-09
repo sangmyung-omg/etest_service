@@ -39,7 +39,6 @@ public class UserMaster {
 	@Enumerated(EnumType.STRING)
 	private AuthProvider provider;
 
-	@Email
 	@Column(nullable = false)
 	private String email;
 
