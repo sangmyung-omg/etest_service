@@ -43,6 +43,7 @@ public class AuthService {
     LRSAPIManager lrsapiManager;
     @Transactional
     public CMRespDto<?> singUp(SignUpRequestDto signUpRequestDto) {
+            logger.debug("signUpRequestDto : "+signUpRequestDto);
             if (!emailDuplicateCheck(signUpRequestDto.getEmail()) && !nickNameDuplicateCheck(signUpRequestDto.getNickname())) {
                 UserMaster userMaster = UserMaster.builder()
                         .nickname(signUpRequestDto.getNickname())
@@ -58,6 +59,8 @@ public class AuthService {
                         .collect_info(true)
                         .build();
                 userRepository.save(userMaster);
+                logger.debug("Sign up UserMaster is : "+userMaster);
+
                 PrincipalDetails principal = PrincipalDetails.create(userMaster);
                 String jwtToken = jwtTokenUtil.generateAccessToken(principal);
 
@@ -186,6 +189,7 @@ public class AuthService {
             }
 
             List<String> IpList = userRepository.findAllByIp();
+            logger.debug("IpList is : "+IpList);
             if (IpList.contains(ip)) {
                 info.put("name", userMaster.getName());
                 return new CMRespDto<>(203, "관리자 로그인 성공", info);
