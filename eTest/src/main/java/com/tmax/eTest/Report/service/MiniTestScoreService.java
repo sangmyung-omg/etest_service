@@ -4,6 +4,7 @@ import java.sql.Timestamp;
 import java.text.ParseException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -178,11 +179,16 @@ public class MiniTestScoreService {
 
 
 	private List<StatementDTO> getMiniTestResultInLRS(String userID, String probSetId) {
-		List<StatementDTO> result = new ArrayList<>();
+		
 		GetStatementInfoDTO statementInput = new GetStatementInfoDTO();
 		statementInput.pushUserId(userID);
 		statementInput.pushSourceType("mini_test_question");
 		statementInput.pushActionType("submit");
+
+		List<StatementDTO> result = new ArrayList<>();
+		List<StatementDTO> stateResult = new ArrayList<>();
+		
+		Map<String, Integer> isIDExist = new HashMap<>();
 		
 		if(probSetId != null)
 			statementInput.pushExtensionStr(probSetId);
@@ -191,9 +197,32 @@ public class MiniTestScoreService {
 			result = lrsAPIManager.getStatementList(statementInput);
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
-			log.info("Parse fail in getMiniTestResultInLRS : "+ statementInput);
+			log.info("Parse fail in getMiniTestResultInLRS : "+ statementInput.toString());
 		}
-
+		
+	
+		for(StatementDTO state : stateResult)
+		{
+			String sourceID = state.getSourceId();
+			
+			if(isIDExist.get(sourceID) != null)
+			{
+				StatementDTO beforeState = result.get(isIDExist.get(sourceID));
+				String beforeTimestamp = beforeState.getTimestamp();
+				String recentTimestamp = state.getTimestamp();
+				
+				// 최신 것을 기준으로.
+				if(beforeTimestamp.compareTo(recentTimestamp) < 0)
+				{
+					result.set(isIDExist.get(sourceID), state);
+				}
+			}
+			else
+			{
+				result.add(state);
+				isIDExist.put(sourceID, result.size()-1);
+			}
+		}
 		return result;
 	}
 

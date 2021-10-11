@@ -356,7 +356,7 @@ public class DiagnosisReportService {
 	
 	private List<StatementDTO> getStatementDiagnosisProb(
 			//String id, 
-			String probSetId) throws Exception
+			String probSetId)
 	{
 		GetStatementInfoDTO getStateInfo = new GetStatementInfoDTO();
 		
@@ -370,10 +370,15 @@ public class DiagnosisReportService {
 			getStateInfo.pushExtensionStr(probSetId);
 		
 		List<StatementDTO> result = new ArrayList<>();
-		List<StatementDTO> stateResult;
+		List<StatementDTO> stateResult = new ArrayList<>();
 		Map<String, Integer> isIDExist = new HashMap<>();
 		
-		stateResult = lrsAPIManager.getStatementList(getStateInfo); 
+		try {
+			stateResult = lrsAPIManager.getStatementList(getStateInfo);
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			log.info("Parse fail in getStatementDiagnosisProb : "+ getStateInfo.toString());
+		} 
 
 		for(StatementDTO state : stateResult)
 		{
@@ -397,9 +402,6 @@ public class DiagnosisReportService {
 				isIDExist.put(sourceID, result.size()-1);
 			}
 		}
-		
-		log.info(result.size()+"    "+result.toString());
-		
 		
 		return result;
 	}
