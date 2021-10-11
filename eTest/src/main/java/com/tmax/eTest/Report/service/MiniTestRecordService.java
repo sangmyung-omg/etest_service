@@ -82,6 +82,9 @@ public class MiniTestRecordService {
 	private static final int PICK_ALARM_CNT_THRESHOLD = 3;
 	private static final int COMMENT_HIGH_LOW_SPLIT_THRESHOLD_SCORE = 60;
 
+	private static final int COMMENT_HIGH_MID_SPLIT_THRESHOLD_SCORE = 80;
+	private static final int COMMENT_MID_LOW_SPLIT_THRESHOLD_SCORE = 60;
+
 	private static final int UK_INFO_MASTERY_INDEX = 1;
 
 	private static final int UK_INFO_SLICE_LENGTH = 5;
@@ -394,8 +397,21 @@ public class MiniTestRecordService {
 
 
 		//TEMP comment template
-		String commentTemplate = String.format("미니진단을 통해 분석된 지식점수에요.\n진단자 평균대비 %s 점수를 받으셨네요.\n이제 상세 분야별로 나의 지식 점수를 확인해보세요.\n우선적으로 학습해야하는 분야를 알 수 있습니다.",
-											   report.getAvgUkMastery().intValue() > COMMENT_HIGH_LOW_SPLIT_THRESHOLD_SCORE ? "높은" : "낮은");
+		// String commentTemplate = String.format("미니진단을 통해 분석된 지식점수에요.\n진단자 평균대비 %s 점수를 받으셨네요.\n이제 상세 분야별로 나의 지식 점수를 확인해보세요.\n우선적으로 학습해야하는 분야를 알 수 있습니다.",
+		// 									   report.getAvgUkMastery().intValue() > COMMENT_HIGH_LOW_SPLIT_THRESHOLD_SCORE ? "높은" : "낮은");
+
+		//New comment template input 2021-10-11 Jonghyun-seong
+		String comment = "";
+		if(report.getAvgUkMastery().intValue() < COMMENT_MID_LOW_SPLIT_THRESHOLD_SCORE){ // under 60 (~59)
+			comment = "주식투자를 시작한지 얼마 되지 않거나, 아직은 주식투자에 익숙하지 않으신가요? 시장과 산업동향, 주식 투자의 기본 등 꼼꼼하고 꾸준하게 공부하는 투자자가 결국에는 오래 투자할 수 있습니다. 투자와 친해지기 위한 첫걸음을 떼세요. 한 걸음 한 걸음 내딛는다면 투자고수로의 길이 열릴 수 있습니다.";
+		}
+		else if(report.getAvgUkMastery().intValue() < COMMENT_HIGH_MID_SPLIT_THRESHOLD_SCORE){ // under 80 (60~79)
+			comment = "당신은 투자의 기본적인 지식은 갖춘 투자자 입니다. 투자에 관심이 커지면서 주변으로부터 접하는 투자정보가 많아지고 있지는 않으신가요? 이럴때일수록 주식을 깊이 있게 공부하고 자신만의 투자원칙이 필요합니다. 지식과 경험을 쌓아간다면 주변의 소문과 주가 등락에도 흔들리지 않고 나아갈 수 있는 힘을 키울 수 있을 겁니다.";
+		}
+		else { //eq or more than 80
+			comment = "당신은 투자 기본부터 상품을 선택하고 관리하는 방법까지 투자에 필요한 전반적인 지식은 갖춘 투자자 입니다. 자신만의 투자방법과 원칙을 갖고 있을 가능성이 큽니다. 하지만 방심은 금물! 투자지식 뿐만 아니라 급변하는 사회, 경제, 정치 등 다양한 분야에 대한 관심을 이어간다면 지금처럼 초보 투자자의 귀감이 되는 주식고수의 자리를 유지할 수 있을 겁니다.";
+		}
+
 		
 		UserMaster userData = report.getUser();
 		if(userData == null){ //fallback get from user master
@@ -419,7 +435,7 @@ public class MiniTestRecordService {
 								 .problemMiddleLevelInfo(midInfo)
 								 .problemHighLevelInfo(highInfo)
 								 .problemCorrectInfo(problemCorrectInfo)
-								 .totalComment(commentTemplate)
+								 .totalComment(comment)
 								 .alarm(alarmcnt >= PICK_ALARM_CNT_THRESHOLD)
 								 .build();
 
