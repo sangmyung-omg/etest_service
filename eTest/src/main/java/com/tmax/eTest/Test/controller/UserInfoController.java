@@ -38,15 +38,9 @@ public class UserInfoController {
 	@PutMapping(value = "/userInfo/{id}")
 	public ResponseEntity<Object> putUserInfo(@PathVariable(value="id") String userId) throws Exception {
 		Map<String, Object> ret = new HashMap<String, Object>();
-		try{
-			String res = userInfoService.updateUserInfo(userId);
-			ret.put("resultMessage", res);
-			return new ResponseEntity<>(ret, HttpStatus.OK);
-
-		} catch (Exception E){
-			ret.put("resultMessage", "Internal Server Error.");
-			return new ResponseEntity<>(ret, HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+		String res = userInfoService.updateUserInfo(userId);
+		ret.put("resultMessage", res);
+		return new ResponseEntity<>(ret, HttpStatus.OK);
 	}
 	
 	@PreAuthorize("hasRole('ROLE_USER')")
@@ -61,9 +55,9 @@ public class UserInfoController {
 		// 회원, 비회원 판별
 		try {
 			userUuid = principalDetails.getUserUuid();
-		} catch (Exception e) {
-			log.info("error : no token given or not registered user. - " + e.getMessage());
-			result.put("error", e.getMessage());
+		} catch (NullPointerException e) {
+			log.info("error : NullPointerException occurred.");
+			result.put("error", "NullPointerException occurred.");
 			return new ResponseEntity<>(result, HttpStatus.NON_AUTHORITATIVE_INFORMATION);
 		}
 

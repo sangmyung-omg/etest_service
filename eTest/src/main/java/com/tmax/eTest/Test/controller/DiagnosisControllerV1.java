@@ -21,7 +21,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.extern.slf4j.Slf4j;
@@ -61,15 +60,7 @@ public class DiagnosisControllerV1 {
 		Map<String, Object> res = new HashMap<String, Object>();
 		
 		// 성향 문제 조회
-		try{
-			// Map<String, Object> res = new HashMap<String, Object>();
-			res = problemService.getDiagnosisTendencyProblems();
-			
-		} catch (Exception E){
-			log.info(E.getMessage());
-			res.put("resultMessage", "Internal Server Error.\n" + E.getMessage());
-			return new ResponseEntity<>(res, HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+		res = problemService.getDiagnosisTendencyProblems();
 		
 		// 지식 문제 조회
 		Integer firstProbId = 0;		// Statement 저장용 첫 문제 ID 저장.
@@ -77,11 +68,10 @@ public class DiagnosisControllerV1 {
 			List<List<Integer>> problems = (List<List<Integer>>) problemService.getDiagnosisKnowledgeProblems().get("knowledgeProblems");
 			firstProbId = problems.get(0).get(0);
 			res.put("knowledgeProblems", problems);
-			
-		} catch (Exception E){
+		} catch (ClassCastException E){
 			res.clear();
-			log.info(E.getMessage());
-			res.put("resultMessage", "Internal Server Error.\n" + E.getMessage());
+			log.info("Internal Server Error. ClassCastException occurred. Please check type convert.");
+			res.put("resultMessage", "Internal Server Error. ClassCastException occurred. Please check type convert.");
 			return new ResponseEntity<>(res, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 		
@@ -122,13 +112,7 @@ public class DiagnosisControllerV1 {
 		statement.setExtension("{\"diagProbSetId\":\""+ diagProbSetId + "\",\"guessAlarm\":0}");
 
 		log.info("Save statement : " + statement.toString());
-		try {
-			statementRepository.save(statement);
-		} catch (Exception e) {
-			log.info("error : insert failed - " + e.getMessage());
-			res.put("resultMessage", "error : statement insert fail - " + e.getMessage());
-			return new ResponseEntity<>(res, HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+		statementRepository.save(statement);
 
 		res.put("resultMessage", "Successfully returned.");
 		res.put("diagProbSetId", diagProbSetId);
@@ -156,9 +140,9 @@ public class DiagnosisControllerV1 {
 		String userUuid = "";
 		try {
 			userUuid = principalDetails.getUserUuid();
-		} catch (Exception e) {
-			log.info("Cannot get userUuid from token");
-			result.put("error", "Cannot get userUuid from token");
+		} catch (NullPointerException e) {
+			log.info("NullPointerException occurred.");
+			result.put("error", "NullPointerException occurred.");
 			return new ResponseEntity<>(result, HttpStatus.NO_CONTENT);
 		}
 		// String token = request.getHeader("Authorization").replace("Bearer ","");

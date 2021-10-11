@@ -1,7 +1,7 @@
 package com.tmax.eTest.Test.service;
 
 import java.util.ArrayList;
-import java.util.Random;
+import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -19,7 +19,6 @@ import org.springframework.stereotype.Service;
 import com.tmax.eTest.Common.model.problem.DiagnosisCurriculum;
 import com.tmax.eTest.Common.model.problem.DiagnosisProblem;
 import com.tmax.eTest.Common.model.problem.Problem;
-import com.tmax.eTest.Common.model.problem.TestProblem;
 import com.tmax.eTest.Contents.repository.DiagnosisCurriculumRepository;
 import com.tmax.eTest.Contents.repository.DiagnosisProblemRepository;
 import com.tmax.eTest.Contents.repository.ProblemRepository;
@@ -47,7 +46,7 @@ public class ProblemServiceV0 implements ProblemServiceBase {
 	ProblemRepository problemRepo;
 	
     // Not working due to the change of DB table structures
-	public Map<String, Object> getDiagnosisTendencyProblems() {
+	public Map<String, Object> getDiagnosisTendencyProblems() throws NullPointerException {
 		Map<String, Object> map = new HashMap<String, Object>();
 		String type = "성향";
 
@@ -61,7 +60,7 @@ public class ProblemServiceV0 implements ProblemServiceBase {
 
 		// 성향문제의 경우 : 가져온 커리큘럼 아이디에 해당되는 모든 진단 문제를 하나의 리스트에 합침
 		List<Integer> problemLists = new ArrayList<Integer>();
-		String choice = Arrays.asList("A", "B", "C").get(new Random().nextInt(3));
+		String choice = Arrays.asList("A", "B", "C").get(new SecureRandom().nextInt(3));
 		for (Integer i : selectedCurriculumId) {
 //			logger.info("Getting diagnosis problems for the selected curriculumId : " + i);
 			List<DiagnosisProblem> selectedProblems = diagnosisRepo.findByCurriculumIdOrderByOrderNumAsc(i);
@@ -82,7 +81,7 @@ public class ProblemServiceV0 implements ProblemServiceBase {
 	}
 
     // Not working due to the change of DB table structures
-	public Map<String, Object> getDiagnosisKnowledgeProblems() {
+	public Map<String, Object> getDiagnosisKnowledgeProblems() throws IndexOutOfBoundsException {
 		Map<String, Object> map = new HashMap<String, Object>();
 		String type = "지식";
 		

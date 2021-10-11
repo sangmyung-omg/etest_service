@@ -1,5 +1,7 @@
 package com.tmax.eTest.Contents.service;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -8,6 +10,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -52,12 +55,8 @@ public class AnswerServicesV1 implements AnswerServicesBase {
 
 		Map<String, Object> data = new HashMap<String, Object>();
 
-		try {
-			data = getProblemSolution(probId);
-		} catch (Exception e) {
-			log.info(e.toString());
-			return 0;
-		}
+		data = getProblemSolution(probId);
+
 		String inputString = data.get("solution").toString();
 		JSONParser parser = new JSONParser();
 		JSONArray jsonArray = (JSONArray) parser.parse(inputString);
@@ -169,11 +168,18 @@ public class AnswerServicesV1 implements AnswerServicesBase {
 							dataList = Arrays.asList(data.substring(2, data.length()-2).split("\",\""));
 							List<String> temp = new ArrayList<String>();
 							if (type.contains("IMAGE")) {					// 이미지 컴포넌트 : array of 이미지 파일명
-								for (String img_name : dataList) {
-									String sb = imgFileApi.getImgFileServiceComponent(new Long(probId), img_name);
-									temp.add(sb);
+								try {
+									for (String img_name : dataList) {
+										String sb = imgFileApi.getImgFileServiceComponent(new Long(probId), img_name);
+										temp.add(sb);
+									}
+								} catch (FileNotFoundException e) {
+									log.info("error : FileNotFoundException occurred. Cannot find the file path.");
+								} catch (IOException e) {
+									log.info("error : IOException occurred. Cannot load image file.");
+								} finally {
+									dataList = temp;
 								}
-								dataList = temp;
 							}
 						} else
 							dataList = new ArrayList<String>(Arrays.asList(data));
@@ -185,8 +191,10 @@ public class AnswerServicesV1 implements AnswerServicesBase {
 				}
 				solutionInfo.setSolution(componentList);
 				solutionMap.put(dto.getProbID(), solutionInfo);
-			} catch (Exception e) {
-				log.error("error: " + e.getMessage());
+			} catch (ParseException e) {
+				log.info("error: jsonParseException occurred.");
+			} catch (ClassCastException e) {
+				log.info("error: CastException occurred. cannot convert error.");
 			}
 		}
 		return solutionMap;

@@ -15,15 +15,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import lombok.extern.slf4j.Slf4j;
+
 import com.tmax.eTest.Test.config.TestPathConstant;
 import com.tmax.eTest.Test.service.ProblemServiceBase;
 
+@Slf4j
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @RequestMapping(path = TestPathConstant.apiPrefix + "/v0")
 public class DiagnosisControllerV0 {
-	
-	private final Logger logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
 	
 	@Autowired
     @Qualifier("ProblemServiceV0")
@@ -37,9 +38,10 @@ public class DiagnosisControllerV0 {
 			res.put("resultMessage", "Successfully returned.");
 			return new ResponseEntity<>(res, HttpStatus.OK);
 
-		} catch (Exception E){
+		} catch (NullPointerException E){
 			Map<String, Object> ret = new HashMap<String, Object>();
-			ret.put("resultMessage", "Internal Server Error.");
+			log.info("Internal Server Error. NullPointerException occurred.");
+			ret.put("resultMessage", "Internal Server Error. NullPointerException occurred.");
 			return new ResponseEntity<>(ret, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
@@ -51,11 +53,10 @@ public class DiagnosisControllerV0 {
 			res.put("resultMessage", "Successfully returned.");
 			return new ResponseEntity<>(res, HttpStatus.OK);
 
-		} catch (Exception E){
+		} catch (IndexOutOfBoundsException E){
 			Map<String, Object> ret = new HashMap<String, Object>();
-			logger.info(E.getMessage());
-			E.printStackTrace();
-			ret.put("resultMessage", "Internal Server Error.");
+			log.info("Internal Server Error. IndexOutOfBoundsException occurred.");
+			ret.put("resultMessage", "Internal Server Error. IndexOutOfBoundsException occurred.");
 			return new ResponseEntity<>(ret, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}

@@ -1,26 +1,20 @@
 package com.tmax.eTest.Test.service;
 
 import java.util.ArrayList;
-import java.util.Random;
 import java.util.UUID;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 import static java.util.stream.Collectors.*;
 
-import java.text.ParseException;
+import org.json.simple.parser.ParseException;
 
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
@@ -188,7 +182,7 @@ public class ProblemServiceV1 implements ProblemServiceBase {
 			statementQuery = lrsAPIManager.getStatementList(statementInput);
 			log.info("length of the statement query result : " + Integer.toString(statementQuery.size()));
 			Collections.reverse(statementQuery);		// 최근 부터 set id 탐색해야 하므로, reverse
-		} catch (ParseException e) {
+		} catch (java.text.ParseException e) {
 			log.info(e.getMessage());
 			map.put("error", e.getMessage());
 			return map;
@@ -250,7 +244,7 @@ public class ProblemServiceV1 implements ProblemServiceBase {
 								guessAlarm++;
 							}
 						}
-					} catch (Exception e) {
+					} catch (ParseException e) {
 						log.info("Extension Parsing Error with String Value : " + extension.toString() + ", error message : " + e.toString());
 					}
 				} else log.info("Json format, which is surrounded by '{' and '}', NOT found in extension : " + query.getExtension().toString());

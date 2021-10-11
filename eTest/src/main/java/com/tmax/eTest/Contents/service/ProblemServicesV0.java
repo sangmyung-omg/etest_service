@@ -133,12 +133,7 @@ public class ProblemServicesV0 implements ProblemServicesBase {
 			throw new UnavailableTypeException(AVAILABLE_ERROR_TYPE, reportType);
 		}
 		errorReport.setReportText(reportText);
-		
-		try {
-			errorRepo.save(errorReport);
-		}catch(Exception e) {
-			throw e;
-		}
+		errorRepo.save(errorReport);
 		return "success";
 	}
 

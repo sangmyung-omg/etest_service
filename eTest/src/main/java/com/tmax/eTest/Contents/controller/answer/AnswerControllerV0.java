@@ -102,7 +102,7 @@ public class AnswerControllerV0 {
 			output.put("resultMessage", "success");
 			output.put("data", data);
 		} catch (NoDataException e) {
-			output.put("resultMessage", "Failed: " + e.getMessage());
+			output.put("resultMessage", "Failed: NoDataException occurred.");
 		}
 
 		return output;

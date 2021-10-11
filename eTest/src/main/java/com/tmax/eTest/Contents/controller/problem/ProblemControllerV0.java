@@ -51,12 +51,8 @@ public class ProblemControllerV0 {
 			output = new ResponseEntity<>(body, headers, HttpStatus.OK);
 		} catch (NoDataException e) {
 			ProblemDTO body = new ProblemDTO();
-			body.setMessage("Failed: " + e.getMessage());
+			body.setMessage("Failed: NoDataException occurred.");
 			output = new ResponseEntity<>(body, headers, HttpStatus.BAD_REQUEST);
-		} catch (Exception e) {
-			ProblemDTO body = new ProblemDTO();
-			body.setMessage("Failed: " + e.getMessage());
-			output = new ResponseEntity<>(body, headers, HttpStatus.NOT_FOUND);
 		}
 		return output;
 	}
@@ -102,12 +98,8 @@ public class ProblemControllerV0 {
 			output = new ResponseEntity<>(body, headers, HttpStatus.OK);
 		} catch (NoDataException e) {
 			DiagnosisProblemDTO body = new DiagnosisProblemDTO();
-			body.setMessage("Failed: " + e.getMessage());
+			body.setMessage("Failed: NoDataException occurred.");
 			output = new ResponseEntity<>(body, headers, HttpStatus.BAD_REQUEST);
-		} catch (Exception e) {
-			DiagnosisProblemDTO body = new DiagnosisProblemDTO();
-			body.setMessage("Failed: " + e.getMessage());
-			output = new ResponseEntity<>(body, headers, HttpStatus.NOT_FOUND);
 		}
 
 		return output;
@@ -124,10 +116,7 @@ public class ProblemControllerV0 {
 					errorReportBody.getReport_type(), errorReportBody.getReport_text());
 			output = new ResponseEntity<>(new ErrorDTO(resultMessage), headers, HttpStatus.OK);
 		} catch (UnavailableTypeException e) {
-			output = new ResponseEntity<>(new ErrorDTO(e.toString()), headers, HttpStatus.NOT_FOUND);
-		} catch (Exception e) {
-			resultMessage = "failed";
-			output = new ResponseEntity<>(new ErrorDTO(resultMessage), headers, HttpStatus.NOT_FOUND);
+			output = new ResponseEntity<>(new ErrorDTO("UnavailableTypeException occurred."), headers, HttpStatus.NOT_FOUND);
 		}
 		//
 		return output;

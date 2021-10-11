@@ -1,5 +1,6 @@
 package com.tmax.eTest.Contents.controller.answer;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.jsonwebtoken.JwtException;
 import lombok.extern.slf4j.Slf4j;
 
 import com.tmax.eTest.Auth.jwt.JwtTokenUtil;
@@ -97,9 +99,13 @@ public class AnswerControllerV2 {
 				Map<String, Object> parseInfo = jwtTokenUtil.getUserParseInfo(token);
 				userId = parseInfo.get("userUuid").toString();
 				logText += "Token exists. Registered user. / user UUID = " + userId;
-			} catch (Exception e) {															// 토큰 파싱 에러
-				log.info("error : cannot parse jwt token, " + e.getMessage());
-				result.put("error", e.getMessage());
+			} catch (NullPointerException e) {															
+				log.info("error : cannot parse jwt token, NullPointerException occurred");
+				result.put("error", "error : cannot parse jwt token, NullPointerException occurred");
+				return new ResponseEntity<>(result, HttpStatus.NON_AUTHORITATIVE_INFORMATION);
+			} catch (JwtException e) {														// 토큰 파싱 에러
+				log.info("error : cannot parse jwt token, jwtException occurred");
+				result.put("error", "error : cannot parse jwt token, jwtException occurred");
 				return new ResponseEntity<>(result, HttpStatus.INTERNAL_SERVER_ERROR);
 			}
 		}
@@ -181,20 +187,12 @@ public class AnswerControllerV2 {
 		log.info("probIdList : " + probIdList.toString());
 
 		List<SolutionDTO> solutions = new ArrayList<SolutionDTO>();
-		try {
-			Map<Integer, SolutionDTO> data = answerServices.getParsedMultipleSolutions(probIdList);
-			log.info("Solution queryResult length : " + Integer.toString(data.size()));
-			for (Integer probId : probIdList) {
-				data.get(probId).setUserAnswer(probAnswerMap.get(probId));
-				solutions.add(data.get(probId));
-
-				// 컴포넌트 분리
-				
-			}
-		}catch(Exception e) {
-			result.put("resultMessage", "error : "+e.getMessage());
+		Map<Integer, SolutionDTO> data = answerServices.getParsedMultipleSolutions(probIdList);
+		log.info("Solution queryResult length : " + Integer.toString(data.size()));
+		for (Integer probId : probIdList) {
+			data.get(probId).setUserAnswer(probAnswerMap.get(probId));
+			solutions.add(data.get(probId));
 		}
-		
 		result.put("resultMessage", "Successfully returned");
 		result.put("solutions", solutions);
 		log.info(result.toString());
@@ -244,9 +242,13 @@ public class AnswerControllerV2 {
 				Map<String, Object> parseInfo = jwtTokenUtil.getUserParseInfo(token);
 				userId = parseInfo.get("userUuid").toString();
 				logText += "Token exists. Registered user. / user UUID = " + userId;
-			} catch (Exception e) {															// 토큰 파싱 에러
-				log.info("error : cannot parse jwt token, " + e.getMessage());
-				result.put("error", e.getMessage());
+			} catch (NullPointerException e) {
+				log.info("error : NullPointerException occurred.");
+				result.put("error", "NullPointerException occurred.");
+				return new ResponseEntity<>(result, HttpStatus.NON_AUTHORITATIVE_INFORMATION);
+		 	} catch (JwtException e) {															// 토큰 파싱 에러
+				log.info("error : cannot parse jwt token, JwtException occurred.");
+				result.put("error", "cannot parse jwt token, JwtException occurred.");
 				return new ResponseEntity<>(result, HttpStatus.INTERNAL_SERVER_ERROR);
 			}
 		}
@@ -274,9 +276,9 @@ public class AnswerControllerV2 {
 				result.put("resultMessage", "error: some of LRS updates are not successfully proceeded");
 				return new ResponseEntity<>(result, HttpStatus.INTERNAL_SERVER_ERROR);
 			}
-		} catch (Exception e) {
-			log.info("error: " + e.getMessage());
-			result.put("resultMessage", "error: " + e.getMessage());
+		} catch (ParseException e) {
+			log.info("error: ParseException occurred.");
+			result.put("resultMessage", "error: ParseException occurred.");
 			return new ResponseEntity<>(result, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
