@@ -6,7 +6,7 @@ import lombok.Getter;
 
 public enum ErrorCode implements ErrorCodeBase {
 
-  GENERIC_ERROR("0001", "Generic error has occured."), DB_ERROR("0002", "DB error has occured."),
+  GENERIC_ERROR("0001", "Generic error has occured."), DB_ERROR("0002", "DB ERROR has occured.", HttpStatus.NOT_FOUND),
   TYPE_ERROR("0003", "Query type is wrong."), LRS_ERROR("0004", "LRS Service error has occured."),
   DIAGNOSIS_ERROR("0005", "Diagnosis Report Error has occured."), USER_ERROR("0006", "User Should not be null."),
   FILE_ERROR("0007", "File has Error.");

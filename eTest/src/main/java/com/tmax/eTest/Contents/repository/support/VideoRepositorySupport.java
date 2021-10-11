@@ -97,15 +97,17 @@ public class VideoRepositorySupport extends QuerydslRepositorySupport {
         .orderBy(getVideoSortedColumn(sort)).fetch().stream().distinct().collect(Collectors.toList()));
   }
 
-  public OrderSpecifier<?> getVideoSortedColumn(SortType sort) {
+  public OrderSpecifier<?>[] getVideoSortedColumn(SortType sort) {
     switch (sort.name()) {
       case "DATE":
-        return querydslUtils.getSortedColumn(Order.ASC, video, "createDate");
+        return new OrderSpecifier[] { querydslUtils.getSortedColumn(Order.DESC, video, "registerDate"),
+            querydslUtils.getSortedColumn(Order.DESC, video, "createDate"),
+            querydslUtils.getSortedColumn(Order.ASC, video, "sequence") };
       case "HIT":
-        return querydslUtils.getSortedColumn(Order.DESC, video, "videoHit.hit");
+        return new OrderSpecifier[] { querydslUtils.getSortedColumn(Order.DESC, video, "videoHit.hit") };
       case "RECOMMEND":
       case "SEQUENCE":
-        return querydslUtils.getSortedColumn(Order.ASC, video, "sequence");
+        return new OrderSpecifier[] { querydslUtils.getSortedColumn(Order.ASC, video, "sequence") };
       default:
         throw new ContentsException(ErrorCode.TYPE_ERROR, sort.name() + ": type not provided!");
     }

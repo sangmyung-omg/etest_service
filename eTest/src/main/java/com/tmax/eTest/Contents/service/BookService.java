@@ -107,8 +107,8 @@ public class BookService {
       throw new ContentsException(ErrorCode.DB_ERROR, "BookId doesn't exist in BookHit Table");
     bookHitRepositorySupport.updateVideoHit(bookId);
 
-    lrsapiManager.saveStatementList(Arrays.asList(lrsUtils.makeStatement(userId, bookId,
-        LRSUtils.ACTION_TYPE.enter, LRSUtils.SOURCE_TYPE.textbook)));
+    lrsapiManager.saveStatementList(Arrays
+        .asList(lrsUtils.makeStatement(userId, bookId, LRSUtils.ACTION_TYPE.enter, LRSUtils.SOURCE_TYPE.textbook)));
 
     return new SuccessDTO(true);
   }
@@ -121,8 +121,8 @@ public class BookService {
   }
 
   public SuccessDTO quitBook(String userId, String bookId, Integer duration) throws ParseException {
-    lrsapiManager.saveStatementList(Arrays.asList(lrsUtils.makeStatement(userId, bookId,
-        LRSUtils.ACTION_TYPE.quit, LRSUtils.SOURCE_TYPE.textbook, duration)));
+    lrsapiManager.saveStatementList(Arrays.asList(
+        lrsUtils.makeStatement(userId, bookId, LRSUtils.ACTION_TYPE.quit, LRSUtils.SOURCE_TYPE.textbook, duration)));
     return new SuccessDTO(true);
   }
 
