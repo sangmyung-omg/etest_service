@@ -8,6 +8,7 @@ import com.tmax.eTest.Common.model.user.UserMaster;
 import com.tmax.eTest.Support.service.InquiryService;
 import io.jsonwebtoken.ExpiredJwtException;
 import lombok.extern.slf4j.Slf4j;
+import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -83,10 +84,9 @@ public class RefreshController {
                 map.put("success", false);
                 map.put("msg", "your refresh token does not exist.");
             }
-        } catch (IOException e) {
+        } catch (NullPointerException e) {
             logger.debug("access token이나 refresh token이 제대로 안들어옴");
         }
-        log.info("m: " + m);
         return map;
     }
 }
