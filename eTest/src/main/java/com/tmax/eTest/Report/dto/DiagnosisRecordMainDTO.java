@@ -74,12 +74,12 @@ public class DiagnosisRecordMainDTO {
 		problemMiddleLevelInfo = (List<List<String>>) probInfos.get("problemMiddleLevelInfo");
 		problemLowLevelInfo = (List<List<String>>) probInfos.get("problemLowLevelInfo");
 		
-		if(giScore <= 80)
-			this.giComment = "자가진단을 통해 분석된 GI 지수에요. 아는만큼 길이 보이는 법입니다. "
-					+ "투자공부를 시작하셔서 나에게 꼭 맞는 투자 방법을 찾아보세요.";
+		if(giScore >= 80)
+			this.giComment = "GI진단을 통해 분석된 결과입니다. 진단자 평균 대비 높은 점수를 받으셨고 "
+					+ "금융투자를 위한 기본적인 역량과 소양을 갖추신 것으로 진단됩니다!";
 		else
-			this.giComment = "자가진단을 통해 분석된 GI 지수에요. 진단자 평균 대비 높은 점수를 받으셨네요. "
-					+ "금융투자를 위한 기본적인 소양이 갖춰지신 것으로 분석됩니다!";
+			this.giComment = "GI진단을 통해 분석된 결과입니다. 아는만큼 길이 보이는 법입니다. "
+					+ "균형잡인 투자공부로 나에게 꼭 맞는 투자 원칙과 방법을 찾아보시기 바랍니다. ";
 		
 		return result;
 	}
