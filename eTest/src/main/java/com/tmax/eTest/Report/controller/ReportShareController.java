@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.security.access.prepost.PreAuthorize;
 
 import com.tmax.eTest.Contents.controller.answer.AnswerControllerV1;
+import com.tmax.eTest.Contents.controller.answer.AnswerControllerV2;
 
 @CrossOrigin("*")
 @RestController
@@ -40,7 +41,8 @@ public class ReportShareController {
     private DiagnosisDetailRecordService diagnosisDetailRecordService;
 
     @Autowired
-    private AnswerControllerV1 answerControllerV1;
+    // private AnswerControllerV1 answerControllerV1;
+    private AnswerControllerV2 answerControllerV2;
     
     @GetMapping(value="/report/mini/share")
     public ResponseEntity<?> getMethodNameMinitest(@RequestParam(value = "sharekey") String key) {
@@ -91,7 +93,8 @@ public class ReportShareController {
 
         Object output;
         try {
-            output = answerControllerV1.problem(keydata.getProbSetId());
+            // output = answerControllerV1.problem(keydata.getProbSetId());
+            output = answerControllerV2.problemTemp1(keydata.getProbSetId());
         }
         catch(Exception e) {
             log.error("Cannot get problem info");
