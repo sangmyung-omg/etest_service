@@ -1,5 +1,6 @@
 package com.tmax.eTest.Auth.service;
 
+import com.tmax.eTest.Auth.controller.AuthController;
 import com.tmax.eTest.Auth.dto.*;
 import com.tmax.eTest.Auth.jwt.JwtTokenUtil;
 import com.tmax.eTest.Auth.repository.UserRepository;
@@ -24,6 +25,10 @@ import java.util.concurrent.TimeUnit;
 @Service
 public class AuthService {
     private static final Logger logger = LoggerFactory.getLogger(AuthService.class);
+<<<<<<< HEAD
+=======
+
+>>>>>>> [feat] modify video date to register date
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
     @Autowired
@@ -41,6 +46,7 @@ public class AuthService {
     LRSAPIManager lrsapiManager;
     @Transactional
     public CMRespDto<?> singUp(SignUpRequestDto signUpRequestDto) {
+            logger.debug("signUpRequestDto : "+signUpRequestDto);
             if (!emailDuplicateCheck(signUpRequestDto.getEmail()) && !nickNameDuplicateCheck(signUpRequestDto.getNickname())) {
                 UserMaster userMaster = UserMaster.builder()
                         .nickname(signUpRequestDto.getNickname())
@@ -56,6 +62,8 @@ public class AuthService {
                         .collect_info(true)
                         .build();
                 userRepository.save(userMaster);
+                logger.debug("Sign up UserMaster is : "+userMaster);
+
                 PrincipalDetails principal = PrincipalDetails.create(userMaster);
                 String jwtToken = jwtTokenUtil.generateAccessToken(principal);
 
@@ -130,16 +138,27 @@ public class AuthService {
     }
     @Transactional
     public CMRespDto<?> login(String providerId, AuthProvider provider,String ip) {
+        logger.debug("providerId is : "+providerId);
+        logger.debug("provider is : "+provider);
+
         System.out.println(ip);
         Optional<UserMaster> userMasterOptional =
                 userRepository.findByProviderIdAndProvider(providerId, provider);
+        logger.debug("userMasterOptional is : " + userMasterOptional);
         if (userMasterOptional.isPresent()) {
+
             UserMaster userMaster = userMasterOptional.get();
+            logger.debug("userMaster is : " + userMaster);
+
             PrincipalDetails principal = PrincipalDetails.create(userMaster);
 
             String jwtToken = jwtTokenUtil.generateAccessToken(principal);
             String refreshToken = jwtTokenUtil.generateRefreshToken(userMaster.getEmail());
+            logger.debug("jwtToken is : " + jwtToken);
+            logger.debug("refreshToken is : " + refreshToken);
+
             userMaster.setRefreshToken(refreshToken);
+            logger.debug("userMaster set refreshToken success ");
 
             Map<String, String> info = new HashMap<>();
             info.put("jwtToken", jwtToken);
@@ -163,17 +182,21 @@ public class AuthService {
                     .sourceType("application")
                     .timestamp(text)
                     .build();
+            logger.debug("lrs statementDTO build success");
 
             //LRS에 저장
             List<StatementDTO> statementDTOList = new ArrayList<>();
             statementDTOList.add(statementDTO);
             try {
                 lrsapiManager.saveStatementList(statementDTOList);
+                logger.debug("lrs save success");
+
             } catch (ParseException e) {
                 return new CMRespDto<>(500,"LRS 전송 실패","실패");
             }
 
             List<String> IpList = userRepository.findAllByIp();
+            logger.debug("IpList is : "+IpList);
             if (IpList.contains(ip)) {
                 info.put("name", userMaster.getName());
                 return new CMRespDto<>(203, "관리자 로그인 성공", info);
