@@ -1,5 +1,6 @@
 package com.tmax.eTest.Report.service;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -59,7 +60,7 @@ public class DiagnosisMainRecordService {
 
 	public DiagnosisRecordMainDTO getDiagnosisRecordMain(
 			String id, 		// 회원인 경우 ID 가져옴. 비회원일 경우 Null
-			String probSetId) throws Exception {
+			String probSetId)  throws ParseException{
 		
 		DiagnosisRecordMainDTO result = new DiagnosisRecordMainDTO();
 
@@ -146,7 +147,7 @@ public class DiagnosisMainRecordService {
 		return result;
 	}
 	
-	private Map<String, List<RecommendVideoDTO>> getRecommendVideoMap(String userId, DiagnosisReport report) throws Exception
+	private Map<String, List<RecommendVideoDTO>> getRecommendVideoMap(String userId, DiagnosisReport report) 
 	{
 		Map<String, List<RecommendVideoDTO>> result = new HashMap<>();
 		
