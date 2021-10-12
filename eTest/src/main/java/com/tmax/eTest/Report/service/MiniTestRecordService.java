@@ -152,6 +152,60 @@ public class MiniTestRecordService {
 							.build();
 	}
 
+	private PartDataDTO buildPartDataV2(JsonArray mastery, String partname, Map<Integer, UkMaster> ukDetailMap){
+		PartDataDTO output = buildPartDataV2(mastery, ukDetailMap);
+
+		//if null
+		if(output == null) return null;
+
+		output.setPartName(partname);
+		output.setPercentage( (long)sndCalculator.calculatePercentage(PartMapper.sndCalcTypeMap.get(partname), output.getScore().intValue() ) );
+		return output;
+	}
+
+	private PartDataDTO buildPartDataV2(JsonArray mastery, Map<Integer, UkMaster> ukDetailMap){
+		//Parse raw data
+		Type typeLLS = new TypeToken< List<List<String>> >(){}.getType();
+		List<List<String>> ukDataList = null;
+		try{ukDataList =  new Gson().fromJson(mastery, typeLLS);}
+		catch(JsonSyntaxException e){log.error("mastery parse error {}", mastery.toString()); return null;}
+
+		//Filter invalid entries
+		ukDataList = ukDataList.stream().filter(data -> data.size() == 3).collect(Collectors.toList());
+
+		//For each uk --> try parse score + build ukInfo
+		double totalScore = ukDataList.stream()
+				.flatMap(data -> {
+					//3rd element is score --> try float conversion
+					try{return Stream.of( Double.parseDouble(data.get(2)) );}
+					catch(NullPointerException e){log.error("score is null {}", data); return Stream.empty();}
+					catch(NumberFormatException e){log.error("score parse error {}", data); return Stream.empty();}
+				}).reduce(0.0, Double::sum);
+		
+		List<List<String>> ukInfo = ukDataList.stream().parallel()
+											  .flatMap(data -> {
+													Integer ukId = null;
+													try{ukId = Integer.parseInt(data.get(0));}
+													catch(NumberFormatException e){log.warn("ukid parse error. {}", data.toString());return Stream.empty();}
+
+													UkMaster uk = ukDetailMap.get(ukId);
+													if(uk == null)
+														return Stream.empty();
+													
+													//build info (name, score, desc, link)	
+													return Stream.of( Arrays.asList(uk.getUkName(), data.get(2), uk.getUkDescription(), uk.getExternalLink() ) );
+											  }).collect(Collectors.toList());
+		Collections.sort(ukInfo, (a,b) -> Double.compare( Double.parseDouble(a.get(UK_INFO_MASTERY_INDEX)), Double.parseDouble(b.get(UK_INFO_MASTERY_INDEX)))); //sort by mastery
+		ukInfo = ukInfo.subList(0, Math.min(UK_INFO_SLICE_LENGTH, ukInfo.size())); //slice list to desired length
+
+		long score = (long)Math.floor(totalScore / ukDataList.size());
+
+		return PartDataDTO.builder()
+							.score(score).ukInfo(ukInfo)
+							// .percentage((long)sndCalculator.calculatePercentage(PartMapper.sndCalcTypeMap.get(), )))
+							.build();
+	}
+
 	private List<List<String>> createProblemInfo(List<StatementDTO> statementList, String userId){
 		//Order lrs by time
 		try{
@@ -246,6 +300,41 @@ public class MiniTestRecordService {
 		return outProbInfo;
 	}
 
+	private Map<Integer, UkMaster> createUkDetailMap(JsonObject masteryMap) {
+		// Map<Integer, UkMaster> outputMap = new HashMap<>();
+
+		//Get part mastery list from info
+		Set<Integer> ukIdSet = PartMapper.map.keySet().stream().flatMap(key -> {
+			JsonArray masteryArray = (JsonArray)masteryMap.get(key);
+			if(masteryArray == null){
+				log.error("No key found for mastery map key {}", key);
+				return Stream.empty();
+			}
+
+			//Parse the mastery Array and return id Set
+			Type typeLLS = new TypeToken< List<List<String>> >(){}.getType();
+			List<List<String>> ukDataList = null;
+			try{ukDataList =  new Gson().fromJson(masteryArray, typeLLS);}
+			catch(JsonSyntaxException e){log.error("mastery parse error {}", masteryArray.toString()); return null;}
+		
+			//Filter invalid entries
+			ukDataList = ukDataList.stream().filter(data -> data.size() == 3).collect(Collectors.toList());
+
+			//Get all ukIdList
+			return ukDataList.stream().parallel()
+										.flatMap(data -> {
+											try{ return Stream.of(Integer.parseInt(data.get(0)));}
+											catch(NumberFormatException e){log.error("uk id parse error {}", data.toString()); return Stream.empty();}
+										}).collect(Collectors.toSet()).stream();
+		})
+		.collect(Collectors.toSet());
+
+		//From the uk Id set get the uk infos
+		return ukMasterRepo.findAllById(ukIdSet).stream()
+							.collect(Collectors.toMap(UkMaster::getUkId, uk -> uk));
+
+	}
+
 	private List<StatementDTO> filterPureLrsStatement(List<StatementDTO> statementList) {
 		Map<String, StatementDTO> srcIdStatementMap = new HashMap<>();
 		for(StatementDTO statement : statementList){
@@ -308,22 +397,21 @@ public class MiniTestRecordService {
 				//Parse the string to json object
 				JsonObject masteryMap = (JsonObject)JsonParser.parseString(minitestMastery);
 
+				//Build and collect uk info map at once
+				Map<Integer, UkMaster> ukDetailMap = createUkDetailMap(masteryMap);
+
 				//Make readable map first
-				// partInfoReadable = masteryMap.entrySet().stream()
-				// 					.collect(Collectors.toMap(e -> e.getKey(),
-				// 											  e -> buildPartData((JsonArray)e.getValue()) ));
 				partInfoReadable = PartMapper.map.keySet().stream().map(key -> {
 												JsonArray masteryArray = (JsonArray)masteryMap.get(key);
 												if(masteryArray == null){
 													return new PartDataTuple(key, PartDataDTO.builder().partName(key).ukInfo(new ArrayList<>()).build());
 												}
-												return new PartDataTuple(key, buildPartData(masteryArray, key));
+												return new PartDataTuple(key, buildPartDataV2(masteryArray, key, ukDetailMap));
 											})
 											.collect(Collectors.toMap(PartDataTuple::getKey, PartDataTuple::getPartData));
-
-				masteryMap.entrySet().stream().forEach(entry -> {
-					partInfo.setPartData(entry.getKey(), buildPartData((JsonArray)entry.getValue(), entry.getKey()));
-				});
+				
+				//Build part1, part2 ~ part6 info from readable
+				partInfoReadable.entrySet().stream().forEach(entry -> partInfo.setPartData(entry.getKey(), entry.getValue()));
 			}
 			catch(JsonParseException e){log.error("uk mastery parse error. {}. {}. {}",userId, probSetId, minitestMastery);}			
 		}
