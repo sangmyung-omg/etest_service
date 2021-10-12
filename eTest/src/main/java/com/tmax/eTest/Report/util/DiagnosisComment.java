@@ -128,10 +128,10 @@ public class DiagnosisComment {
 		
 		///
 		
-		int stockNumIdx = (report.getRiskStockNumScore() < 3) ? 0 : 1;		// number 3 question
+		int stockNumIdx = (report.getRiskStockNumScore() > 2) ? 0 : 1;		// number 3 question
 		int preferNumIdx = (report.getRiskStockPreferScore() < 3) ? 0 : 1;	// number 4 question
 		int investMethodComIdx = tracingIdx * 4 + stockNumIdx * 2 + preferNumIdx;
-		
+
 		riskComment += investMethodComment[investMethodComIdx] + " ";
 		
 		///
@@ -159,9 +159,7 @@ public class DiagnosisComment {
 		String[] tracingMainList = {
 				"안전수익 추구형 투자자", 
 				"고수익 추구형 투자자"};
-		
-		
-		
+	
 		List<Object> result = new ArrayList<>();
 		
 		Map<String, Object> profileCommentInfo = new HashMap<>();
@@ -174,16 +172,16 @@ public class DiagnosisComment {
 		List<List<String>> tracingDetailScore = new ArrayList<>();
 		tracingDetailScore.add(Arrays.asList(
 				RiskTracing.STOCK_PERIOD.toString(), 
-				String.valueOf(report.getRiskInvestPeriodScore()*25)));
+				String.valueOf((report.getRiskInvestPeriodScore()-1)*33+1)));
 		tracingDetailScore.add(Arrays.asList(
 				RiskTracing.STOCK_RATIO.toString(), 
-				String.valueOf(report.getRiskStockRatioScore()*25)));
+				String.valueOf((report.getRiskStockRatioScore()-1)*33+1)));
 		tracingDetailScore.add(Arrays.asList(
 				RiskTracing.STOCK_NUM.toString(), 
-				String.valueOf(report.getRiskStockNumScore()*25)));
+				String.valueOf((report.getRiskStockNumScore()-1)*33+1)));
 		tracingDetailScore.add(Arrays.asList(
 				RiskTracing.STOCK_PREFER.toString(), 
-				String.valueOf(report.getRiskStockPreferScore()*25)));
+				String.valueOf((report.getRiskStockPreferScore()-1)*33+1)));
 		
 		profileCommentInfo.put("name", "투자위험 태도");
 		profileCommentInfo.put("main", (report.getRiskLevelScore() < 8)
@@ -477,7 +475,7 @@ public class DiagnosisComment {
 				int detIdx = 0;
 				
 				if(probOrderIdx == 1)
-					detIdx = (diffIdx == 0) ? 0 : 1;
+					detIdx = (diffIdx == 0) ? 1 : 2;
 				else if(probOrderIdx > 1)
 					detIdx = 3 + (probOrderIdx - 2) * 3 + diffIdx;
 				
