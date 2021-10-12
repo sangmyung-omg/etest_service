@@ -57,7 +57,7 @@ public class AnswerControllerV2 {
 	@PostMapping(value="problems/{probId}/answer-check", produces = "application/json; charset=utf-8")
 	public ResponseEntity<Object> checkAnswer(HttpServletRequest request,
 											  @PathVariable("probId") Integer probId,
-											  @RequestBody AnswerInputDTO inputDto) throws Exception {
+											  @RequestBody AnswerInputDTO inputDto) {
 											//   @RequestBody AnswerInputDTO inputDto) throws Exception {
 		log.info("> answer-check logic start!");
 		Map<String, Object> result = new HashMap<String, Object>();
@@ -114,6 +114,7 @@ public class AnswerControllerV2 {
 		
 		// lrsbody의 유저가 입력한 답 꺼내서 정답과 비교해 정답여부 반환. 1 - 정답 / 0 - 오답 / -1 - 정답 없는 문제
 		int isCorrect = answerServices.evaluateIfCorrect(probId, lrsbody);
+
 		for (Integer i=0; i < lrsbody.size(); i++) {
 			StatementDTO dto = lrsbody.get(i);
 			if (dto.getActionType().equalsIgnoreCase("submit")) {
@@ -131,7 +132,14 @@ public class AnswerControllerV2 {
 		}
 
 		// LRS에 statement 저장
-		List<Integer> queryResult = lrsApiManager.saveStatementList(lrsbody);
+		List<Integer> queryResult = new ArrayList<Integer>();
+		try {
+			queryResult = lrsApiManager.saveStatementList(lrsbody);
+		} catch (ParseException e) {
+			log.info("error : LRSApiManager ParseException occurred.");
+			result.put("error", "LRSApiManager ParseException occurred.");
+			return new ResponseEntity<>(result, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 
 		// 결과 반환
 		if (queryResult.size() == 0) {

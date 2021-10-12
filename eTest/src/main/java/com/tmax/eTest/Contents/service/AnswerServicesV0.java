@@ -8,6 +8,8 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import lombok.extern.slf4j.Slf4j;
+
 import com.tmax.eTest.Common.model.problem.Problem;
 import com.tmax.eTest.Contents.dto.answer.CustomizedSolutionDTO;
 import com.tmax.eTest.Contents.dto.answer.SolutionDTO;
@@ -19,6 +21,7 @@ import com.tmax.eTest.LRS.dto.StatementDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service("AnswerServicesV0")
 public class AnswerServicesV0 implements AnswerServicesBase {
 
@@ -28,7 +31,7 @@ public class AnswerServicesV0 implements AnswerServicesBase {
 	@Autowired
 	ProblemChoiceRepository probChoiceRepo;
 
-	public Map<String, Object> getProblemSolution(Integer problemID) throws Exception {
+	public Map<String, Object> getProblemSolution(Integer problemID) {
 		Map<String, Object> output = new HashMap<String, Object>();
 		Optional<Problem> problemOpt = problemRepo.findById(problemID);
 
@@ -37,12 +40,13 @@ public class AnswerServicesV0 implements AnswerServicesBase {
 			output.put("solution", problem.getSolution());
 
 		} else {
-			throw new NoDataException(problemID);
+			log.info("error : Problem NoDataException occurred.");
+
 		}
 		return output;
 	}
 
-	public Map<String, Object> getSolutionMaterial(Integer problemID) throws Exception {
+	public Map<String, Object> getSolutionMaterial(Integer problemID) {
 		Map<String, Object> output = new HashMap<String, Object>();
 		Optional<Problem> problemOpt = problemRepo.findById(problemID);
 
@@ -52,7 +56,7 @@ public class AnswerServicesV0 implements AnswerServicesBase {
 			output.put("material", problem.getSource());
 
 		} else {
-			throw new NoDataException(problemID);
+			log.info("error : Problem NodataException occurred.");
 		}
 		return output;
 	}
