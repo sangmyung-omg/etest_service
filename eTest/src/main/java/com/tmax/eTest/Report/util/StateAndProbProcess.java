@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.PatternSyntaxException;
 
+import java.text.ParseException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -151,7 +153,7 @@ public class StateAndProbProcess {
 	}
 	
 	public List<StatementDTO> getDiagnosisKnowledgeProbInfo(String probSetId) 
-			throws Exception {
+			throws ParseException {
 
 		GetStatementInfoDTO input = new GetStatementInfoDTO();
 
