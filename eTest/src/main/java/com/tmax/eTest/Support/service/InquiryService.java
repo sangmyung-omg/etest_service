@@ -5,6 +5,7 @@ import com.tmax.eTest.Auth.repository.UserRepository;
 import com.tmax.eTest.Common.model.support.Inquiry;
 import com.tmax.eTest.Common.model.support.Inquiry_file;
 import com.tmax.eTest.Common.model.user.UserMaster;
+import com.tmax.eTest.Support.controller.InquiryController;
 import com.tmax.eTest.Support.dto.CreateInquiryDto;
 import com.tmax.eTest.Support.dto.ModifyInquiryDto;
 import com.tmax.eTest.Support.repository.InquiryFileRepository;

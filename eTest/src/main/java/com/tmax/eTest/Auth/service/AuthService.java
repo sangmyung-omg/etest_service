@@ -41,7 +41,7 @@ public class AuthService {
     LRSAPIManager lrsapiManager;
     @Transactional
     public CMRespDto<?> singUp(SignUpRequestDto signUpRequestDto) {
-            if (!emailDuplicateCheck(signUpRequestDto.getEmail()) && !nickNameDuplicateCheck(signUpRequestDto.getNickname())) {
+        if (!emailDuplicateCheck(signUpRequestDto.getEmail()) && !nickNameDuplicateCheck(signUpRequestDto.getNickname())) {
                 UserMaster userMaster = UserMaster.builder()
                         .nickname(signUpRequestDto.getNickname())
                         .email(signUpRequestDto.getEmail())
