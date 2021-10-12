@@ -1,5 +1,6 @@
 package com.tmax.eTest.Report.service;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -50,7 +51,7 @@ public class DiagnosisDetailRecordService {
 	public DiagnosisRecordDetailDTO getDiagnosisRecordDetail(
 			String id, 
 			String probSetId,
-			String partName) throws Exception {
+			String partName) throws ReportBadRequestException, ParseException {
 		DiagnosisRecordDetailDTO result = new DiagnosisRecordDetailDTO();
 		
 		if(!partNameList.contains(partName))
@@ -94,7 +95,7 @@ public class DiagnosisDetailRecordService {
 	@SuppressWarnings("unchecked")
 	private DiagnosisRecordDetailDTO makeKnowledgeRecordDetail(
 			DiagnosisReport report,
-			List<StatementDTO> knowledgeProbStatement) throws Exception
+			List<StatementDTO> knowledgeProbStatement) throws ReportBadRequestException
 	{
 		List<Integer> probIdList = new ArrayList<>();
 		

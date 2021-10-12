@@ -1,9 +1,12 @@
 package com.tmax.eTest.Report.controller;
 
+import java.text.ParseException;
+
 import javax.servlet.http.HttpServletRequest;
 
 import com.tmax.eTest.Report.dto.ReportShareCreateDTO;
 import com.tmax.eTest.Report.dto.ReportShareKeyDTO;
+import com.tmax.eTest.Report.exception.ReportBadRequestException;
 import com.tmax.eTest.Report.service.DiagnosisDetailRecordService;
 import com.tmax.eTest.Report.service.ReportShareService;
 import com.tmax.eTest.Report.util.UserIdFetchTool;
@@ -74,8 +77,12 @@ public class ReportShareController {
         try {
             output = diagnosisDetailRecordService.getDiagnosisRecordDetail(keydata.getUserId(), keydata.getProbSetId(), partName);
         }
-        catch(Exception e) {
+        catch(ParseException e){
             log.error("Cannot get diagnosis record detail info. {} {} {}", keydata.getUserId(), keydata.getProbSetId(), partName);
+            return ResponseEntity.internalServerError().body("Cannot get part record detail. " + partName);
+        }
+        catch(ReportBadRequestException e){
+            log.error("ReportBadRequestException. {} {} {}", keydata.getUserId(), keydata.getProbSetId(), partName);
             return ResponseEntity.internalServerError().body("Cannot get part record detail. " + partName);
         }
 
@@ -96,7 +103,7 @@ public class ReportShareController {
             // output = answerControllerV1.problem(keydata.getProbSetId());
             output = answerControllerV2.problemTemp1(keydata.getProbSetId());
         }
-        catch(Exception e) {
+        catch(ParseException e){
             log.error("Cannot get problem info");
             return ResponseEntity.internalServerError().body("Cannot get solution from: " + keydata.getProbSetId());
         }

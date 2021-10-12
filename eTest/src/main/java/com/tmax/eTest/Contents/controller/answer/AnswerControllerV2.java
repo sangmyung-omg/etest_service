@@ -156,7 +156,7 @@ public class AnswerControllerV2 {
 	}
 
 	@GetMapping(value="/problems/{setId}/solution", produces = "application/json; charset=utf-8")
-	public ResponseEntity<Object> problemTemp1(@PathVariable("setId") String setId) throws Exception{
+	public ResponseEntity<Object> problemTemp1(@PathVariable("setId") String setId) throws ParseException{
 		log.info("> solution logic start!");
 		Map<String, Object> result = new HashMap<String, Object>();
 		log.info("Set ID : " + setId);
