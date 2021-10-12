@@ -183,8 +183,8 @@ public class ProblemServiceV1 implements ProblemServiceBase {
 			log.info("length of the statement query result : " + Integer.toString(statementQuery.size()));
 			Collections.reverse(statementQuery);		// 최근 부터 set id 탐색해야 하므로, reverse
 		} catch (java.text.ParseException e) {
-			log.info(e.getMessage());
-			map.put("error", e.getMessage());
+			log.info("error : ParseException occurred.");
+			map.put("error", "ParseException occurred.");
 			return map;
 		}
 
@@ -208,15 +208,17 @@ public class ProblemServiceV1 implements ProblemServiceBase {
 
 		if (statementQuery.size() > 0) log.info("first row of query result : " + statementQuery.get(0).toString());
 		for (StatementDTO query : statementQuery) {
+			int sourceId = Integer.parseInt(query.getSourceId());
 			String extension = query.getExtension();
 			if (isLatest < 2 && extension != null) {											// 최근 푼 문제 세트 범위이면서, extension이 null 이 아니라면
 				if (extension.startsWith("{") && extension.endsWith("}")) {						// json 포맷이 맞다면
 					try {
 						json = (JSONObject) parser.parse(extension);
 						if (json.containsKey("diagProbSetId")) {
+							String diagProbSetId = json.get("diagProbSetId").toString();
 							// 최근 푼 세트 ID 수집
 							if (isLatest == 0) {
-								if (!json.get("diagProbSetId").toString().equalsIgnoreCase("")) {
+								if (!diagProbSetId.equalsIgnoreCase("")) {
 									continueProbSetId = json.get("diagProbSetId").toString();
 									log.info("Latest set id : " + continueProbSetId);
 									isLatest++;
@@ -225,10 +227,10 @@ public class ProblemServiceV1 implements ProblemServiceBase {
 				
 							// 최근 푼 세트에 해당하는 문제 풀이 정보 저장 (문제 / 유저 답 / 정답여부)
 							if (isLatest == 1) {
-								if (json.get("diagProbSetId").toString().equalsIgnoreCase(continueProbSetId)) {
+								if (diagProbSetId.equalsIgnoreCase(continueProbSetId)) {
 									// 오류로 인한 LRS 중복 기록 있을 수 있음.
-									if (!continueProblems.contains(Integer.parseInt(query.getSourceId()))){
-										continueProblems.add(Integer.parseInt(query.getSourceId()));
+									if (!continueProblems.contains(sourceId)){
+										continueProblems.add(sourceId);
 										isCorrect.add(query.getIsCorrect());
 										continueAnswers.add(query.getUserAnswer());
 									}
@@ -245,13 +247,14 @@ public class ProblemServiceV1 implements ProblemServiceBase {
 							}
 						}
 					} catch (ParseException e) {
-						log.info("Extension Parsing Error with String Value : " + extension.toString() + ", error message : " + e.toString());
+						log.info("Extension ParseException with String Value : " + extension.toString());
 					}
 				} else log.info("Json format, which is surrounded by '{' and '}', NOT found in extension : " + query.getExtension().toString());
 			}
 
 			// 중복 방지 용 푼 문제 ID 수집
-			solvedProbList.add(Integer.parseInt(query.getSourceId()));
+			if (!solvedProbList.contains(sourceId))
+				solvedProbList.add(sourceId);
 		}
 
 		if (continueProblems.size() >= 20) {
@@ -350,7 +353,6 @@ public class ProblemServiceV1 implements ProblemServiceBase {
 			minitestInfo = parseMinitestQueryResult(additionalProbMap, partNumOrderMap, queryList);
 			additionalProbMap = minitestInfo.getProbMap();
 			partNumOrderMap = minitestInfo.getNumOrderMap();
-			// logger.info("New query results : " + additionalProbMap.toString() + ", " + partNumOrderMap.toString());
 	
 			// 추가로 조회해온 문제들로 부족한 파트의 문제 수 보충.
 			for (Integer partId : additionalProbMap.keySet()) {
@@ -359,7 +361,7 @@ public class ProblemServiceV1 implements ProblemServiceBase {
 						Integer threshold = partNumOrderMap.get(partId).get(1);
 						Integer count = partProbIdMap.get(partId).size();
 						Collections.shuffle(additionalProbMap.get(partId));
-						// logger.info("Check : " + Integer.toString(threshold - count));
+
 						for (int i=0; i < threshold - count; i++) {
 							partProbIdMap.get(partId).add(additionalProbMap.get(partId).get(i));
 						}
@@ -395,20 +397,13 @@ public class ProblemServiceV1 implements ProblemServiceBase {
 				if (probIdList.size() > i) {
 					minitestProblems.add(probIdList.get(i));
 				}
-				// else {
-				// 	logger.info("part, probIdList : " + part + ", " + probIdList);
-				// 	logger.info("part info : " + part.getValue().toString());
-				// }
 			}
 
 			// 이어풀기 문제가 존재할 경우에도 추가. (이어풀기도 푼문제에 포함돼서 배제되었으므로, 혹은 남은 문제 없으면 전체 pool에서 가져왔음)
-			// logger.info(Integer.toString(continueProblems.size()) + ", " + Integer.toString(delimiter));
 			if (continueProblems.size() > delimiter) {
 				for (int j=0; j < part.getValue().get(1); j++) {							// 각 파트 별 문제 수 넘어가면 안 됨.
-					// minitestProblems.add(continueProblems.get(j + delimiter));
 					if (j + delimiter + 1 >= continueProblems.size()) {						// continueProblems 끝나면 종료.
 						deficitNum = part.getValue().get(1) - (j+1);
-						// logger.info("deficitNum : " + Integer.toString(deficitNum));
 						lastPartOrder = idx;
 						break;
 					}				
@@ -423,7 +418,6 @@ public class ProblemServiceV1 implements ProblemServiceBase {
 		}
 
 		for (int order = lastPartOrder; order <= partProbIdMap.size() - 1; order++) {
-			// logger.info(Integer.toString(lastPartOrder) + ", " + Integer.toString(order) + ", " + Integer.toString(partProbIdMap.size()));
 			int thres = orderedList.get(order).getValue().get(1);
 			if (order == lastPartOrder) {
 				if (deficitNum == 0)
