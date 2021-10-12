@@ -22,7 +22,10 @@ public class UserIdFetchTool {
 
     public String getID(HttpServletRequest request){
         try {
-            String bearerToken = request.getHeader("Authorization").replace("Bearer ", "");
+            String authHeader = request.getHeader("Authorization");
+            if(authHeader == null) return null;
+
+            String bearerToken = authHeader.replace("Bearer ", "");
             if(bearerToken == null) {return null;}
 
             Optional<String> email = Optional.ofNullable(jwtTokenUtil.getEmailFromToken(bearerToken));
