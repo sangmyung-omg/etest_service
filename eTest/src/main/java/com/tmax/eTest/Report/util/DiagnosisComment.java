@@ -272,8 +272,8 @@ public class DiagnosisComment {
 		int tracingScore = report.getInvestTracingScore();
 		
 		String[] profileMainList = {
-				"행동편향에 빠질 가능성이 낮은 투자자", 
-				"행동편향에 빠질 가능성이 있는 투자자"};
+				"행동편향에 대한 통제력을 갖춘 투자자", 
+				"행동편향에 대한 통제력이 부족한 투자자"};
 		String[] tracingMainList = {
 				"투자원칙이 명확한 투자자",
 				"투자원칙 정립이 필요한 투자자"};
