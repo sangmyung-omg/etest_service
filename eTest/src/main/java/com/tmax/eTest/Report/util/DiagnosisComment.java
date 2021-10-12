@@ -190,7 +190,7 @@ public class DiagnosisComment {
 				?profileMainList[0]
 				:profileMainList[1]);
 		profileCommentInfo.put("detail", "");
-		profileCommentInfo.put("score", stretchProfileScore);
+		profileCommentInfo.put("score", profCapaScore);
 		profileCommentInfo.put("detailScoreList", profileDetailScore);
 		
 		tracingCommentInfo.put("name", "투자 방법");
