@@ -8,11 +8,11 @@ import com.tmax.eTest.Contents.dto.answer.SolutionDTO;
 import com.tmax.eTest.LRS.dto.StatementDTO;
 
 public interface AnswerServicesBase {
-    public Integer evaluateIfCorrect(Integer probId, List<StatementDTO> lrsbody) throws Exception;
+    public Integer evaluateIfCorrect(Integer probId, List<StatementDTO> lrsbody);
     
-    public Map<String, Object> getProblemSolution(Integer problemID) throws Exception;
+    public Map<String, Object> getProblemSolution(Integer problemID);
 
-    public Map<String, Object> getSolutionMaterial(Integer problemID) throws Exception;
+    public Map<String, Object> getSolutionMaterial(Integer problemID);
 
     public Map<Integer, CustomizedSolutionDTO> getMultipleSolutions(List<Integer> probIdList);
 

@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import org.json.simple.parser.JSONParser;
@@ -48,7 +49,7 @@ public class AnswerServicesV1 implements AnswerServicesBase {
 	@Autowired
 	ImageFileServerApiComponentTs imgFileApi;
 	
-	public Integer evaluateIfCorrect(Integer probId, List<StatementDTO> lrsbody) throws Exception {
+	public Integer evaluateIfCorrect(Integer probId, List<StatementDTO> lrsbody) {
 		String userAnswer = lrsbody.get(0).getUserAnswer();
 		log.info("Problem ID : " + Integer.toString(probId) + ", user answer : " + userAnswer);
 		// log.info("Inserted LRS body : " + lrsbody.toString());
@@ -59,7 +60,12 @@ public class AnswerServicesV1 implements AnswerServicesBase {
 
 		String inputString = data.get("solution").toString();
 		JSONParser parser = new JSONParser();
-		JSONArray jsonArray = (JSONArray) parser.parse(inputString);
+		JSONArray jsonArray = new JSONArray();
+		try {
+			jsonArray = (JSONArray) parser.parse(inputString);
+		} catch (ParseException e) {
+			log.info("error : json ParsingException occurred.");
+		}
 		// log.info("json : " + jsonArray.toJSONString() + ", " + Integer.toString(probId));
 
 		String correctAnswer = "";
@@ -79,17 +85,14 @@ public class AnswerServicesV1 implements AnswerServicesBase {
 				if (correctAnswer.contains("]")) {
 					correctAnswer = correctAnswer.replaceAll("\\]", "");
 				}
-				// log.info("correctAnswer : " + correctAnswer);
 			}
-			// log.info("type : " + type);
 		}
-		// log.info("Total solution string : " + inputString);
 		log.info("Correct Answer is... " + correctAnswer);
 		if (correctAnswer.equalsIgnoreCase(userAnswer)) return 1;
 		else return 0;
 	}
 
-	public Map<String, Object> getProblemSolution(Integer problemID) throws Exception {
+	public Map<String, Object> getProblemSolution(Integer problemID) {
 		Map<String, Object> output = new HashMap<String, Object>();
 
 		log.info("Getting solution info......");
@@ -100,7 +103,7 @@ public class AnswerServicesV1 implements AnswerServicesBase {
 			output.put("solution", problem.getSolution());
 
 		} else {
-			throw new NoDataException(problemID);
+			log.info("error: Problem No Data Exception");
 		}
 		return output;
 	}
@@ -200,7 +203,7 @@ public class AnswerServicesV1 implements AnswerServicesBase {
 		return solutionMap;
 	}
 
-	public Map<String, Object> getSolutionMaterial(Integer problemID) throws Exception {
+	public Map<String, Object> getSolutionMaterial(Integer problemID) {
 		Map<String, Object> output = new HashMap<String, Object>();
 		Optional<Problem> problemOpt = problemRepo.findById(problemID);
 
@@ -210,7 +213,7 @@ public class AnswerServicesV1 implements AnswerServicesBase {
 			output.put("material", problem.getSource());
 
 		} else {
-			throw new NoDataException(problemID);
+			log.info("error : Problem NodataException occurred.");
 		}
 		return output;
 	}

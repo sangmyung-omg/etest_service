@@ -24,31 +24,26 @@ public class ModelUpdateService {
     public UkRelOutputDTO getUkRelInfo() {
         UkRelOutputDTO output = new UkRelOutputDTO();
 
-        try {
-            List<Integer> baseUkList = new ArrayList<Integer>();
-            List<Integer> preUkList = new ArrayList<Integer>();
-            
-            List<UkRel> re = ukRelRepo.findAll();
-            log.info("UK Rel query result size : " + Integer.toString(re.size()));
-            
-            if (re == null | re.size() == 0) {
-                log.info("warning: DB query result is empty!");
-                output.setResultMessage("warning: DB query result is empty!");
-                return output;
-            }
-
-            for (UkRel rel : re) {
-                baseUkList.add(rel.getBaseUkId());
-                preUkList.add(rel.getPreUkId());
-            }
-
-            output.setBaseUk(baseUkList);
-            output.setPreUk(preUkList);
-            output.setResultMessage("Successfully returned");
-        } catch (Exception e) {
-            log.info("error: " + e.getMessage());
-            output.setResultMessage("error: " + e.getMessage());
+        List<Integer> baseUkList = new ArrayList<Integer>();
+        List<Integer> preUkList = new ArrayList<Integer>();
+        
+        List<UkRel> re = ukRelRepo.findAll();
+        log.info("UK Rel query result size : " + Integer.toString(re.size()));
+        
+        if (re == null | re.size() == 0) {
+            log.info("warning: DB query result is empty!");
+            output.setResultMessage("warning: DB query result is empty!");
+            return output;
         }
+
+        for (UkRel rel : re) {
+            baseUkList.add(rel.getBaseUkId());
+            preUkList.add(rel.getPreUkId());
+        }
+
+        output.setBaseUk(baseUkList);
+        output.setPreUk(preUkList);
+        output.setResultMessage("Successfully returned");
 
         return output;
     }

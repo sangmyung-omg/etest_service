@@ -45,7 +45,7 @@ public class AnswerControllerV0 {
 	ProblemServicesV0 problemService;
 
 	@PostMapping(value="problems/{id}/answer-check", produces = "application/json; charset=utf-8")
-	public int checkAnswer(@PathVariable("id") Integer id, @RequestParam String answer, @RequestBody String lrsbody) throws Exception {
+	public int checkAnswer(@PathVariable("id") Integer id, @RequestParam String answer, @RequestBody String lrsbody) {
 		// Map<String, Object> data = null;
 		// data = answerServices.getProblemSolution(id);
 		// String inputString = data.get("solution").toString();
@@ -94,16 +94,12 @@ public class AnswerControllerV0 {
 	}
 
 	@GetMapping(value = "/problems/{id}/solution", produces = "application/json; charset=utf-8")
-	public Map<String, Object> problem(@PathVariable("id") Integer id) throws Exception {
+	public Map<String, Object> problem(@PathVariable("id") Integer id) {
 		Map<String, Object> output = new HashMap<String, Object>();
 		Map<String, Object> data = null;
-		try {
-			data = answerServices.getSolutionMaterial(id);
-			output.put("resultMessage", "success");
-			output.put("data", data);
-		} catch (NoDataException e) {
-			output.put("resultMessage", "Failed: NoDataException occurred.");
-		}
+		data = answerServices.getSolutionMaterial(id);
+		output.put("resultMessage", "success");
+		output.put("data", data);
 
 		return output;
 	}
