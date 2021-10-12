@@ -41,36 +41,33 @@ public class RefreshController {
         String accessToken = null;
         String refreshToken = null;
         String refreshTokenFromDb = null;
-        String email = null;
+        String userUuid = null;
         Map<String, Object> map = new HashMap<>();
 
         try {
             accessToken = m.get("accessToken");
             refreshToken = m.get("refreshToken");
             try {
-                email = jwtTokenUtil.getEmailFromToken(accessToken);
-
+                Map<String, Object> parseInfo = jwtTokenUtil.getUserParseInfo(accessToken);
+                userUuid = (String)parseInfo.get("userUuid");
             } catch (IllegalArgumentException e) {
-
-
-            }  catch (ExpiredJwtException e) { //expire됐을 때
-                email = e.getClaims().getSubject();
-                log.info("email from expired access token: " + email);
+                log.info("userUuid parsing fail");
+            }  catch (ExpiredJwtException e) {
+                log.info("expired access token" );
             }  catch (NoSuchElementException e) {
-                log.info("email이 존재하지 않습니다");
+                log.info("userUuid not exist");
             }
             if (refreshToken != null) { //refresh를 같이 보냈으면.
                 try {
-                    Optional<UserMaster> userMasterOptional = userRepository.findByEmail(email);
+                    Optional<UserMaster> userMasterOptional = userRepository.findByUserUuid(userUuid);
                     UserMaster userMaster = userMasterOptional.get();
                     refreshTokenFromDb = userMasterOptional.get().getRefreshToken();
-                    log.info("rtfrom db: " + refreshTokenFromDb);
                 } catch (IllegalArgumentException e) {
-                    log.warn("illegal argument!!");
+                    log.warn("illegal argument");
                 }
                 //둘이 일치하고 만료도 안됐으면 재발급 해주기.
                 if (refreshToken.equals(refreshTokenFromDb) && !jwtTokenUtil.isTokenExpired(refreshToken)) {
-                    Optional<UserMaster> userMasterOptional  = userRepository.findByEmail(email);
+                    Optional<UserMaster> userMasterOptional  = userRepository.findByUserUuid(userUuid);
                     UserMaster userMaster = userMasterOptional.get();
                     PrincipalDetails principal = PrincipalDetails.create(userMaster);
                     String newToken =  jwtTokenUtil.generateAccessToken(principal);

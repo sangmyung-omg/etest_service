@@ -65,6 +65,7 @@ public class JwtCommonAuthorizationFilter extends BasicAuthenticationFilter {
                 userUuid = (String)parseInfo.get("userUuid");
 
             } catch (ExpiredJwtException e) {
+                logger.debug("token maybe expired");
             }
             if (userUuid != null) {
                 Optional<UserMaster> userMasterOptional = userRepository.findByUserUuid(userUuid);

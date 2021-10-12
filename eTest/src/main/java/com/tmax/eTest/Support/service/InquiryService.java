@@ -143,8 +143,8 @@ public class InquiryService {
             try {
                 Files.write(imageFilePath, modifyInquiryDto.getFileList().get(i).getBytes());
 
-            } catch (Exception e) {
-                e.printStackTrace();
+            } catch (IOException e) {
+                logger.debug("file write error");
             }
             inquiryFileRepository.save(inquiry_file);
         }
