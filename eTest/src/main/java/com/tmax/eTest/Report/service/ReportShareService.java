@@ -4,6 +4,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.text.ParseException;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -95,8 +96,8 @@ public class ReportShareService {
             log.error("Cannot cast to given field type.");
             return null;
         }
-        catch(Exception e){
-            log.error("Cannot get report data from key.");
+        catch(ParseException e){
+            log.error("parse excepton in field type.");
             return null;
         }
     }
