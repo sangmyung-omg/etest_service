@@ -91,6 +91,10 @@ public class MiniTestRecordService {
 
 	private PartDataDTO buildPartData(JsonArray mastery, String partname){
 		PartDataDTO output = buildPartData(mastery);
+
+		//if null
+		if(output == null) return null;
+
 		output.setPartName(partname);
 		output.setPercentage( (long)sndCalculator.calculatePercentage(PartMapper.sndCalcTypeMap.get(partname), output.getScore().intValue() ) );
 		return output;
