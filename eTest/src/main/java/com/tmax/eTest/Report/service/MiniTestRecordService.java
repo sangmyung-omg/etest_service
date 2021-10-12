@@ -374,13 +374,16 @@ public class MiniTestRecordService {
 
 									Integer isGuessInt = null;
 									try{isGuessInt = extension.get("guessAlarm").getAsInt();}
-									catch(ClassCastException e){log.error("extension cast failed.");}
-									catch(IllegalStateException e){log.error("extension state invalid.");}
+									catch(ClassCastException e){log.debug("extension cast failed.");}
+									catch(IllegalStateException e){log.debug("extension state invalid.");}
+									catch(NumberFormatException e){log.debug("extension cast failed.");}
+									catch(NullPointerException e){log.debug("extension field is null");}
 
 									Boolean isGuessBool = null;
 									try{isGuessBool = extension.get("guessAlarm").getAsBoolean();}
-									catch(ClassCastException e){log.error("extension cast failed.");}
-									catch(IllegalStateException e){log.error("extension state invalid.");}
+									catch(ClassCastException e){log.debug("extension cast failed.");}
+									catch(IllegalStateException e){log.debug("extension state invalid.");}
+									catch(NullPointerException e){log.debug("extension field is null");}
 
 									//If both value is null => warn and skip
 									if(isGuessBool == null && isGuessInt == null){
