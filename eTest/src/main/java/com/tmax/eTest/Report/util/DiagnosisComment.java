@@ -172,10 +172,10 @@ public class DiagnosisComment {
 		List<List<String>> tracingDetailScore = new ArrayList<>();
 		tracingDetailScore.add(Arrays.asList(
 				RiskTracing.STOCK_PERIOD.toString(), 
-				String.valueOf((report.getRiskInvestPeriodScore()-1)*33+1)));
+				String.valueOf((report.getRiskInvestPeriodScore()-1)*33+1)));	// 0, 34, 67, 100 표현
 		tracingDetailScore.add(Arrays.asList(
 				RiskTracing.STOCK_RATIO.toString(), 
-				String.valueOf((report.getRiskStockRatioScore()-1)*33+1)));
+				String.valueOf(report.getRiskStockRatioScore()*20)));			// 20,40,60,80 표현
 		tracingDetailScore.add(Arrays.asList(
 				RiskTracing.STOCK_NUM.toString(), 
 				String.valueOf((report.getRiskStockNumScore()-1)*33+1)));
