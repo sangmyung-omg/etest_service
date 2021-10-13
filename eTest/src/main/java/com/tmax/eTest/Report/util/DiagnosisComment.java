@@ -33,19 +33,12 @@ public class DiagnosisComment {
 				"안전과 수익 두 마리 토끼를 잡을 거야, 유토피아형 투자자",
 				"시장평균수익이면 만족이야, 주가지수형 투자자",
 				"수익이 우선이야, 호랑이 굴로 들어가는 사냥꾼형 투자자"};
-		Map<String, String> result = new HashMap<>();
-		
-		int profileIdx = (report.getRiskLevelScore() < 8) ? 0 : 1;			// 11~13 Question 3 ~ 7 / 8 ~ 12
-		int tracingIdx = (report.getRiskStockRatioScore() < 3) ? 0 : 1;		// 2 Question 1,2 / 3,4
-		int typeIdx = profileIdx * 2 + tracingIdx;
-		
-		String riskComment = "";
 		
 		String[] investRiskComment = {	//211012 ver
 			"당신은 원금손실 등 투자 시 발생하는 위험을 피하는 투자자입니다. 자신의 재무능력과 투자위험 간에 균형을 맞추려는 경향이 있기도 합니다.",
 			"당신은 원금손실 등 투자 시 발생하는 위험을 피하는 투자자입니다. 투자 과정에서 심각한 실수나 손실을 줄이는 것에 중점을 두는 경향이 있습니다.",
 			"당신은 원금손실 등 투자 시 발생하는 위험을 피하는 투자자이지만, 때로는 수익을 내기 위해서 기꺼이 투자위험을 감수하려는 경향이 있습니다.",
-			"당신은 투자목표를 위해 투자위험을 감내하는 투자자입니다. 당신의 재무능력과 투자위험 간에 균형을 맞추려는 경향이 있습니다.",
+			"당신은 투자목표를 위해 투자위험을 감내하는 투자자입니다.",
 			"당신은 투자목표를 위해 투자위험을 감내하는 투자자입니다. 특히 투자수익을 내기 위하여 높은 투자위험을 감수하려는 경향이 있습니다.",
 			"당신은 투자목표를 위해 투자위험을 감내하는 투자자입니다. 특히 투자수익을 내기 위하여 높은 투자위험을 감수하려는 경향이 매우 강합니다."
 		};
@@ -112,6 +105,13 @@ public class DiagnosisComment {
 		};
 		
 		///
+		Map<String, String> result = new HashMap<>();
+
+		String riskComment = "";
+		
+		int profileIdx = (report.getRiskLevelScore() < 8) ? 0 : 1;			// 11~13 Question 3 ~ 7 / 8 ~ 12
+		int tracingIdx = (report.getRiskStockRatioScore() < 3) ? 0 : 1;		// 2 Question 1,2 / 3,4
+		int typeIdx = profileIdx * 2 + tracingIdx;
 		int levelCapaDiff = report.getRiskLevelScore() - report.getRiskCapaScore();
 		int investRiskComIdx = 0;
 		if(profileIdx == 0)
