@@ -128,7 +128,7 @@ public class DiagnosisComment {
 		
 		///
 		
-		int stockNumIdx = (report.getRiskStockNumScore() > 2) ? 0 : 1;		// number 3 question
+		int stockNumIdx = (report.getRiskStockNumScore() > 2) ? 0 : 1;		// number 3 question 점수 reverse 되어있음.
 		int preferNumIdx = (report.getRiskStockPreferScore() < 3) ? 0 : 1;	// number 4 question
 		int investMethodComIdx = tracingIdx * 4 + stockNumIdx * 2 + preferNumIdx;
 

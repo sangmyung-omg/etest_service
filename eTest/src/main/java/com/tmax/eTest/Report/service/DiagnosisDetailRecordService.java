@@ -30,9 +30,6 @@ import lombok.extern.log4j.Log4j2;
 public class DiagnosisDetailRecordService {
 	
 	@Autowired
-	LRSAPIManager lrsAPIManager;
-
-	@Autowired
 	ProblemRepository problemRepo;
 	@Autowired
 	DiagnosisReportRepo diagnosisReportRepo;
