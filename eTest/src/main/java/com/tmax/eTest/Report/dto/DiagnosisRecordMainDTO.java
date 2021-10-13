@@ -35,7 +35,6 @@ public class DiagnosisRecordMainDTO {
 	public boolean pushInfoByReport(
 			DiagnosisReport report, 
 			Map<String, Integer> percentageInfo,
-			Map<String, List<RecommendVideoDTO>> recVideoMap,
 			Map<String, String> commentInfo,
 			Map<String, Object> probInfos,
 			boolean isAlarm,

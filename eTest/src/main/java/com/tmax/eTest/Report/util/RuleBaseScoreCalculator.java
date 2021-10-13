@@ -30,7 +30,7 @@ import lombok.extern.log4j.Log4j2;
 // Rule Base 점수, Triton 점수 관련 Method 집합 Class
 public class RuleBaseScoreCalculator {
 	
-	final private boolean DEBUG_LOG = false;
+	final private boolean DEBUG_LOG = true;
 	
 	private void debugLog(String str)
 	{
@@ -50,7 +50,7 @@ public class RuleBaseScoreCalculator {
 		// 리스크
 		List<Pair<Problem, Integer>> riskTracingProb = new ArrayList<>(); // 투자현황
 		List<Pair<Problem, Integer>> riskLevelProb = new ArrayList<>(); // 리스크 감내 수준
-		List<Pair<Problem, Integer>> riskPatiProb = new ArrayList<>();	//리스크 감내 역량
+		List<Pair<Problem, Integer>> riskCapaProb = new ArrayList<>();	//리스크 감내 역량
 		
 		// 투자 지식
 		List<Pair<Problem, Integer>> knowledgeBasicProb = new ArrayList<>(); // 주식상식
@@ -97,7 +97,7 @@ public class RuleBaseScoreCalculator {
 						riskTracingProb.add(probInfo);
 					else if(section.equals(TendencySection.RISK_PROFILE.toString()))
 						if(curriculum.getSubSection().equals(RiskProfile.CAPACITY.toString()))
-							riskPatiProb.add(probInfo);
+							riskCapaProb.add(probInfo);
 						else
 							riskLevelProb.add(probInfo);
 					else if(section.equals(TendencySection.INVEST_TRACING.toString()))
@@ -122,7 +122,7 @@ public class RuleBaseScoreCalculator {
 		debugLog("Invest tracing Prob Num : "+investTracingProb.size());
 		debugLog("Invest profile Prob Num : "+investProfileProb.size());
 		debugLog("Risk tracing Prob Num : "+riskTracingProb.size());
-		debugLog("Risk 감내역량 Prob Num : "+riskPatiProb.size());
+		debugLog("Risk 감내역량 Prob Num : "+riskCapaProb.size());
 		debugLog("Risk 감내 수준 Prob Num : "+riskLevelProb.size());
 		debugLog("Knowledge 투자기초 Prob Num : "+knowledgeBasicProb.size());
 		debugLog("Knowledge 종목고르기 Prob Num : "+knowledgeTypeProb.size());
@@ -130,22 +130,22 @@ public class RuleBaseScoreCalculator {
 		debugLog("Knowledge 매매방법 Prob Num : "+knowledgeSellProb.size());
 		
 		
-		if(riskPatiProb.size() != 2) // 2문항
+		if(riskCapaProb.size() != 2) // 2문항
 		{
-			log.info("probDivideAndCalculateScores riskPatienceProb size error : " + riskPatiProb.size());
+			log.info("probDivideAndCalculateScores riskPatienceProb size error : " + riskCapaProb.size());
 			res.put(AnswerKey.RISK_1.toString(), 1);
 			res.put(AnswerKey.RISK_2.toString(), 1);
 		}
 		else
 		{
-			int q1Idx = riskPatiProb.get(0).getFirst().getProbID() < riskPatiProb.get(1).getFirst().getProbID()?0:1;
+			int q1Idx = riskCapaProb.get(0).getFirst().getProbID() < riskCapaProb.get(1).getFirst().getProbID()?0:1;
 			int q2Idx = q1Idx==0?1:0;
 			
-			res.put(AnswerKey.RISK_1.toString(), riskPatiProb.get(q1Idx).getSecond());
-			res.put(AnswerKey.RISK_2.toString(), riskPatiProb.get(q2Idx).getSecond());
+			res.put(AnswerKey.RISK_1.toString(), riskCapaProb.get(q1Idx).getSecond());
+			res.put(AnswerKey.RISK_2.toString(), riskCapaProb.get(q2Idx).getSecond());
 		}
 		
-		res.putAll(calculateRiskScore(riskTracingProb, riskPatiProb, riskLevelProb));
+		res.putAll(calculateRiskScore(riskTracingProb, riskCapaProb, riskLevelProb));
 		res.putAll(calculateDecisionMakingScore(investTracingProb, investProfileProb));
 		res.putAll(calculateInvestKnowledgeScoreV2(
 				knowledgeBasicProb, 

@@ -61,13 +61,9 @@ public class DiagnosisReportService {
 
 	@Autowired
 	LRSAPIManager lrsAPIManager;
-	@Autowired
-	TritonAPIManager tritonAPIManager;
 	
 	@Autowired
 	ProblemRepository problemRepo;
-	@Autowired
-	UserKnowledgeRepository userKnowledgeRepo;
 	@Autowired
 	DiagnosisReportRepo diagnosisReportRepo;
 	@Autowired
@@ -77,12 +73,6 @@ public class DiagnosisReportService {
 	StateAndProbProcess stateAndProbProcess;
 	@Autowired
 	RuleBaseScoreCalculator ruleBaseScoreCalculator;
-	@Autowired
-	UKScoreCalculator ukScoreCalculator;
-	@Autowired
-	DiagnosisComment commentGenerator;
-	@Autowired
-	SNDCalculator sndCalculator;
 	@Autowired
 	DiagnosisRecommend recommendGenerator;
 	
