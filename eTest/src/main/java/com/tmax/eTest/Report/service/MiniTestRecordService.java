@@ -382,6 +382,8 @@ public class MiniTestRecordService {
 
 	
 	public MiniTestRecordDTO getMiniTestRecord(String userId,String probSetId){
+		log.debug("Get minittest record {} {}", userId, probSetId);
+
 		//Get report
 		Optional<MinitestReport> queryResult = reportRepo.getReport(probSetId, userId);
 		if(!queryResult.isPresent()){return null;}
@@ -393,6 +395,8 @@ public class MiniTestRecordService {
 		Map<String, PartDataDTO> partInfoReadable = null;
 		String minitestMastery = report.getMinitestUkMastery();
 		if(minitestMastery != null){
+			log.debug("Build part data infos");
+
 			try {
 				//Parse the string to json object
 				JsonObject masteryMap = (JsonObject)JsonParser.parseString(minitestMastery);
@@ -417,6 +421,7 @@ public class MiniTestRecordService {
 		}
 
 		//Get LRS Record
+		log.debug("Fetch lrs record {}", userId);
 		List<StatementDTO> statementList = null;
 		try{
 			statementList = lrsAPIManager.getStatementList(GetStatementInfoDTO.builder()
@@ -436,6 +441,7 @@ public class MiniTestRecordService {
 		statementList = filterPureLrsStatement(statementList);
 
 		//Problem info build
+		log.debug("Build problem info {}", userId);
  		List<List<String>> problemInfoTotal = createProblemInfo(statementList, userId);
 
 		List<List<String>> lowInfo = problemInfoTotal.stream().filter(info -> info.get(info.size()-2).equals("하")).collect(Collectors.toList());
@@ -458,24 +464,25 @@ public class MiniTestRecordService {
 
 
 		//Try alarm get for lrs statements
+		log.debug("Count alarm {}", userId);
 		int alarmcnt = statementList.stream().parallel()
 								.mapToInt(statement -> {
 									JsonObject extension = null;
 									try{extension = JsonParser.parseString(statement.getExtension()).getAsJsonObject();}
 									catch(JsonParseException e){log.warn("extension can't be parsed. {}", statement.getExtension()); return 0;}
 
-									Integer isGuessInt = null;
-									try{isGuessInt = extension.get("guessAlarm").getAsInt();}
-									catch(ClassCastException e){log.debug("extension cast failed.");}
-									catch(IllegalStateException e){log.debug("extension state invalid.");}
-									catch(NumberFormatException e){log.debug("extension cast failed.");}
-									catch(NullPointerException e){log.debug("extension field is null");}
-
 									Boolean isGuessBool = null;
-									try{isGuessBool = extension.get("guessAlarm").getAsBoolean();}
-									catch(ClassCastException e){log.debug("extension cast failed.");}
-									catch(IllegalStateException e){log.debug("extension state invalid.");}
-									catch(NullPointerException e){log.debug("extension field is null");}
+									try{isGuessBool = extension.get("guessAlarm").getAsBoolean(); return isGuessBool ? 1 : 0;}
+									catch(ClassCastException e){log.debug("bool extension cast failed.");}
+									catch(IllegalStateException e){log.debug("bool extension state invalid.");}
+									catch(NullPointerException e){log.debug("bool extension field is null");}
+
+									Integer isGuessInt = null;
+									try{isGuessInt = extension.get("guessAlarm").getAsInt(); return isGuessInt > 0 ? 1 : 0;}
+									catch(ClassCastException e){log.debug("int extension cast failed.");}
+									catch(IllegalStateException e){log.debug("int extension state invalid.");}
+									catch(NumberFormatException e){log.debug("int extension cast failed.");}
+									catch(NullPointerException e){log.debug("int extension field is null");}
 
 									//If both value is null => warn and skip
 									if(isGuessBool == null && isGuessInt == null){
@@ -520,6 +527,7 @@ public class MiniTestRecordService {
 			}
 		}
 		
+		log.debug("Returning report for {} {}", userId, probSetId);
 		MiniTestRecordDTO result =  MiniTestRecordDTO.builder()
 								 .userName(userData.getNickname())
 								 .totalScore(report.getAvgUkMastery().intValue())

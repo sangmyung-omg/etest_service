@@ -3,6 +3,7 @@ package com.tmax.eTest.LRS.model;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.Table;
 
 import com.tmax.eTest.LRS.dto.StatementDTO;
@@ -21,7 +22,7 @@ import java.util.UUID;
 
 @Data
 @Entity
-@Table(name="STATEMENT")
+@Table(name="STATEMENT", indexes = @Index(columnList = "userId"))
 @NoArgsConstructor
 @Log4j2
 public class Statement {
