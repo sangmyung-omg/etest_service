@@ -6357,7 +6357,7 @@ insert into "ETEST"."VIDEO_HASHTAG" ("VIDEO_ID", "HASHTAG_ID") values ('CV202120
 ------- Start of ETEST.BOOK-------
 ------- Start of ETEST.BOOK_HIT-------
 
-insert into "ETEST"."BOOK" ("BOOK_ID", "BOOK_SRC", "TITLE", "CREATE_DATE", "IMG_SRC", "DESCRIPTION", "CREATOR_ID") values ('CB1', 'books/CB1/index.html', '알고하는 금융투자', '2021/10/05', 'books/CB1/CB1_Thumbnail.jpg', '경제적 자유를 위환 나의 투자, 어떻게 할 것인가? 이에 대한 길을 제시하고자 합니다.
+insert into "ETEST"."BOOK" ("BOOK_ID", "BOOK_SRC", "TITLE", "CREATE_DATE", "IMG_SRC", "DESCRIPTION", "CREATOR_ID") values ('CB1', 'books/CB1/index.html', '알고하는 금융투자', '2021/10/05', 'books/CB1/CB1_Thumbnail.jpg', '경제적 자유를 위한 나의 투자, 어떻게 할 것인가? 이에 대한 길을 제시하고자 합니다.
 
 금융투자 시 꼭 알아야 하는 핵심 내용을 담은 ‘금융투자 기초편’과
 금융투자 리스크관리와 분산투자 등 합리적 투자에 큰 도움이 되는 ‘금융투자 실전편’으로 구성하였습니다.', '금융투자협회');
