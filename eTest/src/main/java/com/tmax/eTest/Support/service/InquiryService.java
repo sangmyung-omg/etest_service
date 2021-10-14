@@ -98,7 +98,6 @@ public class InquiryService {
         inquiry.setTitle(modifyInquiryDto.getTitle());
         inquiry.setType(modifyInquiryDto.getType());
         String uploadFolder = filePath + "inquiry/";
-
         /***
          * inquiry file은 db/storage 전부 지웠다가 새로 만들고
          * inquiry는 update
@@ -129,25 +128,28 @@ public class InquiryService {
 
 
         // 새로 만들기
-        for(int i=0; i<modifyInquiryDto.getFileList().size(); i++){
-            String fileName = UUID.randomUUID().toString() + "_" + modifyInquiryDto.getFileList().get(i).getOriginalFilename();
-            Path imageFilePath = Paths.get(uploadFolder + fileName);
+        if (!(modifyInquiryDto.getFileList() == null)){
+            for(int i=0; i<modifyInquiryDto.getFileList().size(); i++){
+                String fileName = UUID.randomUUID().toString() + "_" + modifyInquiryDto.getFileList().get(i).getOriginalFilename();
+                Path imageFilePath = Paths.get(uploadFolder + fileName);
 
-            Inquiry_file inquiry_file = Inquiry_file.builder()
-                    .name(modifyInquiryDto.getFileList().get(i).getOriginalFilename().replaceFirst("[.][^.]+$", ""))
-                    .size(modifyInquiryDto.getFileList().get(i).getSize())
-                    .url(fileName)
-                    .type(modifyInquiryDto.getFileList().get(i).getContentType())
-                    .inquiry(inquiry)
-                    .build();
-            try {
-                Files.write(imageFilePath, modifyInquiryDto.getFileList().get(i).getBytes());
+                Inquiry_file inquiry_file = Inquiry_file.builder()
+                        .name(modifyInquiryDto.getFileList().get(i).getOriginalFilename().replaceFirst("[.][^.]+$", ""))
+                        .size(modifyInquiryDto.getFileList().get(i).getSize())
+                        .url(fileName)
+                        .type(modifyInquiryDto.getFileList().get(i).getContentType())
+                        .inquiry(inquiry)
+                        .build();
+                try {
+                    Files.write(imageFilePath, modifyInquiryDto.getFileList().get(i).getBytes());
 
-            } catch (IOException e) {
-                logger.debug("file write error");
+                } catch (IOException e) {
+                    logger.debug("file write error");
+                }
+                inquiryFileRepository.save(inquiry_file);
             }
-            inquiryFileRepository.save(inquiry_file);
         }
+
         return "True";
     }
 
