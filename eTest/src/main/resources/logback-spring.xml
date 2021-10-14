@@ -4,7 +4,7 @@
     <!-- root log level-->
     <springProperty scope="context" name="SERVICE_LOG_LEVEL" source="logging.level.service"/>
     <!-- log file root path -->
-	<property name="LOG_PATH" value="./logs/" />
+	<springProperty scope="context" name="LOG_PATH" source="logging.file.path" />
 	<!-- log file name -->
 	<property name="LOG_FILE_NAME" value="log" />
 	<!-- err log file name -->

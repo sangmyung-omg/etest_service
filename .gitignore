@@ -40,3 +40,4 @@ out/
 ### log file ###
 log/
 !**/src/main/resources/logback.xml
+logs/
