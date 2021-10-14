@@ -116,7 +116,7 @@ public class AuthService {
 
         // StatementDto빌드
         StatementDTO statementDTO = StatementDTO.builder().userId(principalDetails.getUserUuid())
-                .actionType("withdrwawal").sourceType("application").timestamp(text).build();
+                .actionType("withdrawal").sourceType("application").timestamp(text).build();
 
         // LRS에 저장
         List<StatementDTO> statementDTOList = new ArrayList<>();
