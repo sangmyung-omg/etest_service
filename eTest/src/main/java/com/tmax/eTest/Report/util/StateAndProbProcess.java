@@ -153,13 +153,16 @@ public class StateAndProbProcess {
 		return result;
 	}
 	
-	public List<StatementDTO> getDiagnosisKnowledgeProbInfo(String probSetId) 
+	public List<StatementDTO> getDiagnosisKnowledgeProbInfo(String userId, String probSetId) 
 			throws ParseException {
 
 		GetStatementInfoDTO input = new GetStatementInfoDTO();
 
-		if (probSetId != null)
+		if (probSetId != null && !probSetId.isEmpty())
 			input.pushExtensionStr(probSetId);
+		if(userId != null && !userId.isEmpty())
+			input.pushUserId(userId);
+		
 		input.pushActionType("submit");
 		input.pushSourceType("diagnosis");
 		

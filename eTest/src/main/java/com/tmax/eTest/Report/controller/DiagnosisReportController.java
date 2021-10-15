@@ -100,9 +100,9 @@ public class DiagnosisReportController {
 			@PathVariable("probSetId") String probSetId,
 			@PathVariable("partName") String partName) throws Exception{
 		
-		String id = getUserIDFromRequest(request);
+		String userId = getUserIDFromRequest(request);
 		
-		DiagnosisRecordDetailDTO output = diagnosisDetailRecordService.getDiagnosisRecordDetail(id, probSetId, partName);
+		DiagnosisRecordDetailDTO output = diagnosisDetailRecordService.getDiagnosisRecordDetail(userId, probSetId, partName);
 		
 		return output;
 	}

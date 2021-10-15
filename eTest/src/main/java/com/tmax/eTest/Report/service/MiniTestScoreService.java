@@ -69,7 +69,6 @@ public class MiniTestScoreService {
 
 	public boolean saveMiniTestResult(String userId, String probSetId) {
 		boolean result = true;
-
 		// Mini Test 관련 문제 풀이 정보 획득.
 		List<StatementDTO> miniTestRes = getMiniTestResultInLRS(userId, probSetId);
 		List<Problem> probInfos = getProblemInfos(miniTestRes);
@@ -88,9 +87,7 @@ public class MiniTestScoreService {
 					masteryData = dto;
 				}
 			}
-			
 			if (embeddingData != null && masteryData != null) {
-				Map<Integer, UkMaster> usedUkMap =stateAndProbProcess.makeUsedUkMap(probInfos);
 				Map<Integer, Float> ukScoreMap = scoreCalculator.makeUKScoreMap(masteryData);
 				float ukModiRatio = 1.5f, ukModiDif = 0.1f;
 				ukScoreMap.forEach((ukUuid, score) -> {
@@ -98,23 +95,10 @@ public class MiniTestScoreService {
 					modScore = (modScore > 1)? 1.f : (modScore <= 0.05) ? 0.05f : modScore;
 					ukScoreMap.put(ukUuid, modScore);
 				});
-//				List<List<String>> partScoreList = scoreCalculator.makePartScore(usedUkMap, ukScoreMap);
-//				Map<String, List<List<String>>> partUkDetail = scoreCalculator.makePartUkDetail(usedUkMap, ukScoreMap);
-//				
-//				float avg = 0;
-//				for (List<String> part : partScoreList) {
-//					avg += Float.parseFloat(part.get(2));
-//				}
-//				
-//				int ukAvgScore = 0;
-//				
-//				if(partScoreList.size() > 0)
-//					ukAvgScore = Math.round(avg / partScoreList.size());
 				
 				// 문제 주제 쪽으로 uk 정보 변경.
 				Map<String, List<List<String>>> partUkDetail = scoreCalculator.makeThemeInfo(ukScoreMap, probInfos);
 				int ukAvgScore = Math.round(scoreCalculator.makeAllThemeAvg(partUkDetail));
-				
 				log.info(partUkDetail.toString());
 				
 				int setNum = 0;
@@ -234,13 +218,12 @@ public class MiniTestScoreService {
 			try {
 				int probId = Integer.parseInt(dto.getSourceId());
 				probIdList.add(probId);
-				probList = problemRepo.findAllById(probIdList);
 			} catch (NumberFormatException e) {
 				log.info(
 					"Wrong number format in getProblemInfos. id : " + dto.getSourceId() + " error!");
 			}
 		}
-
+		probList = problemRepo.findAllById(probIdList);
 		// problem 관련 정보를 가공하여 TritonInput 화.
 		return probList;
 	}

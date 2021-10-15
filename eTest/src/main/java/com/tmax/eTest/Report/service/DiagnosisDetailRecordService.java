@@ -46,7 +46,7 @@ public class DiagnosisDetailRecordService {
 	private final List<String> partNameList = new ArrayList<>(Arrays.asList("risk", "invest", "knowledge"));
 
 	public DiagnosisRecordDetailDTO getDiagnosisRecordDetail(
-			String id, 
+			String userId, 
 			String probSetId,
 			String partName) throws ReportBadRequestException, ParseException {
 		DiagnosisRecordDetailDTO result = new DiagnosisRecordDetailDTO();
@@ -75,7 +75,7 @@ public class DiagnosisDetailRecordService {
 					result = makeInvestRecordDetail(report);
 					break;
 				case "knowledge":
-					List<StatementDTO> knowledgeProbStatement = probProcessor.getDiagnosisKnowledgeProbInfo(probSetId);
+					List<StatementDTO> knowledgeProbStatement = probProcessor.getDiagnosisKnowledgeProbInfo(userId, probSetId);
 					result = makeKnowledgeRecordDetail(report, knowledgeProbStatement);
 					break;
 				default: // 해당 경우 없음.

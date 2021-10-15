@@ -68,7 +68,7 @@ public class DiagnosisMainRecordService {
 			{
 				String userId = id;
 				DiagnosisReport report = reportOpt.get();
-				List<StatementDTO> knowledgeStatements = probProcessor.getDiagnosisKnowledgeProbInfo(probSetId);
+				List<StatementDTO> knowledgeStatements = probProcessor.getDiagnosisKnowledgeProbInfo(userId, probSetId);
 				
 				// 
 				if(knowledgeStatements.size() < 0 && id == null)

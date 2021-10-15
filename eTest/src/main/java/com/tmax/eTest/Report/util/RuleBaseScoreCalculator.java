@@ -30,7 +30,7 @@ import lombok.extern.log4j.Log4j2;
 // Rule Base 점수, Triton 점수 관련 Method 집합 Class
 public class RuleBaseScoreCalculator {
 	
-	final private boolean DEBUG_LOG = true;
+	final private boolean DEBUG_LOG = false;
 	
 	private void debugLog(String str)
 	{
