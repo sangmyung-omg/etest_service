@@ -13,6 +13,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.tmax.eTest.Auth.dto.AuthProvider;
 import com.tmax.eTest.Auth.dto.Role;
 import com.tmax.eTest.Common.model.error_report.ErrorReport;
+import com.tmax.eTest.Common.model.report.MinitestReport;
 import com.tmax.eTest.Common.model.support.Inquiry;
 import lombok.*;
 
@@ -21,7 +22,8 @@ import lombok.*;
 @Data
 @Entity
 @Table(name="USER_MASTER")
-@ToString(exclude = "inquiry")
+@ToString(exclude = {"inquiry","errors","minitestReports"})
+
 @Builder
 public class UserMaster {
 	@Id
@@ -33,8 +35,6 @@ public class UserMaster {
 
 	@Column(name = "PROVIDER_ID")
 	private String providerId;
-
-
 
 	@Enumerated(EnumType.STRING)
 	private AuthProvider provider;
@@ -67,8 +67,10 @@ public class UserMaster {
 	private Integer investPeriod;
 
 	@OneToMany(mappedBy = "userMaster",  cascade = {CascadeType.REMOVE},fetch = FetchType.LAZY)
-	@JsonIgnoreProperties({"userMaster"})
 	private List<Inquiry> inquiry;
+
+	@OneToMany(mappedBy = "user",  cascade = {CascadeType.REMOVE},fetch = FetchType.LAZY)
+	private List<MinitestReport> minitestReports;
 
 	@Column(name = "CREATE_DATE")
 	private LocalDateTime createDate;

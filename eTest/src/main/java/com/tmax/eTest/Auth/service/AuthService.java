@@ -19,10 +19,16 @@ import com.tmax.eTest.Auth.dto.Role;
 import com.tmax.eTest.Auth.dto.SignUpRequestDto;
 import com.tmax.eTest.Auth.jwt.JwtTokenUtil;
 import com.tmax.eTest.Auth.repository.UserRepository;
+import com.tmax.eTest.Common.model.book.BookBookmark;
+import com.tmax.eTest.Common.model.report.DiagnosisReport;
 import com.tmax.eTest.Common.model.user.UserMaster;
+import com.tmax.eTest.Common.model.video.VideoBookmark;
+import com.tmax.eTest.Common.repository.book.BookBookmarkRepository;
+import com.tmax.eTest.Common.repository.video.VideoBookmarkRepository;
 import com.tmax.eTest.LRS.dto.StatementDTO;
 import com.tmax.eTest.LRS.util.LRSAPIManager;
 
+import com.tmax.eTest.MyPage.repository.DiagnosisReportRepo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,7 +56,12 @@ public class AuthService {
     private BCryptPasswordEncoder bCryptPasswordEncoder;
     @Autowired
     LRSAPIManager lrsapiManager;
-
+    @Autowired
+    private DiagnosisReportRepo diagnosisReportRepo;
+    @Autowired
+    private BookBookmarkRepository bookBookmarkRepository;
+    @Autowired
+    private VideoBookmarkRepository videoBookmarkRepository;
     @Transactional
     public CMRespDto<?> singUp(SignUpRequestDto signUpRequestDto) {
         logger.debug("signUpRequestDto : " + signUpRequestDto);
@@ -105,7 +116,19 @@ public class AuthService {
     @Transactional
     public String deleteUser(PrincipalDetails principalDetails) {
         Optional<UserMaster> userMasterOptional = userRepository.findByUserUuid(principalDetails.getUserUuid());
+        String userUuid = userMasterOptional.get().getUserUuid();
+        List<DiagnosisReport> diagnosisReportList = diagnosisReportRepo.findAllByUserUuid(userUuid);
+        List<VideoBookmark> videoBookmarkList = videoBookmarkRepository.findAllByUserUuid(userUuid);
+        List<BookBookmark> bookBookmarkList = bookBookmarkRepository.findAllByUserUuid(userUuid);
+        bookBookmarkRepository.deleteAll(bookBookmarkList);
+        logger.debug("delete bookBookmarkList success");
+        videoBookmarkRepository.deleteAll(videoBookmarkList);
+        logger.debug("delete videoBookmarkList success");
+        diagnosisReportRepo.deleteAll(diagnosisReportList);
+        logger.debug("delete diagnosisReportList success");
         userRepository.delete(userMasterOptional.get());
+        logger.debug("delete userMaster success");
+
 
         // 현재 시간을 LRS timestamp 포멧에 맞게 변환
         Date date = new Date(System.currentTimeMillis());
