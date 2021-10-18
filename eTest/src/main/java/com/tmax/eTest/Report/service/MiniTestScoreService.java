@@ -106,7 +106,7 @@ public class MiniTestScoreService {
 					setNum = 1;//probInfos.get(0).getTestInfo().getSetNum(); jinhyung edit
 				
 				// 오래걸림. (거의 5.3초 중 5초 차지
-				saveUserUKInfo(userId, ukScoreMap);
+				//saveUserUKInfo(userId, ukScoreMap);
 				saveMinitestReport(userId, probSetId, ukAvgScore, diagQuestionInfo, setNum, partUkDetail);
 			}
 		}

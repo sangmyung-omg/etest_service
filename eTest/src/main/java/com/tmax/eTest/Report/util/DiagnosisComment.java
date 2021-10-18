@@ -148,7 +148,7 @@ public class DiagnosisComment {
 	
 	public List<Object> makeRiskDetailComment(DiagnosisReport report)
 	{
-		int profLevelScore = (int)((14-report.getRiskLevelScore()) / 12. * 100 );
+		int profLevelScore = (int)((report.getRiskLevelScore()-1.5) / 12. * 100 );
 		int profCapaScore = (int)((report.getRiskCapaScore()) / 8. * 100);
 		
 		int stretchProfileScore = (int)((report.getRiskProfileScore() - 5) / 15.f * 100);
@@ -188,7 +188,7 @@ public class DiagnosisComment {
 				?profileMainList[0]
 				:profileMainList[1]);
 		profileCommentInfo.put("detail", "");
-		profileCommentInfo.put("score", profCapaScore);
+		profileCommentInfo.put("score", profLevelScore);
 		profileCommentInfo.put("detailScoreList", profileDetailScore);
 		
 		tracingCommentInfo.put("name", "투자 방법");
