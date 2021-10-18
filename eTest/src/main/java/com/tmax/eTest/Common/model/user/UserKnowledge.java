@@ -19,20 +19,11 @@ import lombok.Data;
 @Entity
 @Table(name="USER_KNOWLEDGE")
 @Data
-@IdClass(UserKnowledgeKey.class)
 public class UserKnowledge {
 	@Id
 	private String userUuid;
 
-	@Id
-	private Integer ukId;
-	
-//	private String ukId;
-	
-	private Float ukMastery;
+	private String ukMastery;
 	private Timestamp updateDate;
-	
-	@OneToOne(cascade=(CascadeType.ALL), fetch = FetchType.LAZY)
-	@JoinColumn(name="ukId", insertable = false, updatable = false)
-	private UkMaster ukDao;
+
 }

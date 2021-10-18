@@ -99,19 +99,16 @@ public class MiniTestScoreService {
 				// 문제 주제 쪽으로 uk 정보 변경.
 				Map<String, List<List<String>>> partUkDetail = scoreCalculator.makeThemeInfo(ukScoreMap, probInfos);
 				int ukAvgScore = Math.round(scoreCalculator.makeAllThemeAvg(partUkDetail));
-				log.info(partUkDetail.toString());
 				
 				int setNum = 0;
 				if(probInfos.size() > 0)
 					setNum = 1;//probInfos.get(0).getTestInfo().getSetNum(); jinhyung edit
 				
-				// 오래걸림. (거의 5.3초 중 5초 차지
-				//saveUserUKInfo(userId, ukScoreMap);
+				saveUserUKInfo(userId, masteryData.getData().toString());
 				saveMinitestReport(userId, probSetId, ukAvgScore, diagQuestionInfo, setNum, partUkDetail);
 			}
 		}
 		
-
 		return result;
 	}
 	
@@ -230,24 +227,19 @@ public class MiniTestScoreService {
 
 	
 	
-	private void saveUserUKInfo(String userId, Map<Integer, Float> ukScoreList) {
+	private void saveUserUKInfo(String userId, String ukMasteryStr) {
 
-		Set<UserKnowledge> userKnowledgeSet = new HashSet<UserKnowledge>();
+		
+		UserKnowledge userKnowledge = new UserKnowledge();
+		userKnowledge.setUserUuid(userId);
+		userKnowledge.setUkMastery(ukMasteryStr);
+		userKnowledge.setUpdateDate(Timestamp.valueOf(LocalDateTime.now()));
 
-		ukScoreList.forEach((ukUuid, score) -> {
-			UserKnowledge userKnowledge = new UserKnowledge();
-			userKnowledge.setUserUuid(userId);
-			userKnowledge.setUkId(ukUuid);
-			userKnowledge.setUkMastery(score);
-			userKnowledge.setUpdateDate(Timestamp.valueOf(LocalDateTime.now()));
-			userKnowledgeSet.add(userKnowledge);
-
-		});
 
 		try {
-			userKnowledgeRepo.saveAll(userKnowledgeSet);
+			userKnowledgeRepo.save(userKnowledge);
 		} catch (IllegalArgumentException e) {
-			log.info("Illegal Argument in save user UK Info. " + userKnowledgeSet.toString());
+			log.info("Illegal Argument in save user UK Info. " + userKnowledge.toString());
 		}
 	}	
 

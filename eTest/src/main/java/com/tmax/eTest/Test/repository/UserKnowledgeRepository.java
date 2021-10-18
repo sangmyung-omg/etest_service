@@ -7,12 +7,11 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
 import com.tmax.eTest.Common.model.user.UserKnowledge;
-import com.tmax.eTest.Common.model.user.UserKnowledgeKey;
 import org.springframework.stereotype.Repository;
 
 @Repository("TE-UserKnowledgeRepository")
 
-public interface UserKnowledgeRepository extends CrudRepository<UserKnowledge, UserKnowledgeKey> {
+public interface UserKnowledgeRepository extends CrudRepository<UserKnowledge, String> {
 	List<UserKnowledge> findByUserUuid(String userUuid);
 
 }
