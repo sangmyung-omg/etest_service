@@ -196,7 +196,7 @@ public class DiagnosisComment {
 				? tracingMainList[0]
 				: tracingMainList[1]);
 		tracingCommentInfo.put("detail", "");
-		tracingCommentInfo.put("score", stretchTracingScore);
+		tracingCommentInfo.put("score", report.getRiskStockRatioScore()*20);
 		tracingCommentInfo.put("detailScoreList", tracingDetailScore);
 		
 		result.add(profileCommentInfo);
