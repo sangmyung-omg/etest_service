@@ -247,6 +247,17 @@ definitions:
         example: 4
   MiniProblemList:
     type: object
+    properties:
+      totalCount:
+        type: integer
+        example: 132
+      totalPage:
+        type: integer
+        example: 7
+      contents:
+        $ref: '#/definitions/MiniProblemListContents'
+  MiniProblemListContents:
+    type: object
     required:
     - id
     - part

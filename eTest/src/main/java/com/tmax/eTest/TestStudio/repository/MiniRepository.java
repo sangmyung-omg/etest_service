@@ -18,8 +18,8 @@ import com.querydsl.core.types.dsl.ComparableExpressionBase;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.tmax.eTest.TestStudio.dto.MiniProblemListDTO;
-import com.tmax.eTest.TestStudio.dto.QMiniProblemListDTO;
+import com.tmax.eTest.TestStudio.dto.MiniProblemListDTOContents;
+import com.tmax.eTest.TestStudio.dto.QMiniProblemListDTOContents;
 
 import org.apache.http.util.TextUtils;
 import org.springframework.data.domain.Page;
@@ -39,10 +39,10 @@ public class MiniRepository {
 		this.queryFactory = new JPAQueryFactory(em);
 	}
 	
-	public Page<MiniProblemListDTO> searchMiniProblems(Integer partId, String keyword, String order, String orderOption,
+	public Page<MiniProblemListDTOContents> searchMiniProblems(Integer partId, String keyword, String order, String orderOption,
 			Pageable pageable) {
 		Path<Date> editDate = Expressions.datePath(Date.class, "editDate");
-		JPAQuery<MiniProblemListDTO> query = queryFactory.select(new QMiniProblemListDTO(testProblem.probID, part.partName, problem.difficulty, testProblem.subject, testProblem.status, problem.question, problem.editDate.coalesce(problem.createDate).as(editDate)))
+		JPAQuery<MiniProblemListDTOContents> query = queryFactory.select(new QMiniProblemListDTOContents(testProblem.probID, part.partName, problem.difficulty, testProblem.subject, testProblem.status, problem.question, problem.editDate.coalesce(problem.createDate).as(editDate)))
 				.from(testProblem)
 				.join(testProblem.problem, problem)
 				.leftJoin(testProblem.part, part)
@@ -56,7 +56,7 @@ public class MiniRepository {
 		} else {
 			query.orderBy(order(order, orderOption, editDate));
 		}
-		QueryResults<MiniProblemListDTO> results = query.fetchResults();
+		QueryResults<MiniProblemListDTOContents> results = query.fetchResults();
 		return new PageImpl<>(results.getResults(), pageable, results.getTotal());
 	}
 
