@@ -1,8 +1,16 @@
 -------- Begin of ETEST.CS_FAQ-------
 
-insert into "ETEST"."CS_FAQ" ("FAQ_ID", "FAQ_TITLE", "FAQ_CONTENT" ) values (1, '[계정] 비밀번호를 변경하고1 싶어요.', '웹사이트에 로그인하신 후1, PC 웹사이트 우측 상단 혹은 모바일 웹 페이지 하단 페이지에서 이메일 주소를 직접 변경하실 수 있습니다.');
-insert into "ETEST"."CS_FAQ" ("FAQ_ID", "FAQ_TITLE", "FAQ_CONTENT" ) values (2, '[계정] 비밀번호1111111111를 변경하고1 싶어요.', '웹사이트에 로그인하1111111111111신 후1, PC 웹사이트 우측 상단 혹은 모바일 웹 페이지 하단 페이지에서 이메일 주소를 직접 변경하실 수 있습니다.');
-
+insert into "ETEST"."CS_FAQ" ("FAQ_ID", "FAQ_TITLE", "FAQ_CONTENT") values (6, '[서비스] 알투플러스가 무엇인가요?', '알투플러스는 ''알고 하는 투자''의 줄임말로 금융투자협회에서 선보이는 금융투자 교육 플랫폼 입니다. 알투플러스에서는 투자역량을 점검한 후 취약 개념 기반으로 맞춤형 콘텐츠를 제공하여 체계적이면서도 쉬운 학습 방법을제공합니다.');
+insert into "ETEST"."CS_FAQ" ("FAQ_ID", "FAQ_TITLE", "FAQ_CONTENT") values (7, '[금융투자 Test] GI진단이 무엇인가요?', 'GI 진단은 Good Investor의 약자로 투자자의 주식투자 역량을 종합적으로 점검하여 성공투자자 소양지수(GI 지수) 를 도출합니다.GI   진단은 성향 진단 18문항,   지식 진단 12 문항으로 구성됩니다. 성향 진단에서는 위험을 대하는 나의 태도와 투자를 하면서 발생하는 인지 편향을, 지식 진단에서는 투자 기초부터 실전까지의 문항을 출제합니다.
+진단결과를 통해 나의 투자소양지수를 확인해보고 나에게 필요한 추천 콘텐츠를 학습해보세요.');
+insert into "ETEST"."CS_FAQ" ("FAQ_ID", "FAQ_TITLE", "FAQ_CONTENT") values (8, '[금융투자 Test] 미니진단은 무엇인가요?', '미니진단은 「금융투자이해력 테스트 표준교재」에서 출제된 문제로 자신의 투자지식 수준을 측정합니다. 미니진단에서는 인공지능 이해도 모델을 기반으로 투자기본, 투자상품, 가치평가, 투자태도, 선택관리 5가지 영역에서 다루는 개념의 이해도를 측정하게됩니다.
+내가 부족한 개념과 해당 개념이 설명된 교재 페이지를 안내해드리니 학습에 활용해보세요.');
+insert into "ETEST"."CS_FAQ" ("FAQ_ID", "FAQ_TITLE", "FAQ_CONTENT") values (9, '[사이트이용] 처음 접속을 했습니다.어떤 순서로 이용을 해야 하나요? ', '알투플러스는 2 개의 진단(GI진단, 미니진단) 과 2 개의 콘텐츠( 금융투자 콘텐츠몰,  금융투자 표준교재) 로 구성되어 있습니다. 첫 방문이시라면, GI진단을 통해 나의 투자소양을 측정하고 나에게 맞춤화된 콘텐츠를 학습하시기를 추천드립니다.
+이후에는 표준교재 학습, 미니진단 등을 통해 투자소양을 쌓으실 수 있습니다.');
+insert into "ETEST"."CS_FAQ" ("FAQ_ID", "FAQ_TITLE", "FAQ_CONTENT") values (10, '[사이트이용] 로그인을 했는데, 아무 반응이 없습니다. 어떻게 하나요? ', '접속하신 디바이스에 쿠키 등 로그인 기록을 삭제 후 다시 로그인을 시도해 보세요.
+사용 브라우저의 인터넷 옵션 > 인터넷 사용 기록 삭제');
+insert into "ETEST"."CS_FAQ" ("FAQ_ID", "FAQ_TITLE", "FAQ_CONTENT") values (11, '[사이트이용] 회원탈퇴는 어떻게 하나요? ', '마이페이지 > 계정 탈퇴 버튼을 눌러주세요.
+회원 탈퇴를 하시면 해당 계정은 바로 탈퇴 처리되며, 회원님의 개인정보 또한 파기됩니다.');
 ------- End of ETEST.CS_FAQ -------------- Begin of ETEST.CS_INQUIRY-------
 
 insert into "ETEST"."CS_INQUIRY" ("INQUIRY_ID", "INQUIRY_STATUS", "INQUIRY_TITLE", "INQUIRY_TYPE", "INQUIRY_CONTENT", "INQUIRY_URL", "INQUIRY_ANSWER", "USER_UUID", "CREATE_DATE", "INQUIRY_ANSWER_TIME", "ADMIN_UUID" ) values (6, 'complete', '질문있어요', 'account', '로그인이 잘 안되어요', null, '문의답변답변', 'e88f0cd4-54bd-4e96-ba53-2d1046b7300b', null, TO_DATE('2021/09/02 16:43:04', 'YYYY/MM/DD HH24:MI:SS'), 'temporaryAdminUUID');
