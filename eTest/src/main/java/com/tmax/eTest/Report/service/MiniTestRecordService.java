@@ -10,11 +10,14 @@ import lombok.extern.slf4j.Slf4j;
 import com.tmax.eTest.Contents.repository.ProblemRepository;
 import com.tmax.eTest.LRS.util.LRSAPIManager;
 import com.tmax.eTest.Report.dto.MiniTestRecordDTO;
+import com.tmax.eTest.Report.util.ReportCacheType;
 import com.tmax.eTest.Report.util.SNDCalculator;
 import com.tmax.eTest.Report.util.minitest.PartMapper;
 import com.tmax.eTest.Common.repository.report.MinitestReportRepo;
-
+import com.tmax.eTest.Common.repository.report.ReportCacheRepo;
 import com.tmax.eTest.Common.model.report.MinitestReport;
+import com.tmax.eTest.Common.model.report.ReportCache;
+import com.tmax.eTest.Common.model.report.ReportCacheKey;
 import com.tmax.eTest.Report.dto.minitest.PartInfoDTO;
 import com.tmax.eTest.Report.dto.minitest.PartDataDTO;
 
@@ -78,9 +81,11 @@ public class MiniTestRecordService {
 
 	@Autowired private UserMasterRepo userMasterRepo;
 
+	@Autowired private ReportCacheRepo reportCacheRepo;
+
 
 	private static final int PICK_ALARM_CNT_THRESHOLD = 3;
-	private static final int COMMENT_HIGH_LOW_SPLIT_THRESHOLD_SCORE = 60;
+	// private static final int COMMENT_HIGH_LOW_SPLIT_THRESHOLD_SCORE = 60;
 
 	private static final int COMMENT_HIGH_MID_SPLIT_THRESHOLD_SCORE = 80;
 	private static final int COMMENT_MID_LOW_SPLIT_THRESHOLD_SCORE = 60;
@@ -89,6 +94,7 @@ public class MiniTestRecordService {
 
 	private static final int UK_INFO_SLICE_LENGTH = 5;
 
+	@Deprecated
 	private PartDataDTO buildPartData(JsonArray mastery, String partname){
 		PartDataDTO output = buildPartData(mastery);
 
@@ -100,6 +106,7 @@ public class MiniTestRecordService {
 		return output;
 	}
 
+	@Deprecated
 	private PartDataDTO buildPartData(JsonArray mastery){
 		//Parse raw data
 		Type typeLLS = new TypeToken< List<List<String>> >(){}.getType();
@@ -380,9 +387,30 @@ public class MiniTestRecordService {
 		return filteredList;
 	}
 
-	
-	public MiniTestRecordDTO getMiniTestRecord(String userId,String probSetId){
+	public MiniTestRecordDTO getMiniTestRecord(String userId, String probSetId){
+		//User default cached mode
+		return  getMiniTestRecord(userId, probSetId, true);
+	}
+
+	public MiniTestRecordDTO getMiniTestRecord(String userId,String probSetId, boolean useCache){
 		log.debug("Get minittest record {} {}", userId, probSetId);
+
+		//Check for existing cache.
+		ReportCacheKey cachekey = new ReportCacheKey(probSetId, userId);
+		Optional<ReportCache> cacheData = reportCacheRepo.findById(cachekey);
+		if(cacheData.isPresent() && useCache){
+			try {
+				MiniTestRecordDTO parsedRecord = new Gson().fromJson(cacheData.get().getData(), MiniTestRecordDTO.class);
+
+				log.debug("Using minitest record from cache {} {}", userId, probSetId);
+				return parsedRecord;
+			}	
+			catch(JsonSyntaxException e){
+				//NOTE: Not removing cache at error because it will be overwritten later in the process
+				log.warn("Invalid json in cache.", userId, probSetId);
+			}
+		}
+
 
 		//Get report
 		Optional<MinitestReport> queryResult = reportRepo.getReport(probSetId, userId);
@@ -541,6 +569,18 @@ public class MiniTestRecordService {
 								 .totalComment(comment)
 								 .alarm(alarmcnt >= PICK_ALARM_CNT_THRESHOLD)
 								 .build();
+		
+
+		//Save to cache table 
+		String resultCacheString = new Gson().toJson(result);
+		reportCacheRepo.save(ReportCache.builder()
+										.reportId(probSetId)
+										.userId(userId)
+										.type(ReportCacheType.MINI_TEST.name())
+										.data(resultCacheString)
+										.updateTime(Timestamp.valueOf(LocalDateTime.now()))
+										.build());
+
 
 		return result;
 	}
