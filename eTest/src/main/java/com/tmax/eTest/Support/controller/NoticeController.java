@@ -24,13 +24,8 @@ public class NoticeController {
 
     @GetMapping("/notice")
     public CMRespDto<?> findAllNotice() {
-        List<Notice> noticeList =  noticeRepository.findAll(Sort.by(Sort.Direction.DESC, "date"));
+        List<Notice> noticeList =  noticeRepository.findAll();
         return new CMRespDto<>(200,"공지사항 가져오기 성공",noticeList);
     }
 
-    @PostMapping("/notice/create")
-    public CMRespDto<?> createNotice(@RequestBody CreateNoticeDto createNoticeDto) {
-        Long noticeId = noticeService.createNotice(createNoticeDto.getTitle(),createNoticeDto.getDate(),createNoticeDto.getContent());
-        return new CMRespDto<>(200,"공지사항 만들기 성공",noticeId);
-    }
 }

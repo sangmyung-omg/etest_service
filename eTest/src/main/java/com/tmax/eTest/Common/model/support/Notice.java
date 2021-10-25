@@ -6,10 +6,17 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import java.time.LocalDate;
 
+import lombok.*;
+import javax.persistence.*;
+import java.sql.Timestamp;
+
 @Entity
-@Data
 @Table(name = "CS_NOTICE")
+@Getter
+@Setter
+@Builder
 @NoArgsConstructor
+@AllArgsConstructor
 public class Notice {
     @Id
     @Column(name = "NOTICE_ID")
@@ -17,18 +24,21 @@ public class Notice {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "NOTICE_SEQ_GENERATOR")
     private Long id;
 
-    @Column(name = "NOTICE_TITLE")
+    @Column(name = "draft")
+    private int draft;
+
+    @Column(name = "title")
     private String title;
 
-    @Column(name = "NOTICE_DATE")
-    private LocalDate date;
-
-    @Column(name = "NOTICE_CONTENT")
+    @Column(name = "content")
     private String content;
 
-    public Notice(String title, LocalDate date, String content){
-        this.title = title;
-        this.date = date;
-        this.content = content;
-    }
+    @Column(name = "views")
+    private Long views;
+
+    @Column(name = "date_add")
+    private Timestamp dateAdd;
+
+    @Column(name = "date_edit")
+    private Timestamp dateEdit;
 }
