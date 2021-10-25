@@ -53,6 +53,7 @@ public class RefreshController {
             } catch (IllegalArgumentException e) {
                 log.info("userUuid parsing fail");
             }  catch (ExpiredJwtException e) {
+                userUuid = (String) e.getClaims().get("userUuid");
                 log.info("expired access token" );
             }  catch (NoSuchElementException e) {
                 log.info("userUuid not exist");
