@@ -104,7 +104,8 @@ public class MiniTestReportController {
 	@CrossOrigin("*")
 	@PutMapping(value = "/report/minitest", produces = "application/json; charset=utf-8")
 	public ResponseEntity<?> updateMiniTestResult(HttpServletRequest request, @RequestParam("probSetId") String probSetId, 
-												 @RequestParam(value = "forceUpdate", defaultValue = "false") boolean forceUpdate) throws Exception {
+												 @RequestParam(value = "forceUpdate", defaultValue = "false") boolean forceUpdate,
+												 @RequestParam(value = "usecache", defaultValue = "false") boolean usecache) {
 		//Extract id from auth
 		String id = userIdFetchTool.getID(request);
 
@@ -116,7 +117,7 @@ public class MiniTestReportController {
 		if(!miniTestRecordService.checkMinireportExist(id, probSetId) || forceUpdate)
 			miniTestScoreService.saveMiniTestResult(id, probSetId);
 
-		MiniTestRecordDTO output = miniTestRecordService.getMiniTestRecord(id, probSetId);
+		MiniTestRecordDTO output = miniTestRecordService.getMiniTestRecord(id, probSetId, usecache);
 
 		if(output == null)
 			return ResponseEntity.internalServerError().body("Record not found");
@@ -127,7 +128,8 @@ public class MiniTestReportController {
 
 	@CrossOrigin("*")
 	@GetMapping(value="/report/minitest", produces = "application/json; charset=utf-8")
-	public ResponseEntity<?> readMiniTestRecord(HttpServletRequest request, @RequestParam("probSetId") String probSetId) throws Exception{
+	public ResponseEntity<?> readMiniTestRecord(HttpServletRequest request, @RequestParam("probSetId") String probSetId,
+											   @RequestParam(value = "usecache", defaultValue = "true") boolean usecache){
 		//Extract id from auth
 		String id = userIdFetchTool.getID(request);
 
@@ -135,7 +137,7 @@ public class MiniTestReportController {
 			return ResponseEntity.internalServerError().body("Cannot get uuid from token info");
 		}
 		
-		MiniTestRecordDTO output = miniTestRecordService.getMiniTestRecord(id, probSetId);
+		MiniTestRecordDTO output = miniTestRecordService.getMiniTestRecord(id, probSetId, usecache);
 		if(output == null)
 			return ResponseEntity.internalServerError().body("Record not found");
 

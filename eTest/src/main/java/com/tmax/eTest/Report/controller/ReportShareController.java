@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 
-import com.tmax.eTest.Contents.controller.answer.AnswerControllerV1;
+// import com.tmax.eTest.Contents.controller.answer.AnswerControllerV1;
 import com.tmax.eTest.Contents.controller.answer.AnswerControllerV2;
 
 @CrossOrigin("*")
