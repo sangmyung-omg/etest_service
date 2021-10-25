@@ -18,10 +18,4 @@ public class NoticeService {
     @Qualifier("SU-NoticeRepository")
     private NoticeRepository noticeRepository;
 
-    @Transactional
-    public Long createNotice(String title, LocalDate date, String content) {
-        Notice notice = new Notice(title,date,content);
-        noticeRepository.save(notice);
-        return notice.getId();
-    }
 }
