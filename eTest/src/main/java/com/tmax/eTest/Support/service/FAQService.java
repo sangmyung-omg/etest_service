@@ -13,12 +13,4 @@ public class FAQService {
     @Autowired
     @Qualifier("SU-FAQRepository")
     FAQRepository faqRepository;
-
-    @Transactional
-    public Long createFAQ(CreateFAQDto createFaqDto){
-        FAQ faq = new FAQ(createFaqDto.getTitle(), createFaqDto.getContent());
-        faqRepository.save(faq);
-        return faq.getId();
-    }
-
 }

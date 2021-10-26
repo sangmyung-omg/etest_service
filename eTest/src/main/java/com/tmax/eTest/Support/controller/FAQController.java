@@ -24,12 +24,6 @@ public class FAQController {
     @Autowired
     private FAQService faqService;
 
-    @PostMapping("/faq/create")
-    public CMRespDto<?> createFAQ(@RequestBody CreateFAQDto createFaqDto) {
-            Long faqId = faqService.createFAQ(createFaqDto);
-        return new CMRespDto<>(200,"FAQ 생성 성공",faqId);
-    }
-
     @GetMapping("/faq")
     private CMRespDto<?> faq() {
         List<FAQ> faqList = faqRepository.findAll();
