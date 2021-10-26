@@ -1,14 +1,16 @@
 package com.tmax.eTest.Common.model.support;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
+import java.sql.Timestamp;
 
 @Entity
-@Data
+@Getter
+@Setter
+@Builder
 @NoArgsConstructor
-
+@AllArgsConstructor
 @Table(name = "CS_FAQ")
 public class FAQ {
     @Id
@@ -17,15 +19,24 @@ public class FAQ {
     @Column(name = "FAQ_ID")
     private Long id;
 
-    @Column(name = "FAQ_TITLE")
+    @Column(name = "category")
+    private String category;
+
+    @Column(name = "draft")
+    private int draft;
+
+    @Column(name = "TITLE")
     private String title;
 
-    @Column(name = "FAQ_CONTENT")
+    @Column(name = "CONTENT")
     private String content;
 
-    public FAQ(String title, String content) {
-        this.title = title;
-        this.content = content;
-    }
+    @Column(name = "views")
+    private Long views;
 
+    @Column(name = "date_add")
+    private Timestamp dateAdd;
+
+    @Column(name = "date_edit")
+    private Timestamp dateEdit;
 }
