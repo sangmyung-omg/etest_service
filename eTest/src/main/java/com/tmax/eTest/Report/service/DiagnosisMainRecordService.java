@@ -22,7 +22,7 @@ import com.tmax.eTest.Report.dto.RecommendVideoDTO;
 import com.tmax.eTest.Report.exception.ReportBadRequestException;
 import com.tmax.eTest.Report.util.SNDCalculator;
 import com.tmax.eTest.Report.util.StateAndProbProcess;
-import com.tmax.eTest.Report.util.DiagnosisComment;
+import com.tmax.eTest.Report.util.diagnosis.DiagnosisComment;
 import com.tmax.eTest.Common.model.report.DiagnosisReport;
 import com.tmax.eTest.Common.model.user.UserMaster;
 import com.tmax.eTest.Common.model.video.Video;

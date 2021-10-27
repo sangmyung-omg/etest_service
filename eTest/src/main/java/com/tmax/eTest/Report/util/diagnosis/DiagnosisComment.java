@@ -1,4 +1,4 @@
-package com.tmax.eTest.Report.util;
+package com.tmax.eTest.Report.util.diagnosis;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -13,12 +13,12 @@ import org.springframework.stereotype.Component;
 import com.tmax.eTest.Common.model.problem.Problem;
 import com.tmax.eTest.Common.model.report.DiagnosisReport;
 import com.tmax.eTest.LRS.dto.StatementDTO;
-import com.tmax.eTest.Report.util.DiagnosisUtil.InvestProfile;
-import com.tmax.eTest.Report.util.DiagnosisUtil.InvestTracing;
-import com.tmax.eTest.Report.util.DiagnosisUtil.KnowledgeSection;
-import com.tmax.eTest.Report.util.DiagnosisUtil.KnowledgeSubSection;
-import com.tmax.eTest.Report.util.DiagnosisUtil.RiskProfile;
-import com.tmax.eTest.Report.util.DiagnosisUtil.RiskTracing;
+import com.tmax.eTest.Report.util.diagnosis.DiagnosisUtil.InvestProfile;
+import com.tmax.eTest.Report.util.diagnosis.DiagnosisUtil.InvestTracing;
+import com.tmax.eTest.Report.util.diagnosis.DiagnosisUtil.KnowledgeSection;
+import com.tmax.eTest.Report.util.diagnosis.DiagnosisUtil.KnowledgeSubSection;
+import com.tmax.eTest.Report.util.diagnosis.DiagnosisUtil.RiskProfile;
+import com.tmax.eTest.Report.util.diagnosis.DiagnosisUtil.RiskTracing;
 
 import lombok.extern.log4j.Log4j2;
 

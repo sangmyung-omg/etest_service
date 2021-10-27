@@ -1,4 +1,4 @@
-package com.tmax.eTest.Report.util;
+package com.tmax.eTest.Report.util.diagnosis;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,12 +16,12 @@ import com.google.gson.JsonParser;
 import com.tmax.eTest.Common.model.problem.DiagnosisCurriculum;
 import com.tmax.eTest.Common.model.problem.Problem;
 import com.tmax.eTest.Common.model.problem.ProblemChoice;
-import com.tmax.eTest.Report.util.DiagnosisUtil.AnswerKey;
-import com.tmax.eTest.Report.util.DiagnosisUtil.Chapter;
-import com.tmax.eTest.Report.util.DiagnosisUtil.KnowledgeSection;
-import com.tmax.eTest.Report.util.DiagnosisUtil.RiskProfile;
-import com.tmax.eTest.Report.util.DiagnosisUtil.ScoreKey;
-import com.tmax.eTest.Report.util.DiagnosisUtil.TendencySection;
+import com.tmax.eTest.Report.util.diagnosis.DiagnosisUtil.AnswerKey;
+import com.tmax.eTest.Report.util.diagnosis.DiagnosisUtil.Chapter;
+import com.tmax.eTest.Report.util.diagnosis.DiagnosisUtil.KnowledgeSection;
+import com.tmax.eTest.Report.util.diagnosis.DiagnosisUtil.RiskProfile;
+import com.tmax.eTest.Report.util.diagnosis.DiagnosisUtil.ScoreKey;
+import com.tmax.eTest.Report.util.diagnosis.DiagnosisUtil.TendencySection;
 
 import lombok.extern.log4j.Log4j2;
 

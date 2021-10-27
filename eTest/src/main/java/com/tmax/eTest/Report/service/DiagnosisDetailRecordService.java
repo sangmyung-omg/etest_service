@@ -19,9 +19,9 @@ import com.tmax.eTest.LRS.dto.StatementDTO;
 import com.tmax.eTest.LRS.util.LRSAPIManager;
 import com.tmax.eTest.Report.dto.DiagnosisRecordDetailDTO;
 import com.tmax.eTest.Report.exception.ReportBadRequestException;
-import com.tmax.eTest.Report.util.DiagnosisComment;
 import com.tmax.eTest.Report.util.SNDCalculator;
 import com.tmax.eTest.Report.util.StateAndProbProcess;
+import com.tmax.eTest.Report.util.diagnosis.DiagnosisComment;
 
 import lombok.extern.log4j.Log4j2;
 

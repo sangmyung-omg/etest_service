@@ -29,19 +29,19 @@ import com.tmax.eTest.LRS.util.LRSAPIManager;
 import com.tmax.eTest.Report.dto.triton.TritonDataDTO;
 import com.tmax.eTest.Report.dto.triton.TritonResponseDTO;
 import com.tmax.eTest.Report.exception.ReportBadRequestException;
-import com.tmax.eTest.Report.util.RuleBaseScoreCalculator;
 import com.tmax.eTest.Report.util.SNDCalculator;
-import com.tmax.eTest.Report.util.DiagnosisComment;
-import com.tmax.eTest.Report.util.DiagnosisRecommend;
-import com.tmax.eTest.Report.util.DiagnosisUtil;
-import com.tmax.eTest.Report.util.DiagnosisUtil.InvestProfile;
-import com.tmax.eTest.Report.util.DiagnosisUtil.InvestTracing;
-import com.tmax.eTest.Report.util.DiagnosisUtil.KnowledgeSection;
-import com.tmax.eTest.Report.util.DiagnosisUtil.KnowledgeSubSection;
-import com.tmax.eTest.Report.util.DiagnosisUtil.RiskProfile;
-import com.tmax.eTest.Report.util.DiagnosisUtil.RiskTracing;
-import com.tmax.eTest.Report.util.DiagnosisUtil.ScoreKey;
-import com.tmax.eTest.Report.util.DiagnosisUtil.TendencySection;
+import com.tmax.eTest.Report.util.diagnosis.DiagnosisComment;
+import com.tmax.eTest.Report.util.diagnosis.DiagnosisRecommend;
+import com.tmax.eTest.Report.util.diagnosis.DiagnosisUtil;
+import com.tmax.eTest.Report.util.diagnosis.RuleBaseScoreCalculator;
+import com.tmax.eTest.Report.util.diagnosis.DiagnosisUtil.InvestProfile;
+import com.tmax.eTest.Report.util.diagnosis.DiagnosisUtil.InvestTracing;
+import com.tmax.eTest.Report.util.diagnosis.DiagnosisUtil.KnowledgeSection;
+import com.tmax.eTest.Report.util.diagnosis.DiagnosisUtil.KnowledgeSubSection;
+import com.tmax.eTest.Report.util.diagnosis.DiagnosisUtil.RiskProfile;
+import com.tmax.eTest.Report.util.diagnosis.DiagnosisUtil.RiskTracing;
+import com.tmax.eTest.Report.util.diagnosis.DiagnosisUtil.ScoreKey;
+import com.tmax.eTest.Report.util.diagnosis.DiagnosisUtil.TendencySection;
 import com.tmax.eTest.Report.util.StateAndProbProcess;
 import com.tmax.eTest.Report.util.TritonAPIManager;
 import com.tmax.eTest.Report.util.UKScoreCalculator;
@@ -82,7 +82,6 @@ public class DiagnosisReportService {
 	{
 		String userId = id;
 		boolean result = true;
-		
 		if(diagnosisReportRepo.existsById(probSetId))
 		{
 			log.info("Have report in saveDiagnosisResult. Save process stop.");
