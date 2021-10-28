@@ -28,7 +28,6 @@ import com.tmax.eTest.Contents.exception.ErrorCode;
 import com.tmax.eTest.Contents.util.CommonUtils;
 import com.tmax.eTest.Contents.util.QuerydslUtils;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import org.springframework.stereotype.Repository;
 
@@ -39,15 +38,15 @@ import lombok.extern.slf4j.Slf4j;
 public class VideoRepositorySupport extends QuerydslRepositorySupport {
   private final JPAQueryFactory query;
 
-  @Autowired
   private CommonUtils commonUtils;
 
-  @Autowired
   private QuerydslUtils querydslUtils;
 
-  public VideoRepositorySupport(JPAQueryFactory query) {
+  public VideoRepositorySupport(JPAQueryFactory query, CommonUtils commonUtils, QuerydslUtils querydslUtils) {
     super(Video.class);
     this.query = query;
+    this.commonUtils = commonUtils;
+    this.querydslUtils = querydslUtils;
   }
 
   public JPAQuery<Video> multipleFetchJoin() {

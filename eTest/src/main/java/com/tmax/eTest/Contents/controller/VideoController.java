@@ -12,7 +12,6 @@ import com.tmax.eTest.Contents.service.VideoService;
 import com.tmax.eTest.Contents.util.CommonUtils;
 import com.tmax.eTest.Contents.util.JWTUtils;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -29,14 +28,17 @@ import lombok.extern.slf4j.Slf4j;
 @RestController
 public class VideoController {
 
-  @Autowired
   private VideoService videoService;
 
-  @Autowired
   private CommonUtils commonUtils;
 
-  @Autowired
   private JWTUtils jwtUtils;
+
+  public VideoController(VideoService videoService, CommonUtils commonUtils, JWTUtils jwtUtils) {
+    this.videoService = videoService;
+    this.commonUtils = commonUtils;
+    this.jwtUtils = jwtUtils;
+  }
 
   @GetMapping("/videos/curriculums")
   public ResponseEntity<Object> getVideoCurriculumList() {

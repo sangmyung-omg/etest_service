@@ -42,7 +42,6 @@ import com.tmax.eTest.LRS.dto.GetStatementInfoDTO;
 import com.tmax.eTest.LRS.dto.StatementDTO;
 import com.tmax.eTest.LRS.util.LRSAPIManager;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -58,32 +57,39 @@ public class VideoService {
 
   private final String YOUTUBE_TYPE = "youtu";
 
-  @Autowired
   private VideoCurriculumRepositorySupport videoCurriculumRepositorySupport;
 
-  @Autowired
   private VideoHitRepositorySupport videoHitRepositorySupport;
 
-  @Autowired
   private VideoRepositorySupport videoRePositorySupport;
 
-  @Autowired
   private VideoBookmarkRepository videoBookmarkRepository;
 
-  @Autowired
   private MetaCodeMasterRepositorySupport metaCodeMasterRepositorySupport;
 
-  @Autowired
+  private DiagnosisReportRepositorySupport diagnosisReportRepositorySupport;
+
   private LRSUtils lrsUtils;
 
-  @Autowired
-  private CommonUtils commonUtils;
-
-  @Autowired
   private LRSAPIManager lrsapiManager;
 
-  @Autowired
-  private DiagnosisReportRepositorySupport diagnosisReportRepositorySupport;
+  private CommonUtils commonUtils;
+
+  public VideoService(VideoCurriculumRepositorySupport videoCurriculumRepositorySupport,
+      VideoHitRepositorySupport videoHitRepositorySupport, VideoRepositorySupport videoRePositorySupport,
+      VideoBookmarkRepository videoBookmarkRepository, MetaCodeMasterRepositorySupport metaCodeMasterRepositorySupport,
+      DiagnosisReportRepositorySupport diagnosisReportRepositorySupport, LRSUtils lrsUtils, LRSAPIManager lrsapiManager,
+      CommonUtils commonUtils) {
+    this.videoCurriculumRepositorySupport = videoCurriculumRepositorySupport;
+    this.videoHitRepositorySupport = videoHitRepositorySupport;
+    this.videoRePositorySupport = videoRePositorySupport;
+    this.videoBookmarkRepository = videoBookmarkRepository;
+    this.metaCodeMasterRepositorySupport = metaCodeMasterRepositorySupport;
+    this.diagnosisReportRepositorySupport = diagnosisReportRepositorySupport;
+    this.lrsUtils = lrsUtils;
+    this.lrsapiManager = lrsapiManager;
+    this.commonUtils = commonUtils;
+  }
 
   public ListDTO.Curriculum getVideoCurriculumList() {
     List<VideoCurriculum> curriculums = videoCurriculumRepositorySupport.findAll();
@@ -120,7 +126,7 @@ public class VideoService {
               () -> new LinkedHashMap<>(16, 0.75f, true)))
           .values().stream().distinct().sorted((a, b) -> -1).collect(Collectors.toList());
       if (videoIds.size() == 0)
-        return new ListDTO.Video(0, null);
+        return new ListDTO.Video();
     } catch (ParseException e) {
       throw new ContentsException(ErrorCode.LRS_ERROR);
     }
@@ -136,7 +142,7 @@ public class VideoService {
     List<String> recommendVideos = getDiagnosisRecommendVideoList(diagnosisReport);
     Boolean recommended = !commonUtils.objectNullcheck(recommendVideos);
     if (!recommended)
-      return new ListDTO.Video(0, null, recommended);
+      return new ListDTO.Video(recommended);
 
     List<VideoJoin> videos = videoRePositorySupport.findVideosByUserAndCurriculum(userId, curriculumId,
         SortType.RECOMMEND, keyword);
@@ -223,9 +229,10 @@ public class VideoService {
 
   @Transactional
   public SuccessDTO updateVideoHit(String userId, String videoId, VideoType videoType) throws ParseException {
-    if (videoHitRepositorySupport.notExistsById(videoId))
-      throw new ContentsException(ErrorCode.DB_ERROR, "VideoId doesn't exist in VideoHit Table");
-    videoHitRepositorySupport.updateVideoHit(videoId);
+    // if (videoHitRepositorySupport.notExistsById(videoId))
+    // throw new ContentsException(ErrorCode.DB_ERROR, "VideoId doesn't exist in
+    // VideoHit Table");
+    // videoHitRepositorySupport.updateVideoHit(videoId);
 
     // lrsService.init("/SaveStatement");
     // lrsService.saveStatement(lrsService.makeStatement(userId,
@@ -233,7 +240,7 @@ public class VideoService {
     // LRSService.SOURCE_TYPE.video));
     lrsapiManager.saveStatementList(Arrays.asList(lrsUtils.makeStatement(userId, videoId, LRSUtils.ACTION_TYPE.enter,
         videoType.equals(VideoType.ARTICLE) ? LRSUtils.SOURCE_TYPE.article : LRSUtils.SOURCE_TYPE.video)));
-    return new SuccessDTO(true);
+    return updateVideoHit(videoId, videoType);
   }
 
   public SuccessDTO quitVideo(String videoId, Integer duration) {
@@ -246,31 +253,19 @@ public class VideoService {
   public SuccessDTO quitVideo(String userId, String videoId, Integer duration) throws ParseException {
     lrsapiManager.saveStatementList(Arrays.asList(
         lrsUtils.makeStatement(userId, videoId, LRSUtils.ACTION_TYPE.quit, LRSUtils.SOURCE_TYPE.video, duration)));
-    return new SuccessDTO(true);
+    return quitVideo(videoId, duration);
   }
 
   public VideoDTO convertVideoToDTO(Video video) {
-    return VideoDTO.builder().videoId(video.getVideoId()).videoSrc(video.getVideoSrc()).title(video.getTitle())
-        .imgSrc(video.getImgSrc()).subject(video.getVideoCurriculum().getSubject()).totalTime(video.getTotalTime())
-        .startTime(video.getStartTime()).endTime(video.getEndTime()).hit(video.getVideoHit().getHit())
-        .createDate(video.getRegisterDate().toString())
-        .videoType(video.getType().equals(VideoType.ARTICLE.name()) ? video.getType()
-            : !commonUtils.stringNullCheck(video.getVideoSrc()) && video.getVideoSrc().contains(YOUTUBE_TYPE)
-                ? VideoType.YOUTUBE.toString()
-                : VideoType.SELF.toString())
-        .source(getSource(video.getCodeSet())).description(video.getDescription())
-        .uks(video.getVideoUks().stream().map(videoUks -> videoUks.getUkMaster().getUkName())
-            .collect(Collectors.toList()))
-        .hashtags(video.getVideoHashtags().stream().map(videoHashtags -> videoHashtags.getHashtag().getName())
-            .collect(Collectors.toList()))
-        .build();
+    String source = getSource(video.getCodeSet());
+    return convertVideoToDTO(video, source);
   }
 
   public VideoDTO convertVideoToDTO(Video video, String source) {
     return VideoDTO.builder().videoId(video.getVideoId()).videoSrc(video.getVideoSrc()).title(video.getTitle())
         .imgSrc(video.getImgSrc()).subject(video.getVideoCurriculum().getSubject()).totalTime(video.getTotalTime())
         .startTime(video.getStartTime()).endTime(video.getEndTime()).hit(video.getVideoHit().getHit())
-        .createDate(video.getRegisterDate().toString())
+        .createDate(video.getCreateDate().toString()).registerDate(video.getRegisterDate().toString())
         .videoType(video.getType().equals(VideoType.ARTICLE.name()) ? video.getType()
             : !commonUtils.stringNullCheck(video.getVideoSrc()) && video.getVideoSrc().contains(YOUTUBE_TYPE)
                 ? VideoType.YOUTUBE.toString()
@@ -292,47 +287,18 @@ public class VideoService {
 
   public VideoDTO convertVideoJoinToDTO(VideoJoin videoJoin) {
     Video video = videoJoin.getVideo();
-    return VideoDTO.builder().videoId(video.getVideoId()).videoSrc(video.getVideoSrc()).title(video.getTitle())
-        .imgSrc(video.getImgSrc()).subject(video.getVideoCurriculum().getSubject()).totalTime(video.getTotalTime())
-        .startTime(video.getStartTime()).endTime(video.getEndTime()).hit(video.getVideoHit().getHit())
-        .createDate(video.getRegisterDate().toString()).bookmark(!commonUtils.stringNullCheck(videoJoin.getUserUuid()))
-        .videoType(video.getType().equals(VideoType.ARTICLE.name()) ? video.getType()
-            : !commonUtils.stringNullCheck(video.getVideoSrc()) && video.getVideoSrc().contains(YOUTUBE_TYPE)
-                ? VideoType.YOUTUBE.toString()
-                : VideoType.SELF.toString())
-        .source(getSource(video.getCodeSet())).description(video.getDescription())
-        .uks(video.getVideoUks().stream().map(videoUks -> videoUks.getUkMaster().getUkName())
-            .collect(Collectors.toList()))
-        .hashtags(video.getVideoHashtags().stream().map(videoHashtags -> videoHashtags.getHashtag().getName())
-            .collect(Collectors.toList()))
-        .build();
+    String source = getSource(video.getCodeSet());
+    return convertVideoToDTO(video, source);
   }
 
   public VideoDTO convertVideoJoinToDTO(VideoJoin videoJoin, String source) {
     Video video = videoJoin.getVideo();
-    return VideoDTO.builder().videoId(video.getVideoId()).videoSrc(video.getVideoSrc()).title(video.getTitle())
-        .imgSrc(video.getImgSrc()).subject(video.getVideoCurriculum().getSubject()).totalTime(video.getTotalTime())
-        .startTime(video.getStartTime()).endTime(video.getEndTime()).hit(video.getVideoHit().getHit())
-        .createDate(video.getRegisterDate().toString()).bookmark(!commonUtils.stringNullCheck(videoJoin.getUserUuid()))
-        .videoType(video.getType().equals(VideoType.ARTICLE.name()) ? video.getType()
-            : !commonUtils.stringNullCheck(video.getVideoSrc()) && video.getVideoSrc().contains(YOUTUBE_TYPE)
-                ? VideoType.YOUTUBE.toString()
-                : VideoType.SELF.toString())
-        .source(source).description(video.getDescription())
-        .uks(video.getVideoUks().stream().map(videoUks -> videoUks.getUkMaster().getUkName())
-            .collect(Collectors.toList()))
-        .hashtags(video.getVideoHashtags().stream().map(videoHashtags -> videoHashtags.getHashtag().getName())
-            .collect(Collectors.toList()))
-        .build();
+    return convertVideoToDTO(video, source);
   }
 
   public ListDTO.Video convertVideoJoinToDTO(List<VideoJoin> videoJoins) {
-    Map<String, String> sourceMap = getSources(
-        videoJoins.stream().map(videoJoin -> videoJoin.getVideo().getCodeSet()).collect(Collectors.toList()));
-    return new ListDTO.Video(videoJoins.size(),
-        videoJoins.stream()
-            .map(videoJoin -> this.convertVideoJoinToDTO(videoJoin, sourceMap.get(videoJoin.getVideo().getCodeSet())))
-            .collect(Collectors.toList()));
+    List<Video> videos = videoJoins.stream().map(videoJoin -> videoJoin.getVideo()).collect(Collectors.toList());
+    return convertVideoToDTO(videos);
   }
 
   public ListDTO.Video convertVideoJoinToDTO(List<VideoJoin> videoJoins, Boolean recommended, Timestamp diagnosisDate,
@@ -353,7 +319,7 @@ public class VideoService {
             .collect(Collectors.toList()));
   }
 
-  private String getSource(String codeSetStr) {
+  private String getSourceId(String codeSetStr) {
     final String PREFIX_SOURCE_NAME = "콘텐츠 제작기관";
 
     if (commonUtils.stringNullCheck(codeSetStr)) {
@@ -376,37 +342,22 @@ public class VideoService {
         break;
       }
     }
+    return sourceId;
+  }
 
+  private String getSource(String codeSetStr) {
+    String sourceId = getSourceId(codeSetStr);
     MetaCodeMaster metaCodeMaster = metaCodeMasterRepositorySupport.findMetaCodeById(sourceId);
     String sourceName = metaCodeMaster.getCodeName();
+
     return sourceName;
   }
 
   private Map<String, String> getSources(List<String> codeSetStrs) {
-    final String PREFIX_SOURCE_NAME = "콘텐츠 제작기관";
-
-    ObjectMapper mapper = new ObjectMapper();
     HashMap<String, String> sourceMap = new HashMap<String, String>();
     ArrayList<String> sourceIds = new ArrayList<String>();
     for (String codeSetStr : codeSetStrs) {
-      if (commonUtils.stringNullCheck(codeSetStr)) {
-        log.info("Meta Code Null Error");
-        continue;
-      }
-      CodeSet codeSet = null;
-      try {
-        codeSet = mapper.readValue(codeSetStr, CodeSet.class);
-      } catch (IOException e) {
-        log.info(codeSetStr + ": Meta Code Json Error ");
-        continue;
-      }
-      String sourceId = null;
-      for (String codeId : codeSet.getCodes()) {
-        if (codeId.contains(PREFIX_SOURCE_NAME)) {
-          sourceId = codeId;
-          break;
-        }
-      }
+      String sourceId = getSourceId(codeSetStr);
       sourceIds.add(sourceId);
     }
 

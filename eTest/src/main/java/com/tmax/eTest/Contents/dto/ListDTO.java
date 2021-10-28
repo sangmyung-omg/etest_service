@@ -5,6 +5,7 @@ import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @Builder
@@ -17,6 +18,7 @@ public class ListDTO {
 
   @Data
   @AllArgsConstructor
+  @NoArgsConstructor
   public static class Video {
     private Boolean recommended;
     private String recommendDate;
@@ -34,6 +36,10 @@ public class ListDTO {
     public Video(int size, List<VideoDTO> videos, Boolean recommended) {
       this.size = size;
       this.videos = videos;
+      this.recommended = recommended;
+    }
+
+    public Video(Boolean recommended) {
       this.recommended = recommended;
     }
   }

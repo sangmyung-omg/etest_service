@@ -10,7 +10,6 @@ import com.tmax.eTest.Contents.service.BookService;
 import com.tmax.eTest.Contents.util.CommonUtils;
 import com.tmax.eTest.Contents.util.JWTUtils;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -23,18 +22,21 @@ import org.springframework.web.bind.annotation.RestController;
 
 import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @RestController
+@Slf4j
 public class BookController {
 
-  @Autowired
   private BookService bookService;
 
-  @Autowired
   private CommonUtils commonUtils;
 
-  @Autowired
   private JWTUtils jwtUtils;
+
+  public BookController(BookService bookService, CommonUtils commonUtils, JWTUtils jwtUtils) {
+    this.bookService = bookService;
+    this.commonUtils = commonUtils;
+    this.jwtUtils = jwtUtils;
+  }
 
   @GetMapping("/books")
   public ResponseEntity<Object> getBookList(@RequestParam(value = "keyword", required = false) String keyword,

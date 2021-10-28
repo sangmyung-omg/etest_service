@@ -6,7 +6,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.tmax.eTest.Auth.jwt.JwtTokenUtil;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import lombok.extern.slf4j.Slf4j;
@@ -15,11 +14,14 @@ import lombok.extern.slf4j.Slf4j;
 @Component(value = "JWTUtils")
 public class JWTUtils {
 
-  @Autowired
   private JwtTokenUtil jwtTokenUtil;
 
-  @Autowired
   private CommonUtils commonUtils;
+
+  public JWTUtils(JwtTokenUtil jwtTokenUtil, CommonUtils commonUtils) {
+    this.jwtTokenUtil = jwtTokenUtil;
+    this.commonUtils = commonUtils;
+  }
 
   public String getUserId(HttpServletRequest request) {
     String header = request.getHeader("Authorization");

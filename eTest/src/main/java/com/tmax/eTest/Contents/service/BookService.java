@@ -21,30 +21,37 @@ import com.tmax.eTest.Contents.util.CommonUtils;
 import com.tmax.eTest.Contents.util.LRSUtils;
 import com.tmax.eTest.LRS.util.LRSAPIManager;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Service
+@Slf4j
 public class BookService {
 
-  @Autowired
   private BookBookmarkRepository bookBookmarkRepository;
 
-  @Autowired
   private BookRepositorySupport bookRepositorySupport;
 
-  @Autowired
   private BookHitRepositorySupport bookHitRepositorySupport;
 
-  @Autowired
   private LRSUtils lrsUtils;
 
-  @Autowired
+  private LRSAPIManager lrsapiManager;
+
   private CommonUtils commonUtils;
 
-  @Autowired
-  private LRSAPIManager lrsapiManager;
+  public BookService(BookBookmarkRepository bookBookmarkRepository, BookRepositorySupport bookRepositorySupport,
+      BookHitRepositorySupport bookHitRepositorySupport, LRSUtils lrsUtils, CommonUtils commonUtils,
+      LRSAPIManager lrsapiManager) {
+    this.bookBookmarkRepository = bookBookmarkRepository;
+    this.bookHitRepositorySupport = bookHitRepositorySupport;
+    this.bookRepositorySupport = bookRepositorySupport;
+    this.lrsUtils = lrsUtils;
+    this.commonUtils = commonUtils;
+    this.lrsapiManager = lrsapiManager;
+  }
 
   public BookDTO getBook(String bookId) {
     Book book = bookRepositorySupport.findBookById(bookId);
@@ -103,14 +110,10 @@ public class BookService {
 
   @Transactional
   public SuccessDTO updateBookHit(String userId, String bookId) throws ParseException {
-    if (bookHitRepositorySupport.notExistsById(bookId))
-      throw new ContentsException(ErrorCode.DB_ERROR, "BookId doesn't exist in BookHit Table");
-    bookHitRepositorySupport.updateVideoHit(bookId);
-
     lrsapiManager.saveStatementList(Arrays
         .asList(lrsUtils.makeStatement(userId, bookId, LRSUtils.ACTION_TYPE.enter, LRSUtils.SOURCE_TYPE.textbook)));
 
-    return new SuccessDTO(true);
+    return updateBookHit(bookId);
   }
 
   public SuccessDTO quitBook(String bookId, Integer duration) {
@@ -123,13 +126,18 @@ public class BookService {
   public SuccessDTO quitBook(String userId, String bookId, Integer duration) throws ParseException {
     lrsapiManager.saveStatementList(Arrays.asList(
         lrsUtils.makeStatement(userId, bookId, LRSUtils.ACTION_TYPE.quit, LRSUtils.SOURCE_TYPE.textbook, duration)));
-    return new SuccessDTO(true);
+    return quitBook(bookId, duration);
   }
 
   public BookDTO convertBookToDTO(Book book) {
+    final String INDEX_HTML = "index.html";
+    final String PDF = "pdf/";
+    String pdfSrc = book.getBookSrc().replace(INDEX_HTML, "") + PDF;
+    log.info(pdfSrc);
+
     return BookDTO.builder().bookId(book.getBookId()).bookSrc(book.getBookSrc()).title(book.getTitle())
         .createDate(book.getCreateDate().toString()).creatorId(book.getCreatorId()).imgSrc(book.getImgSrc())
-        .description(book.getDescription()).hit(book.getBookHit().getHit()).build();
+        .description(book.getDescription()).hit(book.getBookHit().getHit()).pdfSrc(pdfSrc).build();
   }
 
   public ListDTO.Book convertBookToDTO(List<Book> books) {
@@ -139,14 +147,11 @@ public class BookService {
 
   public BookDTO convertBookJoinToDTO(BookJoin bookJoin) {
     Book book = bookJoin.getBook();
-    return BookDTO.builder().bookId(book.getBookId()).bookSrc(book.getBookSrc()).title(book.getTitle())
-        .createDate(book.getCreateDate().toString()).creatorId(book.getCreatorId()).imgSrc(book.getImgSrc())
-        .description(book.getDescription()).hit(book.getBookHit().getHit())
-        .bookmark(!commonUtils.stringNullCheck(bookJoin.getUserUuid())).build();
+    return convertBookToDTO(book);
   }
 
   public ListDTO.Book convertBookJoinToDTO(List<BookJoin> bookJoins) {
-    return new ListDTO.Book(bookJoins.size(),
-        bookJoins.stream().map(bookJoin -> convertBookJoinToDTO(bookJoin)).collect(Collectors.toList()));
+    List<Book> books = bookJoins.stream().map(bookJoin -> bookJoin.getBook()).collect(Collectors.toList());
+    return convertBookToDTO(books);
   }
 }

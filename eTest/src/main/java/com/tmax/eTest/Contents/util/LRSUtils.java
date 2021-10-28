@@ -28,6 +28,10 @@ public class LRSUtils {
     video, textbook, wiki, article;
   }
 
+  public LRSUtils() {
+
+  }
+
   public StatementDTO makeStatement(String userId, String sourceId, ACTION_TYPE actionType, SOURCE_TYPE sourceType) {
     // String timestamp =
     // ZonedDateTime.now(ZoneOffset.UTC).format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);

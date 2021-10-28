@@ -9,6 +9,9 @@ import org.springframework.stereotype.Component;
 @Component(value = "CommonUtils")
 public class CommonUtils {
 
+  public CommonUtils() {
+  }
+
   public boolean stringNullCheck(String str) {
     return StringUtils.isBlank(str);
   }

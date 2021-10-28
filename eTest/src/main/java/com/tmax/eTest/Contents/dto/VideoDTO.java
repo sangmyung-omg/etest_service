@@ -17,6 +17,7 @@ public class VideoDTO {
   private String imgSrc;
   private String subject;
   private String createDate;
+  private String registerDate;
   private Float totalTime;
   private Float startTime;
   private Float endTime;
