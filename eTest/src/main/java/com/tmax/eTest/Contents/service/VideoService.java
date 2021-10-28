@@ -265,7 +265,7 @@ public class VideoService {
     return VideoDTO.builder().videoId(video.getVideoId()).videoSrc(video.getVideoSrc()).title(video.getTitle())
         .imgSrc(video.getImgSrc()).subject(video.getVideoCurriculum().getSubject()).totalTime(video.getTotalTime())
         .startTime(video.getStartTime()).endTime(video.getEndTime()).hit(video.getVideoHit().getHit())
-        .createDate(video.getCreateDate().toString()).registerDate(video.getRegisterDate().toString())
+        .createDate(video.getRegisterDate().toString()).registerDate(video.getRegisterDate().toString())
         .videoType(video.getType().equals(VideoType.ARTICLE.name()) ? video.getType()
             : !commonUtils.stringNullCheck(video.getVideoSrc()) && video.getVideoSrc().contains(YOUTUBE_TYPE)
                 ? VideoType.YOUTUBE.toString()
