@@ -1046,6 +1046,10 @@ components:
           type: string
         subject: 
           type: string
+        createDate:
+          type: string
+        registerDate:
+          type: string
         totalTime: 
           type: number
         startTime:
@@ -1108,6 +1112,8 @@ components:
         creatorId:
           type: string
         imgSrc: 
+          type: string
+        pdfSrc:
           type: string
         description: 
           type: string
