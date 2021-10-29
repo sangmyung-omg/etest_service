@@ -22,7 +22,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.sql.Timestamp;
 
-@Component
+//@Component
 public class ManagementHistoryFilter extends OncePerRequestFilter {
     private static final Logger logger = LoggerFactory.getLogger(ManagementHistoryFilter.class);
     private final ObjectMapper mapper;
