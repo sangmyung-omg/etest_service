@@ -1,0 +1,5 @@
+jmx 에 적힌 조건으로 1000 thread까지 천천히 쌓아올리는 방식으로 테스트 진행.
+
+- Diagnosis, Minitest 두 시나리오 모두 600 Thread가 돌아가는 시점에서부터 첫 에러가 발생. 
+- 기존, 300 Thread 이하에서 에러가 났었던 것에서부터, DB Session을 늘림으로서 더 좋은 결과가 나옴. DB Session 수에 thread 수가 비례할 것으로 보임.
+- 해당 테스트 진행 사항은 Minitest 최적화 전 버전임.
