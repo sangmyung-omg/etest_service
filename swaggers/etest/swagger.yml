@@ -296,37 +296,64 @@ paths:
                   ]
 
   /userInfo/{id}:
-      put:
-        tags:
+    put:
+      tags:
+      - User
+      summary: 유저 정보 입력
+      description: 랜덤 생성된 유저 ID를 입력합니다.
+      parameters:
+      - name: id
+        in: path
+        description: 유저 아이디
+        required: true
+        schema:
+          type: string
+          format: string
+      responses:
+        200:
+          description: OK
+          content:
+            json:
+              schema:
+                type: object
+                example:
+                  resultMessage: Successfully updated
+        
+        500:
+          description: Server Side Exception of any kind 
+          content:
+            json:
+              schema:
+                type: object
+                example:
+                  resultMessage: Internal Server Error.
+  /registerUser:
+    put:
+      tags:
         - User
-        summary: 유저 정보 입력
-        description: 랜덤 생성된 유저 ID를 입력합니다.
-        parameters:
-        - name: id
-          in: path
-          description: 유저 아이디
-          required: true
-          schema:
-            type: string
-            format: string
-        responses:
-          200:
-            description: OK
-            content:
-              json:
-                schema:
-                  type: object
-                  example:
-                    resultMessage: Successfully updated
-         
-          500:
-            description: Server Side Exception of any kind 
-            content:
-              json:
-                schema:
-                  type: object
-                  example:
-                    resultMessage: Internal Server Error.
+      summary: 비회원을 회원으로 전환
+      description: 비회원일 때의 기록들을 회원 UUID로 변경
+      parameters:
+        - $ref: "#/components/parameters/Authorization"
+      requestBody:
+        $ref: "#/components/requestBodies/registerBody"
+      responses:
+        200:
+          description: OK
+          content:
+            json:
+              schema:
+                type: object
+                example:
+                  resultMessage: Successfully updated
+        500:
+          description: Server Side Exception of any kind 
+          content:
+            json:
+              schema:
+                type: object
+                example:
+                  resultMessage: Internal Server Error.
   /model/ukRel:
     get:
       tags:
@@ -968,4 +995,13 @@ components:
               NRUuid:
                 type: string
                 example: NR-0c966b66-0b06-11ec-9a03-0242ac130003
-
+    registerBody:
+      description: 비회원용 UUID 정보
+      required: true
+      content:
+        application/json:
+          schema:
+            properties:
+              NRUuid:
+                type: string
+                example: NR-0c966b66-0b06-11ec-9a03-0242ac130003
