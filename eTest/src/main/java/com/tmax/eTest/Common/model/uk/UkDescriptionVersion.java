@@ -21,6 +21,7 @@ public class UkDescriptionVersion {
     private Long versionId;
     private String ukName;
     private String ukDescription;
+    private String externalLink;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ukId", insertable = false, updatable = false, nullable = true)
