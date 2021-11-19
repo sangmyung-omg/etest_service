@@ -1,5 +1,7 @@
 package com.tmax.eTest.Common.model.uk;
 
+import java.sql.Timestamp;
+
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
@@ -22,6 +24,7 @@ public class UkDescriptionVersion {
     private String ukName;
     private String ukDescription;
     private String externalLink;
+    private Timestamp editDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ukId", insertable = false, updatable = false, nullable = true)
