@@ -17,5 +17,5 @@ public class BookDTO {
   private String description;
   private Integer hit;
   private boolean bookmark;
-  private String pdfSrc;
+  private String pdf;
 }

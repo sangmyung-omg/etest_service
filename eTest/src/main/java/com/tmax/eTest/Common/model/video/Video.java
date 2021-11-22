@@ -43,6 +43,7 @@ public class Video {
   private String type;
   private String related;
   private String description;
+  private String show;
 
   @ManyToOne(fetch = FetchType.EAGER)
   @JoinColumn(name = "curriculumId", insertable = false, updatable = false)

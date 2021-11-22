@@ -3,6 +3,8 @@ package com.tmax.eTest.Contents.controller;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -32,9 +34,11 @@ public class FileController {
   private static final String CONTETNS_PATH = "contents" + File.separator;
 
   @GetMapping("/file/**")
-  public void download(HttpServletRequest request, HttpServletResponse response) {
-    String filename = request.getRequestURI().split(request.getContextPath() + "/file/")[1];
+  public void download(HttpServletRequest request, HttpServletResponse response) throws UnsupportedEncodingException {
+    String originalFilename = request.getRequestURI().split(request.getContextPath() + "/file/")[1];
+    String filename = URLDecoder.decode(originalFilename, "UTF-8");
     String filePath = DEFAULT_PATH + CONTETNS_PATH + filename;
+
     log.info("File Download: " + filePath);
 
     File downloadFile = new File(filePath);

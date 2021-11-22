@@ -288,17 +288,25 @@ public class VideoService {
   public VideoDTO convertVideoJoinToDTO(VideoJoin videoJoin) {
     Video video = videoJoin.getVideo();
     String source = getSource(video.getCodeSet());
-    return convertVideoToDTO(video, source);
+    VideoDTO videoDTO = convertVideoToDTO(video, source);
+    videoDTO.setBookmark(!commonUtils.stringNullCheck(videoJoin.getUserUuid()));
+    return videoDTO;
   }
 
   public VideoDTO convertVideoJoinToDTO(VideoJoin videoJoin, String source) {
     Video video = videoJoin.getVideo();
-    return convertVideoToDTO(video, source);
+    VideoDTO videoDTO = convertVideoToDTO(video, source);
+    videoDTO.setBookmark(!commonUtils.stringNullCheck(videoJoin.getUserUuid()));
+    return videoDTO;
   }
 
   public ListDTO.Video convertVideoJoinToDTO(List<VideoJoin> videoJoins) {
-    List<Video> videos = videoJoins.stream().map(videoJoin -> videoJoin.getVideo()).collect(Collectors.toList());
-    return convertVideoToDTO(videos);
+    Map<String, String> sourceMap = getSources(
+        videoJoins.stream().map(videoJoin -> videoJoin.getVideo().getCodeSet()).collect(Collectors.toList()));
+    return new ListDTO.Video(videoJoins.size(),
+        videoJoins.stream()
+            .map(videoJoin -> this.convertVideoJoinToDTO(videoJoin, sourceMap.get(videoJoin.getVideo().getCodeSet())))
+            .collect(Collectors.toList()));
   }
 
   public ListDTO.Video convertVideoJoinToDTO(List<VideoJoin> videoJoins, Boolean recommended, Timestamp diagnosisDate,

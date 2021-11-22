@@ -7,6 +7,7 @@ import static com.tmax.eTest.Common.model.video.QVideoBookmark.videoBookmark;
 import static com.tmax.eTest.Common.model.video.QVideoHashtag.videoHashtag;
 import static com.tmax.eTest.Common.model.video.QVideoUkRel.videoUkRel;
 
+import java.sql.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -15,6 +16,7 @@ import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.CaseBuilder;
+import com.querydsl.core.types.dsl.DateExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.jpa.JPAExpressions;
@@ -42,6 +44,20 @@ public class VideoRepositorySupport extends QuerydslRepositorySupport {
 
   private QuerydslUtils querydslUtils;
 
+  public enum Show {
+    TRUE("1"), FALSE("0");
+
+    private final String value;
+
+    Show(String value) {
+      this.value = value;
+    }
+
+    public String value() {
+      return value;
+    }
+  }
+
   public VideoRepositorySupport(JPAQueryFactory query, CommonUtils commonUtils, QuerydslUtils querydslUtils) {
     super(Video.class);
     this.query = query;
@@ -52,14 +68,16 @@ public class VideoRepositorySupport extends QuerydslRepositorySupport {
   public JPAQuery<Video> multipleFetchJoin() {
     return query.select(video).from(video).join(video.videoCurriculum).fetchJoin().leftJoin(video.videoHit).fetchJoin()
         .leftJoin(video.videoHashtags, videoHashtag).fetchJoin().leftJoin(videoHashtag.hashtag, hashtag).fetchJoin()
-        .leftJoin(video.videoUks, videoUkRel).fetchJoin().leftJoin(videoUkRel.ukMaster, ukMaster).fetchJoin();
+        .leftJoin(video.videoUks, videoUkRel).fetchJoin().leftJoin(videoUkRel.ukMaster, ukMaster).fetchJoin()
+        .where(checkShow());
   }
 
   public JPAQuery<Tuple> multipleBookmarkFetchJoin() {
     return query.select(video, videoBookmark.userUuid).from(video).join(video.videoCurriculum).fetchJoin()
         .join(video.videoHit).fetchJoin().leftJoin(video.videoHashtags, videoHashtag).fetchJoin()
         .leftJoin(videoHashtag.hashtag, hashtag).fetchJoin().leftJoin(video.videoUks, videoUkRel).fetchJoin()
-        .leftJoin(videoUkRel.ukMaster, ukMaster).fetchJoin().leftJoin(video.videoBookmarks, videoBookmark).fetchJoin();
+        .leftJoin(videoUkRel.ukMaster, ukMaster).fetchJoin().leftJoin(video.videoBookmarks, videoBookmark).fetchJoin()
+        .where(checkShow());
   }
 
   public Video findVideoById(String videoId) {
@@ -98,17 +116,17 @@ public class VideoRepositorySupport extends QuerydslRepositorySupport {
 
   public OrderSpecifier<?>[] getVideoSortedColumn(SortType sort) {
     switch (sort.name()) {
-      case "DATE":
-        return new OrderSpecifier[] { querydslUtils.getSortedColumn(Order.DESC, video, "registerDate"),
-            querydslUtils.getSortedColumn(Order.DESC, video, "createDate"),
-            querydslUtils.getSortedColumn(Order.ASC, video, "sequence") };
-      case "HIT":
-        return new OrderSpecifier[] { querydslUtils.getSortedColumn(Order.DESC, video, "videoHit.hit") };
-      case "RECOMMEND":
-      case "SEQUENCE":
-        return new OrderSpecifier[] { querydslUtils.getSortedColumn(Order.ASC, video, "sequence") };
-      default:
-        throw new ContentsException(ErrorCode.TYPE_ERROR, sort.name() + ": type not provided!");
+    case "DATE":
+      return new OrderSpecifier[] { querydslUtils.getSortedColumn(Order.DESC, video, "registerDate"),
+          querydslUtils.getSortedColumn(Order.DESC, video, "createDate"),
+          querydslUtils.getSortedColumn(Order.ASC, video, "sequence") };
+    case "HIT":
+      return new OrderSpecifier[] { querydslUtils.getSortedColumn(Order.DESC, video, "videoHit.hit") };
+    case "RECOMMEND":
+    case "SEQUENCE":
+      return new OrderSpecifier[] { querydslUtils.getSortedColumn(Order.ASC, video, "sequence") };
+    default:
+      throw new ContentsException(ErrorCode.TYPE_ERROR, sort.name() + ": type not provided!");
     }
   }
 
@@ -147,6 +165,11 @@ public class VideoRepositorySupport extends QuerydslRepositorySupport {
                     videoUkRel.ukMaster.ukName.contains(keyword))))
             .or(video.videoHashtags.any().in(JPAExpressions.selectFrom(videoHashtag).where(videoHashtag.video.eq(video),
                 videoHashtag.hashtag.name.contains(keyword))));
+  }
+
+  private BooleanExpression checkShow() {
+    return video.show.eq(Show.TRUE.value())
+        .and(DateExpression.currentDate(Date.class).between(video.registerDate, video.endDate));
   }
 
   private VideoJoin tupleToJoin(Tuple tuple) {

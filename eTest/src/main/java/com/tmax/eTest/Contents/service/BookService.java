@@ -130,14 +130,9 @@ public class BookService {
   }
 
   public BookDTO convertBookToDTO(Book book) {
-    final String INDEX_HTML = "index.html";
-    final String PDF = "pdf/";
-    String pdfSrc = book.getBookSrc().replace(INDEX_HTML, "") + PDF;
-    log.info(pdfSrc);
-
     return BookDTO.builder().bookId(book.getBookId()).bookSrc(book.getBookSrc()).title(book.getTitle())
         .createDate(book.getCreateDate().toString()).creatorId(book.getCreatorId()).imgSrc(book.getImgSrc())
-        .description(book.getDescription()).hit(book.getBookHit().getHit()).pdfSrc(pdfSrc).build();
+        .description(book.getDescription()).hit(book.getBookHit().getHit()).pdf(book.getPdf()).build();
   }
 
   public ListDTO.Book convertBookToDTO(List<Book> books) {
@@ -147,11 +142,13 @@ public class BookService {
 
   public BookDTO convertBookJoinToDTO(BookJoin bookJoin) {
     Book book = bookJoin.getBook();
-    return convertBookToDTO(book);
+    BookDTO bookDTO = convertBookToDTO(book);
+    bookDTO.setBookmark(!commonUtils.stringNullCheck(bookJoin.getUserUuid()));
+    return bookDTO;
   }
 
   public ListDTO.Book convertBookJoinToDTO(List<BookJoin> bookJoins) {
-    List<Book> books = bookJoins.stream().map(bookJoin -> bookJoin.getBook()).collect(Collectors.toList());
-    return convertBookToDTO(books);
+    return new ListDTO.Book(bookJoins.size(),
+        bookJoins.stream().map(bookJoin -> convertBookJoinToDTO(bookJoin)).collect(Collectors.toList()));
   }
 }

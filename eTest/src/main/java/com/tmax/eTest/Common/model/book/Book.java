@@ -31,6 +31,7 @@ public class Book {
   private String description;
   private Date createDate;
   private String creatorId;
+  private String pdf;
 
   @OneToOne(fetch = FetchType.EAGER)
   @JoinColumn(name = "bookId")

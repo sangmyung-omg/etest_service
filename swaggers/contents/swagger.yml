@@ -1113,8 +1113,9 @@ components:
           type: string
         imgSrc: 
           type: string
-        pdfSrc:
+        pdf:
           type: string
+          description: JSON Array
         description: 
           type: string
         hit:
