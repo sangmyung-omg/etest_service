@@ -271,8 +271,9 @@ public class VideoService {
                 ? VideoType.YOUTUBE.toString()
                 : VideoType.SELF.toString())
         .source(source).description(video.getDescription())
-        .uks(video.getVideoUks().stream().map(videoUks -> videoUks.getUkMaster().getUkName())
-            .collect(Collectors.toList()))
+        // .uks(video.getVideoUks().stream().map(videoUks ->
+        // videoUks.getUkMaster().getUkName())
+        // .collect(Collectors.toList()))
         .hashtags(video.getVideoHashtags().stream().map(videoHashtags -> videoHashtags.getHashtag().getName())
             .collect(Collectors.toList()))
         .build();
