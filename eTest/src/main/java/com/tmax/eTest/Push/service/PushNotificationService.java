@@ -48,15 +48,21 @@ public class PushNotificationService {
 
     @PostConstruct
     public void firebaseSetting() throws IOException {
-        GoogleCredentials googleCredentials = GoogleCredentials.fromStream(
-                new ClassPathResource(firebaseAdminSdkCredentials).getInputStream())
-                .createScoped((Arrays.asList(fireBaseCreateScoped)));
+        if (!new ClassPathResource(firebaseAdminSdkCredentials).exists()) {
+            logger.error("Firebase admin sdk credentials not exists.");
+            logger.error("Firebase Cloud Messaging service might not work.");
+        }
+        else{
+            GoogleCredentials googleCredentials = GoogleCredentials.fromStream(
+                    new ClassPathResource(firebaseAdminSdkCredentials).getInputStream())
+                    .createScoped((Arrays.asList(fireBaseCreateScoped)));
 
-        FirebaseOptions secondaryAppConfig = FirebaseOptions.builder()
-                .setCredentials(googleCredentials)
-                .build();
-        FirebaseApp app = FirebaseApp.initializeApp(secondaryAppConfig);
-        this.instance = FirebaseMessaging.getInstance(app);
+            FirebaseOptions secondaryAppConfig = FirebaseOptions.builder()
+                    .setCredentials(googleCredentials)
+                    .build();
+            FirebaseApp app = FirebaseApp.initializeApp(secondaryAppConfig);
+            this.instance = FirebaseMessaging.getInstance(app);
+        }
     }
 
     public String sendMessage(Message message) throws FirebaseMessagingException {
