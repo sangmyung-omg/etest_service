@@ -25,6 +25,7 @@ public class GetStatementInfoDTO {
 	public Integer recentStatementNum;
 	public List<String> sourceTypeList;
 	public List<String> userIdList;
+	public List<String> sourceIdList;
 	public List<String> containExtension;
 
 	public boolean pushUserId(String id) {
@@ -32,6 +33,14 @@ public class GetStatementInfoDTO {
 			userIdList = new ArrayList<String>();
 
 		return userIdList.add(id);
+	}
+	
+	public boolean pushSourceId(String sourceId)
+	{
+		if (sourceIdList == null)
+			sourceIdList = new ArrayList<String>();
+
+		return sourceIdList.add(sourceId);
 	}
 
 	public boolean pushSourceType(String sourceType) {

@@ -120,4 +120,29 @@ public class StatementService {
 			return false;
 	}
 	
+	// sourceId == nullable
+	public boolean setStatementDisable(String userId, String sourceType, String sourceId)
+	{
+		if(userId != null && sourceType != null)
+		{
+			GetStatementInfoDTO searchInfo = new GetStatementInfoDTO();
+			searchInfo.pushUserId(userId);
+			searchInfo.pushSourceType(sourceType);
+			
+			if(sourceId != null)
+				searchInfo.pushSourceId(sourceId);
+			
+			List<Statement> statements = statementRepo.findAll(StatementSpecs.searchStatement(searchInfo, false, false));
+			
+			for(Statement dao : statements)
+				dao.setIsDeleted(1);
+			
+			statementRepo.saveAll(statements);
+
+			return true;
+		}
+		else
+			return false;
+	}
+	
 }

@@ -39,6 +39,19 @@ public class LRSAPIManager {
 		return statementService.updateUserID(recentUserID, changeUserID);
 	}
 	
+	// if videoId == null => all bound
+	public boolean disableVideoStatement(String userId, String videoId)
+	{
+		return statementService.setStatementDisable(userId, "video", videoId);
+	}
+	
+	// if article == null => all bound
+	public boolean disableArticleStatement(String userId, String articleId)
+	{
+		return statementService.setStatementDisable(userId, "article", articleId);
+	}
+	
+	
 
 	public LRSAPIManager() {
 	}

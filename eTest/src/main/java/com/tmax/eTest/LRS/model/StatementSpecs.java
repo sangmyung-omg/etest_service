@@ -55,6 +55,12 @@ public class StatementSpecs {
                     root.get("actionType"),
                     builder));
             
+            if(searchInfo.getSourceIdList() != null)
+            	results.add(getPredByStrList(
+                        searchInfo.getSourceIdList(),
+                        root.get("sourceId"),
+                        builder));
+            
             
             if(searchInfo.getDateFromObj() != null 
                 || searchInfo.getDateToObj() != null)
