@@ -45,4 +45,7 @@ public class UkMaster {
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "ukMaster", cascade = CascadeType.ALL, orphanRemoval = true)
 	private Set<ArticleUkRel> articleUks = new LinkedHashSet<ArticleUkRel>();
+
+	@OneToMany(mappedBy = "ukId")
+	private List<UkDescriptionVersion> ukVersion = new ArrayList<UkDescriptionVersion>();
 }
