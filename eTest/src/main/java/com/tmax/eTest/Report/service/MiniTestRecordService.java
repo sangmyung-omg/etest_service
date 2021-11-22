@@ -13,6 +13,7 @@ import com.tmax.eTest.Report.dto.MiniTestRecordDTO;
 import com.tmax.eTest.Report.util.ReportCacheType;
 import com.tmax.eTest.Report.util.SNDCalculator;
 import com.tmax.eTest.Report.util.minitest.PartMapper;
+import com.tmax.eTest.Test.util.UkVersionManager;
 import com.tmax.eTest.Common.repository.report.MinitestReportRepo;
 import com.tmax.eTest.Common.repository.report.ReportCacheRepo;
 import com.tmax.eTest.Common.model.report.MinitestReport;
@@ -20,9 +21,11 @@ import com.tmax.eTest.Common.model.report.ReportCache;
 import com.tmax.eTest.Common.model.report.ReportCacheKey;
 import com.tmax.eTest.Report.dto.minitest.PartInfoDTO;
 import com.tmax.eTest.Report.dto.minitest.PartDataDTO;
-
+import com.tmax.eTest.Common.repository.uk.UkDescriptionVersionRepo;
 import com.tmax.eTest.Common.repository.uk.UkMasterRepo;
 import com.tmax.eTest.Common.repository.user.UserMasterRepo;
+import com.tmax.eTest.Common.model.uk.UkDescriptionVersion;
+import com.tmax.eTest.Common.model.uk.UkDescriptionVersionCompositeKey;
 import com.tmax.eTest.Common.model.uk.UkMaster;
 import com.tmax.eTest.Common.model.user.UserMaster;
 
@@ -78,6 +81,8 @@ public class MiniTestRecordService {
 	@Autowired private MinitestReportRepo reportRepo;
 
 	@Autowired private UkMasterRepo ukMasterRepo;
+	
+	@Autowired private UkDescriptionVersionRepo ukDescriptionRepo;
 
 	@Autowired private UserMasterRepo userMasterRepo;
 
@@ -159,7 +164,7 @@ public class MiniTestRecordService {
 							.build();
 	}
 
-	private PartDataDTO buildPartDataV2(JsonArray mastery, String partname, Map<Integer, UkMaster> ukDetailMap){
+	private PartDataDTO buildPartDataV2(JsonArray mastery, String partname, Map<Long, UkDescriptionVersion> ukDetailMap){
 		PartDataDTO output = buildPartDataV2(mastery, ukDetailMap);
 
 		//if null
@@ -170,7 +175,7 @@ public class MiniTestRecordService {
 		return output;
 	}
 
-	private PartDataDTO buildPartDataV2(JsonArray mastery, Map<Integer, UkMaster> ukDetailMap){
+	private PartDataDTO buildPartDataV2(JsonArray mastery, Map<Long, UkDescriptionVersion> ukDetailMap){
 		//Parse raw data
 		Type typeLLS = new TypeToken< List<List<String>> >(){}.getType();
 		List<List<String>> ukDataList = null;
@@ -191,11 +196,11 @@ public class MiniTestRecordService {
 		
 		List<List<String>> ukInfo = ukDataList.stream().parallel()
 											  .flatMap(data -> {
-													Integer ukId = null;
-													try{ukId = Integer.parseInt(data.get(0));}
+													Long ukId = null;
+													try{ukId = Long.parseLong(data.get(0));}
 													catch(NumberFormatException e){log.warn("ukid parse error. {}", data.toString());return Stream.empty();}
 
-													UkMaster uk = ukDetailMap.get(ukId);
+													UkDescriptionVersion uk = ukDetailMap.get(ukId);
 													if(uk == null)
 														return Stream.empty();
 													
@@ -337,8 +342,51 @@ public class MiniTestRecordService {
 		.collect(Collectors.toSet());
 
 		//From the uk Id set get the uk infos
+		
 		return ukMasterRepo.findAllById(ukIdSet).stream()
 							.collect(Collectors.toMap(UkMaster::getUkId, uk -> uk));
+
+	}
+	
+	private Map<Long, UkDescriptionVersion> createUkDetailMapV2(JsonObject masteryMap) {
+		// Map<Integer, UkMaster> outputMap = new HashMap<>();
+
+		//Get part mastery list from info
+		Set<UkDescriptionVersionCompositeKey> ukIdSet = PartMapper.map.keySet().stream().flatMap(key -> {
+			JsonArray masteryArray = (JsonArray)masteryMap.get(key);
+			if(masteryArray == null){
+				log.error("No key found for mastery map key {}", key);
+				return Stream.empty();
+			}
+
+			//Parse the mastery Array and return id Set
+			Type typeLLS = new TypeToken< List<List<String>> >(){}.getType();
+			List<List<String>> ukDataList = null;
+			try{ukDataList =  new Gson().fromJson(masteryArray, typeLLS);}
+			catch(JsonSyntaxException e){log.error("mastery parse error {}", masteryArray.toString()); return null;}
+		
+			//Filter invalid entries
+			ukDataList = ukDataList.stream().filter(data -> data.size() == 3).collect(Collectors.toList());
+
+			//Get all ukIdList
+			return ukDataList.stream().parallel()
+										.flatMap(data -> {
+											try{												
+												UkDescriptionVersionCompositeKey ukKey = new UkDescriptionVersionCompositeKey();
+												ukKey.setUkId(Long.parseLong(data.get(0)));
+												ukKey.setVersionId(UkVersionManager.currentUkVersionId);
+												
+												return Stream.of(ukKey);}
+											catch(NumberFormatException e){log.error("uk id parse error {}", data.toString()); return Stream.empty();}
+										}).collect(Collectors.toSet()).stream();
+		})
+		.collect(Collectors.toSet());
+
+		//From the uk Id set get the uk infos
+		
+		
+		return ukDescriptionRepo.findAllById(ukIdSet).stream()
+							.collect(Collectors.toMap(UkDescriptionVersion::getUkId, uk -> uk));
 
 	}
 
@@ -430,7 +478,8 @@ public class MiniTestRecordService {
 				JsonObject masteryMap = (JsonObject)JsonParser.parseString(minitestMastery);
 
 				//Build and collect uk info map at once
-				Map<Integer, UkMaster> ukDetailMap = createUkDetailMap(masteryMap);
+				//Map<Integer, UkMaster> ukDetailMap = createUkDetailMap(masteryMap);
+				Map<Long, UkDescriptionVersion> ukDetailMap = createUkDetailMapV2(masteryMap);
 
 				//Make readable map first
 				partInfoReadable = PartMapper.map.keySet().stream().map(key -> {
