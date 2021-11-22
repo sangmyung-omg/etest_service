@@ -21,6 +21,7 @@ public class VersionMaster {
     private Timestamp createDate;
     private Timestamp editDate;
     private String isDefault;
+    private String isDeleted;
 
     @OneToMany(mappedBy = "versionId")
     private List<UkDescriptionVersion> ukVersion;
