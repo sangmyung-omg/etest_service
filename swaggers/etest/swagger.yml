@@ -114,7 +114,7 @@ paths:
           content:
             json:
               schema:
-                $ref: "#/components/schemas/answerCheckResult"
+                $ref: "#/components/schemas/quitResult"
   /test/v1/diagnosis:
     get:
       tags: [Test]
@@ -686,6 +686,12 @@ components:
             - 1
             - 0
             - -1
+    quitResult:
+      type: object
+      properties:
+        resultMessage:
+          type: string
+          example: "Successfully returned"
     ukRelResult:
       type: object
       properties:
