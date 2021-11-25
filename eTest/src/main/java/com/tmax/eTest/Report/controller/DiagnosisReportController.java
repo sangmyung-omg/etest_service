@@ -24,6 +24,7 @@ import com.tmax.eTest.Report.service.DiagnosisDetailRecordService;
 import com.tmax.eTest.Report.service.DiagnosisMainRecordService;
 import com.tmax.eTest.Report.service.DiagnosisReportService;
 import com.tmax.eTest.Report.service.DiagnosisVideoService;
+import com.tmax.eTest.Report.util.diagnosis.CommentMapper;
 import com.tmax.eTest.Test.service.UserInfoService;
 
 import io.jsonwebtoken.ExpiredJwtException;
@@ -52,6 +53,8 @@ public class DiagnosisReportController {
 	@Autowired
 	JwtTokenUtil jwtTokenUtil;
 	
+	@Autowired
+	CommentMapper commentMapper;
 
 	@Deprecated
 	@GetMapping(value="/saveResult/{probSetId}", produces = "application/json; charset=utf-8")
@@ -63,6 +66,15 @@ public class DiagnosisReportController {
 		boolean output = selfDiagnosisReportService.saveDiagnosisResult(id, probSetId);
 //		selfDiagnosisReportService.test();
 		return true;
+	}
+	
+	@PutMapping(value="/comment", produces = "application/json; charset=utf-8")
+	public ResponseEntity<?> updateComment(
+			HttpServletRequest request) throws Exception{
+		
+		commentMapper.initRoutine();
+				
+		return ResponseEntity.ok().body(true);
 	}
 	
 	@DeleteMapping(value="/record", produces = "application/json; charset=utf-8")
@@ -94,6 +106,7 @@ public class DiagnosisReportController {
 		return output;
 	}
 	
+	// risk 가져올 때, 고정. / invest 엔 고정 없음.
 	@GetMapping(value="/record/{probSetId}/{partName}", produces = "application/json; charset=utf-8")
 	public DiagnosisRecordDetailDTO diagnosisRecordDetail(
 			HttpServletRequest request,
