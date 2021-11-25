@@ -274,48 +274,88 @@ paths:
           content:
             schema:
               example: true
-  /report/miniTestResult/{id}:
+  /report/minitest:
     get:
       tags:
-      - Self Diagnosis Report
+      - Minitest Report
       summary: 미니 테스트 리포트의 정보를 가져옵니다.
-      description: 투자 지식 평가 점수, 백분율, Part 별 이해도, 취약 영역 상세, 지식문제 수준 진단 기록을 가져옵니다. UX 예시와 값을 대체로 맞췄으니 참고하여 해당 값들의 역할을 파악 바랍니다.
+      description: 투자 지식 평가 점수, 백분율, Part 별 이해도, 취약 영역 상세, 지식문제 수준 진단 기록을 가져옵니다.
       parameters:
-      - name: id
-        in: path
-        description: 유저 ID
+      - name: probSetId
+        in: query
+        description: 미니 테스트 문제 Set ID
         required: true
         schema:
           type: string
           format: string
+      - name: usecache
+        in: query
+        description: 캐시 데이터 사용 여부. (첫 생성때엔 X 생성된 Report를 참조할땐 사용 가능)
+        required: true
+        schema:
+          type: boolean
+      - $ref: "#/components/parameters/Authorization"
       responses:
         200:
           description: OK
           content:
             json:
               schema:
-                type: object
-                example:
-                  score: 70
-                  percentage: 88
-                  partUnderstanding: [
-                    ["필요자금 마련방법", "C", "50"],
-                    ["생애주기", "A", "89"],
-                    ["가치변화의 요인", "F", "10"]
-                  ]
-                  weakPartDetail: [
-                    ["파트 5 상세 1", "F", "C"],
-                    ["파트 5 상세 2", "F", "C"],
-                    ["파트 5 상세 3", "F", "C"],
-                    ["파트 5 상세 4", "F", "C"],
-                    ["파트 5 상세 5", "F", "C"]
-                  ]
-                  diagnosisQuestionInfo: [
-                    ["맞은 문제 ID", "2", "3", "4", "5"],
-                    ["틀린 문제 ID", "7", "8"],
-                    ["모르는 문제 ID", "9", "10"]
-                  ]
-
+                $ref: "#/components/schemas/MiniTestRecordDTO"
+    put:
+      tags:
+      - Minitest Report
+      summary: 미니 테스트 리포트의 정보를 업데이트 후 가져옵니다.
+      description: 이미 생성된 미니 테스트 리포트라도 강제로 업데이트를 시킬 수 있는 API입니다. UK의 변경 과 같은, 미니 테스트 리포트 내에서 사용되는 데이터의 변경이 있을 시 사용됩니다.
+      parameters:
+      - name: probSetId
+        in: query
+        description: 업데이트 및 가져오려는 미니 테스트 리포트의 문제 Set ID
+        required: true
+        schema:
+          type: string
+          format: string
+      - name: forceUpdate
+        in: query
+        description: 강제 업데이트 여부. (true 시, 이미 생성된 미니 테스트 리포트 정보 재생성(변경될 가능성 있음))
+        required: true
+        schema:
+          type: boolean
+      - name: usecache
+        in: query
+        description: 캐시 데이터 사용 여부. (첫 생성때엔 X 생성된 Report를 참조할땐 사용 가능)
+        required: true
+        schema:
+          type: boolean
+      - $ref: "#/components/parameters/Authorization"
+      responses:
+        200:
+          description: OK
+          content:
+            json:
+              schema:
+                 $ref: "#/components/schemas/MiniTestRecordDTO"
+    delete:
+      tags:
+      - Minitest Report
+      summary: 미니 테스트 리포트를 삭제합니다.
+      description: 제공 받은 미니 테스트 문제 Set ID에 해당되는 미니 테스트 리포트를 삭제합니다.
+      parameters:
+      - name: probSetId
+        in: query
+        description: 미니 테스트 문제 Set ID
+        required: true
+        schema:
+          type: string
+          format: string
+      - $ref: "#/components/parameters/Authorization"
+      responses:
+        200:
+          description: OK
+          content:
+            json:
+              schema:
+                type: boolean
   /userInfo/{id}:
     put:
       tags:
@@ -818,54 +858,54 @@ components:
                   type: string
                   example : 해당 파트 간략 코멘트
                   description: 투자기초부터 탄탄한 학습이 필요한 주린이
-            problemCorrectInfo:
-              type: object
-              properties:
-                allCorr:
-                  type: integer
-                  description: 모든 문제 중 맞은 갯수
-                  example: 3
-                allProb:
-                  type: integer
-                  description: 모든 문제 갯수
-                  example: 12
-                high:
-                  type: string
-                  description: 난이도 상, '정답 맞은 갯수 / 모든 문제' 형태의 string
-                  example: '1/1'
-                middle:
-                  type: string
-                  description: 난이도 중, '정답 맞은 갯수 / 모든 문제' 형태의 string
-                  example: '1/6'
-                low:
-                  type: string
-                  description: 난이도 하, '정답 맞은 갯수 / 모든 문제' 형태의 string
-                  example: '1/5'
-              description: 지식 이해(knowledge) 파트 일 경우 활성화. 문제 정오답에 대한 정보 Object
-            problemHighLevelInfo:
-              type: array
-              items:
-                type: array
-                items:
-                  type: string
-                  example: [문제 index, 문제 UUID, 정오답 여부(true or false), 문제 내용, 난이도, 출제의도]
-              description: 난이도 상, 유저가 푼 문제 정보
-            problemMiddleLevelInfo:
-              type: array
-              items:
-                type: array
-                items:
-                  type: string
-                  example: [문제 index, 문제 UUID, 정오답 여부(true or false), 문제 내용, 난이도, 출제의도]
-              description: 난이도 중, 유저가 푼 문제 정보
-            problemLowLevelInfo:
-              type: array
-              items:
-                type: array
-                items:
-                  type: string
-                  example: [문제 index, 문제 UUID, 정오답 여부(true or false), 문제 내용, 난이도, 출제의도]
-              description: 난이도 하, 유저가 푼 문제 정보  
+        problemCorrectInfo:
+          type: object
+          properties:
+            allCorr:
+              type: integer
+              description: 모든 문제 중 맞은 갯수
+              example: 3
+            allProb:
+              type: integer
+              description: 모든 문제 갯수
+              example: 12
+            high:
+              type: string
+              description: 난이도 상, '정답 맞은 갯수 / 모든 문제' 형태의 string
+              example: '1/1'
+            middle:
+              type: string
+              description: 난이도 중, '정답 맞은 갯수 / 모든 문제' 형태의 string
+              example: '1/6'
+            low:
+              type: string
+              description: 난이도 하, '정답 맞은 갯수 / 모든 문제' 형태의 string
+              example: '1/5'
+          description: 지식 이해(knowledge) 파트 일 경우 활성화. 문제 정오답에 대한 정보 Object
+        problemHighLevelInfo:
+          type: array
+          items:
+            type: array
+            items:
+              type: string
+              example: [문제 index, 문제 UUID, 정오답 여부(true or false), 문제 내용, 난이도, 출제의도]
+          description: 난이도 상, 유저가 푼 문제 정보
+        problemMiddleLevelInfo:
+          type: array
+          items:
+            type: array
+            items:
+              type: string
+              example: [문제 index, 문제 UUID, 정오답 여부(true or false), 문제 내용, 난이도, 출제의도]
+          description: 난이도 중, 유저가 푼 문제 정보
+        problemLowLevelInfo:
+          type: array
+          items:
+            type: array
+            items:
+              type: string
+              example: [문제 index, 문제 UUID, 정오답 여부(true or false), 문제 내용, 난이도, 출제의도]
+          description: 난이도 하, 유저가 푼 문제 정보  
     DiagnosisRecordDetailDTO:
       type: object
       properties:
@@ -923,6 +963,117 @@ components:
                     type: string
                 description: 각 파트의 UK 상세 점수 리스트
           description: 해당 파트의 점수 및 코멘트
+    PartInfoDTO:
+      type: object
+      properties:
+        part1:
+          $ref: "#/components/schemas/PartDataDTO"
+        part2:
+          $ref: "#/components/schemas/PartDataDTO"
+        part3:
+          $ref: "#/components/schemas/PartDataDTO"
+        part4:
+          $ref: "#/components/schemas/PartDataDTO"
+        part5:
+          $ref: "#/components/schemas/PartDataDTO"
+    PartDataDTO:
+      type: object
+      properties:
+        partName:
+          type: string
+          example: 금융투자 이해&금융투자 기본
+          description: 해당 파트 이름.
+        score:
+          type: number
+          example: 50
+          description: 해당 파트 평균 이해도 점수
+        percentage:
+          type: number
+          example: 58
+          description: 해당 파트 평균 이해도 점수에 대한 퍼센테이지. (ex 상위 58%)
+        ukInfo:
+          type: array
+          items:
+            type: array
+            example: ["부당권유", "37.6529"]
+            items:
+              type: string
+          description: 각 파트의 UK 상세 점수 리스트
+        
+    MiniTestRecordDTO:
+      type: object
+      properties:
+        totalScore:
+          type: integer
+          example: 85
+          description: 미니 진단 평균 점수.
+        totalPercentage:
+          type: integer
+          example: 15
+          description: 미니 진단 평균 점수 퍼센테이지. (ex 상위 15%)
+        userName:
+          type: string
+          example: '홍길동'
+          description: 해당 유저의 닉네임.
+        totalComment:
+          type: string
+          example: 주식투자를 시작한지 얼마 되지 않거나, 아직은 주식투자에 익숙하지 않으신가요?
+          description: 미니 진단 평균 점수에 따른 코멘트.
+        alarm:
+          type: boolean
+          example: true
+          description: 자가 진단 알람 여부.
+        partInfo:
+          $ref: "#/components/schemas/PartInfoDTO"
+          description: 각 파트별 점수 및 코멘트 정보(투자기본, 투자상품, 가치평가, 투자태도, 선택관리)
+        problemCorrectInfo:
+          type: object
+          properties:
+            allCorr:
+              type: integer
+              description: 모든 문제 중 맞은 갯수
+              example: 3
+            allProb:
+              type: integer
+              description: 모든 문제 갯수
+              example: 12
+            high:
+              type: string
+              description: 난이도 상, '정답 맞은 갯수 / 모든 문제' 형태의 string
+              example: '1/1'
+            middle:
+              type: string
+              description: 난이도 중, '정답 맞은 갯수 / 모든 문제' 형태의 string
+              example: '1/6'
+            low:
+              type: string
+              description: 난이도 하, '정답 맞은 갯수 / 모든 문제' 형태의 string
+              example: '1/5'
+          description: 지식 이해(knowledge) 파트 일 경우 활성화. 문제 정오답에 대한 정보 Object
+        problemHighLevelInfo:
+          type: array
+          items:
+            type: array
+            items:
+              type: string
+              example: [문제 index, 문제 UUID, 정오답 여부(true or false), 문제 내용, 난이도, 출제의도]
+          description: 난이도 상, 유저가 푼 문제 정보
+        problemMiddleLevelInfo:
+          type: array
+          items:
+            type: array
+            items:
+              type: string
+              example: [문제 index, 문제 UUID, 정오답 여부(true or false), 문제 내용, 난이도, 출제의도]
+          description: 난이도 중, 유저가 푼 문제 정보
+        problemLowLevelInfo:
+          type: array
+          items:
+            type: array
+            items:
+              type: string
+              example: [문제 index, 문제 UUID, 정오답 여부(true or false), 문제 내용, 난이도, 출제의도]
+          description: 난이도 하, 유저가 푼 문제 정보 
   parameters:
     userId:
       in: query
