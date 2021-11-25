@@ -7,6 +7,7 @@ import com.google.firebase.messaging.*;
 import com.tmax.eTest.Push.dto.AdminPushRequestDTO;
 import com.tmax.eTest.Push.dto.CategoryPushRequestDTO;
 import com.tmax.eTest.Push.dto.UserNotificationConfigEditDTO;
+import com.tmax.eTest.Push.dto.UserNotificationConfigInfoDTO;
 import com.tmax.eTest.Push.model.UserNotificationConfig;
 import com.tmax.eTest.Push.repository.*;
 import io.jsonwebtoken.Jwts;
@@ -210,6 +211,17 @@ public class PushNotificationService {
 
     public List<com.tmax.eTest.Push.model.Notification> getNotificationListByToken(String token) {
         return notificationRepository.findAllByToken(token);
+    }
+
+    public UserNotificationConfigInfoDTO getUserNotificationConfigByJwtToken(String jwtToken) {
+        String userUuid = Jwts.parser().setSigningKey(secret).parseClaimsJws(jwtToken.substring(7)).getBody().get("userUuid").toString();
+        UserNotificationConfig userNotificationConfig = userNotificationConfigRepositorySupport.getUserNotificationConfigByUserUuid(userUuid).get(0);
+        return UserNotificationConfigInfoDTO.builder()
+                .global(userNotificationConfig.getGlobal())
+                .notice(userNotificationConfig.getNotice())
+                .inquiry(userNotificationConfig.getInquiry())
+                .content(userNotificationConfig.getContent())
+                .build();
     }
 
     public void notificationRead(Long id) {

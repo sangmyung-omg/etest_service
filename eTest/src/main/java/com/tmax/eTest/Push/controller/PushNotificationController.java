@@ -38,6 +38,11 @@ public class PushNotificationController {
         pushNotificationService.linkTokenWithUserUuid(jwtToken, token);
     }
 
+    @GetMapping("push/config")
+    public ResponseEntity<?> getUserNotificationConfigByJwtToken(@RequestHeader(value = "Authorization") String jwtToken){
+        return new ResponseEntity<>(pushNotificationService.getUserNotificationConfigByJwtToken(jwtToken), HttpStatus.OK);
+    }
+
     @PutMapping("push/config/edit")
     public void editNotificationConfig(@RequestBody UserNotificationConfigEditDTO editData) {
         pushNotificationService.editNotificationConfig(editData);
