@@ -9,6 +9,7 @@ import com.tmax.eTest.Push.dto.CategoryPushRequestDTO;
 import com.tmax.eTest.Push.dto.UserNotificationConfigEditDTO;
 import com.tmax.eTest.Push.model.UserNotificationConfig;
 import com.tmax.eTest.Push.repository.*;
+import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,6 +35,9 @@ public class PushNotificationService {
     private final UserNotificationConfigRepositorySupport userNotificationConfigRepositorySupport;
     private final NotificationRepository notificationRepository;
     private Logger logger = LoggerFactory.getLogger(PushNotificationService.class);
+
+    @Value("${jwt.secret}")
+    private String secret;
 
     @Value("${firebase.admin-sdk-credentials}")
     String firebaseAdminSdkCredentials;
@@ -192,6 +196,11 @@ public class PushNotificationService {
                     break;
             }
         userNotificationConfigRepository.saveAll(userNotificationConfigList);
+    }
+
+    public List<com.tmax.eTest.Push.model.Notification> getNotificationListByJwtToken(String jwtToken) {
+        String userUuid = Jwts.parser().setSigningKey(secret).parseClaimsJws(jwtToken.substring(7)).getBody().get("userUuid").toString();
+        return getNotificationListByUserUuid(userUuid);
     }
 
     public List<com.tmax.eTest.Push.model.Notification> getNotificationListByUserUuid(String userUuid) {

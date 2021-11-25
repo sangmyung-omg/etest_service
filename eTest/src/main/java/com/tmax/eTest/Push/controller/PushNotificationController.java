@@ -44,16 +44,8 @@ public class PushNotificationController {
     }
 
     @GetMapping("notification/list")
-    public ResponseEntity<?> getNotificationList (
-            @RequestParam(required = false) String userUuid,
-            @RequestParam(required = false) String token) throws Exception {
-        if (userUuid != null & token == null)
-            return new ResponseEntity<>(pushNotificationService.getNotificationListByUserUuid(userUuid), HttpStatus.OK);
-        else if (userUuid == null & token != null)
-            return new ResponseEntity<>(pushNotificationService.getNotificationListByToken(token), HttpStatus.OK);
-        else if (userUuid != null & token != null)
-            throw new Exception("Both userUuid and token is given");
-        throw new Exception("userUuid or token is not given");
+    public ResponseEntity<?> getNotificationList (@RequestHeader(value = "Authorization") String jwtToken) {
+        return new ResponseEntity<>(pushNotificationService.getNotificationListByJwtToken(jwtToken), HttpStatus.OK);
     }
 
     @PutMapping("notification/read")
