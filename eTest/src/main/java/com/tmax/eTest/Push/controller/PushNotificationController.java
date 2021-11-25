@@ -44,8 +44,8 @@ public class PushNotificationController {
     }
 
     @PutMapping("push/config/edit")
-    public void editNotificationConfig(@RequestBody UserNotificationConfigEditDTO editData) {
-        pushNotificationService.editNotificationConfig(editData);
+    public void editNotificationConfig(@RequestHeader(value = "Authorization") String jwtToken, @RequestBody UserNotificationConfigEditDTO editData) {
+        pushNotificationService.editNotificationConfig(jwtToken, editData);
     }
 
     @GetMapping("notification/list")

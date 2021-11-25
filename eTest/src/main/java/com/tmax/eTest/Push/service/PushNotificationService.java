@@ -179,9 +179,10 @@ public class PushNotificationService {
         logger.info("{} push successfully sent.", data.getCategory());
     }
 
-    public void editNotificationConfig(UserNotificationConfigEditDTO editData){
+    public void editNotificationConfig(String jwtToken, UserNotificationConfigEditDTO editData){
+        String userUuid = Jwts.parser().setSigningKey(secret).parseClaimsJws(jwtToken.substring(7)).getBody().get("userUuid").toString();
         List<UserNotificationConfig> userNotificationConfigList
-                = userNotificationConfigRepositorySupport.getUserNotificationConfigByUserUuid(editData.getUserUuid());
+                = userNotificationConfigRepositorySupport.getUserNotificationConfigByUserUuid(userUuid);
         for (UserNotificationConfig userNotificationConfig : userNotificationConfigList)
             switch (editData.getCategory()) {
                 case "global":
