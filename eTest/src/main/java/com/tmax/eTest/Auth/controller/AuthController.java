@@ -36,7 +36,7 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/login")
-    public CMRespDto<?> jwtCreate(@RequestBody LoginRequestDTO loginRequestDTO) {
+    public CMRespDto<?> jwtCreate(@RequestBody LoginRequestDto loginRequestDTO) {
         return authService.login(loginRequestDTO);
     }
 

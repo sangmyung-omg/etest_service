@@ -3,7 +3,7 @@ package com.tmax.eTest.Auth.dto;
 import lombok.Getter;
 
 @Getter
-public class LoginRequestDTO {
+public class LoginRequestDto {
     private String providerId;
     private String provider;
 }

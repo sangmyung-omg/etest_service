@@ -140,7 +140,7 @@ public class AuthService {
     }
 
     @Transactional
-    public CMRespDto<?> login(LoginRequestDTO loginRequestDTO) {
+    public CMRespDto<?> login(LoginRequestDto loginRequestDTO) {
         String providerId = loginRequestDTO.getProviderId();
         AuthProvider provider = AuthProvider.valueOf(loginRequestDTO.getProvider());
         Optional<UserMaster> userMasterOptional = userRepository.findByProviderIdAndProvider(providerId, provider);
