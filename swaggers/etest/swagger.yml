@@ -192,6 +192,28 @@ paths:
             json:
               schema:
                 $ref: "#/components/schemas/DiagnosisRecordMainDTO"
+  /report/diagnosis/record:
+    delete:
+      tags:
+      - Self Diagnosis Report
+      summary: 자가진단 리포트 삭제. 
+      description: 보내준 ID에 해당되는 자가진단 리포트 데이터를 삭제합니다.
+      parameters:
+      - name: probSetId
+        in: query
+        description: 해당 자가진단 문제 셋 ID
+        required: true
+        schema:
+          type: string
+          format: string
+          example: '1d80abe8-c8fb-45b1-9307-de689ccfaf60'
+      - $ref: "#/components/parameters/Authorization"
+      responses:
+        200:
+          description: OK
+          content:
+            schema:
+              example: true
   /report/diagnosis/record/{probSetId}/{partName}:
     get:
       tags:
@@ -250,9 +272,8 @@ paths:
         200:
           description: OK
           content:
-            json:
-              schema:
-                $ref: "#/components/schemas/DiagnosisRecordDetailDTO"
+            schema:
+              example: true
   /report/miniTestResult/{id}:
     get:
       tags:
@@ -736,7 +757,11 @@ components:
         giComment:
           type: string
           example: '자가 진단 상위권에 해당되는 점수 입니다.'
-          description: 자가 진단 GI 점수에 따른 코멘트.        
+          description: 자가 진단 GI 점수에 따른 코멘트.  
+        giFixedComment:
+          type: string
+          example: 'GI진단을 통해 분석된 결과입니다.'
+          description: 자가 진단 고정 코멘트. 
         userName:
           type: string
           example: '홍길동'
@@ -759,6 +784,10 @@ components:
                   type: integer
                   example : 15
                   description: 위험 대응 점수 퍼센테이지. (ex 상위 15%)
+                comment:
+                  type: string
+                  example : 해당 파트 간략 코멘트
+                  description: 티끌 모아 태산을 만들꺼야, 예금형 투자자
             invest:
               type: object
               properties:
@@ -770,6 +799,10 @@ components:
                   type: integer
                   example : 15
                   description: 투자 행동 편향 점수 퍼센테이지. (ex 상위 15%)
+                comment:
+                  type: string
+                  example : 해당 파트 간략 코멘트
+                  description: 나만의 투자원칙이 필요한 임기응변형 투자자
             knowledge:
               type: object
               properties:
@@ -781,59 +814,58 @@ components:
                   type: integer
                   example : 15
                   description: 지식 이해 점수 퍼센테이지. (ex 상위 15%)
-        similarTypeInfo:
-          type: array
-          items:
-            type: string
-          description: 자신과 비슷한 유형의 투자자 정보. [투자자 비율, 평균 투자종목 수, 주식투자 비중] 으로 구성.
-          example: ['15%', '5종목', '40%']
-        video:
-          type: object
-          properties:
-            basic:
+                comment:
+                  type: string
+                  example : 해당 파트 간략 코멘트
+                  description: 투자기초부터 탄탄한 학습이 필요한 주린이
+            problemCorrectInfo:
+              type: object
+              properties:
+                allCorr:
+                  type: integer
+                  description: 모든 문제 중 맞은 갯수
+                  example: 3
+                allProb:
+                  type: integer
+                  description: 모든 문제 갯수
+                  example: 12
+                high:
+                  type: string
+                  description: 난이도 상, '정답 맞은 갯수 / 모든 문제' 형태의 string
+                  example: '1/1'
+                middle:
+                  type: string
+                  description: 난이도 중, '정답 맞은 갯수 / 모든 문제' 형태의 string
+                  example: '1/6'
+                low:
+                  type: string
+                  description: 난이도 하, '정답 맞은 갯수 / 모든 문제' 형태의 string
+                  example: '1/5'
+              description: 지식 이해(knowledge) 파트 일 경우 활성화. 문제 정오답에 대한 정보 Object
+            problemHighLevelInfo:
               type: array
               items:
-                $ref: '#/components/schemas/RecommendVideoDTO'
-            type:
+                type: array
+                items:
+                  type: string
+                  example: [문제 index, 문제 UUID, 정오답 여부(true or false), 문제 내용, 난이도, 출제의도]
+              description: 난이도 상, 유저가 푼 문제 정보
+            problemMiddleLevelInfo:
               type: array
               items:
-                $ref: '#/components/schemas/RecommendVideoDTO'
-            advanced:
+                type: array
+                items:
+                  type: string
+                  example: [문제 index, 문제 UUID, 정오답 여부(true or false), 문제 내용, 난이도, 출제의도]
+              description: 난이도 중, 유저가 푼 문제 정보
+            problemLowLevelInfo:
               type: array
               items:
-                $ref: '#/components/schemas/RecommendVideoDTO'
-          description: 추천 비디오 관련 정보. (투자 기초(basic), 투자 실전(advanced), 투자 성향(type)) 
-    RecommendVideoDTO:
-      type: object
-      properties:
-        id:
-          type: string
-          description: 해당 비디오의 ID
-          example: 'asdgkljbn-sklagjdnvb24fj-12489sdfn'
-        videoSrcUrl:
-          type: string
-          description: 해당 비디오의 영상 URL
-          example: 'https://youtube.com/vnwEchbie'
-        title:
-          type: string
-          description: 해당 비디오의 제목
-          example: '[슈카월드] 투자란?'
-        thumbnailUrl:
-          type: string
-          description: 해당 비디오의 썸네일 URL 
-          example: 'thumbmail.png'
-        totalTime:
-          type: number
-          description: 해당 비디오의 재생 시간 길이. (단위 second)
-          example: 864
-        hit:
-          type: integer
-          description: 해당 비디오의 조회수 
-          example: 30
-        isBookmark:
-          type: boolean
-          description: 해당 유저가 해당 비디오에 북마크가 되었는지에 대한 여부.
-          example: true
+                type: array
+                items:
+                  type: string
+                  example: [문제 index, 문제 UUID, 정오답 여부(true or false), 문제 내용, 난이도, 출제의도]
+              description: 난이도 하, 유저가 푼 문제 정보  
     DiagnosisRecordDetailDTO:
       type: object
       properties:
@@ -856,6 +888,14 @@ components:
               type: string
               description: 해당 파트 점수에 따른 메인 코멘트 설명문
               example: 하이브리드형 투자자는 공격적일때는 공격적으로, 보수적일때는 보수적으로....
+            fixed:
+              type: string
+              description: 해당 파트 고정 코멘트(risk, knowledge 해당)
+              example: 투자지식 없이도 높은 수익을 얻을 수도 있지만 그런 경우는 일회성이고 일시적일 수 밖에 없습니다.
+            fixedGuide:
+              type: string
+              description: 지식 파트 고정 추가 코멘트(knowledge만 해당)
+              example: 성공 투자를 위해 필요한 지식 체계 또는 골격을 먼저 갖추고 자신에게 꼭 맞는 공부방법도 찾아보시기 바랍니다.
           description: 해당 파트 점수에 따른 코멘트
         detailCommentInfo:
           type: array
@@ -866,67 +906,23 @@ components:
                 type: string
                 description: 해당 파트의 상세 점수 이름
                 example: 투자위험 태도
-              main:
-                type: string
-                description: 해당 파트의 상세 점수 메인 코멘트
-                example: 너무 큰 위험도 너무 작은 위험도 추구하지 않는, 중립형 투자자
               detail:
                 type: string
                 description: 해당 파트의 상세 점수 메인 코멘트 설명문
                 example: 당신은 리스크 중립형으로 위험을 적당하게 수용하고 인내하는 투자자 입니다.
               score:
                 type: integer
-                description: 해당 파트의 상세 점수
+                description: 해당 파트 내 UK 평균 점수
                 example: 42
-          description: 해당 파트의 상세 점수에 대한 코멘트
-        problemCorrectInfo:
-          type: object
-          properties:
-            allCorr:
-              type: integer
-              description: 모든 문제 중 맞은 갯수
-              example: 3
-            allProb:
-              type: integer
-              description: 모든 문제 갯수
-              example: 12
-            high:
-              type: string
-              description: 난이도 상, '정답 맞은 갯수 / 모든 문제' 형태의 string
-              example: '1/1'
-            middle:
-              type: integer
-              description: 난이도 중, '정답 맞은 갯수 / 모든 문제' 형태의 string
-              example: '1/6'
-            low:
-              type: integer
-              description: 난이도 하, '정답 맞은 갯수 / 모든 문제' 형태의 string
-              example: '1/5'
-          description: 지식 이해(knowledge) 파트 일 경우 활성화. 문제 정오답에 대한 정보 Object
-        problemHighLevelInfo:
-          type: array
-          items:
-            type: array
-            items:
-              type: string
-              example: [문제 index, 문제 UUID, 정오답 여부(true or false), 문제 내용, 난이도]
-          description: 난이도 상, 유저가 푼 문제 정보
-        problemMiddleLevelInfo:
-          type: array
-          items:
-            type: array
-            items:
-              type: string
-              example: [문제 index, 문제 UUID, 정오답 여부(true or false), 문제 내용, 난이도]
-          description: 난이도 중, 유저가 푼 문제 정보
-        problemLowLevelInfo:
-          type: array
-          items:
-            type: array
-            items:
-              type: string
-              example: [문제 index, 문제 UUID, 정오답 여부(true or false), 문제 내용, 난이도]
-          description: 난이도 하, 유저가 푼 문제 정보  
+              detailScoreList:
+                type: array
+                items:
+                  type: array
+                  example: ["가격 변동 특징", "50"]
+                  items:
+                    type: string
+                description: 각 파트의 UK 상세 점수 리스트
+          description: 해당 파트의 점수 및 코멘트
   parameters:
     userId:
       in: query

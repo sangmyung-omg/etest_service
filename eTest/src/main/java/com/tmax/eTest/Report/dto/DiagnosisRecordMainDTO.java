@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 
 import com.tmax.eTest.Common.model.report.DiagnosisReport;
+import com.tmax.eTest.Report.util.diagnosis.CommentMapper;
+import com.tmax.eTest.Report.util.diagnosis.CommentMapper.Type;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -19,6 +21,7 @@ public class DiagnosisRecordMainDTO {
 	// 최종 점수
 	int giScore=0, giPercentage=0;
 	String giComment = "";
+	String giFixedComment = "";
 	String userName = "이름";
 	boolean alarm = false;
 
@@ -74,11 +77,11 @@ public class DiagnosisRecordMainDTO {
 		problemLowLevelInfo = (List<List<String>>) probInfos.get("problemLowLevelInfo");
 		
 		if(giScore >= 80)
-			this.giComment = "GI진단을 통해 분석된 결과입니다. 진단자 평균 대비 높은 점수를 받으셨고 "
-					+ "금융투자를 위한 기본적인 역량과 소양을 갖추신 것으로 진단됩니다!";
+			this.giComment = CommentMapper.getComment(Type.GI, 0);
 		else
-			this.giComment = "GI진단을 통해 분석된 결과입니다. 아는만큼 길이 보이는 법입니다. "
-					+ "균형잡인 투자공부로 나에게 꼭 맞는 투자 원칙과 방법을 찾아보시기 바랍니다. ";
+			this.giComment = CommentMapper.getComment(Type.GI, 1);
+		
+		this.giFixedComment = CommentMapper.getComment(Type.GI, 2);
 		
 		return result;
 	}

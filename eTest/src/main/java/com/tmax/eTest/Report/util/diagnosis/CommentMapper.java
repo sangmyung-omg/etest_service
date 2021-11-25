@@ -27,7 +27,7 @@ public class CommentMapper {
 
 	// version name, 
     static Map<Type, List<CommentInfo>> commentMap = null;
-    static String nowActivateVersionName = null;
+    static String nowSelectedVersionName = null;
 
 
     //Build at application startup
@@ -60,8 +60,8 @@ public class CommentMapper {
     	
     	if(opt.isPresent())
     	{
-    		nowActivateVersionName = opt.get().getVersionName();
-    		List<CommentInfo> commentList = commentRepo.findAllByVersionName(nowActivateVersionName);
+    		nowSelectedVersionName = opt.get().getVersionName();
+    		List<CommentInfo> commentList = commentRepo.findAllByVersionName(nowSelectedVersionName);
     		
     		for(CommentInfo comment : commentList)
     			if(comment.getCommentText() == null)
@@ -85,6 +85,8 @@ public class CommentMapper {
             commentMap.put(Type.KNOWLEDGE_MAIN, commentList.subList(178, 181));   
             commentMap.put(Type.KNOWLEDGE_FIXED, commentList.subList(181, 183));   	
     		
+            
+            log.info("Now Selected Comment Version Is " +nowSelectedVersionName);
     	}
     	else
     	{
