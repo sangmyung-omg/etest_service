@@ -4,19 +4,12 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.TimeZone;
 import java.util.UUID;
 
-import com.tmax.eTest.Auth.dto.AuthProvider;
-import com.tmax.eTest.Auth.dto.CMRespDto;
-import com.tmax.eTest.Auth.dto.ModifyUserInfoDto;
-import com.tmax.eTest.Auth.dto.PrincipalDetails;
-import com.tmax.eTest.Auth.dto.Role;
-import com.tmax.eTest.Auth.dto.SignUpRequestDto;
+import com.tmax.eTest.Auth.dto.*;
 import com.tmax.eTest.Auth.jwt.JwtTokenUtil;
 import com.tmax.eTest.Auth.repository.UserRepository;
 import com.tmax.eTest.Common.model.book.BookBookmark;
@@ -64,7 +57,6 @@ public class AuthService {
     private VideoBookmarkRepository videoBookmarkRepository;
     @Transactional
     public CMRespDto<?> singUp(SignUpRequestDto signUpRequestDto) {
-        logger.debug("signUpRequestDto : " + signUpRequestDto);
         if (!emailDuplicateCheck(signUpRequestDto.getEmail())
                 && !nickNameDuplicateCheck(signUpRequestDto.getNickname())) {
             UserMaster userMaster = UserMaster.builder().nickname(signUpRequestDto.getNickname())
@@ -73,7 +65,6 @@ public class AuthService {
                     .providerId(signUpRequestDto.getProviderId()).birthday(signUpRequestDto.getBirthday())
                     .older_than_14(true).service_agreement(true).collect_info(true).build();
             userRepository.save(userMaster);
-            logger.debug("Sign up UserMaster is : " + userMaster);
 
             PrincipalDetails principal = PrincipalDetails.create(userMaster);
             String jwtToken = jwtTokenUtil.generateAccessToken(principal);
@@ -121,13 +112,9 @@ public class AuthService {
         List<VideoBookmark> videoBookmarkList = videoBookmarkRepository.findAllByUserUuid(userUuid);
         List<BookBookmark> bookBookmarkList = bookBookmarkRepository.findAllByUserUuid(userUuid);
         bookBookmarkRepository.deleteAll(bookBookmarkList);
-        logger.debug("delete bookBookmarkList success");
         videoBookmarkRepository.deleteAll(videoBookmarkList);
-        logger.debug("delete videoBookmarkList success");
         diagnosisReportRepo.deleteAll(diagnosisReportList);
-        logger.debug("delete diagnosisReportList success");
         userRepository.delete(userMasterOptional.get());
-        logger.debug("delete userMaster success");
 
 
         // 현재 시간을 LRS timestamp 포멧에 맞게 변환
@@ -153,71 +140,42 @@ public class AuthService {
     }
 
     @Transactional
-    public CMRespDto<?> login(String providerId, AuthProvider provider, String ip) {
-        logger.debug("providerId is : " + providerId);
-        logger.debug("provider is : " + provider);
-
-        System.out.println(ip);
+    public CMRespDto<?> login(LoginRequestDTO loginRequestDto) {
+        String providerId = loginRequestDto.getProviderId();
+        AuthProvider provider = AuthProvider.valueOf(loginRequestDto.getProvider());
         Optional<UserMaster> userMasterOptional = userRepository.findByProviderIdAndProvider(providerId, provider);
-        logger.debug("userMasterOptional is : " + userMasterOptional);
         if (userMasterOptional.isPresent()) {
-
             UserMaster userMaster = userMasterOptional.get();
-            logger.debug("userMaster is : " + userMaster);
-
             PrincipalDetails principal = PrincipalDetails.create(userMaster);
-
             String jwtToken = jwtTokenUtil.generateAccessToken(principal);
             String refreshToken = jwtTokenUtil.generateRefreshToken(userMaster.getEmail());
-            logger.debug("jwtToken is : " + jwtToken);
-            logger.debug("refreshToken is : " + refreshToken);
-
             userMaster.setRefreshToken(refreshToken);
-            logger.debug("userMaster set refreshToken success ");
+            LoginResponseDTO loginResponseDTO = LoginResponseDTO.builder()
+                    .provider(userMaster.getProvider().toString())
+                    .jwtToken(jwtToken)
+                    .email(userMaster.getEmail())
+                    .birthday(userMaster.getBirthday().toString())
+                    .providerId(userMaster.getProviderId())
+                    .refreshToken(refreshToken)
+                    .nickname(userMaster.getNickname())
+                    .build();
 
-            Map<String, String> info = new HashMap<>();
-            info.put("jwtToken", jwtToken);
-            info.put("email", userMaster.getEmail());
-            info.put("birthday", userMaster.getBirthday().toString());
-            info.put("nickname", userMaster.getNickname());
-            info.put("provider", userMaster.getProvider().toString());
-            info.put("providerId", userMaster.getProviderId().toString());
-            info.put("refreshToken", refreshToken);
             // 현재 시간을 LRS timestamp 포멧에 맞게 변환
             Date date = new Date(System.currentTimeMillis());
             SimpleDateFormat sdf;
             sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
             sdf.setTimeZone(TimeZone.getTimeZone("KST"));
             String text = sdf.format(date);
-
-            // StatementDto빌드
             StatementDTO statementDTO = StatementDTO.builder().userId(userMaster.getUserUuid()).actionType("enter")
                     .sourceType("application").timestamp(text).build();
-            logger.debug("lrs statementDTO build success");
-
-            // LRS에 저장
             List<StatementDTO> statementDTOList = new ArrayList<>();
             statementDTOList.add(statementDTO);
             try {
                 lrsapiManager.saveStatementList(statementDTOList);
-                logger.debug("lrs save success");
-
             } catch (ParseException e) {
                 return new CMRespDto<>(500, "LRS 전송 실패", "실패");
             }
-
-            List<String> IpList = userRepository.findAllByIp();
-            logger.debug("IpList is : " + IpList);
-            if (IpList.contains(ip)) {
-                info.put("name", userMaster.getName());
-                return new CMRespDto<>(203, "관리자 로그인 성공", info);
-            }
-            return new CMRespDto<>(200, "jwt 반환", info);
-        }
-
-        List<String> IpList = userRepository.findAllByIp();
-        if (IpList.contains(ip)) {
-            return new CMRespDto<>(202, "관리자 로그인 실패", ip);
+            return new CMRespDto<>(200, "jwt 반환", loginResponseDTO);
         }
         return new CMRespDto<>(201, "회원 가입이 안된 유저", null);
     }

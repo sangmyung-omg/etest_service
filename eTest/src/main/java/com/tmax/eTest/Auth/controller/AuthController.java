@@ -5,25 +5,18 @@ import com.tmax.eTest.Auth.dto.*;
 import com.tmax.eTest.Auth.jwt.JwtTokenUtil;
 import com.tmax.eTest.Auth.repository.UserRepository;
 import com.tmax.eTest.Auth.service.AuthService;
-import com.tmax.eTest.Common.model.user.UserMaster;
-import com.tmax.eTest.LRS.dto.StatementDTO;
 import com.tmax.eTest.LRS.util.LRSAPIManager;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 
 @RestController
 @RequiredArgsConstructor
@@ -42,16 +35,9 @@ public class AuthController {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final AuthService authService;
 
-    public static String getClientIp(HttpServletRequest req) {
-        String ip = req.getHeader("X-Forwarded-For");
-        if (ip == null) ip = req.getRemoteAddr();
-        return ip;
-    }
     @PostMapping("/login")
-    public CMRespDto<?> jwtCreate(@RequestBody Map<String, Object> data, HttpServletRequest httpServletRequest) {
-        logger.debug("data is : "+data);
-        String ip = getClientIp(httpServletRequest);
-        return authService.login((String) data.get("providerId"), AuthProvider.valueOf((String) data.get("provider")), ip );
+    public CMRespDto<?> jwtCreate(@RequestBody LoginRequestDTO loginRequestDto) {
+        return authService.login(loginRequestDto);
     }
 
     @PostMapping("/signup")
