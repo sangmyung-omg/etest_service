@@ -2,7 +2,7 @@ package com.tmax.eTest.Auth.dto;
 import lombok.Data;
 
 @Data
-public class LoginRequestDto {
-    private String email;
-    private String password;
+public class LoginRequestDTO {
+    String providerId;
+    String provider;
 }
