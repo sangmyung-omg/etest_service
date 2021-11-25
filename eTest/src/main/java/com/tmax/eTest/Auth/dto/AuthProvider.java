@@ -3,5 +3,6 @@ public enum AuthProvider {
     facebook,
     google,
     naver,
-    kakao
+    kakao,
+    apple
 }
