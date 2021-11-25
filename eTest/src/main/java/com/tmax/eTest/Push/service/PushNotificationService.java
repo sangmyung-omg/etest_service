@@ -89,7 +89,8 @@ public class PushNotificationService {
         );
     }
 
-    public void linkTokenWithUserUuid(String userUuid, String token) {
+    public void linkTokenWithUserUuid(String jwtToken, String token) {
+        String userUuid = Jwts.parser().setSigningKey(secret).parseClaimsJws(jwtToken.substring(7)).getBody().get("userUuid").toString();
         List<UserNotificationConfig> userNotificationConfigList
                 = userNotificationConfigRepositorySupport.getUserNotificationConfigByUserUuid(userUuid);
         UserNotificationConfig userNotificationConfig;

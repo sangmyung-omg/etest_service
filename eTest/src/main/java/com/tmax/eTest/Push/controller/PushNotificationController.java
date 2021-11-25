@@ -34,8 +34,8 @@ public class PushNotificationController {
     }
 
     @PostMapping("push/config/add/user")
-    public void linkTokenWithUserUuid(@RequestParam String userUuid, @RequestParam String token) {
-        pushNotificationService.linkTokenWithUserUuid(userUuid, token);
+    public void linkTokenWithUserUuid(@RequestHeader(value = "Authorization") String jwtToken, @RequestParam String token) {
+        pushNotificationService.linkTokenWithUserUuid(jwtToken, token);
     }
 
     @PutMapping("push/config/edit")
