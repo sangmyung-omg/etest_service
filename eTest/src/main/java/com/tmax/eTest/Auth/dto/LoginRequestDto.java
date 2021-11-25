@@ -3,6 +3,6 @@ import lombok.Getter;
 
 @Getter
 public class LoginRequestDTO {
-    String providerId;
-    String provider;
+    private String providerId;
+    private String provider;
 }

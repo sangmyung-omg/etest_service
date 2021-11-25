@@ -6,11 +6,11 @@ import lombok.Getter;
 @Builder
 @Getter
 public class LoginResponseDTO {
-    String jwtToken;
-    String email;
-    String birthday;
-    String nickname;
-    String provider;
-    String providerId;
-    String refreshToken;
+    private String jwtToken;
+    private String email;
+    private String birthday;
+    private String nickname;
+    private String provider;
+    private String providerId;
+    private String refreshToken;
 }
