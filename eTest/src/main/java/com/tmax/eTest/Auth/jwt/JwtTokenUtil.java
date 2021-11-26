@@ -17,9 +17,7 @@ import org.springframework.stereotype.Component;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @Component
 public class JwtTokenUtil implements Serializable {
 
@@ -52,12 +50,9 @@ public class JwtTokenUtil implements Serializable {
     }
 
     public Map<String, Object> getUserParseInfo(String token) {
-        log.info(token);
         Claims parseInfo = Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
-        log.info(parseInfo.toString());
         Map<String, Object> result = new HashMap<>();
         result.put("userUuid", parseInfo.get("userUuid"));
-        log.info((String) parseInfo.get("userUuid"));
         result.put("email", parseInfo.getSubject());
         result.put("role", parseInfo.get("role", List.class));
         return result;
