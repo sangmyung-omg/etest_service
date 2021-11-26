@@ -129,4 +129,22 @@ public class VideoController {
       throw new ContentsException(ErrorCode.USER_ERROR);
     return new ResponseEntity<>(videoService.getWatchVideoList(userId), HttpStatus.OK);
   }
+
+  @DeleteMapping("/videos/watch")
+  public ResponseEntity<Object> deleteWatchVideoList(HttpServletRequest request) {
+    log.info("---deleteWatchVideoList---");
+    String userId = jwtUtils.getUserId(request);
+    if (commonUtils.stringNullCheck(userId))
+      throw new ContentsException(ErrorCode.USER_ERROR);
+    return new ResponseEntity<>(videoService.deleteWatchVideoList(userId), HttpStatus.OK);
+  }
+
+  @DeleteMapping("/videos/{video_id}/watch")
+  public ResponseEntity<Object> deleteWatchVideo(@PathVariable("video_id") String videoId, HttpServletRequest request) {
+    log.info("---deleteWatchVideo---");
+    String userId = jwtUtils.getUserId(request);
+    if (commonUtils.stringNullCheck(userId))
+      throw new ContentsException(ErrorCode.USER_ERROR);
+    return new ResponseEntity<>(videoService.deleteWatchVideo(userId, videoId), HttpStatus.OK);
+  }
 }

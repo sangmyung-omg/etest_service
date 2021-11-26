@@ -6,6 +6,7 @@ import java.text.ParseException;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -29,6 +30,7 @@ import com.tmax.eTest.Contents.dto.SuccessDTO;
 import com.tmax.eTest.Contents.dto.VideoCurriculumDTO;
 import com.tmax.eTest.Contents.dto.VideoDTO;
 import com.tmax.eTest.Contents.dto.VideoJoin;
+import com.tmax.eTest.Contents.dto.WatchVideo;
 import com.tmax.eTest.Contents.exception.ContentsException;
 import com.tmax.eTest.Contents.exception.ErrorCode;
 import com.tmax.eTest.Contents.repository.support.DiagnosisReportRepositorySupport;
@@ -41,6 +43,7 @@ import com.tmax.eTest.Contents.util.LRSUtils;
 import com.tmax.eTest.LRS.dto.GetStatementInfoDTO;
 import com.tmax.eTest.LRS.dto.StatementDTO;
 import com.tmax.eTest.LRS.util.LRSAPIManager;
+import com.tmax.eTest.Test.util.UkVersionManager;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -75,11 +78,13 @@ public class VideoService {
 
   private CommonUtils commonUtils;
 
+  private UkVersionManager ukVersionManager;
+
   public VideoService(VideoCurriculumRepositorySupport videoCurriculumRepositorySupport,
       VideoHitRepositorySupport videoHitRepositorySupport, VideoRepositorySupport videoRePositorySupport,
       VideoBookmarkRepository videoBookmarkRepository, MetaCodeMasterRepositorySupport metaCodeMasterRepositorySupport,
       DiagnosisReportRepositorySupport diagnosisReportRepositorySupport, LRSUtils lrsUtils, LRSAPIManager lrsapiManager,
-      CommonUtils commonUtils) {
+      CommonUtils commonUtils, UkVersionManager ukVersionManager) {
     this.videoCurriculumRepositorySupport = videoCurriculumRepositorySupport;
     this.videoHitRepositorySupport = videoHitRepositorySupport;
     this.videoRePositorySupport = videoRePositorySupport;
@@ -89,6 +94,7 @@ public class VideoService {
     this.lrsUtils = lrsUtils;
     this.lrsapiManager = lrsapiManager;
     this.commonUtils = commonUtils;
+    this.ukVersionManager = ukVersionManager;
   }
 
   public ListDTO.Curriculum getVideoCurriculumList() {
@@ -116,25 +122,69 @@ public class VideoService {
     return convertVideoJoinToDTO(videos);
   }
 
-  public ListDTO.Video getWatchVideoList(String userId) {
+  public List<ListDTO.Video> getWatchVideoList(String userId) {
     GetStatementInfoDTO lrsGetStatementDTO = lrsUtils.makeGetStatement(userId);
+    List<WatchVideo> watchVideos = getLrsVideos(userId, lrsGetStatementDTO);
+    if (commonUtils.objectNullcheck(watchVideos))
+      return new ArrayList<>();
+    return convertWatchVideoToDTO(watchVideos);
+  }
+
+  private List<WatchVideo> getLrsVideos(String userId, GetStatementInfoDTO lrsGetStatementDTO) {
     List<String> videoIds;
+    List<StatementDTO> lrsStatementDTOs = null;
     try {
-      List<StatementDTO> lrsStatementDTOs = lrsapiManager.getStatementList(lrsGetStatementDTO);
+      lrsStatementDTOs = lrsapiManager.getStatementList(lrsGetStatementDTO);
       videoIds = lrsStatementDTOs.stream().map(lrsStatementDTO -> lrsStatementDTO.getSourceId())
           .collect(Collectors.toMap(key -> key, value -> value, (oldValue, newValue) -> newValue,
               () -> new LinkedHashMap<>(16, 0.75f, true)))
           .values().stream().distinct().sorted((a, b) -> -1).collect(Collectors.toList());
       if (videoIds.size() == 0)
-        return new ListDTO.Video();
+        return null;
     } catch (ParseException e) {
       throw new ContentsException(ErrorCode.LRS_ERROR);
     }
-
     List<VideoJoin> videos = videoRePositorySupport.findVideosByUserAndIds(userId, videoIds);
-    // Collections.sort(videos, Comparator.comparing(item ->
-    // videoIds.indexOf(item.getVideo().getVideoId())));
-    return convertVideoJoinToDTO(videos);
+    Map<String, List<VideoJoin>> videoMap = new LinkedHashMap<String, List<VideoJoin>>();
+    Collections.reverse(lrsStatementDTOs);
+    for (VideoJoin video : videos) {
+      String videoId = video.getVideo().getVideoId();
+      for (StatementDTO lrsStatement : lrsStatementDTOs) {
+        if (lrsStatement.getSourceId().equals(videoId)) {
+          String watchDate = lrsStatement.getStatementDate().toLocalDateTime().toLocalDate()
+              .format(DateTimeFormatter.ISO_LOCAL_DATE);
+          if (videoMap.containsKey(watchDate))
+            videoMap.get(watchDate).add(video);
+          else
+            videoMap.put(watchDate, new ArrayList<>(Arrays.asList(video)));
+          break;
+        }
+      }
+    }
+
+    List<WatchVideo> watchVideos = videoMap.entrySet().stream().map(e -> new WatchVideo(e.getKey(), e.getValue()))
+        .collect(Collectors.toList());
+
+    return watchVideos;
+  }
+
+  @Transactional
+  public SuccessDTO deleteWatchVideo(String userId, String videoId) {
+    Video video = videoRePositorySupport.findVideoById(videoId);
+    if (video.getType().equals(VideoType.VIDEO.name()))
+      lrsapiManager.disableVideoStatement(userId, videoId);
+    else if (video.getType().equals(VideoType.ARTICLE.name()))
+      lrsapiManager.disableArticleStatement(userId, videoId);
+    else
+      throw new ContentsException(ErrorCode.TYPE_ERROR);
+    return new SuccessDTO(true);
+  }
+
+  @Transactional
+  public SuccessDTO deleteWatchVideoList(String userId) {
+    lrsapiManager.disableVideoStatement(userId, null);
+    lrsapiManager.disableArticleStatement(userId, null);
+    return new SuccessDTO(true);
   }
 
   public ListDTO.Video getRecommendVideoList(String userId, Long curriculumId, String keyword) throws IOException {
@@ -262,6 +312,7 @@ public class VideoService {
   }
 
   public VideoDTO convertVideoToDTO(Video video, String source) {
+    Long ukVersionId = ukVersionManager.getCurrentUkVersionId();
     return VideoDTO.builder().videoId(video.getVideoId()).videoSrc(video.getVideoSrc()).title(video.getTitle())
         .imgSrc(video.getImgSrc()).subject(video.getVideoCurriculum().getSubject()).totalTime(video.getTotalTime())
         .startTime(video.getStartTime()).endTime(video.getEndTime()).hit(video.getVideoHit().getHit())
@@ -271,9 +322,12 @@ public class VideoService {
                 ? VideoType.YOUTUBE.toString()
                 : VideoType.SELF.toString())
         .source(source).description(video.getDescription())
-        // .uks(video.getVideoUks().stream().map(videoUks ->
-        // videoUks.getUkMaster().getUkName())
-        // .collect(Collectors.toList()))
+        .uks(video.getVideoUks().stream()
+            .map(videoUks -> videoUks.getUkMaster().getUkVersion().stream()
+                .filter(ukVersion -> ukVersion.getVersionId().equals(ukVersionId)).findAny()
+                .orElseThrow(() -> new ContentsException(ErrorCode.DB_ERROR, ukVersionId + ": UK Version not exist!"))
+                .getUkName())
+            .collect(Collectors.toList()))
         .hashtags(video.getVideoHashtags().stream().map(videoHashtags -> videoHashtags.getHashtag().getName())
             .collect(Collectors.toList()))
         .build();
@@ -319,6 +373,16 @@ public class VideoService {
     videoDTO.setInvestScore(investScore);
     videoDTO.setKnowledgeScore(knowledgeScore);
     return videoDTO;
+  }
+
+  public List<ListDTO.Video> convertWatchVideoToDTO(List<WatchVideo> watchVideos) {
+    List<ListDTO.Video> watchVideoDTOs = new ArrayList<>();
+    for (WatchVideo watchVideo : watchVideos) {
+      ListDTO.Video watchVideoDTO = convertVideoJoinToDTO(watchVideo.getVideoJoins());
+      watchVideoDTO.setWatchDate(watchVideo.getWatchDate());
+      watchVideoDTOs.add(watchVideoDTO);
+    }
+    return watchVideoDTOs;
   }
 
   public ListDTO.Curriculum convertVideoCurriculumToDTO(List<VideoCurriculum> curriculums) {

@@ -25,6 +25,7 @@ public class ListDTO {
     private Integer riskScore;
     private Integer investScore;
     private Integer knowledgeScore;
+    private String watchDate;
     private int size;
     private List<VideoDTO> videos;
 

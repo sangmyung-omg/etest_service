@@ -1,5 +1,6 @@
 package com.tmax.eTest.Contents.repository.support;
 
+import static com.tmax.eTest.Common.model.uk.QUkDescriptionVersion.ukDescriptionVersion;
 import static com.tmax.eTest.Common.model.uk.QUkMaster.ukMaster;
 import static com.tmax.eTest.Common.model.video.QHashtag.hashtag;
 import static com.tmax.eTest.Common.model.video.QVideo.video;
@@ -69,15 +70,15 @@ public class VideoRepositorySupport extends QuerydslRepositorySupport {
     return query.select(video).from(video).join(video.videoCurriculum).fetchJoin().leftJoin(video.videoHit).fetchJoin()
         .leftJoin(video.videoHashtags, videoHashtag).fetchJoin().leftJoin(videoHashtag.hashtag, hashtag).fetchJoin()
         .leftJoin(video.videoUks, videoUkRel).fetchJoin().leftJoin(videoUkRel.ukMaster, ukMaster).fetchJoin()
-        .where(checkShow());
+        .leftJoin(ukMaster.ukVersion, ukDescriptionVersion).fetchJoin().where(checkShow());
   }
 
   public JPAQuery<Tuple> multipleBookmarkFetchJoin() {
     return query.select(video, videoBookmark.userUuid).from(video).join(video.videoCurriculum).fetchJoin()
         .join(video.videoHit).fetchJoin().leftJoin(video.videoHashtags, videoHashtag).fetchJoin()
         .leftJoin(videoHashtag.hashtag, hashtag).fetchJoin().leftJoin(video.videoUks, videoUkRel).fetchJoin()
-        .leftJoin(videoUkRel.ukMaster, ukMaster).fetchJoin().leftJoin(video.videoBookmarks, videoBookmark).fetchJoin()
-        .where(checkShow());
+        .leftJoin(videoUkRel.ukMaster, ukMaster).fetchJoin().leftJoin(ukMaster.ukVersion, ukDescriptionVersion)
+        .fetchJoin().leftJoin(video.videoBookmarks, videoBookmark).fetchJoin().where(checkShow());
   }
 
   public Video findVideoById(String videoId) {

@@ -74,4 +74,13 @@ public class LRSUtils {
     return GetStatementInfoDTO.builder().actionTypeList(actionTypeList).sourceTypeList(sourceTypeList)
         .dateFromObj(dateFrom).dateToObj(dateTo).build();
   }
+
+  public GetStatementInfoDTO makeGetStatement(String userId, Timestamp dateFrom, Timestamp dateTo) {
+    log.info("DateFrom: " + dateFrom + " DateTo: " + dateTo);
+    List<String> userIdList = Arrays.asList(userId);
+    List<String> actionTypeList = Arrays.asList(ACTION_TYPE.enter.name());
+    List<String> sourceTypeList = Arrays.asList(SOURCE_TYPE.video.name(), SOURCE_TYPE.article.name());
+    return GetStatementInfoDTO.builder().actionTypeList(actionTypeList).sourceTypeList(sourceTypeList)
+        .userIdList(userIdList).dateFromObj(dateFrom).dateToObj(dateTo).build();
+  }
 }

@@ -264,7 +264,44 @@ paths:
           content:
             json:
               schema:
-                $ref: '#/components/schemas/VideoListModel'           
+                $ref: '#/components/schemas/WatchVideoListModel'                
+    delete:
+      tags:
+        - Video
+      summary : 유저의 시청 영상 기록 일괄 삭제
+      description : 유저가 시청한 영상 모두 삭제
+      responses:
+        200:
+          description: OK
+          content:
+            json:
+              schema:
+                type: object
+                example:
+                  isSuccess: true           
+  /videos/{video_id}/watch:
+    delete:
+      tags:
+        - Video
+      summary : 유저의 개별 시청 영상 기록 삭제
+      description : 유저가 시청한 영상 중 하나 삭제
+      parameters:
+      - name: video_id
+        in: path
+        description: 삭제할 영상 아이디
+        required: true
+        schema:
+          type: string
+          format: string
+      responses:
+        200:
+          description: OK
+          content:
+            json:
+              schema:
+                type: object
+                example:
+                  isSuccess: true           
   /books:
     get:
       tags:
@@ -1098,6 +1135,18 @@ components:
           items:
             allOf:
             - $ref: '#/components/schemas/VideoModel'
+    WatchVideoListModel:
+      type: array
+      items:
+        type: object
+        properties:
+          watchDate:
+            type: string      
+          videos:
+            type: array
+            items:
+              allOf:
+              - $ref: '#/components/schemas/VideoModel'     
     BookModel:
       type: object
       properties:
