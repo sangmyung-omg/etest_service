@@ -7,26 +7,12 @@ servers:
     description: example server address
 tags:
 
-  - name: 로그인
-    description: Everything about your Pets
-    externalDocs:
-      description: Find out more
-      url: 'http://swagger.io'
-  - name: 회원가입
-    description: Everything about your Pets
-    externalDocs:
-      description: Find out more
-      url: 'http://swagger.io'
-  - name: 공지사항
-    description: Access to Petstore orders
+  - name: AUTH
   - name: 자주 묻는 질문
-    description: Access to Petstore orders
+  - name: 공지사항
+
   - name: 1대1문의
-    description: Access to Petstore orders
   - name: 자가진단
-    description: Access to Petstore orders
-  - name: 미니테스트
-    description: Operations about user
 
 
 paths:
@@ -34,8 +20,7 @@ paths:
   /login:
     post:
       tags:
-        - 로그인
-      description: Oauth로 로그인 시도
+        - AUTH
       requestBody:
         content:
           application/json:
@@ -50,9 +35,8 @@ paths:
               required:
                 - status
               example: {
-                            "providerId": "1234",
-                            "provider": "google",
-                            "email": "hong@tmax.co.kr"
+                            "providerId": "1232344324",
+                            "provider": "kakao"
                         }
       responses:
         '200':
@@ -65,11 +49,15 @@ paths:
                   code: 200
                   message: success
                   data: {
-                          "provider": "naver",
-                          "nickname": "sdgsd",
-                          "jwtToken": "sdfsfsfsdfdff",
-                          "email": "asdfads@naver.com"
-                        }
+                        jwtToken: "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtaW5UZXNtaW5UZXN0dEBuYXZlci5jb20iLCJyb2xlIjpbIlJPTEVfVVNFUiJdLCJ1c2VyVXVpZCI6IjIxNmI5MDc4LTVjNzQtNDVkOC1hODg4LWMyODY3NWRjMjcxZiIsImV4cCI6MTYzNzg5NDg0NiwiaWF0IjoxNjM3ODg4ODQ2LCJlbWFpbCI6Im1pblRlc21pblRlc3R0QG5hdmVyLmNvbSJ9.TjZaj-UL4qAzk_byXmYhMsP4dBpl2YIrQnbvkR1ygbG8-zGuWWcH_acg6cUubhiDQT2w-xHCKrpvwlrgwOpcDg",
+                        email: "test@naver.com",
+                        birthday: '1995-04-25',
+                        nickname: "test",
+                        provider: "kakao",
+                        providerId: "test",
+                        refreshToken: "eyJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE2Mzc4ODg4NDYsImV4cCI6MTYzODQ5MzY0Nn0.vNsnKobB8KvIdtrhOC06kEklC2qmc0CB5XgazGh9T6XQ76nVP-y3O3-z8P6WkzmIrcS4s842TfSbfWSyj-C5Lw"
+                  }
+                        
         '201':
           description: 회원가입이 안 된 유저
           content:
@@ -83,8 +71,7 @@ paths:
   /signup:
     post:
       tags:
-        - 회원가입
-      description: 회원가입
+        - AUTH
       requestBody:
         content:
           application/json:
@@ -99,29 +86,18 @@ paths:
                 provider:
                   description: Oauth 플랫폼
                   type: string
-                gender:
-                  description: 성별
-                  type: string
                 birthday:
                   description: 생일 (yyyy-mm-dd)
                   type: string
-                event_sms_agreement:
-                  description: 이벤트 및 공지 알림 수신에 동의합니다
-                  type: string
-                account_active:
-                  description: 장기 미접속 시계정 활성 상태를 유지합니다
+                nickname:
+                  description: 닉네임
                   type: string
               example: {
                           "providerId": "test",
-                          "gender": "male",
                           "email": "test@naver.com",
                           "birthday": "1995-04-25",
-                          "role": "USER",
-                          "password": "3245345",
                           "provider": "naver",
-                          "event_sms_agreement": "false",
-                          "account_active": "false",
-                          "nickname": "minjoon"
+                          "nickname": "test"
                       }
       responses:
         '200':
@@ -133,12 +109,49 @@ paths:
                 example:
                   code: 200
                   message: 회원가입 완료
-                  data: jwt토큰
-  /duplicateCheck:
+                  data: "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzZGZnc2JAYm1uYXZlci5jb20iLCJyb2xlIjpbIlJPTEVfVVNFUiJdLCJ1c2VyVXVpZCI6ImIyZjcyNDlmLTUwN2QtNDQ1ZS04MmQ0LWRkZjlkN2E3MDgxOSIsImV4cCI6MTYzNzg5NTEyMSwiaWF0IjoxNjM3ODg5MTIxLCJlbWFpbCI6InNkZmdzYkBibW5hdmVyLmNvbSJ9.y0iojclYYaHcHMMlPnXle-odRhexQezcmtL3wDczh6qLKBOtCKwcgc2qb1-JDWKElY6JL_KxiP9QdcVlGwZEQQ"
+  /user/modifyUserInfo:
     post:
       tags:
-        - 회원가입
-      description: 중복 회원 체크
+        - AUTH
+      description: 유저 정보 수정
+      parameters:
+        - name: Cookie
+          in: header
+          description: JWTtoken
+          required: true
+          schema:
+            type: string
+            format: Bearer Token      
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                inquiryId:
+                  description: 질문 번호
+                  type: number      
+              example:  
+                nickname: "test"
+                email: "test@naver.com"
+                birthday : 1995-04-25
+      responses:
+        '200':
+          description: 회원 정보 수정 완료
+          content:
+            json:
+              schema:
+                type: object
+                example:
+                  code: 200
+                  message: 성공
+                  data: 성공
+                
+  /emailDuplicateCheck:
+    post:
+      tags:
+        - AUTH
+      description: 이메일 중복 체크
       requestBody:
         content:
           application/json:
@@ -149,7 +162,6 @@ paths:
                   type: string
               example: {
                             "email" : "test@naver.com",
-                            "nickname" : "test"
                         }
       responses:
         '201':
@@ -161,7 +173,9 @@ paths:
                 example:
                   code: 201
                   message: 중복 회원 존재
-                  data: true
+                  data: {
+                    email : "중복된 회원이 존재합니다"
+                  }
         '200':
           description: 중복 회원 체크
           content:
@@ -171,7 +185,9 @@ paths:
                 example:
                   code: 200
                   message: 회원가입 가능
-                  data: false
+                  data: {
+                    email : "중복된 회원 없음"
+                  }
   /notice:
     get:
       tags:
@@ -187,11 +203,17 @@ paths:
                 example:
                   code: 200
                   message: 공지사항 가져오기 성공
-                  data: noticeList      
-              example: {
-                            "title": "투자 정보 콘텐츠가 개선됩니다.",
-                            "content": "진단 문제가 1000문제 업데이트 됩니다. 더 많은 문제 풀을 통해 더 정교하고 섬세한 진단 및 학습이 가능해졌습니다. 감사합니다 금융 투자 교육원 드림"
-                        }        
+                  data: {
+                    id : 1,
+                    drafte: 0,
+                    title: "알투플러스 이모티콘 이벤트 안내",
+                    content: "안녕하십니까, 금융투자협회입니다.",
+                    views : 10,
+                    dateAdd : "2021-11-05T04:23:35.980+00:00",
+                    dateEdit : "2021-11-05T04:23:35.980+00:00"
+                    
+                  }   
+
   /faq:
     get:
       tags:
@@ -207,7 +229,16 @@ paths:
                 example:
                   code: 200
                   message: faqList 반환 성공
-                  data: faqList       
+                  data: {
+                    id : 41,
+                    category : "test",
+                    draft : 0,
+                    title : test,
+                    content : testtest,
+                    views : 1,
+                    dateAdd : "2021-11-03T00:13:53.193+00:00",
+                    dateEdit : "2021-11-03T00:13:53.193+00:00"
+                  }       
 
 
 
@@ -219,11 +250,11 @@ paths:
       parameters:
         - name: Cookie
           in: header
-          description: user JWTtoken
+          description: JWTtoken
           required: true
           schema:
             type: string
-            format: string      
+            format: Bearer Token      
       requestBody:
         content:
           multipart/form-data:
@@ -244,14 +275,13 @@ paths:
                 inquiry_file:
                   description: 첨부파일 json 리스트
                   type: string
-              example: {   
-                          "status": "대기중",
-                          "title": "두번째 질문이 있습니다",
-                          "type": "error",
-                          "content": "페이지가 안보입니다",
-                          "fileList": ["제목없음.png","제목없음2.png"]
-                        }
-     
+              example: 
+                status : "답변 대기중"
+                title : "질문 있습니다"
+                type : "Account"
+                content : "로그인이 잘 안됩니다"
+                fileList : "사진.png"
+                filsList : "사진.png"
       responses:
         '200':
           description: 해당 유저의 1대1 문의생성
@@ -262,7 +292,27 @@ paths:
                 example:
                   code: 200
                   message: 1대1 질문 생성 성공
-                  data: inquiryId   
+                  data: {
+                    id : 228,
+                    userUuid: "82919d9e-9dc4-4048-9be2-a4973713de60",
+                    userType: null,
+                    providerId: "sdfdfsffdbmnmsf",
+                    provider: "kakao",
+                    email: "sdfgsb@bmnaver.com",
+                    role: "USER",
+                    birthday: "1995",
+                    errors: [],
+                    nickname: "sbvbmbnmxcvxv",
+                    name: null,
+                    older_than_14: true,
+                    service_agreement: true,
+                    collect_info: true,
+                    investPeriod: null,
+                    minitestReports: [],
+                    createDate: "2021-11-26T10:38:44.588",
+                    ip: null,
+                    refreshToken: "eyJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE2Mzc4OTA3MzYsImV4cCI6MTYzODQ5NTUzNn0.vNbboT4X1aAvYUwZJzE-H7uDQsdK0ZaNtoFWmPBamyhUhS1KW2bNs3jJZMDLtLUobj32Dp7nAp0nsOZfFCc7Xg"
+                  }
 
   /user/inquiry/list:
     get:
@@ -272,11 +322,11 @@ paths:
       parameters:
         - name: Cookie
           in: header
-          description: user JWTtoken
+          description: JWTtoken
           required: true
           schema:
             type: string
-            format: string        
+            format: Bearer Token        
       responses:
         '200':
           description: 해당 유저의 모든 1대1 리스트 기록 반환
@@ -287,8 +337,14 @@ paths:
                 example:
                   code: 200
                   message: 1대1 질문 리스트 받아오기 성공
-                  data: inquiryList    
-  /inquiry/attachment:
+                  data: {
+                          "inquiry_TYPE": "test",
+                          "create_DATE": "2021-11-26T10:39:31.321",
+                          "inquiry_ID": 228,
+                          "inquiry_STATUS": "test",
+                          "inquiry_TITLE": "test"
+                         }    
+  /user/inquiry/attachment:
     get:
       tags:
         - 1대1문의
@@ -296,11 +352,11 @@ paths:
       parameters:
         - name: Cookie
           in: header
-          description: user JWTtoken
+          description: JWTtoken
           required: true
           schema:
             type: string
-            format: string   
+            format: Bearer Token   
         - name: filename
           in: query
           schema:
@@ -308,15 +364,14 @@ paths:
             format: string   
       responses:
         '200':
-          description: 해당 유저의 모든 1대1 리스트 기록 반환
+          description: 1대1 문의 첨부 파일 반환
           content:
             image/png:
               schema:
                 type: object
                 example:
                   code: 200
-                  message: 1대1 질문 리스트 받아오기 성공
-                  data: inquiryList      
+                  data: 첨부파일 이미지    
 
   /user/inquiry:
     post:
@@ -330,7 +385,7 @@ paths:
           required: true
           schema:
             type: string
-            format: string      
+            format: Bearer Token      
       requestBody:
         content:
           application/json:
@@ -351,8 +406,43 @@ paths:
                 type: object
                 example:
                   code: 200
-                  message: 제거 성공
-                  data: inquiry   
+                  message: 1대1 질문 받아오기 성공
+                  data: 
+                    id: 228
+                    userMaster:
+                      userUuid: 82919d9e-9dc4-4048-9be2-a4973713de60
+                      userType: null
+                      providerId: sdfdfsffdbmnmsf
+                      provider: kakao
+                      email: sdfgsb@bmnaver.com
+                      role: USER
+                      birthday: '1995'
+                      errors: []
+                      nickname: sbvbmbnmxcvxv
+                      name: null
+                      older_than_14: true
+                      service_agreement: true
+                      collect_info: true
+                      investPeriod: null
+                      minitestReports: []
+                      createDate: '2021-11-26T10:38:44.588'
+                      refreshToken: eyJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE2Mzc4OTA3MzYsImV4cCI6MTYzODQ5NTUzNn0.vNbboT4X1aAvYUwZJzE-H7uDQsdK0ZaNtoFWmPBamyhUhS1KW2bNs3jJZMDLtLUobj32Dp7nAp0nsOZfFCc7Xg
+                    inquiry_file:
+                      - url: 01731c43-9f1d-44c4-85b7-c1454e66263c_kofia-공지사항.png
+                        type: image/png
+                        file: null
+                        id: 20164
+                        name: kofia-공지사항
+                        size: 640351
+                    status: test6test6test6test6test6test6test6test6test6test6test6test6test6test6test6test6
+                    title: test6test6test6test6test6test6test6test6test6test6test6test6test6test6test6test6
+                    type: test6test6test6test6test6test6test6test6test6test6test6test6test6test6test6test6
+                    content: test6test6test6test6test6test6test6test6test6test6test6test6test6test6test6test6
+                    answer: null
+                    answer_time: null
+                    createDate: '2021-11-26T10:39:31.321'
+                    adminUuid: null
+                           
   /user/inquiry/delete:
     post:
       tags:
@@ -361,11 +451,11 @@ paths:
       parameters:
         - name: Cookie
           in: header
-          description: user JWTtoken
+          description: JWTtoken
           required: true
           schema:
             type: string
-            format: string      
+            format: Bearer Token      
       requestBody:
         content:
           application/json:
@@ -374,10 +464,8 @@ paths:
                 inquiryId:
                   description: 질문 번호
                   type: number      
-              example: {   
-                          "inquiryId": 1
-                        }
-     
+              example:    
+                inquiryId : 228
       responses:
         '200':
           description: 해당 유저의 1대1 질문 삭제
@@ -388,7 +476,7 @@ paths:
                 example:
                   code: 200
                   message: 제거 성공
-                  data: userInquiryList                     
+                  data: 228                     
         '400':
           description: 해당 유저의 1대1 질문 삭제
           content:
@@ -408,11 +496,11 @@ paths:
       parameters:
         - name: Cookie
           in: header
-          description: user JWTtoken
+          description: JWTtoken
           required: true
           schema:
             type: string
-            format: string      
+            format: Bearer Token      
       responses:
         '200':
           description: 해당 유저의 모든 미니 테스트 리포트 반환
@@ -432,11 +520,11 @@ paths:
       parameters:
         - name: Cookie
           in: header
-          description: user JWTtoken
+          description: JWTtoken
           required: true
           schema:
             type: string
-            format: string      
+            format: Bearer Token      
       responses:
         '200':
           description: 해당 유저의 모든 미니 테스트 리포트 반환
@@ -451,16 +539,16 @@ paths:
   /user/delete:
     get:
       tags:
-        - 회원가입
+        - AUTH
       description: 회원 탈퇴
       parameters:
         - name: Cookie
           in: header
-          description: user JWTtoken
+          description: JWTtoken
           required: true
           schema:
             type: string
-            format: string      
+            format: Bearer Token      
       responses:
         '200':
           description: 회원 탈퇴
@@ -521,7 +609,7 @@ paths:
                 example:
                   code: 200
                   message: 성공
-                  data: result   
+                  data: "True"   
         '400':
           description: 수정 실패
           content:
@@ -532,3 +620,4 @@ paths:
                   code: 400
                   message: 유저가 생성한 질문이 아닙니다
                   data: 유저가 생성한 질문이 아닙니다    
+                  
