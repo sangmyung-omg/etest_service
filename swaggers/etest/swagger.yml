@@ -19,6 +19,8 @@ tags:
   description: 유저 정보 CRUD
 - name: Model
   description: 이해도 모델 업데이트 관련
+- name: Report Share
+  description: 리포트 공유 관련
 
 paths:
   /contents/v1/problems/{probId}:
@@ -428,7 +430,254 @@ paths:
             json:
               schema:
                 $ref: "#/components/schemas/ukRelResult"
-
+  /report/mini/share:
+    get:
+      tags:
+      - Report Share
+      summary: 공유된 미니 테스트 리포트의 정보를 가져옵니다.
+      parameters:
+      - name: sharekey
+        in: query
+        description: 공유키
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: OK
+          content:
+            json:
+              schema:
+                type: object
+                example:
+                  sharekey: "key"
+    post:
+      tags:
+      - Report Share
+      summary: 공유된 미니 테스트 리포트의 정보를 가져옵니다.
+      requestBody:
+        $ref: "#/components/requestBodies/shareCreateKey"
+      responses:
+        200:
+          description: OK
+          content:
+            json:
+              schema:
+                type: object
+                example:
+                  score: 70
+                  percentage: 88
+                  partUnderstanding: [
+                    ["필요자금 마련방법", "C", "50"],
+                    ["생애주기", "A", "89"],
+                    ["가치변화의 요인", "F", "10"]
+                  ]
+                  weakPartDetail: [
+                    ["파트 5 상세 1", "F", "C"],
+                    ["파트 5 상세 2", "F", "C"],
+                    ["파트 5 상세 3", "F", "C"],
+                    ["파트 5 상세 4", "F", "C"],
+                    ["파트 5 상세 5", "F", "C"]
+                  ]
+                  diagnosisQuestionInfo: [
+                    ["맞은 문제 ID", "2", "3", "4", "5"],
+                    ["틀린 문제 ID", "7", "8"],
+                    ["모르는 문제 ID", "9", "10"]
+                  ]
+  /report/diag/share:
+    get:
+      tags:
+      - Report Share
+      summary: 공유된 진단 테스트 리포트의 정보를 가져옵니다.
+      parameters:
+      - name: sharekey
+        in: query
+        description: 공유키
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: OK
+          content:
+            json:
+              schema:
+                type: object
+                example:
+                  score: 70
+                  percentage: 88
+                  partUnderstanding: [
+                    ["필요자금 마련방법", "C", "50"],
+                    ["생애주기", "A", "89"],
+                    ["가치변화의 요인", "F", "10"]
+                  ]
+                  weakPartDetail: [
+                    ["파트 5 상세 1", "F", "C"],
+                    ["파트 5 상세 2", "F", "C"],
+                    ["파트 5 상세 3", "F", "C"],
+                    ["파트 5 상세 4", "F", "C"],
+                    ["파트 5 상세 5", "F", "C"]
+                  ]
+                  diagnosisQuestionInfo: [
+                    ["맞은 문제 ID", "2", "3", "4", "5"],
+                    ["틀린 문제 ID", "7", "8"],
+                    ["모르는 문제 ID", "9", "10"]
+                  ]
+    post:
+      tags:
+      - Report Share
+      summary: 공유된 진단 테스트 리포트의 정보를 가져옵니다.
+      requestBody:
+        $ref: "#/components/requestBodies/shareCreateKey"
+      responses:
+        200:
+          description: OK
+          content:
+            json:
+              schema:
+                type: object
+                example:
+                  score: 70
+                  percentage: 88
+                  partUnderstanding: [
+                    ["필요자금 마련방법", "C", "50"],
+                    ["생애주기", "A", "89"],
+                    ["가치변화의 요인", "F", "10"]
+                  ]
+                  weakPartDetail: [
+                    ["파트 5 상세 1", "F", "C"],
+                    ["파트 5 상세 2", "F", "C"],
+                    ["파트 5 상세 3", "F", "C"],
+                    ["파트 5 상세 4", "F", "C"],
+                    ["파트 5 상세 5", "F", "C"]
+                  ]
+                  diagnosisQuestionInfo: [
+                    ["맞은 문제 ID", "2", "3", "4", "5"],
+                    ["틀린 문제 ID", "7", "8"],
+                    ["모르는 문제 ID", "9", "10"]
+                  ]
+  /report/diag/share/bypart/{part}:
+    get:
+      tags:
+      - Report Share
+      summary: 파트별 정보
+      parameters:
+      - name: sharekey
+        in: query
+        description: 공유키
+        required: true
+        schema:
+          type: string
+      - name: part
+        in: path
+        description: 파트
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: OK
+          content:
+            json:
+              schema:
+                $ref: "#/components/schemas/DiagnosisRecordDetailDTO"
+  /report/diag/share/solution:
+    get:
+      tags:
+      - Report Share
+      summary: 파트별 정보
+      parameters:
+      - name: sharekey
+        in: query
+        description: 공유키
+        required: true
+        schema:
+          type: string
+      - name: part
+        in: path
+        description: 파트
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: OK
+          content:
+            json:
+              schema:
+                $ref: "#/components/schemas/parsedSolutionResult"
+  /report/share:
+    get:
+      tags:
+      - Report Share
+      summary: 공유된 리포트의 정보를 가져옵니다.
+      parameters:
+      - name: sharekey
+        in: query
+        description: 공유키
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: OK
+          content:
+            json:
+              schema:
+                type: object
+                example:
+                  score: 70
+                  percentage: 88
+                  partUnderstanding: [
+                    ["필요자금 마련방법", "C", "50"],
+                    ["생애주기", "A", "89"],
+                    ["가치변화의 요인", "F", "10"]
+                  ]
+                  weakPartDetail: [
+                    ["파트 5 상세 1", "F", "C"],
+                    ["파트 5 상세 2", "F", "C"],
+                    ["파트 5 상세 3", "F", "C"],
+                    ["파트 5 상세 4", "F", "C"],
+                    ["파트 5 상세 5", "F", "C"]
+                  ]
+                  diagnosisQuestionInfo: [
+                    ["맞은 문제 ID", "2", "3", "4", "5"],
+                    ["틀린 문제 ID", "7", "8"],
+                    ["모르는 문제 ID", "9", "10"]
+                  ]
+    post:
+      tags:
+      - Report Share
+      summary: 공유된 리포트의 정보를 가져옵니다.
+      requestBody:
+        $ref: "#/components/requestBodies/shareCreateKey"
+      responses:
+        200:
+          description: OK
+          content:
+            json:
+              schema:
+                type: object
+                example:
+                  score: 70
+                  percentage: 88
+                  partUnderstanding: [
+                    ["필요자금 마련방법", "C", "50"],
+                    ["생애주기", "A", "89"],
+                    ["가치변화의 요인", "F", "10"]
+                  ]
+                  weakPartDetail: [
+                    ["파트 5 상세 1", "F", "C"],
+                    ["파트 5 상세 2", "F", "C"],
+                    ["파트 5 상세 3", "F", "C"],
+                    ["파트 5 상세 4", "F", "C"],
+                    ["파트 5 상세 5", "F", "C"]
+                  ]
+                  diagnosisQuestionInfo: [
+                    ["맞은 문제 ID", "2", "3", "4", "5"],
+                    ["틀린 문제 ID", "7", "8"],
+                    ["모르는 문제 ID", "9", "10"]
+                  ]
 components:
   schemas:
     diagnosisProblemList:
@@ -1120,6 +1369,29 @@ components:
         type: string
         example: "301211121278486"
   requestBodies:
+    shareCreateKey:
+      description: "공유 정보"
+      required: true
+      content:
+        application/json:
+          schema:
+            properties:
+              type:
+                type: string
+                example: minitest
+                description: 리포트 타입
+              expire:
+                type: string
+                example: 유효날짜
+                description: 유효날짜
+              probSetId:
+                type: string
+                example: setId
+                description: 문제 세트 아이디
+              userId:
+                type: string
+                example: ""
+                description: 유저의 ID
     LRSBody:
       description: "LRS에 저장할 statement 구성 정보"
       required: true
