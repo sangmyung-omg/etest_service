@@ -246,26 +246,6 @@ public class DiagnosisReportService {
 		// score 관련 저장
 		log.info(report.toString());
 		diagnosisReportRepo.save(report);
-		
-		try
-		{
-			// 유저 정보 수정.
-			Optional<UserMaster> userInfo = userMasterRepo.findById(id);
-			
-			if(userInfo.isPresent())
-			{
-				UserMaster um = userInfo.get();
-				um.setInvestPeriod(investPeriod);
-				userMasterRepo.save(um);
-			}
-			else
-				log.info("User Info Not Found in saveDiangosisReport. "+id);
-		} 
-		catch (IllegalArgumentException e)
-		{
-			log.info("User Info Not Found in saveDiangosisReport. "+id);
-		}
-		
 	}
 	
 	private List<Pair<Problem, Integer>> getProblemAndChoiceInfos(
