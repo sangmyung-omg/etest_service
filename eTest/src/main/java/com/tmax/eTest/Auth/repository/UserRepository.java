@@ -25,10 +25,5 @@ public interface UserRepository extends JpaRepository<UserMaster, Long> {
 
     Boolean existsByNickname(String nickname);
 
-
-    @Query("select u.ip from com.tmax.eTest.Common.model.user.UserMaster u where ip != null")
-    List<String> findAllByIp();
-
-
 }
 

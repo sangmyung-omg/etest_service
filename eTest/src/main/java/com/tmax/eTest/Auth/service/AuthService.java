@@ -59,11 +59,16 @@ public class AuthService {
     public CMRespDto<?> singUp(SignUpRequestDto signUpRequestDto) {
         if (!emailDuplicateCheck(signUpRequestDto.getEmail())
                 && !nickNameDuplicateCheck(signUpRequestDto.getNickname())) {
-            UserMaster userMaster = UserMaster.builder().nickname(signUpRequestDto.getNickname())
-                    .email(signUpRequestDto.getEmail()).provider(signUpRequestDto.getProvider()).role(Role.USER)
-                    .name(signUpRequestDto.getName()).userUuid(UUID.randomUUID().toString())
-                    .providerId(signUpRequestDto.getProviderId()).birthday(signUpRequestDto.getBirthday())
-                    .older_than_14(true).service_agreement(true).collect_info(true).build();
+            UserMaster userMaster = UserMaster.builder()
+                    .nickname(signUpRequestDto.getNickname())
+                    .email(signUpRequestDto.getEmail())
+                    .provider(signUpRequestDto.getProvider())
+                    .role(Role.USER)
+                    .userUuid(UUID.randomUUID().toString())
+                    .providerId(signUpRequestDto.getProviderId())
+                    .older_than_14(true)
+                    .service_agreement(true)
+                    .collect_info(true).build();
             userRepository.save(userMaster);
 
             PrincipalDetails principal = PrincipalDetails.create(userMaster);
@@ -154,7 +159,6 @@ public class AuthService {
                     .provider(userMaster.getProvider().toString())
                     .jwtToken(jwtToken)
                     .email(userMaster.getEmail())
-                    .birthday(userMaster.getBirthday().toString())
                     .providerId(userMaster.getProviderId())
                     .refreshToken(refreshToken)
                     .nickname(userMaster.getNickname())
@@ -211,7 +215,6 @@ public class AuthService {
         Optional<UserMaster> userMasterOptional = userRepository.findByUserUuid(principalDetails.getUserUuid());
         UserMaster userMaster = userMasterOptional.get();
         userMaster.setNickname(modifyUserInfoDto.getNickname());
-        userMaster.setBirthday(modifyUserInfoDto.getBirthday());
         userMaster.setEmail(modifyUserInfoDto.getEmail());
         return new CMRespDto<>(200, "회원정보 수정 성공", "성공");
     };

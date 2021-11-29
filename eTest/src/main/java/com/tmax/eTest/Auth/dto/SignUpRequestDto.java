@@ -14,11 +14,7 @@ public class SignUpRequestDto {
 
     private String email;
 
-    private LocalDate birthday;
-
     private String nickname;
-
-    private String name;
 
     @Enumerated(EnumType.STRING)
     private Role role;

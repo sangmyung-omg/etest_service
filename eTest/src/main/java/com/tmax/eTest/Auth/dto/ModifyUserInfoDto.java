@@ -9,9 +9,6 @@ import java.time.LocalDate;
 public class ModifyUserInfoDto {
     private String nickname;
 
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    private LocalDate birthday;
-
     private String email;
 
     private Gender gender;
