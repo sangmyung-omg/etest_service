@@ -1,14 +1,7 @@
 package com.tmax.eTest.Auth.service;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
-import java.util.TimeZone;
-import java.util.UUID;
-
+import com.tmax.eTest.Auth.authenum.AuthProvider;
+import com.tmax.eTest.Auth.authenum.Role;
 import com.tmax.eTest.Auth.dto.*;
 import com.tmax.eTest.Auth.jwt.JwtTokenUtil;
 import com.tmax.eTest.Auth.repository.UserRepository;
@@ -20,7 +13,6 @@ import com.tmax.eTest.Common.repository.book.BookBookmarkRepository;
 import com.tmax.eTest.Common.repository.video.VideoBookmarkRepository;
 import com.tmax.eTest.LRS.dto.StatementDTO;
 import com.tmax.eTest.LRS.util.LRSAPIManager;
-
 import com.tmax.eTest.MyPage.repository.DiagnosisReportRepo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,6 +22,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @Service
 public class AuthService {
@@ -55,6 +51,7 @@ public class AuthService {
     private BookBookmarkRepository bookBookmarkRepository;
     @Autowired
     private VideoBookmarkRepository videoBookmarkRepository;
+
     @Transactional
     public CMRespDto<?> singUp(SignUpRequestDto signUpRequestDto) {
         if (!emailDuplicateCheck(signUpRequestDto.getEmail())
@@ -217,6 +214,5 @@ public class AuthService {
         userMaster.setNickname(modifyUserInfoDto.getNickname());
         userMaster.setEmail(modifyUserInfoDto.getEmail());
         return new CMRespDto<>(200, "회원정보 수정 성공", "성공");
-    };
-
+    }
 }

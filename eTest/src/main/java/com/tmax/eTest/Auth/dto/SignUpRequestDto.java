@@ -1,11 +1,11 @@
 package com.tmax.eTest.Auth.dto;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
+import com.tmax.eTest.Auth.authenum.AuthProvider;
+import com.tmax.eTest.Auth.authenum.Role;
 import lombok.Data;
 
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import java.time.LocalDate;
 
 @Data
 public class SignUpRequestDto {
