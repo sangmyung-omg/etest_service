@@ -1,16 +1,12 @@
 package com.tmax.eTest.ManageUser.model.dto;
 
-import com.tmax.eTest.Auth.dto.AuthProvider;
-import com.tmax.eTest.Common.model.report.DiagnosisReport;
-import com.tmax.eTest.Common.model.user.UserMaster;
+import com.tmax.eTest.Auth.authenum.AuthProvider;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Data
 @Builder

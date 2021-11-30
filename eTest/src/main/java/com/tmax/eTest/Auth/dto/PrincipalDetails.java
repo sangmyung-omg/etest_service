@@ -6,7 +6,10 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 public class PrincipalDetails implements OAuth2User, UserDetails {
 
@@ -17,7 +20,8 @@ public class PrincipalDetails implements OAuth2User, UserDetails {
     private Collection<? extends GrantedAuthority> authorities;
     private Map<String, Object> attributes;
     private String nickname;
-    public PrincipalDetails(  String email, String userUuid, String nickname, Collection<? extends GrantedAuthority> authorities) {
+
+    public PrincipalDetails(String email, String userUuid, String nickname, Collection<? extends GrantedAuthority> authorities) {
         this.email = email;
         this.authorities = authorities;
         this.userUuid = userUuid;
@@ -26,7 +30,7 @@ public class PrincipalDetails implements OAuth2User, UserDetails {
 
     public static PrincipalDetails create(UserMaster user) {
         List<GrantedAuthority> authorities = Collections.
-                singletonList(new SimpleGrantedAuthority("ROLE_"+user.getRole()));
+                singletonList(new SimpleGrantedAuthority("ROLE_" + user.getRole()));
 
         return new PrincipalDetails(
                 user.getEmail(),
@@ -97,7 +101,9 @@ public class PrincipalDetails implements OAuth2User, UserDetails {
         return null;
     }
 
-    public String getUserUuid() { return userUuid;}
+    public String getUserUuid() {
+        return userUuid;
+    }
 
     public String getNickname() {
         return nickname;
