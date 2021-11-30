@@ -135,7 +135,7 @@ public class PushNotificationService {
         logger.info("admin push request received.");
         Timestamp currentDateTime = new Timestamp(System.currentTimeMillis());
         List<String> tokenList = data.getToken();
-        saveNotificationList(data.getToken(), data.getCategory(), data.getTitle(), currentDateTime);
+        saveNotificationList(data.getToken(), data.getCategory(), data.getBody(), currentDateTime);
         logger.info("new notifications inserted.");
 
         Notification notification = Notification.builder()
@@ -159,7 +159,7 @@ public class PushNotificationService {
         logger.info("{} push request received.", data.getCategory());
         Timestamp currentDateTime = new Timestamp(System.currentTimeMillis());
         List<String> tokenList = userNotificationConfigRepositorySupport.getFilteredTokens(data.getCategory());
-        saveNotificationList(tokenList, data.getCategory(), data.getTitle(), currentDateTime);
+        saveNotificationList(tokenList, data.getCategory(), data.getBody(), currentDateTime);
         logger.info("new notifications inserted.");
 
         Notification notification = Notification.builder()
