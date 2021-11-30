@@ -5,7 +5,6 @@ import com.tmax.eTest.Auth.jwt.JwtCommonAuthorizationFilter;
 import com.tmax.eTest.Auth.jwt.JwtTokenUtil;
 import com.tmax.eTest.Auth.repository.UserRepository;
 import com.tmax.eTest.Auth.service.PrincipalDetailsService;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -44,21 +43,20 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-    http
-        .addFilter(corsConfig.corsFilter())
-        .csrf().disable() //csrf 토큰
-        .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-    .and()
-        .formLogin().disable()
-        .httpBasic().disable()
-            .exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint)
-            .and()
-            .addFilter(new JwtCommonAuthorizationFilter(authenticationManager(),userRepository,jwtTokenUtil))
-            .authorizeRequests()
-                .antMatchers("/user/**").hasAnyRole("USER","MASTER","SUB_MASTER")
-                .antMatchers("/submaster/**").hasAnyRole("SUB_MASTER","MASTER")
+        http
+                .addFilter(corsConfig.corsFilter())
+                .csrf().disable() //csrf 토큰
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
+                .formLogin().disable()
+                .httpBasic().disable()
+                .exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint)
+                .and()
+                .addFilter(new JwtCommonAuthorizationFilter(authenticationManager(), userRepository, jwtTokenUtil))
+                .authorizeRequests()
+                .antMatchers("/user/**").hasAnyRole("USER", "MASTER", "SUB_MASTER")
+                .antMatchers("/submaster/**").hasAnyRole("SUB_MASTER", "MASTER")
                 .antMatchers("/master/**").hasRole("MASTER")
-
-            .anyRequest().permitAll();
+                .anyRequest().permitAll();
     }
 }
