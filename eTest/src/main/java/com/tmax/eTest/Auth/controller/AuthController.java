@@ -18,9 +18,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.HashMap;
-import java.util.Map;
-
 @RestController
 @RequiredArgsConstructor
 public class AuthController {
@@ -49,37 +46,13 @@ public class AuthController {
     }
 
     @PostMapping("/emailDuplicateCheck")
-    public CMRespDto<?> duplicateCheck(@RequestBody DuplicateCheckDto duplicateCheckDto) {
-        Map<String, String> data = new HashMap<>();
-        Boolean res = false;
-        if (authService.emailDuplicateCheck(duplicateCheckDto.getEmail())) {
-            data.put("email", "중복된 회원이 존재합니다");
-            res = true;
-        } else {
-            data.put("email", "중복된 회원 없음");
-        }
-        if (res == true) {
-            return new CMRespDto<>(201, "중복 회원 존재", data);
-        } else {
-            return new CMRespDto<>(200, "회원가입 가능", data);
-        }
+    public CMRespDto<?> duplicateCheck(@RequestBody EmailDuplicateCheckReqDto emailDuplicateCheckReqDto) {
+        return authService.emailDuplicateCheck(emailDuplicateCheckReqDto);
     }
 
     @PostMapping("/nicknameDuplicateCheck")
-    public CMRespDto<?> nicknameDuplicateCheck(@RequestBody DuplicateCheckDto duplicateCheckDto) {
-        Map<String, String> data = new HashMap<>();
-        Boolean res = false;
-        if (authService.nickNameDuplicateCheck(duplicateCheckDto.getNickname())) {
-            data.put("nickname", "중복된 회원이 존재합니다");
-            res = true;
-        } else {
-            data.put("nickname", "중복된 회원 없음");
-        }
-        if (res == true) {
-            return new CMRespDto<>(201, "중복 회원 존재", data);
-        } else {
-            return new CMRespDto<>(200, "회원가입 가능", data);
-        }
+    public CMRespDto<?> nicknameDuplicateCheck(@RequestBody NicknameDuplicateCheckReqDto nicknameDuplicateCheckReqDto) {
+        return authService.nickNameDuplicateCheck(nicknameDuplicateCheckReqDto);
     }
 
 
@@ -103,6 +76,4 @@ public class AuthController {
         authService.modifyUserInfo(principalDetails, modifyUserInfoDto);
         return new CMRespDto<>(200, "성공", "성공");
     }
-
-
 }
