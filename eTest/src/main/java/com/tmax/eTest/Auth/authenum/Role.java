@@ -1,4 +1,4 @@
-package com.tmax.eTest.Auth.dto;
+package com.tmax.eTest.Auth.authenum;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

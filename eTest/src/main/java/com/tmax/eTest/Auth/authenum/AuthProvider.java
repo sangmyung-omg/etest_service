@@ -1,4 +1,5 @@
-package com.tmax.eTest.Auth.dto;
+package com.tmax.eTest.Auth.authenum;
+
 public enum AuthProvider {
     facebook,
     google,
