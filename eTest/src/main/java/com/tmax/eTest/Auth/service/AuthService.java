@@ -54,8 +54,8 @@ public class AuthService {
 
     @Transactional
     public CMRespDto<?> singUp(SignUpRequestDto signUpRequestDto) {
-        if (!emailDuplicateCheck(signUpRequestDto.getEmail())
-                && !nickNameDuplicateCheck(signUpRequestDto.getNickname())) {
+        if (!userRepository.existsByEmail(signUpRequestDto.getEmail())
+                && !userRepository.existsByNickname(signUpRequestDto.getNickname())) {
             UserMaster userMaster = UserMaster.builder()
                     .nickname(signUpRequestDto.getNickname())
                     .email(signUpRequestDto.getEmail())
@@ -85,6 +85,7 @@ public class AuthService {
             // LRS에 저장
             List<StatementDTO> statementDTOList = new ArrayList<>();
             statementDTOList.add(statementDTO);
+
             try {
                 lrsapiManager.saveStatementList(statementDTOList);
             } catch (ParseException e) {
@@ -97,14 +98,30 @@ public class AuthService {
     }
 
     @Transactional(readOnly = true)
-    public boolean emailDuplicateCheck(String email) {
-        return userRepository.existsByEmail(email);
+    public CMRespDto<?> emailDuplicateCheck(EmailDuplicateCheckReqDto emailDuplicateCheckReqDto) {
+        String email = emailDuplicateCheckReqDto.getEmail();
+        EmailDuplicateCheckResDto emailDuplicateCheckResDto = new EmailDuplicateCheckResDto();
+        if (userRepository.existsByEmail(email)) {
+            emailDuplicateCheckResDto.setEmail("중복된 회원이 존재합니다");
+            return new CMRespDto<>(201, "중복 회원 존재", emailDuplicateCheckResDto);
+        }
+        emailDuplicateCheckResDto.setEmail("중복된 회원 없음");
+        return new CMRespDto<>(200, "회원가입 가능", emailDuplicateCheckResDto);
     }
 
     @Transactional(readOnly = true)
-    public boolean nickNameDuplicateCheck(String nickname) {
-        return userRepository.existsByNickname(nickname);
+    public CMRespDto<?> nickNameDuplicateCheck(NicknameDuplicateCheckReqDto nicknameDuplicateCheckReqDto) {
+
+        String nickname = nicknameDuplicateCheckReqDto.getNickname();
+        NicknameDuplicatedCheckResDto nicknameDuplicatedCheckResDto = new NicknameDuplicatedCheckResDto();
+        if (userRepository.existsByNickname(nickname)) {
+            nicknameDuplicatedCheckResDto.setNickname("중복된 회원이 존재합니다");
+            return new CMRespDto<>(201, "중복 회원 존재", nicknameDuplicatedCheckResDto);
+        }
+        nicknameDuplicatedCheckResDto.setNickname("중복된 회원 없음");
+        return new CMRespDto<>(200, "회원가입 가능", nicknameDuplicatedCheckResDto);
     }
+
 
     @Transactional
     public String deleteUser(PrincipalDetails principalDetails) {
