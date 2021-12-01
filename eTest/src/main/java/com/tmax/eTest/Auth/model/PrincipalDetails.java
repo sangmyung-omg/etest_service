@@ -1,4 +1,4 @@
-package com.tmax.eTest.Auth.dto;
+package com.tmax.eTest.Auth.model;
 
 import com.tmax.eTest.Common.model.user.UserMaster;
 import org.springframework.security.core.GrantedAuthority;

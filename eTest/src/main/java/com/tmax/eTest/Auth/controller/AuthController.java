@@ -2,6 +2,7 @@ package com.tmax.eTest.Auth.controller;
 
 import com.tmax.eTest.Auth.dto.*;
 import com.tmax.eTest.Auth.jwt.JwtTokenUtil;
+import com.tmax.eTest.Auth.model.PrincipalDetails;
 import com.tmax.eTest.Auth.repository.UserRepository;
 import com.tmax.eTest.Auth.service.AuthService;
 import com.tmax.eTest.LRS.util.LRSAPIManager;

@@ -1,6 +1,6 @@
 package com.tmax.eTest.Auth.controller;
 
-import com.tmax.eTest.Auth.dto.PrincipalDetails;
+import com.tmax.eTest.Auth.model.PrincipalDetails;
 import com.tmax.eTest.Auth.exception.ResourceNotFoundExceptionDto;
 import com.tmax.eTest.Auth.repository.UserRepository;
 import com.tmax.eTest.Common.model.user.UserMaster;

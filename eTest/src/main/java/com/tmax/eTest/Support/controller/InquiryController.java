@@ -1,16 +1,13 @@
 package com.tmax.eTest.Support.controller;
 
 import com.tmax.eTest.Auth.dto.CMRespDto;
-import com.tmax.eTest.Auth.dto.PrincipalDetails;
-import com.tmax.eTest.Auth.exception.ResourceNotFoundExceptionDto;
+import com.tmax.eTest.Auth.model.PrincipalDetails;
 import com.tmax.eTest.Auth.repository.UserRepository;
 import com.tmax.eTest.Common.model.support.Inquiry;
-import com.tmax.eTest.Common.model.user.UserMaster;
 import com.tmax.eTest.Support.dto.*;
 import com.tmax.eTest.Support.repository.InquiryFileRepository;
 import com.tmax.eTest.Support.repository.InquiryRepository;
 import com.tmax.eTest.Support.service.InquiryService;
-import io.swagger.models.auth.In;
 import org.apache.tika.Tika;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,18 +19,12 @@ import org.springframework.core.io.Resource;
 import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;

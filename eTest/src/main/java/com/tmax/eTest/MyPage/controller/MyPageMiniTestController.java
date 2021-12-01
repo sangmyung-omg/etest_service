@@ -1,7 +1,7 @@
 package com.tmax.eTest.MyPage.controller;
 
 import com.tmax.eTest.Auth.dto.CMRespDto;
-import com.tmax.eTest.Auth.dto.PrincipalDetails;
+import com.tmax.eTest.Auth.model.PrincipalDetails;
 import com.tmax.eTest.Common.model.report.MinitestReport;
 import com.tmax.eTest.MyPage.dto.MiniTestReportHistoryDTO;
 import com.tmax.eTest.MyPage.service.MyPageMiniTestService;

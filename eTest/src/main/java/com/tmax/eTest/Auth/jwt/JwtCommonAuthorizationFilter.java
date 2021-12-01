@@ -1,7 +1,7 @@
 package com.tmax.eTest.Auth.jwt;
 
 
-import com.tmax.eTest.Auth.dto.PrincipalDetails;
+import com.tmax.eTest.Auth.model.PrincipalDetails;
 import com.tmax.eTest.Auth.repository.UserRepository;
 import com.tmax.eTest.Common.model.user.UserMaster;
 import io.jsonwebtoken.ExpiredJwtException;

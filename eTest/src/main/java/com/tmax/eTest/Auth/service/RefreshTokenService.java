@@ -1,7 +1,6 @@
 package com.tmax.eTest.Auth.service;
 
-import com.tmax.eTest.Auth.dto.CMRespDto;
-import com.tmax.eTest.Auth.dto.PrincipalDetails;
+import com.tmax.eTest.Auth.model.PrincipalDetails;
 import com.tmax.eTest.Auth.dto.RefreshTokenRequestDto;
 import com.tmax.eTest.Auth.dto.RefreshTokenResponseDto;
 import com.tmax.eTest.Auth.jwt.JwtTokenUtil;
@@ -10,7 +9,6 @@ import com.tmax.eTest.Common.model.user.UserMaster;
 import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;

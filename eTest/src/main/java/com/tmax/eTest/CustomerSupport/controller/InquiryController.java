@@ -1,12 +1,10 @@
 package com.tmax.eTest.CustomerSupport.controller;
 
 
-import com.tmax.eTest.Auth.dto.PrincipalDetails;
-import com.tmax.eTest.Common.model.support.Inquiry;
+import com.tmax.eTest.Auth.model.PrincipalDetails;
 import com.tmax.eTest.CustomerSupport.model.dto.InquiryAnswerDTO;
 import com.tmax.eTest.CustomerSupport.model.dto.InquiryDTO;
 import com.tmax.eTest.CustomerSupport.service.InquiryService;
-import com.tmax.eTest.ManageUser.model.dto.UserInfoDTO;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import lombok.extern.slf4j.Slf4j;
 
-import com.tmax.eTest.Auth.dto.PrincipalDetails;
+import com.tmax.eTest.Auth.model.PrincipalDetails;
 import com.tmax.eTest.Auth.jwt.JwtTokenUtil;
 import com.tmax.eTest.Test.config.TestPathConstant;
 import com.tmax.eTest.Test.dto.RegisterInputDTO;

@@ -4,6 +4,7 @@ import com.tmax.eTest.Auth.authenum.AuthProvider;
 import com.tmax.eTest.Auth.authenum.Role;
 import com.tmax.eTest.Auth.dto.*;
 import com.tmax.eTest.Auth.jwt.JwtTokenUtil;
+import com.tmax.eTest.Auth.model.PrincipalDetails;
 import com.tmax.eTest.Auth.repository.UserRepository;
 import com.tmax.eTest.Common.model.book.BookBookmark;
 import com.tmax.eTest.Common.model.report.DiagnosisReport;

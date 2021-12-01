@@ -1,6 +1,5 @@
 package com.tmax.eTest.ManageUser.controller;
 
-import com.tmax.eTest.Auth.dto.PrincipalDetails;
 import com.tmax.eTest.Common.model.report.DiagnosisReport;
 import com.tmax.eTest.ManageUser.model.dto.UserInfoDTO;
 import com.tmax.eTest.ManageUser.model.dto.UserPopupDTO;
@@ -10,14 +9,9 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import java.text.ParseException;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping(value = "master/manageUser",produces = MediaType.APPLICATION_JSON_VALUE)
