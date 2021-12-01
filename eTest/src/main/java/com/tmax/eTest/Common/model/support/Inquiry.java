@@ -30,7 +30,6 @@ public class Inquiry {
     private UserMaster userMaster;
 
     @OneToMany(mappedBy = "inquiry", cascade = {CascadeType.REMOVE}, fetch = FetchType.LAZY)
-    @JsonBackReference
     private List<Inquiry_file> inquiry_file;
 
     @Column(name = "INQUIRY_STATUS")

@@ -1,5 +1,6 @@
 package com.tmax.eTest.Common.model.support;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.AllArgsConstructor;
@@ -38,7 +39,7 @@ public class Inquiry_file {
 
     @ManyToOne
     @JoinColumn(name = "INQUIRY_ID")
-    @JsonManagedReference
+    @JsonIgnore
     private Inquiry inquiry;
 
 }
