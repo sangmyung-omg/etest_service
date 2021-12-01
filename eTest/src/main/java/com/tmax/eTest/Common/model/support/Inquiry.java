@@ -16,7 +16,10 @@ import javax.persistence.PrePersist;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.tmax.eTest.Common.model.user.UserMaster;
 import lombok.*;
 
@@ -25,12 +28,12 @@ import java.util.List;
 import javax.persistence.*;
 
 @Entity
-@Data
+@Getter
+@Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "CS_INQUIRY")
-@ToString(exclude = "inquiry_file")
 public class Inquiry {
 
     @Id
@@ -39,13 +42,13 @@ public class Inquiry {
     @Column(name = "INQUIRY_ID")
     private Long id;
 
-    @JsonIgnoreProperties({ "inquiry" })
     @JoinColumn(name = "USER_UUID")
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonManagedReference
     private UserMaster userMaster;
 
-    @JsonIgnoreProperties({"inquiry"})
     @OneToMany(mappedBy = "inquiry", cascade = {CascadeType.REMOVE}, fetch = FetchType.LAZY)
+    @JsonBackReference
     private List<Inquiry_file> inquiry_file;
 
     @Column(name = "INQUIRY_STATUS")

@@ -1,11 +1,10 @@
 package com.tmax.eTest.Support.service;
 
-import com.tmax.eTest.Auth.dto.PrincipalDetails;
+import com.tmax.eTest.Auth.model.PrincipalDetails;
 import com.tmax.eTest.Auth.repository.UserRepository;
 import com.tmax.eTest.Common.model.support.Inquiry;
 import com.tmax.eTest.Common.model.support.Inquiry_file;
 import com.tmax.eTest.Common.model.user.UserMaster;
-import com.tmax.eTest.Support.controller.InquiryController;
 import com.tmax.eTest.Support.dto.CreateInquiryDto;
 import com.tmax.eTest.Support.dto.ModifyInquiryDto;
 import com.tmax.eTest.Support.repository.InquiryFileRepository;
@@ -55,9 +54,9 @@ public class InquiryService {
                         .title(createInquiryDto.getTitle())
                         .type(createInquiryDto.getType())
                         .build();
-        inquiryRepository.save(inquiry);
 
         if (!(createInquiryDto.getFileList() == null)) {
+            List<Inquiry_file> inquiry_files = new ArrayList<>();
             for(int i=0; i<createInquiryDto.getFileList().size(); i++){
                 String fileName = UUID.randomUUID().toString() + "_" + createInquiryDto.getFileList().get(i).getOriginalFilename();
                 String uploadFolder = filePath + "inquiry/";
@@ -69,6 +68,7 @@ public class InquiryService {
                         .type(createInquiryDto.getFileList().get(i).getContentType())
                         .inquiry(inquiry)
                         .build();
+                inquiry_files.add(inquiry_file);
                 try {
                     Files.write(imageFilePath, createInquiryDto.getFileList().get(i).getBytes());
                 } catch (IOException e) {
@@ -76,7 +76,9 @@ public class InquiryService {
                 }
                 inquiryFileRepository.save(inquiry_file);
             }
+            inquiry.setInquiry_file(inquiry_files);
         }
+        inquiryRepository.save(inquiry);
         return inquiry;
     }
 

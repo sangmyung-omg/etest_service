@@ -6,6 +6,9 @@ import java.util.List;
 
 import javax.persistence.*;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.tmax.eTest.Auth.authenum.AuthProvider;
 import com.tmax.eTest.Auth.authenum.Role;
 import com.tmax.eTest.Common.model.error_report.ErrorReport;
@@ -15,11 +18,10 @@ import lombok.*;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
+@Getter
+@Setter
 @Entity
 @Table(name="USER_MASTER")
-@ToString(exclude = {"inquiry","errors","minitestReports"})
-
 @Builder
 public class UserMaster {
 	@Id
@@ -53,7 +55,8 @@ public class UserMaster {
 	// 개인정보 수집이용에 동의합니다(필수)
 	private Boolean collect_info  ;
 
-	@OneToMany(mappedBy = "userMaster",  cascade = {CascadeType.REMOVE},fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "userMaster",  cascade = {CascadeType.REMOVE},fetch = FetchType.EAGER)
+	@JsonBackReference
 	private List<Inquiry> inquiry;
 
 	@OneToMany(mappedBy = "user",  cascade = {CascadeType.REMOVE},fetch = FetchType.LAZY)

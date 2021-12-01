@@ -1,10 +1,12 @@
 package com.tmax.eTest.Common.model.support;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.*;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
-import java.util.List;
 
 import javax.persistence.*;
 
@@ -12,20 +14,13 @@ import javax.persistence.*;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-
-
 @Builder
 @Table(name = "CS_INQUIRY_FILE")
 public class Inquiry_file {
 
-    @Transient
-    private MultipartFile file;
-
-
     @Id
     @SequenceGenerator(name = "INQUIRY_FILE_SEQ_GENERATOR", sequenceName = "INQUIRY_FILE_SEQUENCE", allocationSize = 1, initialValue = 20000)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "INQUIRY_FILE_SEQ_GENERATOR")
-
     @Column(name = "INQUIRY_FILE_ID")
     private Long id;
 
@@ -43,15 +38,7 @@ public class Inquiry_file {
 
     @ManyToOne
     @JoinColumn(name = "INQUIRY_ID")
-    @JsonIgnoreProperties({"inquiry_file"})
+    @JsonManagedReference
     private Inquiry inquiry;
-
-    public Inquiry_file(@JsonProperty("url") String url,
-                        @JsonProperty("type") String type,
-                        @JsonProperty("inquiry") Inquiry inquiry) {
-    this.url = url;
-    this.type = type;
-    this. inquiry = inquiry;
-    }
 
 }
