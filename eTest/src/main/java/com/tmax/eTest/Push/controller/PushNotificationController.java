@@ -17,15 +17,26 @@ import java.util.List;
 public class PushNotificationController {
     private final PushNotificationService pushNotificationService;
 
-    @PostMapping("push/admin")
-    public ResponseEntity<?> adminNotification(@RequestBody AdminPushRequestDTO data) throws FirebaseMessagingException {
-        pushNotificationService.adminPushRequest(data);
+    @PostMapping("push/admin/token")
+    public ResponseEntity<?> adminPushRequestByToken(@RequestBody AdminPushRequestDTO data) throws FirebaseMessagingException {
+        pushNotificationService.adminPushRequestByToken(data);
+        return new ResponseEntity<>("admin push sent", HttpStatus.OK);
+    }
+
+    @PostMapping("push/admin/user")
+    public ResponseEntity<?> adminPushRequestByUserUuid(@RequestBody AdminPushRequestDTO data) throws FirebaseMessagingException {
+        pushNotificationService.adminPushRequestByUserUuid(data);
         return new ResponseEntity<>("admin push sent", HttpStatus.OK);
     }
 
     @PostMapping("push/category")
-    public void filteredNotification(@RequestBody CategoryPushRequestDTO data) throws FirebaseMessagingException {
+    public void categoryPushToAll(@RequestBody CategoryPushRequestDTO data) throws FirebaseMessagingException {
         pushNotificationService.categoryPushRequest(data);
+    }
+
+    @PostMapping("push/category/user")
+    public void categoryPushToUser(@RequestBody CategoryPushRequestDTO data) throws FirebaseMessagingException {
+        pushNotificationService.categoryPushRequestByUserUuid(data);
     }
 
     @PostMapping("push/config/add/token")
@@ -49,7 +60,7 @@ public class PushNotificationController {
     }
 
     @GetMapping("notification/list")
-    public ResponseEntity<?> getNotificationList (@RequestHeader(value = "Authorization") String jwtToken) {
+    public ResponseEntity<?> getNotificationList(@RequestHeader(value = "Authorization") String jwtToken) {
         return new ResponseEntity<>(pushNotificationService.getNotificationListByJwtToken(jwtToken), HttpStatus.OK);
     }
 

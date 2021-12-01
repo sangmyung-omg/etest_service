@@ -32,6 +32,13 @@ public class UserNotificationConfigRepositorySupport {
                 .fetch();
     }
 
+    public List<String> getTokenByUserUuid(String userUuid) {
+        return query.select(userNotificationConfig.token)
+                .from(userNotificationConfig)
+                .where(userNotificationConfig.userUuid.eq(userUuid))
+                .fetch();
+    }
+
     public List<UserNotificationConfig> getUserNotificationConfigByUserUuid(String userUuid) {
         return query.select(userNotificationConfig)
                 .from(userNotificationConfig)
@@ -63,6 +70,15 @@ public class UserNotificationConfigRepositorySupport {
                 .from(userNotificationConfig)
 //                .leftJoin(userNotificationConfig).on(userNotificationConfig.userUuid.eq(userMaster.userUuid))
                 .where(itemFilter(item).and(userNotificationConfig.global.eq("Y")))
+                .fetch();
+    }
+
+    public List<String> getFilteredTokensByUserUuid(String item, String userUuid) {
+        return query.select(userNotificationConfig.token)
+                .from(userNotificationConfig)
+                .where(itemFilter(item)
+                        .and(userNotificationConfig.global.eq("Y"))
+                        .and(userNotificationConfig.userUuid.eq(userUuid)))
                 .fetch();
     }
 }
