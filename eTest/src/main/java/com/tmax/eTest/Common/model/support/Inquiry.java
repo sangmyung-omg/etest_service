@@ -25,7 +25,7 @@ public class Inquiry {
     private Long id;
 
     @JoinColumn(name = "USER_UUID")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JsonManagedReference
     private UserMaster userMaster;
 
