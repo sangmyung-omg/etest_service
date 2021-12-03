@@ -115,7 +115,7 @@ public class RuleBaseScoreCalculator {
 			}
 			else
 			{
-				log.info("probDivideAndCalculateScores prob not have diagnosisInfo : " + prob.toString());
+				log.info("probDivideAndCalculateScores prob not have diagnosisInfo : "); // + prob.toString());
 			}
 		}
 		

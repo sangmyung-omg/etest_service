@@ -83,7 +83,7 @@ public class DiagnosisRecommend {
 					sellProbChoiceInfo.add(probInfo);
 			}
 			else
-				log.info("probDivideAndCalculateScores prob not have diagnosisInfo : " + prob.toString());
+				log.info("probDivideAndCalculateScores prob not have diagnosisInfo : "); // + prob.toString());
 		}
 		
 		result.add(getBasicRecommend(commonProbChoiceInfo));
@@ -125,7 +125,7 @@ public class DiagnosisRecommend {
 					sellProbChoiceInfo.add(probInfo);
 			}
 			else
-				log.info("probDivideAndCalculateScores prob not have diagnosisInfo : " + prob.toString());
+				log.info("probDivideAndCalculateScores prob not have diagnosisInfo : "); //  + prob.toString());
 		}
 		
 		result.add(getBasicRecommend(commonProbChoiceInfo));
