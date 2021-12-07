@@ -96,18 +96,24 @@ public class PushNotificationService {
                 = userNotificationConfigRepositorySupport.getUserNotificationConfigByUserUuid(userUuid);
         UserNotificationConfig userNotificationConfig;
 
-        if (userNotificationConfigList.size() > 0)
-            userNotificationConfig = userNotificationConfigList.get(0);
+        if (userNotificationConfigList.size() > 0) {
+            UserNotificationConfig u = userNotificationConfigList.get(0);
+            userNotificationConfig = userNotificationConfigRepository.findById(token).get();
+            userNotificationConfig.setUserUuid(userUuid);
+            userNotificationConfig.setGlobal(u.getGlobal());
+            userNotificationConfig.setNotice(u.getNotice());
+            userNotificationConfig.setInquiry(u.getInquiry());
+            userNotificationConfig.setContent(u.getContent());
+        }
         else
             userNotificationConfig = UserNotificationConfig.builder()
+                    .token(token)
                     .userUuid(userUuid)
                     .global("Y")
                     .notice("Y")
                     .inquiry("Y")
                     .content("Y")
                     .build();
-
-        userNotificationConfig.setToken(token);
         userNotificationConfigRepository.save(userNotificationConfig);
     }
 
