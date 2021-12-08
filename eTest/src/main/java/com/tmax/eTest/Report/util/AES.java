@@ -7,6 +7,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.Base64;
+import java.util.List;
 
 // import javax.crypto.AEADBadTagException;
 import javax.crypto.BadPaddingException;
@@ -15,32 +16,42 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.SecretKeySpec;
 
+import org.springframework.boot.context.event.ApplicationStartedEvent;
+import org.springframework.context.event.EventListener;
+import org.springframework.stereotype.Component;
+
+import com.tmax.eTest.Common.model.problem.Part;
+
 import lombok.extern.slf4j.Slf4j;
  
 //Source from https://howtodoinjava.com/java/java-security/java-aes-encryption-example/
 @Slf4j
+@Component
 public class AES {
  
     private static SecretKeySpec secretKey;
     private static byte[] key;
+    
+    private static final Integer saltNumber = 579348108;
+    private static byte[] saltKey = saltNumber.toString().getBytes();
  
     public static void setKey(String myKey) 
     {
         MessageDigest sha = null;
         try {
         	sha = MessageDigest.getInstance("SHA-256");
-        	sha.update(getSecureRandomSalt());
         	
             key = myKey.getBytes("UTF-8");
+            sha.update(saltKey);
             key = sha.digest(key);
             key = Arrays.copyOf(key, 16); 
             secretKey = new SecretKeySpec(key, "AES");
         } 
         catch (NoSuchAlgorithmException e) {
-            log.error("Invalid algorithm selected.");
+            log.error("Invalid algorithm selected in setKey.");
         } 
         catch (UnsupportedEncodingException e) {
-            log.error("Given data's encoding is not supported.");
+            log.error("Given data's encoding is not supported in setKey.");
         }
     }
  
@@ -49,6 +60,7 @@ public class AES {
         try
         {
             setKey(secret);
+            log.info(key.toString());
             Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
             cipher.init(Cipher.ENCRYPT_MODE, secretKey);
             return Base64.getEncoder().encodeToString(cipher.doFinal(strToEncrypt.getBytes("UTF-8")));
@@ -69,6 +81,7 @@ public class AES {
         try
         {
             setKey(secret);
+            log.info(key.toString());
             Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5PADDING");
             cipher.init(Cipher.DECRYPT_MODE, secretKey);
             return new String(cipher.doFinal(Base64.getDecoder().decode(strToDecrypt)));
@@ -83,14 +96,4 @@ public class AES {
         return null;
     }
     
-    public static byte[] getSecureRandomSalt() throws NoSuchAlgorithmException{
-    	byte[] returnSalt = null;
-
-		SecureRandom prng = SecureRandom.getInstance("SHA256PRNG");
-		String randomNum = new Integer(prng.nextInt()).toString();
-		
-		returnSalt = randomNum.getBytes();
-		
-    	return returnSalt;
-    }
 }
