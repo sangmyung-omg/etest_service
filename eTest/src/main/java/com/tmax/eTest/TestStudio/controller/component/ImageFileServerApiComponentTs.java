@@ -449,9 +449,13 @@ public class ImageFileServerApiComponentTs {
 					sb.append(Base64.getEncoder().encodeToString(buf));
 				}
 				else{
-					byte[] temp = new byte[len];
-					System.arraycopy(buf, 0, temp, 0, len);
-					sb.append(Base64.getEncoder().encodeToString(temp));
+					if(len<0) {
+						throw new IOException();
+					}else {
+						byte[] temp = new byte[len];
+						System.arraycopy(buf, 0, temp, 0, len);
+						sb.append(Base64.getEncoder().encodeToString(temp));
+					}
 				}
 			}
 			
