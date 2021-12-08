@@ -169,20 +169,39 @@ public class RuleBaseScoreCalculator {
 			5, 3, 2}; // 오답
 
 		Problem prob = probInfo.getFirst();
-		int choice = probInfo.getSecond();
+		int userChoice = probInfo.getSecond();
 		
 		JsonArray solution = JsonParser.parseString(prob.getSolution()).getAsJsonArray();
 		
 		for(int i = 0; i < solution.size(); i++)
 		{
-			JsonObject jo = solution.get(i).getAsJsonObject();
+			JsonObject solutionJson = solution.get(i).getAsJsonObject();
 			
-			if(jo.get("type") != null && jo.get("data") != null &&
-				jo.get("type").getAsString().equals("MULTIPLE_CHOICE_CORRECT_ANSWER"))
+			if(solutionJson.get("type") != null && solutionJson.get("data") != null &&
+				solutionJson.get("type").getAsString().equals("MULTIPLE_CHOICE_CORRECT_ANSWER"))
 			{
 				
-				int answer = jo.get("data").getAsInt();
-				int idx = choice == answer ? 0 : 3;
+				JsonArray answerArr = solutionJson.get("data").getAsJsonArray();
+				boolean isCorrect = false;
+				
+				for(int j = 0; j < answerArr.size(); j++)
+				{
+					try
+					{
+						if(answerArr.get(i).getAsInt() == userChoice)
+						{
+							isCorrect = true;
+							break;
+						}
+					}
+					catch(IllegalStateException e)
+					{
+						log.info("Problem solution format is wrong!! probId is : "
+								+prob.getProbID() + "\n" + solutionJson.toString() );	
+					}
+				}
+				
+				int idx = isCorrect ? 0 : 3;
 				idx += prob.getDifficulty().equals("상") ? 0 
 					: prob.getDifficulty().equals("중") ? 1 
 					: 2;					// 하

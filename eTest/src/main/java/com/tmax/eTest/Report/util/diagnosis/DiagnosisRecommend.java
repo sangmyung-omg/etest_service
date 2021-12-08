@@ -261,11 +261,29 @@ public class DiagnosisRecommend {
 						&& jo.get("data") != null
 						&& jo.get("type").getAsString().equals("MULTIPLE_CHOICE_CORRECT_ANSWER")){
 					
+					JsonArray answerArr = jo.get("data").getAsJsonArray();
 					int currId = prob.getDiagnosisInfo().getCurriculumId();
 					
-					int colValue = (choice == jo.get("data").getAsInt())?0:1;
+					int colValue = 0;
 					int diffValue = -1;
 					int currValue = -1;
+					
+					for(int ansArrIdx = 0; ansArrIdx < answerArr.size(); ansArrIdx++)
+					{
+						try
+						{
+							if(choice == answerArr.get(ansArrIdx).getAsInt())
+							{
+								colValue = 1;
+								break;
+							}
+						}
+						catch(IllegalStateException e)
+						{
+							log.error("Problem's answer in solution is wrong in recommend video method! probId : "+ prob.getProbID()
+							+"\n"+jo.toString());
+						}
+					}
 					
 					for(int idx = 0; idx < curriculumIds.length; idx++)
 						if(currId == curriculumIds[idx])
