@@ -4,6 +4,7 @@ import java.io.UnsupportedEncodingException;
 import java.security.InvalidKeyException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.Base64;
 
@@ -27,8 +28,10 @@ public class AES {
     {
         MessageDigest sha = null;
         try {
+        	sha = MessageDigest.getInstance("SHA-256");
+        	sha.update(getSecureRandomSalt());
+        	
             key = myKey.getBytes("UTF-8");
-            sha = MessageDigest.getInstance("SHA-256");
             key = sha.digest(key);
             key = Arrays.copyOf(key, 16); 
             secretKey = new SecretKeySpec(key, "AES");
@@ -78,5 +81,16 @@ public class AES {
         catch (BadPaddingException e) { log.error("Encoding failed due to bac padding");}
 
         return null;
+    }
+    
+    public static byte[] getSecureRandomSalt() throws NoSuchAlgorithmException{
+    	byte[] returnSalt = null;
+
+		SecureRandom prng = SecureRandom.getInstance("SHA256PRNG");
+		String randomNum = new Integer(prng.nextInt()).toString();
+		
+		returnSalt = randomNum.getBytes();
+		
+    	return returnSalt;
     }
 }
