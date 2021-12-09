@@ -188,7 +188,7 @@ public class RuleBaseScoreCalculator {
 				{
 					try
 					{
-						if(answerArr.get(i).getAsInt() == userChoice)
+						if(answerArr.get(j).getAsInt() == userChoice)
 						{
 							isCorrect = true;
 							break;
