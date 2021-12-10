@@ -338,7 +338,7 @@ definitions:
               type: object
               required:
               - choiceNum
-              - ukID
+              # - ukID
               properties: 
                 choiceNum:
                   type: string
@@ -363,6 +363,12 @@ definitions:
             - curriculumID
             properties: 
               curriculumID:
+                type: string
+              chapter:
+                type: string
+              section:
+                type: string
+              subsection:
                 type: string
               subject:
                 type: string
@@ -443,7 +449,7 @@ definitions:
                 type: object
                 required:
                 - choiceNum
-                - ukID
+                # - ukID
                 properties: 
                   choiceNum:
                     type: string
@@ -569,7 +575,7 @@ definitions:
                 type: object
                 required:
                 - choiceNum
-                - ukID
+                # - ukID
                 properties: 
                   choiceNum:
                     type: string
@@ -677,7 +683,7 @@ definitions:
                 type: object
                 required:
                 - choiceNum
-                - ukID
+                # - ukID
                 properties: 
                   choiceNum:
                     type: string
@@ -795,7 +801,7 @@ definitions:
                 type: object
                 required:
                 - choiceNum
-                - ukID
+                # - ukID
                 properties: 
                   choiceNum:
                     type: string
@@ -821,8 +827,8 @@ definitions:
                   type: string
                 subject:
                   type: string
-                # status:
-                #   type: string
+                status:
+                  type: string
 
   GetProblemImageDTOOut:
     type: object

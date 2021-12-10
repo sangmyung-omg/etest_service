@@ -68,10 +68,10 @@ public class TestProblemServiceTs {
 			if(requestInfo.getSubject()!=null)
 				testProblem.setSubject(requestInfo.getSubject());
 			
-//			if(requestInfo.getStatus()!=null)
-//				if(pathUtilEtest.getStatusOn().equals(requestInfo.getStatus()) || pathUtilEtest.getStatusOff().equals(requestInfo.getStatus())) {
-//					testProblem.setStatus(requestInfo.getStatus());
-//				}
+			if(requestInfo.getStatus()!=null)
+				if(pathUtilEtest.getStatusOn().equals(requestInfo.getStatus()) || pathUtilEtest.getStatusOff().equals(requestInfo.getStatus())) {
+					testProblem.setStatus(requestInfo.getStatus());
+				}
 			
 		}else {
 			throw new NoDataExceptionTs("TestProblem",requestInfo.getProbID());

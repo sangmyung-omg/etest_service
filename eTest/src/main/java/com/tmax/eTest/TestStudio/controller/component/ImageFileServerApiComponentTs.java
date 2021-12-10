@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.google.gson.JsonObject;
@@ -32,6 +33,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Transactional
+@CrossOrigin(origins = "*")
 @RequiredArgsConstructor
 @Slf4j
 public class ImageFileServerApiComponentTs {

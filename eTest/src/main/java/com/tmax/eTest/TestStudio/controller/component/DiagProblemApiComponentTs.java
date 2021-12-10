@@ -152,9 +152,17 @@ public class DiagProblemApiComponentTs {
 					if(findProblem.getDiagnosisInfo() ==null) {
 						throw new Exception("DiagnosisInfo() ==null");
 					}
-					String status = findProblem.getDiagnosisInfo().getCurriculum().getStatus();
+					
 					BaseDiagCurriculumDTO baseDiagCurriculumDTO = new BaseDiagCurriculumDTO();
-					baseDiagCurriculumDTO.setStatus(status);
+					
+					
+					baseDiagCurriculumDTO.setCurriculumID(findProblem.getDiagnosisInfo().getCurriculum().getCurriculumId()==null? null:findProblem.getDiagnosisInfo().getCurriculum().getCurriculumId().toString());
+					baseDiagCurriculumDTO.setChapter(findProblem.getDiagnosisInfo().getCurriculum().getChapter());
+					baseDiagCurriculumDTO.setSection(findProblem.getDiagnosisInfo().getCurriculum().getSection());
+					baseDiagCurriculumDTO.setSubSection(findProblem.getDiagnosisInfo().getCurriculum().getSubSection());
+					baseDiagCurriculumDTO.setSubject(findProblem.getDiagnosisInfo().getCurriculum().getSubject());
+					baseDiagCurriculumDTO.setStatus(findProblem.getDiagnosisInfo().getCurriculum().getStatus());
+		
 					outputBase.setDiagCurriculum(baseDiagCurriculumDTO);
 					
 					output.getDiagProblems().add(outputBase);
