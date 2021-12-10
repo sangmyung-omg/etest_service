@@ -32,6 +32,7 @@ import com.tmax.eTest.Contents.repository.TestProblemRepository;
 import com.tmax.eTest.LRS.dto.GetStatementInfoDTO;
 import com.tmax.eTest.LRS.dto.StatementDTO;
 import com.tmax.eTest.LRS.util.LRSAPIManager;
+import com.tmax.eTest.Test.util.MinitestPart;
 
 @Slf4j
 @Service("ProblemServiceV1")
@@ -493,22 +494,27 @@ public class ProblemServiceV1 implements ProblemServiceBase {
 
 	private MinitestInfo parseMinitestQueryResult(Map<Integer, List<Integer>> probMap, Map<Integer, List<Integer>> numOrderMap, List<TestProblem> queryResult) {
 		MinitestInfo minitestInfo = new MinitestInfo();
+		List<Integer> partIdList = MinitestPart.minitestPartIdList;
 
 		for (TestProblem problem : queryResult) {
+			int partId = problem.getPartID();
+			if (!partIdList.contains(partId))
+				continue;
+
 			if (problem.getPart() == null) {
 				log.info("No part mapping info for probId : " + Integer.toString(problem.getProbID()) + ", DB data issue.\nPlease check if data is filled in 'PART' table");
 				continue;
 			}
 			// 파트 별 문제 수집
-			if (!probMap.containsKey(problem.getPart().getPartID())) {
-				probMap.put(problem.getPart().getPartID(), new ArrayList<Integer>(Arrays.asList(problem.getProbID())));
+			if (!probMap.containsKey(partId)) {
+				probMap.put(partId, new ArrayList<Integer>(Arrays.asList(problem.getProbID())));
 			} else {
-				probMap.get(problem.getPartID()).add(problem.getProbID());
+				probMap.get(partId).add(problem.getProbID());
 			}
 
 			// 파트 별 [파트 순서, 출제 문제 개수] 수집
-			if (!numOrderMap.containsKey(problem.getPart().getPartID())){
-				numOrderMap.put(problem.getPart().getPartID(), Arrays.asList(problem.getPart().getOrderNum(), problem.getPart().getProblemCount()));
+			if (!numOrderMap.containsKey(partId)){
+				numOrderMap.put(partId, Arrays.asList(problem.getPart().getOrderNum(), problem.getPart().getProblemCount()));
 			}
 		}
 
