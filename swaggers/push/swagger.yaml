@@ -109,7 +109,7 @@ paths:
         - Push
       summary: 새로운 FCM 토큰 추가
       parameters:
-        - name: token
+        - name: fcmToken
           in: query
           schema:
             type: string
@@ -126,7 +126,7 @@ paths:
       security:
         - bearerAuth: []
       parameters:
-        - name: token
+        - name: fcmToken
           in: query
           schema:
             type: string

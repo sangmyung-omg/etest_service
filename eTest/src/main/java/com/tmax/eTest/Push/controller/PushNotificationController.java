@@ -40,13 +40,13 @@ public class PushNotificationController {
     }
 
     @PostMapping("push/config/add/token")
-    public void addNewToken(@RequestParam String token) {
-        pushNotificationService.addNewToken(token);
+    public void addNewToken(@RequestParam String fcmToken) {
+        pushNotificationService.addNewToken(fcmToken);
     }
 
     @PostMapping("push/config/add/user")
-    public void linkTokenWithUserUuid(@RequestHeader(value = "Authorization") String jwtToken, @RequestParam String token) {
-        pushNotificationService.linkTokenWithUserUuid(jwtToken, token);
+    public void linkTokenWithUserUuid(@RequestHeader(value = "Authorization") String jwtToken, @RequestParam String fcmToken) {
+        pushNotificationService.linkTokenWithUserUuid(jwtToken, fcmToken);
     }
 
     @GetMapping("push/config")

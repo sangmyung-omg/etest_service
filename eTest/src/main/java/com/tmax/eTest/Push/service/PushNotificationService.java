@@ -78,16 +78,19 @@ public class PushNotificationService {
         return this.instance.sendMulticast(message);
     }
 
-    public void addNewToken(String token) {
-        userNotificationConfigRepository.save(
-                UserNotificationConfig.builder()
-                        .token(token)
-                        .global("Y")
-                        .notice("Y")
-                        .inquiry("Y")
-                        .content("Y")
-                        .build()
-        );
+    public void addNewToken(String fcmToken) {
+        if (!userNotificationConfigRepository.findById(fcmToken).isPresent()) {
+            userNotificationConfigRepository.save(
+                    UserNotificationConfig.builder()
+                            .token(fcmToken)
+                            .global("Y")
+                            .notice("Y")
+                            .inquiry("Y")
+                            .content("Y")
+                            .build()
+            );
+            logger.info("added new FCM token");
+        }
     }
 
     public void linkTokenWithUserUuid(String jwtToken, String token) {
