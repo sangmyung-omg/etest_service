@@ -63,6 +63,8 @@ public class CommentMapper {
     		for(CommentInfo comment : commentList)
     			if(comment.getCommentText() == null)
     				comment.setCommentText("");
+    			else
+    				comment.setCommentText(comment.getCommentText().replaceAll("\\\\n","\n"));
     		
     		commentMap = new HashMap<>();
     		
