@@ -6,8 +6,6 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.event.ApplicationStartedEvent;
-import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -16,11 +14,10 @@ import com.tmax.eTest.Common.model.comment.CommentVersionInfo;
 import com.tmax.eTest.Common.repository.comment.CommentRepo;
 import com.tmax.eTest.Common.repository.comment.CommentVersionRepo;
 
-import lombok.extern.log4j.Log4j2;
 import lombok.extern.slf4j.Slf4j;
 
 @Component
-@Log4j2
+@Slf4j
 public class CommentMapper {
 	@Autowired private CommentRepo commentRepo;
 	@Autowired private CommentVersionRepo versionRepo;
@@ -31,10 +28,10 @@ public class CommentMapper {
 
 
     //Build at application startup
-    @EventListener
-    public void startUpGenerator(ApplicationStartedEvent event){
-    	initRoutine();
-    }
+//    @EventListener
+//    public void startUpGenerator(ApplicationStartedEvent event){
+//    	initRoutine();
+//    }
 
     @Scheduled(fixedRate=60*60*1000)
     public void scheduledUpdater(){

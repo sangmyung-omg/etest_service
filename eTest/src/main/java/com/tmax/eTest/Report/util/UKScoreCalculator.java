@@ -12,7 +12,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.tmax.eTest.Report.dto.triton.TritonDataDTO;
 
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 
 import com.tmax.eTest.Common.model.problem.Problem;
 import com.tmax.eTest.Common.model.problem.TestProblem;
@@ -20,7 +20,7 @@ import com.tmax.eTest.Common.model.uk.ProblemUKRelation;
 import com.tmax.eTest.Common.model.uk.UkMaster;
 
 @Component
-@Log4j2
+@Slf4j
 public class UKScoreCalculator {
 
 	public String calculateUKScoreString(float ukScore)

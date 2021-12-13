@@ -37,9 +37,9 @@ import com.tmax.eTest.Common.model.user.UserMaster;
 import com.tmax.eTest.Common.repository.report.DiagnosisReportRepo;
 import com.tmax.eTest.Common.repository.user.UserMasterRepo;
 
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 
-@Log4j2
+@Slf4j
 @Service
 public class DiagnosisReportService {
 

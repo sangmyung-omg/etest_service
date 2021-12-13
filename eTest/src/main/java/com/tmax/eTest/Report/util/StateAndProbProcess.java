@@ -26,11 +26,11 @@ import com.tmax.eTest.LRS.dto.StatementDTO;
 import com.tmax.eTest.LRS.util.LRSAPIManager;
 import com.tmax.eTest.Report.exception.ReportBadRequestException;
 
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 
 import com.tmax.eTest.Common.model.uk.ProblemUKRelation;
 @Component
-@Log4j2
+@Slf4j
 // Statement(LRS 정보) 와 Problem 정보가 필요한 단순 작업 관련 Method들 집합.
 public class StateAndProbProcess {
 	

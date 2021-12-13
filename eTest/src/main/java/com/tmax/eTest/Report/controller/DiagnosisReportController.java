@@ -31,9 +31,9 @@ import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureException;
 import io.jsonwebtoken.UnsupportedJwtException;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 
-@Log4j2
+@Slf4j
 @RestController
 @CrossOrigin(origins = "*")
 @RequestMapping(path = "/report/diagnosis")
@@ -102,6 +102,7 @@ public class DiagnosisReportController {
 		selfDiagnosisReportService.saveDiagnosisResult(id, probSetId);
 		
 		DiagnosisRecordMainDTO output = diagnosisMainRecordService.getDiagnosisRecordMain(id, probSetId);
+		log.info(output.getGiComment());
 		
 		return output;
 	}
@@ -116,6 +117,8 @@ public class DiagnosisReportController {
 		String userId = getUserIDFromRequest(request);
 		
 		DiagnosisRecordDetailDTO output = diagnosisDetailRecordService.getDiagnosisRecordDetail(userId, probSetId, partName);
+		
+		log.info(output.getDetailCommentInfo().toString());
 		
 		return output;
 	}

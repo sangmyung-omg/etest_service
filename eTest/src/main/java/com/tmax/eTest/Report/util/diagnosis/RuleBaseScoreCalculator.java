@@ -23,9 +23,9 @@ import com.tmax.eTest.Report.util.diagnosis.DiagnosisUtil.RiskProfile;
 import com.tmax.eTest.Report.util.diagnosis.DiagnosisUtil.ScoreKey;
 import com.tmax.eTest.Report.util.diagnosis.DiagnosisUtil.TendencySection;
 
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 
-@Log4j2
+@Slf4j
 @Component
 // Rule Base 점수, Triton 점수 관련 Method 집합 Class
 public class RuleBaseScoreCalculator {

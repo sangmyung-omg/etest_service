@@ -11,7 +11,7 @@ import com.tmax.eTest.LRS.util.JWTUtil;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 
 import java.sql.Timestamp;
 import java.text.DateFormat;
@@ -24,7 +24,7 @@ import java.util.UUID;
 @Entity
 @Table(name="STATEMENT", indexes = @Index(columnList = "userId"))
 @NoArgsConstructor
-@Log4j2
+@Slf4j
 public class Statement {
 	
 	@Id

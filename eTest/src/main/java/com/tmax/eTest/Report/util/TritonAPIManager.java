@@ -28,7 +28,7 @@ import com.tmax.eTest.Report.dto.triton.TritonResponseDTO;
 import io.netty.channel.ChannelOption;
 import io.netty.handler.timeout.ReadTimeoutHandler;
 import io.netty.handler.timeout.WriteTimeoutHandler;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
 import reactor.netty.http.client.HttpClient;
 
@@ -37,7 +37,7 @@ import reactor.netty.http.client.HttpClient;
  * 
  * @author sangheonLee
  */
-@Log4j2
+@Slf4j
 @Component
 @PropertySource("classpath:application.properties")
 public class TritonAPIManager {

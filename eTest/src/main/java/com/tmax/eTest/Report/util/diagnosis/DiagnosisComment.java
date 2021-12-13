@@ -21,10 +21,10 @@ import com.tmax.eTest.Report.util.diagnosis.DiagnosisUtil.KnowledgeSubSection;
 import com.tmax.eTest.Report.util.diagnosis.DiagnosisUtil.RiskProfile;
 import com.tmax.eTest.Report.util.diagnosis.DiagnosisUtil.RiskTracing;
 
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 
 @Component
-@Log4j2
+@Slf4j
 public class DiagnosisComment {
 	
 	public Map<String, String> makeRiskMainComment(DiagnosisReport report)

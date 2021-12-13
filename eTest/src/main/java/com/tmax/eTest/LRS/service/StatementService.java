@@ -15,11 +15,11 @@ import com.tmax.eTest.LRS.model.StatementSpecs;
 import com.tmax.eTest.LRS.repository.StatementRepository;
 import com.tmax.eTest.LRS.util.JWTUtil;
 
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 
 
 @Service
-@Log4j2
+@Slf4j
 public class StatementService {
 
 	@Autowired
