@@ -284,7 +284,9 @@ public class ProblemServiceV1 implements ProblemServiceBase {
 		log.info("Getting minitest problem infos......");
 		if (solvedProbList.size() == 0)						// LRS에 푼 기록이 없는 처음 진입한 미니진단 유저 : 존재하지 않는 문제 id 넣어줌
 			solvedProbList = Arrays.asList(-1);
-		List<TestProblem> minitestQueryResult = minitestRepo.findAllByProbIDNotIn(solvedProbList);			// Not in (리스트)에 빈 리스트 들어가면 조회 X.
+		
+		String status = "출제";		// 12/13 S.M. 문제 상태 (status) = '출제' 인 문항만 출제
+		List<TestProblem> minitestQueryResult = minitestRepo.findAllByProbIDNotInAndStatus(solvedProbList, status);			// Not in (리스트)에 빈 리스트 들어가면 조회 X.
 
 		/* 8/27
 		 * 문제를 다 풀어본 수준이 아니라, 그 이후에도 계속해서 꾸준히 문제를 반복해서 푸는 유저의 경우 : 문제 풀이 frequency 고려해줘야 함.
@@ -294,9 +296,20 @@ public class ProblemServiceV1 implements ProblemServiceBase {
 		// 모든 문제 다 풀었으면 solvedProbList가 DB의 모든 probId 리스트와 동일. 위 쿼리 결과 size() = 0
 		// -> 모든 풀에서 문제 출제해야 함.
 		if (minitestQueryResult.size() == 0) {
-			minitestQueryResult = minitestRepo.findAll();
+			minitestQueryResult = minitestRepo.findAllByStatus(status);
+			if (minitestQueryResult.size() == 0) {
+				log.info("No available problem to make a minitest");
+				map.put("error", "No available problem to make a minitest");
+				return map;
+			}
 		}
-		if (minitestQueryResult.size() > 0) log.info("Selected minitest probs size : " + Integer.toString(minitestQueryResult.size()));
+
+		if (minitestQueryResult.size() < 20) {
+			log.info("Not enough available problems to make a minitest ( < 20 )");
+			map.put("error", "Not enough available problems to make a minitest ( < 20 )");
+			return map;
+		} else
+			log.info("Selected minitest probs size : " + Integer.toString(minitestQueryResult.size()));
 
 		/* 
 		 * 쿼리해온 미니진단 문제 정보 파싱
@@ -357,7 +370,7 @@ public class ProblemServiceV1 implements ProblemServiceBase {
 			log.info("Getting supplementary minitest problem infos......");
 			if (probIdAlready.size() == 0)
 				probIdAlready = Arrays.asList(-1);
-			queryList = minitestRepo.findAllByPartPartIDNotInAndProbIDNotIn(partIdAlready, probIdAlready);
+			queryList = minitestRepo.findAllByPartPartIDNotInAndProbIDNotInAndStatus(partIdAlready, probIdAlready, status);
 
 			// -> 문제 개수 총족한 파트(partIdAlready) 제외 나머지 파트에서 이미 조금 수집해놓은 문제(probIdAlready) 빼고 전체 문제 서치
 			// -> 부족할 수가 없음. 만약 부족하다면, 해당 파트 원래 문제 개수가 부족한 것. (5문제 출제해야되는데 총 4문제 이하 밖에 없는 것.)

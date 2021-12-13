@@ -16,9 +16,15 @@ public interface TestProblemRepository extends  JpaRepository<TestProblem, Integ
 	// @Query("SELECT MAX(tp.setNum) FROM TestProblem tp")
 	// Integer findMaximumSetNum();
 
+	List<TestProblem> findAllByStatus(String status);
+
     List<TestProblem> findAllByProbIDNotIn(List<Integer> solvedProbId);
+
+	List<TestProblem> findAllByProbIDNotInAndStatus(List<Integer> solvedProbId, String status);
 
 	List<TestProblem> findAllByPartPartIDNotIn(List<Integer> solvedPartId);
 
 	List<TestProblem> findAllByPartPartIDNotInAndProbIDNotIn(List<Integer> partId, List<Integer> probId);
+
+	List<TestProblem> findAllByPartPartIDNotInAndProbIDNotInAndStatus(List<Integer> partId, List<Integer> probId, String status);
 }
