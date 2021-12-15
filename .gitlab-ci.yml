@@ -32,8 +32,8 @@ gradle-build:
     - export GRADLE_USER_HOME=pwd/eTest/.gradle
     - cd eTest
     - docker login -u ${REGISTRY_ID} -p ${REGISTRY_PASSWORD} ${REGISTRY_HOST}
-    - kubectl get secret ktest-admin-sdk-token -o jsonpath='{.data.token}' > secret.txt
-    - base64 -di secret.txt > ./src/main/resources/tmax-kofia-firebase-adminsdk.json
+    - kubectl get secret ktest-hc-admin-sdk-token -o jsonpath='{.data.token}' > secret.txt
+    - base64 -di secret.txt > ./src/main/resources/tmax-hc-kofia-firebase-adminsdk.json
     - ./gradlew clean
     - ./gradlew compileQuerydsl
     - chmod +x gradlew
