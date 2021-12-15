@@ -135,6 +135,52 @@ paths:
       responses:
         '200':
           description: Successful response
+  /push/config/delete/token:
+    post:
+      tags:
+        - Push
+      summary: FCM 토큰 삭제
+      parameters:
+        - name: fcmToken
+          in: query
+          schema:
+            type: string
+          example: >-
+            dKz7V3QcRDq9qHyobwki1N:APA91bHbs_ymFN4ZTzCENb5y-SVUYV2Gd7nrnswsPAzXCNgiP19TdAPhLcrVKIxtWZfleMSMTCNsEFbbTDxNvP2ZBfND9BC7EpWexvDVIArUczFVp6WVZYusVY5CZtVteyrlj5FqAI1k
+      responses:
+        '200':
+          description: Successful response
+          content:
+            text/plain:
+              schema:
+                type: string
+              example: deleted FCM token
+  /push/config/refresh/token:
+    post:
+      tags:
+        - Push
+      summary: FCM 토큰 갱신
+      parameters:
+        - name: expiredFcmToken
+          in: query
+          schema:
+            type: string
+          example: >-
+            dKz7V3QcRDq9qHyobwki1N:APA91bHbs_ymFN4ZTzCENb5y-SVUYV2Gd7nrnswsPAzXCNgiP19TdAPhLcrVKIxtWZfleMSMTCNsEFbbTDxNvP2ZBfND9BC7EpWexvDVIArUczFVp6WVZYusVY5CZtVteyrlj5FqAI1k
+        - name: refreshFcmToken
+          in: query
+          schema:
+            type: string
+          example: >-
+            eS92od9wykJ1tFYTqea8XE:APA91bGvSUyzrhBmVRHaTPxI3MG3RTK_FFDrXJdcTeLnfXOiL63ty4DTuusK7U9DXHMzHoVVEzYTMzrdhYDoUnmis6ylStv-qmUsQ44BIPBXnixeDbDB41JSLvQEXxmM32bLeqGVLve6
+      responses:
+        '200':
+          description: Successful response
+          content:
+            text/plain:
+              schema:
+                type: string
+              example: refreshed FCM token
   /push/config:
     get:
       tags:

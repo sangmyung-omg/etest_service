@@ -49,6 +49,16 @@ public class PushNotificationController {
         pushNotificationService.linkTokenWithUserUuid(jwtToken, fcmToken);
     }
 
+    @PostMapping("push/config/delete/token")
+    public String deleteFcmToken(@RequestParam String fcmToken) {
+        return pushNotificationService.deleteFcmToken(fcmToken);
+    }
+
+    @PostMapping("push/config/refresh/token")
+    public String refreshFcmToken(@RequestParam String expiredFcmToken, @RequestParam String refreshFcmToken){
+        return pushNotificationService.refreshFcmToken(expiredFcmToken, refreshFcmToken);
+    }
+
     @GetMapping("push/config")
     public ResponseEntity<?> getUserNotificationConfigByJwtToken(@RequestHeader(value = "Authorization") String jwtToken){
         return new ResponseEntity<>(pushNotificationService.getUserNotificationConfigByJwtToken(jwtToken), HttpStatus.OK);

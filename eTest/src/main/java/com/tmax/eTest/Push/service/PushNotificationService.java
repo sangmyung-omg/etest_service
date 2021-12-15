@@ -93,7 +93,7 @@ public class PushNotificationService {
         }
     }
 
-    public void linkTokenWithUserUuid(String jwtToken, String token) {
+    public void linkTokenWithUserUuid(String jwtToken, String fcmToken) {
         String userUuid = Jwts.parser().setSigningKey(secret).parseClaimsJws(jwtToken.substring(7)).getBody().get("userUuid").toString();
         List<UserNotificationConfig> userNotificationConfigList
                 = userNotificationConfigRepositorySupport.getUserNotificationConfigByUserUuid(userUuid);
@@ -101,7 +101,7 @@ public class PushNotificationService {
 
         if (userNotificationConfigList.size() > 0) {
             UserNotificationConfig u = userNotificationConfigList.get(0);
-            userNotificationConfig = userNotificationConfigRepository.findById(token).get();
+            userNotificationConfig = userNotificationConfigRepository.findById(fcmToken).get();
             userNotificationConfig.setUserUuid(userUuid);
             userNotificationConfig.setGlobal(u.getGlobal());
             userNotificationConfig.setNotice(u.getNotice());
@@ -110,7 +110,7 @@ public class PushNotificationService {
         }
         else
             userNotificationConfig = UserNotificationConfig.builder()
-                    .token(token)
+                    .token(fcmToken)
                     .userUuid(userUuid)
                     .global("Y")
                     .notice("Y")
@@ -118,6 +118,27 @@ public class PushNotificationService {
                     .content("Y")
                     .build();
         userNotificationConfigRepository.save(userNotificationConfig);
+    }
+
+    public String deleteFcmToken(String fcmToken) {
+        if (userNotificationConfigRepository.findById(fcmToken).isPresent()) {
+            userNotificationConfigRepository.deleteById(fcmToken);
+            return "deleted FCM token";
+        }
+        else
+            return "cannot found requested FCM token";
+    }
+
+    public String refreshFcmToken(String expiredFcmToken, String refreshFcmToken) {
+        if (userNotificationConfigRepository.findById(expiredFcmToken).isPresent()) {
+            UserNotificationConfig userNotificationConfig = userNotificationConfigRepository.findById(expiredFcmToken).get();
+            userNotificationConfigRepository.deleteById(expiredFcmToken);
+            userNotificationConfig.setToken(refreshFcmToken);
+            userNotificationConfigRepository.save(userNotificationConfig);
+            return "refreshed FCM token";
+        }
+        else
+            return "cannot found requested FCM token";
     }
 
     private void saveNotificationList
