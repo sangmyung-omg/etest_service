@@ -188,6 +188,77 @@ paths:
                   data: {
                     email : "중복된 회원 없음"
                   }
+  /notice/image:
+    get:
+      tags:
+        - 공지사항
+      description: 공지사항 첨부파일 가져옴
+      parameters:
+        - name: Cookie
+          in: header
+          description: JWTtoken
+          required: true
+          schema:
+            type: string
+            format: Bearer Token
+        - name: filename
+          in: query
+          schema:
+            type: string
+            format: string
+      responses:
+        '200':
+          description: 공지사항 이미지 반환
+          content:
+            image/png:
+              schema:
+                type: object
+                example:
+                  code: 200
+                  data: 첨부파일 이미지
+  /create/notice:
+    post:
+      tags:
+        - 공지사항
+      description: 공지사항 만들기
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              properties:
+                title:
+                  description: 제목
+                  type: string
+                content:
+                  description: 내용
+                  type: string
+                image:
+                  description: 공지사항 이미지
+                  type: string
+              example:
+                title : "test"
+                content : "test"
+                image : "test.png"
+      responses:
+        '200':
+          description: 공지사항 생성
+          content:
+            json:
+              schema:
+                type: object
+                example:
+                  code: 200
+                  message: success
+                data: {
+                  id: 36,
+                  draft: 0,
+                  title: null,
+                  content: "test 20211213 1",
+                  views: 0,
+                  imageUrl: "C:/data/notice/a6be5f21-195c-419f-982c-00522c46d383_test.PNG",
+                  dateAdd: "2021-12-13T05:41:35.226+00:00",
+                  dateEdit: "2021-12-13T05:41:35.226+00:00"
+                }
   /notice:
     get:
       tags:

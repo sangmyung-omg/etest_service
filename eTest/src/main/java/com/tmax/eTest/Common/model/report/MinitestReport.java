@@ -10,6 +10,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.tmax.eTest.Common.model.user.UserMaster;
 
 import lombok.AllArgsConstructor;
@@ -37,5 +38,6 @@ public class MinitestReport {
 	
 	@ManyToOne
 	@JoinColumn(name="userUuid", insertable = false, updatable = false)
+	@JsonManagedReference
 	private UserMaster user;
 }

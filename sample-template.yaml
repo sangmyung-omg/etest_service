@@ -99,6 +99,8 @@ objects:
                   mountPath: /logs
                 - name: data-pvc
                   mountPath: /data
+                - name: notice-pvc
+                  mountPath: /notice
           imagePullSecrets:
             - name: $REGISTRY_IMAGE_PULL_SECRETS
   - apiVersion: v1

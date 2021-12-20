@@ -60,6 +60,7 @@ public class UserMaster {
 	private List<Inquiry> inquiry;
 
 	@OneToMany(mappedBy = "user",  cascade = {CascadeType.REMOVE},fetch = FetchType.LAZY)
+	@JsonBackReference
 	private List<MinitestReport> minitestReports;
 
 	@Column(name = "CREATE_DATE")
