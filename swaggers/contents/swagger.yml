@@ -19,6 +19,8 @@ tags:
   description: 이미지, 교재 파일 관리
 - name: Statistics
   description: 조회수 통계
+- name: Event
+  description: 이벤트
 
 paths:       
   /videos/curriculums:
@@ -1068,6 +1070,82 @@ paths:
                               type: integer
                             article:
                               type: integer
+  /event:
+    get:
+      tags:
+        - Event
+      summary : 이벤트 정보 조회
+      description : 유저의 이벤트 정보 조회
+      responses:
+        200:
+          description: OK
+          content:
+            json:
+              schema:
+                $ref: '#/components/schemas/EventModel'
+    post:
+      tags:
+        - Event
+      summary : 이벤트 정보 생성 
+      description : 유저의 이벤트 정보 생성
+      requestBody:
+        content:
+          json:
+            schema:
+              type: object
+              properties:
+                channel:
+                  type: string
+                  description: Android / IOS
+                step:
+                  type: integer
+      responses:
+        200:
+          description: OK
+          content:
+            json:
+              schema:
+                $ref: '#/components/schemas/EventModel'                
+    put:
+      tags:
+        - Event
+      summary : 이벤트 정보 수정
+      description : 유저의 이벤트 정보 수정
+      requestBody:
+        content:
+          json:
+            schema:
+              type: object
+              properties:
+                phoneNumber:
+                  type: string
+                step:
+                  type: integer
+                privacyPolicyAgree:
+                  type: string
+                thirdPartyAgree:
+                  type: string
+      responses:
+        200:
+          description: OK
+          content:
+            json:
+              schema:
+                $ref: '#/components/schemas/EventModel'
+    delete:
+      tags:
+        - Event
+      summary : 이벤트 정보 삭제
+      description : 유저의 이벤트 정보 삭제
+      responses:
+        200:
+          description: OK
+          content:
+            json:
+              schema:
+                type: object
+                example:
+                  isSuccess: true
 components:
   schemas:
     VideoModel:
@@ -1216,3 +1294,20 @@ components:
             items:       
               allOf:
               - $ref: '#/components/schemas/WikiModel'
+    EventModel:
+      type: object
+      properties:
+        phoneNumber:
+          type: string
+        userUuid:
+          type: string
+        channel:
+          type: string
+        createDate:
+          type: string
+        step:
+          type: integer
+        privacyPolicyAgree:
+          type: string
+        thirdPartyAgree:
+          type: string

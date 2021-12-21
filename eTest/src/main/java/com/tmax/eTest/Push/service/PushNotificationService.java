@@ -1,17 +1,33 @@
 package com.tmax.eTest.Push.service;
 
+import java.io.IOException;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+
+import javax.annotation.PostConstruct;
+import javax.persistence.EntityNotFoundException;
+
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
-import com.google.firebase.messaging.*;
+import com.google.firebase.messaging.BatchResponse;
+import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.firebase.messaging.FirebaseMessagingException;
+import com.google.firebase.messaging.Message;
+import com.google.firebase.messaging.MulticastMessage;
+import com.google.firebase.messaging.Notification;
 import com.tmax.eTest.Push.dto.AdminPushRequestDTO;
 import com.tmax.eTest.Push.dto.CategoryPushRequestDTO;
 import com.tmax.eTest.Push.dto.UserNotificationConfigEditDTO;
 import com.tmax.eTest.Push.dto.UserNotificationConfigInfoDTO;
 import com.tmax.eTest.Push.model.UserNotificationConfig;
-import com.tmax.eTest.Push.repository.*;
-import io.jsonwebtoken.Jwts;
-import lombok.RequiredArgsConstructor;
+import com.tmax.eTest.Push.repository.NotificationRepository;
+import com.tmax.eTest.Push.repository.UserNotificationConfigRepository;
+import com.tmax.eTest.Push.repository.UserNotificationConfigRepositorySupport;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,14 +35,8 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
-import javax.persistence.EntityNotFoundException;
-import java.io.IOException;
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import io.jsonwebtoken.Jwts;
+import lombok.RequiredArgsConstructor;
 
 @PropertySource("classpath:push-config.properties")
 @Service
@@ -56,8 +66,7 @@ public class PushNotificationService {
         if (!new ClassPathResource(firebaseAdminSdkCredentials).exists()) {
             logger.error("Firebase admin sdk credentials not exists.");
             logger.error("Firebase Cloud Messaging service might not work.");
-        }
-        else{
+        } else {
             GoogleCredentials googleCredentials = GoogleCredentials.fromStream(
                     new ClassPathResource(firebaseAdminSdkCredentials).getInputStream())
                     .createScoped((Arrays.asList(fireBaseCreateScoped)));
@@ -78,6 +87,7 @@ public class PushNotificationService {
         return this.instance.sendMulticast(message);
     }
 
+<<<<<<< HEAD
     public void addNewToken(String fcmToken) {
         if (!userNotificationConfigRepository.findById(fcmToken).isPresent()) {
             userNotificationConfigRepository.save(
@@ -97,6 +107,24 @@ public class PushNotificationService {
         String userUuid = Jwts.parser().setSigningKey(secret).parseClaimsJws(jwtToken.substring(7)).getBody().get("userUuid").toString();
         List<UserNotificationConfig> userNotificationConfigList
                 = userNotificationConfigRepositorySupport.getUserNotificationConfigByUserUuid(userUuid);
+=======
+    public void addNewToken(String token) {
+        userNotificationConfigRepository.save(
+                UserNotificationConfig.builder()
+                        .token(token)
+                        .global("Y")
+                        .notice("Y")
+                        .inquiry("Y")
+                        .content("Y")
+                        .build());
+    }
+
+    public void linkTokenWithUserUuid(String jwtToken, String token) {
+        String userUuid = Jwts.parser().setSigningKey(secret).parseClaimsJws(jwtToken.substring(7)).getBody()
+                .get("userUuid").toString();
+        List<UserNotificationConfig> userNotificationConfigList = userNotificationConfigRepositorySupport
+                .getUserNotificationConfigByUserUuid(userUuid);
+>>>>>>> [feat] apply event api
         UserNotificationConfig userNotificationConfig;
 
         if (userNotificationConfigList.size() > 0) {
@@ -107,8 +135,7 @@ public class PushNotificationService {
             userNotificationConfig.setNotice(u.getNotice());
             userNotificationConfig.setInquiry(u.getInquiry());
             userNotificationConfig.setContent(u.getContent());
-        }
-        else
+        } else
             userNotificationConfig = UserNotificationConfig.builder()
                     .token(fcmToken)
                     .userUuid(userUuid)
@@ -120,6 +147,7 @@ public class PushNotificationService {
         userNotificationConfigRepository.save(userNotificationConfig);
     }
 
+<<<<<<< HEAD
     public String deleteFcmToken(String fcmToken) {
         if (userNotificationConfigRepository.findById(fcmToken).isPresent()) {
             userNotificationConfigRepository.deleteById(fcmToken);
@@ -143,6 +171,10 @@ public class PushNotificationService {
 
     private void saveNotificationList
             (List<String> tokenList, String category, String title, Timestamp currentDateTime) {
+=======
+    private void saveNotificationList(List<String> tokenList, String category, String title,
+            Timestamp currentDateTime) {
+>>>>>>> [feat] apply event api
         List<com.tmax.eTest.Push.model.Notification> notificationList = new ArrayList<>();
         for (String token : tokenList) {
             List<String> userUuidList = userNotificationConfigRepositorySupport.getUserUuidByToken(token);
@@ -155,8 +187,7 @@ public class PushNotificationService {
                             .category(category)
                             .title(title)
                             .timestamp(currentDateTime)
-                            .build()
-            );
+                            .build());
         }
         notificationRepository.saveAll(notificationList);
     }
@@ -174,7 +205,7 @@ public class PushNotificationService {
                 .setImage(data.getImage())
                 .build();
 
-        for (int i = 0; i < tokenList.size(); i += multicastMessageSize){
+        for (int i = 0; i < tokenList.size(); i += multicastMessageSize) {
             MulticastMessage.Builder builder = MulticastMessage.builder();
             MulticastMessage message = builder
                     .setNotification(notification)
@@ -200,7 +231,7 @@ public class PushNotificationService {
                 .setImage(data.getImage())
                 .build();
 
-        for (int i = 0; i < tokenList.size(); i += multicastMessageSize){
+        for (int i = 0; i < tokenList.size(); i += multicastMessageSize) {
             MulticastMessage.Builder builder = MulticastMessage.builder();
             MulticastMessage message = builder
                     .setNotification(notification)
@@ -240,7 +271,8 @@ public class PushNotificationService {
         Timestamp currentDateTime = new Timestamp(System.currentTimeMillis());
         List<String> tokenList = new ArrayList<>();
         for (String userUuid : data.getUserUuid())
-            tokenList.addAll(userNotificationConfigRepositorySupport.getFilteredTokensByUserUuid(data.getCategory(), userUuid));
+            tokenList.addAll(
+                    userNotificationConfigRepositorySupport.getFilteredTokensByUserUuid(data.getCategory(), userUuid));
         saveNotificationList(tokenList, data.getCategory(), data.getBody(), currentDateTime);
         logger.info("new notifications inserted.");
 
@@ -261,10 +293,11 @@ public class PushNotificationService {
         logger.info("{} push successfully sent to user(s).", data.getCategory());
     }
 
-    public void editNotificationConfig(String jwtToken, UserNotificationConfigEditDTO editData){
-        String userUuid = Jwts.parser().setSigningKey(secret).parseClaimsJws(jwtToken.substring(7)).getBody().get("userUuid").toString();
-        List<UserNotificationConfig> userNotificationConfigList
-                = userNotificationConfigRepositorySupport.getUserNotificationConfigByUserUuid(userUuid);
+    public void editNotificationConfig(String jwtToken, UserNotificationConfigEditDTO editData) {
+        String userUuid = Jwts.parser().setSigningKey(secret).parseClaimsJws(jwtToken.substring(7)).getBody()
+                .get("userUuid").toString();
+        List<UserNotificationConfig> userNotificationConfigList = userNotificationConfigRepositorySupport
+                .getUserNotificationConfigByUserUuid(userUuid);
         for (UserNotificationConfig userNotificationConfig : userNotificationConfigList)
             switch (editData.getCategory()) {
                 case "global":
@@ -284,7 +317,8 @@ public class PushNotificationService {
     }
 
     public List<com.tmax.eTest.Push.model.Notification> getNotificationListByJwtToken(String jwtToken) {
-        String userUuid = Jwts.parser().setSigningKey(secret).parseClaimsJws(jwtToken.substring(7)).getBody().get("userUuid").toString();
+        String userUuid = Jwts.parser().setSigningKey(secret).parseClaimsJws(jwtToken.substring(7)).getBody()
+                .get("userUuid").toString();
         return getNotificationListByUserUuid(userUuid);
     }
 
@@ -297,8 +331,10 @@ public class PushNotificationService {
     }
 
     public UserNotificationConfigInfoDTO getUserNotificationConfigByJwtToken(String jwtToken) {
-        String userUuid = Jwts.parser().setSigningKey(secret).parseClaimsJws(jwtToken.substring(7)).getBody().get("userUuid").toString();
-        UserNotificationConfig userNotificationConfig = userNotificationConfigRepositorySupport.getUserNotificationConfigByUserUuid(userUuid).get(0);
+        String userUuid = Jwts.parser().setSigningKey(secret).parseClaimsJws(jwtToken.substring(7)).getBody()
+                .get("userUuid").toString();
+        UserNotificationConfig userNotificationConfig = userNotificationConfigRepositorySupport
+                .getUserNotificationConfigByUserUuid(userUuid).get(0);
         return UserNotificationConfigInfoDTO.builder()
                 .global(userNotificationConfig.getGlobal())
                 .notice(userNotificationConfig.getNotice())

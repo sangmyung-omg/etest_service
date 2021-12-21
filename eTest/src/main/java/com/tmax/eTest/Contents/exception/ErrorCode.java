@@ -13,7 +13,8 @@ public enum ErrorCode implements ErrorCodeBase {
   DIAGNOSIS_ERROR("0005", "Diagnosis Report Error has occured.", HttpStatus.CONFLICT),
   USER_ERROR("0006", "User Should not be null.", HttpStatus.UNAUTHORIZED),
   FILE_ERROR("0007", "File has Error.", HttpStatus.BAD_REQUEST),
-  CODE_ERROR("0008", "Code has Error.", HttpStatus.CONFLICT);
+  CODE_ERROR("0008", "Code has Error.", HttpStatus.CONFLICT),
+  EVENT_ERROR("0008", "Event Error", HttpStatus.BAD_REQUEST);
 
   static final String ERROR_CODE_PREFIX = "ERR-REC-";
 

@@ -57,6 +57,7 @@ public class FileController {
     response.setContentLength(fileSize);
     // response.setHeader("Content-Disposition", "attachment; filename=" +
     // filename);
+    response.setHeader("Content-Disposition", "filename=" + filename);
 
     FileInputStream inputStream = null;
     try {
