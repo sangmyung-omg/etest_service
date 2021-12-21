@@ -58,7 +58,7 @@ public class EventService {
       String phoneNumber = eventDTO.getPhoneNumber();
       String privacyPolicyAgree = eventDTO.getPrivacyPolicyAgree();
       String thirdPartyAgree = eventDTO.getThirdPartyAgree();
-      checkDupPhoneNum(userId, phoneNumber);
+      // checkDupPhoneNum(userId, phoneNumber);
       checkAgree(privacyPolicyAgree, thirdPartyAgree);
       event.setPhoneNumber(phoneNumber);
       event.setPrivacyPolicyAgree(privacyPolicyAgree);
