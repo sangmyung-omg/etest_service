@@ -87,7 +87,6 @@ public class PushNotificationService {
         return this.instance.sendMulticast(message);
     }
 
-<<<<<<< HEAD
     public void addNewToken(String fcmToken) {
         if (!userNotificationConfigRepository.findById(fcmToken).isPresent()) {
             userNotificationConfigRepository.save(
@@ -97,34 +96,16 @@ public class PushNotificationService {
                             .notice("Y")
                             .inquiry("Y")
                             .content("Y")
-                            .build()
-            );
+                            .build());
             logger.info("added new FCM token");
         }
     }
 
     public void linkTokenWithUserUuid(String jwtToken, String fcmToken) {
-        String userUuid = Jwts.parser().setSigningKey(secret).parseClaimsJws(jwtToken.substring(7)).getBody().get("userUuid").toString();
-        List<UserNotificationConfig> userNotificationConfigList
-                = userNotificationConfigRepositorySupport.getUserNotificationConfigByUserUuid(userUuid);
-=======
-    public void addNewToken(String token) {
-        userNotificationConfigRepository.save(
-                UserNotificationConfig.builder()
-                        .token(token)
-                        .global("Y")
-                        .notice("Y")
-                        .inquiry("Y")
-                        .content("Y")
-                        .build());
-    }
-
-    public void linkTokenWithUserUuid(String jwtToken, String token) {
         String userUuid = Jwts.parser().setSigningKey(secret).parseClaimsJws(jwtToken.substring(7)).getBody()
                 .get("userUuid").toString();
         List<UserNotificationConfig> userNotificationConfigList = userNotificationConfigRepositorySupport
                 .getUserNotificationConfigByUserUuid(userUuid);
->>>>>>> [feat] apply event api
         UserNotificationConfig userNotificationConfig;
 
         if (userNotificationConfigList.size() > 0) {
@@ -147,34 +128,28 @@ public class PushNotificationService {
         userNotificationConfigRepository.save(userNotificationConfig);
     }
 
-<<<<<<< HEAD
     public String deleteFcmToken(String fcmToken) {
         if (userNotificationConfigRepository.findById(fcmToken).isPresent()) {
             userNotificationConfigRepository.deleteById(fcmToken);
             return "deleted FCM token";
-        }
-        else
+        } else
             return "cannot found requested FCM token";
     }
 
     public String refreshFcmToken(String expiredFcmToken, String refreshFcmToken) {
         if (userNotificationConfigRepository.findById(expiredFcmToken).isPresent()) {
-            UserNotificationConfig userNotificationConfig = userNotificationConfigRepository.findById(expiredFcmToken).get();
+            UserNotificationConfig userNotificationConfig = userNotificationConfigRepository.findById(expiredFcmToken)
+                    .get();
             userNotificationConfigRepository.deleteById(expiredFcmToken);
             userNotificationConfig.setToken(refreshFcmToken);
             userNotificationConfigRepository.save(userNotificationConfig);
             return "refreshed FCM token";
-        }
-        else
+        } else
             return "cannot found requested FCM token";
     }
 
-    private void saveNotificationList
-            (List<String> tokenList, String category, String title, Timestamp currentDateTime) {
-=======
     private void saveNotificationList(List<String> tokenList, String category, String title,
             Timestamp currentDateTime) {
->>>>>>> [feat] apply event api
         List<com.tmax.eTest.Push.model.Notification> notificationList = new ArrayList<>();
         for (String token : tokenList) {
             List<String> userUuidList = userNotificationConfigRepositorySupport.getUserUuidByToken(token);
