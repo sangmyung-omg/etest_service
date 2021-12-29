@@ -3,6 +3,7 @@ package com.tmax.eTest.Support.service;
 import com.tmax.eTest.Auth.dto.CMRespDto;
 import com.tmax.eTest.Common.model.support.Notice;
 import com.tmax.eTest.Support.dto.CreateNoticeRequestDto;
+import com.tmax.eTest.Support.dto.UpdateNoticeViewDto;
 import com.tmax.eTest.Support.repository.NoticeRepository;
 import org.apache.tika.Tika;
 import org.slf4j.Logger;
@@ -22,6 +23,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.Timestamp;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -89,5 +91,17 @@ public class NoticeService {
             noticeRepository.save(notice);
         }
         return new CMRespDto<>(200, "success", notice);
+    }
+
+    @Transactional
+    public CMRespDto<?> updateNoticeView(UpdateNoticeViewDto updateNoticeViewDto) {
+        Optional<Notice> noticeOptional = noticeRepository.findById(updateNoticeViewDto.getId());
+        if (noticeOptional.isPresent()) {
+            Notice notice = noticeOptional.get();
+            Long view = notice.getViews();
+            notice.setViews(view+1);
+            return new CMRespDto<>(200,"success",view+1);
+        }
+        throw new IllegalArgumentException("notice id is not exist");
     }
 }

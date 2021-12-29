@@ -188,6 +188,34 @@ paths:
                   data: {
                     email : "중복된 회원 없음"
                   }
+  /notice/update/view:
+    post:
+      tags:
+        - 공지사항
+      description: notice view update
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                id:
+                  description: notice id
+                  type: number
+              example: {
+                "id": 1
+              }
+      responses:
+        '200':
+          description: view 반환
+          content:
+            json:
+              schema:
+                type: object
+                example:
+                  code: 200
+                  message: success
+                  data:
+                    id: 1
   /notice/image:
     get:
       tags:
@@ -284,7 +312,34 @@ paths:
                     dateEdit : "2021-11-05T04:23:35.980+00:00"
                     
                   }   
-
+  /faq/update/view:
+    post:
+      tags:
+        - 자주 묻는 질문
+      description: faq view update
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                id:
+                  description: faq id
+                  type: number
+              example: {
+                "id": 1
+              }
+      responses:
+        '200':
+          description: view 반환
+          content:
+            json:
+              schema:
+                type: object
+                example:
+                  code: 200
+                  message: success
+                  data:
+                    id: 1
   /faq:
     get:
       tags:

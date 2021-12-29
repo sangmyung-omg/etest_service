@@ -2,7 +2,7 @@ package com.tmax.eTest.Support.controller;
 
 import com.tmax.eTest.Auth.dto.CMRespDto;
 import com.tmax.eTest.Common.model.support.FAQ;
-import com.tmax.eTest.Support.dto.CreateFAQDto;
+import com.tmax.eTest.Support.dto.UpdateFAQViewDto;
 import com.tmax.eTest.Support.repository.FAQRepository;
 import com.tmax.eTest.Support.service.FAQService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +27,11 @@ public class FAQController {
     @GetMapping("/faq")
     private CMRespDto<?> faq() {
         List<FAQ> faqList = faqRepository.findAll();
-        return new CMRespDto<>(200,"faqList 반환 성공",faqList);
+        return new CMRespDto<>(200, "faqList 반환 성공", faqList);
     }
 
+    @PostMapping("/faq/update/view")
+    private CMRespDto<?> updateFAQView(@RequestBody UpdateFAQViewDto updateFAQViewDto) {
+        return faqService.updateFAQView(updateFAQViewDto);
+    }
 }
