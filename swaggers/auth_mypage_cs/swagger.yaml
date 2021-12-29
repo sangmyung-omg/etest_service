@@ -365,8 +365,27 @@ paths:
                     dateAdd : "2021-11-03T00:13:53.193+00:00",
                     dateEdit : "2021-11-03T00:13:53.193+00:00"
                   }       
-
-
+  /faq/attachment:
+    get:
+      tags:
+        - 자주묻는질문
+      description: 자주묻는질문 이미지 반환
+      parameters:
+        - name: filename
+          in: query
+          schema:
+            type: string
+            format: string
+      responses:
+        '200':
+          description: 1대1 문의 첨부 파일 반환
+          content:
+            image/png:
+              schema:
+                type: object
+                example:
+                  code: 200
+                  data: 첨부파일 이미지
 
   /user/inquiry/create:
     post:
