@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,7 +33,7 @@ public class FAQController {
 
     @GetMapping("/faq")
     private CMRespDto<?> faq() {
-        List<FAQ> faqList = faqRepository.findAll();
+        List<FAQ> faqList = faqRepository.findAll(Sort.by(Sort.Direction.DESC, "id"));
         return new CMRespDto<>(200, "faqList 반환 성공", faqList);
     }
 

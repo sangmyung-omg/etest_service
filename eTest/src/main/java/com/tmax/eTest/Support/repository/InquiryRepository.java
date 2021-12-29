@@ -17,10 +17,10 @@ public interface InquiryRepository extends JpaRepository<Inquiry,Long> {
       @Query(value = "SELECT * FROM cs_inquiry WHERE Inquiry_ID = :Inquiry_ID", nativeQuery = true)
       Optional<Inquiry> findByInquiryId(@Param("Inquiry_ID") Long Inquiry_ID);
 
-      @Query(value = "SELECT INQUIRY_ID FROM CS_INQUIRY WHERE USER_UUID = :USER_UUID", nativeQuery = true)
+      @Query(value = "SELECT INQUIRY_ID FROM CS_INQUIRY WHERE USER_UUID = :USER_UUID ORDER BY INQUIRY_ID DESC", nativeQuery = true)
       List<Long> findAllIdByUserUuid(@Param("USER_UUID") String userUuid);
 
-      @Query(value = "SELECT * FROM CS_INQUIRY WHERE USER_UUID = :USER_UUID", nativeQuery = true)
+      @Query(value = "SELECT * FROM CS_INQUIRY WHERE USER_UUID = :USER_UUID ORDER BY INQUIRY_ID DESC", nativeQuery = true)
       List<InquiryHistoryDTO> findAllInquiryHistoryByUserUuid(@Param("USER_UUID") String userUuid);
 
 }

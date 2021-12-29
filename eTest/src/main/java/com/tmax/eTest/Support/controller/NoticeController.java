@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -33,7 +34,7 @@ public class NoticeController {
 
     @GetMapping("/notice")
     public CMRespDto<?> findAllNotice() {
-        List<Notice> noticeList = noticeRepository.findAll();
+        List<Notice> noticeList = noticeRepository.findAll(Sort.by(Sort.Direction.DESC, "id"));
         return new CMRespDto<>(200, "공지사항 가져오기 성공", noticeList);
     }
 
