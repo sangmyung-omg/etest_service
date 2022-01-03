@@ -50,7 +50,7 @@ public class InquiryService {
                 Inquiry.builder()
                         .userMaster(userMasterEntity)
                         .content(createInquiryDto.getContent())
-                        .status(createInquiryDto.getStatus())
+                        .status("답변대기")
                         .title(createInquiryDto.getTitle())
                         .type(createInquiryDto.getType())
                         .build();
