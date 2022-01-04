@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Pair;
@@ -98,57 +99,12 @@ public class DiagnosisReportService {
 		// 5. get recommend info
 		List<JsonArray> recommendInfo = recommendGenerator.getRecommendLists(probAndUserChoice, scoreMap);
 		
-//		// Rule Based 점수들 산출
-//		Map<String, List<Object>> probInfoForTriton = stateAndProbProcess.makeInfoForTriton(diagnosisProbStatements, probList);
-//		TritonResponseDTO tritonResponse = tritonAPIManager.getUnderstandingScoreInTriton(probInfoForTriton);
-//		TritonDataDTO embeddingData = null;
-//		TritonDataDTO masteryData = null;
-//		
-//		if(tritonResponse != null)
-//		{
-//			for (TritonDataDTO dto : tritonResponse.getOutputs()) {
-//				if (dto.getName().equals("Embeddings")) {
-//					embeddingData = dto;
-//				} else if (dto.getName().equals("Mastery")) {
-//					masteryData = dto;
-//				}
-//			}
-//	
-//			if (embeddingData != null && masteryData != null) {
-//				Map<Integer, UkMaster> usedUkMap =stateAndProbProcess.makeUsedUkMap(probList);
-//				Map<Integer, Float> ukScoreMap = ukScoreCalculator.makeUKScoreMap(masteryData);
-				
-				//[파트이름, 스코어 등급(A~F), 스코어 점수]
-//				List<List<String>> partScoreList = ukScoreCalculator.makePartScore(usedUkMap, ukScoreMap);
-				
-//				Collections.sort(partScoreList, new Comparator<List<String>>() {
-//					@Override
-//					public int compare(List<String> o1, List<String> o2) {
-//						// TODO Auto-generated method stub
-//						return o1.get(2).compareTo(o2.get(2));
-//					}
-//				});
-//				
-//				float partAvgScore = 0;
-//				
-//				for(int i = 0; i < partScoreList.size(); i++)
-//				{
-//					List<String> partScoreInfo = partScoreList.get(i);
-//					int partScore = Integer.parseInt(partScoreInfo.get(2));
-//					partAvgScore += partScore;
-//				}
-//				
-//				if(partScoreList.size() > 0)
-//					partAvgScore /= partScoreList.size();
-				saveDiagnosisReport(userId, probSetId, scoreMap, recommendInfo, 0);
-//				
-//			}
-//		}
-//		
+		saveDiagnosisReport(userId, probSetId, scoreMap, recommendInfo, 0);
+
 		return result;
 	}
 	
-	public boolean deleteDiagnosisReport(String id, String probSetId) throws Exception
+	public boolean deleteDiagnosisReport(String id, String probSetId) throws ReportBadRequestException
 	{
 		boolean result = true;
 		
@@ -252,28 +208,14 @@ public class DiagnosisReportService {
 			List<Problem> probList,
 			List<StatementDTO> statementList)
 	{
+		Map<Integer, Integer> probChoiceMap = statementList.stream()
+			.filter(StatementDTO::isInvalidProblemData)
+			.collect(Collectors.toMap(
+					state -> Integer.parseInt(state.getSourceId()), 
+					state -> Integer.parseInt(state.getUserAnswer())));
+		
 		List<Pair<Problem, Integer>> result = new ArrayList<>();
-		Map<Integer, Integer> probChoiceMap = new HashMap<>();
-		
-		for(StatementDTO statement : statementList)
-		{
-			int probId = -1, answerNum = -1;
-			
-			try {
-				probId = Integer.parseInt(statement.getSourceId());
-				answerNum = Integer.parseInt(statement.getUserAnswer());
-			}
-			catch(NumberFormatException e)
-			{
-				log.info("Number Format Exception in getProbAndChoiceInfos :"
-						+ " Id - "+statement.getSourceId() 
-						+ " Answer - " +statement.getUserAnswer());
-			}
-			
-			if(probId!= -1 && answerNum != -1)
-				probChoiceMap.put(probId, answerNum);
-		}
-		
+				
 		for(Problem prob : probList)
 		{
 			Integer choice = probChoiceMap.get(prob.getProbID());
@@ -288,21 +230,12 @@ public class DiagnosisReportService {
 	
 	
 	private List<Problem> getProblemInfos(List<StatementDTO> statementList) {
-		List<Integer> probIdList = new ArrayList<>();
-		List<Problem> probList = new ArrayList<>();
-
-		for (StatementDTO dto : statementList) {
-			try {
-				int probId = Integer.parseInt(dto.getSourceId());
-				probIdList.add(probId);
-			} catch (NumberFormatException e) {
-				log.info("Number Format Exception in getProblemInfos.  id : " + dto.getSourceId() + " error!");
-			}
-		}
-		probList = problemRepo.findAllById(probIdList);
-
-		// problem 관련 정보를 가공하여 TritonInput 화.
-		return probList;
+		List<Integer> probIdList = statementList.stream()
+				.filter(StatementDTO::isInvalidProblemData)
+				.map(state -> Integer.parseInt(state.getSourceId()))
+				.collect(Collectors.toList());
+		
+		return problemRepo.findAllById(probIdList);
 	}
 	
 
@@ -312,8 +245,6 @@ public class DiagnosisReportService {
 			String probSetId)
 	{
 		GetStatementInfoDTO getStateInfo = new GetStatementInfoDTO();
-		
-		//getStateInfo.pushUserId(id);
 
 		getStateInfo.pushSourceType("diagnosis");	
 		getStateInfo.pushSourceType("diagnosis_pattern");		
