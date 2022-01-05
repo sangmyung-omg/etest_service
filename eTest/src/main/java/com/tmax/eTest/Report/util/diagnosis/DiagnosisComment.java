@@ -291,6 +291,7 @@ public class DiagnosisComment {
 		
 		List<List<String>> commonDetailScore = new ArrayList<>();
 		
+		// [[항목 이름, 점수], [항목 이름, 점수] .... ]
 		commonDetailScore.add(Arrays.asList(
 				KnowledgeSubSection.BASIC.toString(), 
 				String.valueOf(report.getKnowledgeCommonBasic() * 10)));

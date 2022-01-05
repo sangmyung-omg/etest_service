@@ -1,36 +1,27 @@
 package com.tmax.eTest.Report.service;
 
 import java.text.ParseException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
 import com.tmax.eTest.LRS.dto.StatementDTO;
-import com.tmax.eTest.LRS.util.LRSAPIManager;
 import com.tmax.eTest.Report.dto.DiagnosisRecordMainDTO;
-import com.tmax.eTest.Report.dto.RecommendVideoDTO;
 import com.tmax.eTest.Report.exception.ReportBadRequestException;
 import com.tmax.eTest.Report.util.SNDCalculator;
 import com.tmax.eTest.Report.util.StateAndProbProcess;
 import com.tmax.eTest.Report.util.diagnosis.DiagnosisComment;
 import com.tmax.eTest.Common.model.report.DiagnosisReport;
 import com.tmax.eTest.Common.model.user.UserMaster;
-import com.tmax.eTest.Common.model.video.Video;
-import com.tmax.eTest.Common.model.video.VideoBookmarkId;
 import com.tmax.eTest.Common.repository.report.DiagnosisReportRepo;
 import com.tmax.eTest.Common.repository.user.UserMasterRepo;
-import com.tmax.eTest.Common.repository.video.VideoBookmarkRepository;
-import com.tmax.eTest.Common.repository.video.VideoRepository;
 
 import lombok.extern.slf4j.Slf4j;
 
