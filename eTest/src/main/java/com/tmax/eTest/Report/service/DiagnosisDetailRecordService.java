@@ -89,7 +89,6 @@ public class DiagnosisDetailRecordService {
 		return result;
 	}
 	
-	@SuppressWarnings("unchecked")
 	private DiagnosisRecordDetailDTO makeKnowledgeRecordDetail(
 			DiagnosisReport report,
 			List<StatementDTO> knowledgeProbStatement) throws ReportBadRequestException
