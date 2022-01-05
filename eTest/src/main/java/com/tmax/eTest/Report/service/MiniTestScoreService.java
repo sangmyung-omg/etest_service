@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.json.simple.JSONObject;
 import org.slf4j.Logger;
@@ -121,7 +122,7 @@ public class MiniTestScoreService {
 		if(reportOpt.isPresent())
 		{
 			MinitestReport report = reportOpt.get();
-			log.info(id+" "+probSetId);
+
 			if(report.getUserUuid().equals(id))
 				minitestReportRepo.deleteById(probSetId);
 			else
@@ -208,33 +209,21 @@ public class MiniTestScoreService {
 	}
 
 	private List<Problem> getProblemInfos(List<StatementDTO> miniTestResult) {
-		List<Integer> probIdList = new ArrayList<>();
-		List<Problem> probList = new ArrayList<>();
+		List<Integer> probIdList = miniTestResult.stream()
+			.filter(StatementDTO::isInvalidProblemData)
+			.map(state -> Integer.parseInt(state.getSourceId()))
+			.collect(Collectors.toList());
 
-		for (StatementDTO dto : miniTestResult) {
-			try {
-				int probId = Integer.parseInt(dto.getSourceId());
-				probIdList.add(probId);
-			} catch (NumberFormatException e) {
-				log.info(
-					"Wrong number format in getProblemInfos. id : " + dto.getSourceId() + " error!");
-			}
-		}
-		probList = problemRepo.findAllById(probIdList);
-		// problem 관련 정보를 가공하여 TritonInput 화.
-		return probList;
+		return problemRepo.findAllById(probIdList);
 	}
 
 	
 	
 	private void saveUserUKInfo(String userId, String ukMasteryStr) {
-
-		
 		UserKnowledge userKnowledge = new UserKnowledge();
 		userKnowledge.setUserUuid(userId);
 		userKnowledge.setUkMastery(ukMasteryStr);
 		userKnowledge.setUpdateDate(Timestamp.valueOf(LocalDateTime.now()));
-
 
 		try {
 			userKnowledgeRepo.save(userKnowledge);

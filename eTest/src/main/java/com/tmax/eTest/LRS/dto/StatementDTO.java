@@ -9,11 +9,13 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@Slf4j
 public class StatementDTO implements Comparable<StatementDTO>{
 	@ApiModelProperty(name = "userId", dataType = "String", example = "test_user_id", value = "유저의 ID(JWT or 일반 String 값)", required = true)
 	private String userId;
@@ -72,5 +74,23 @@ public class StatementDTO implements Comparable<StatementDTO>{
 		// TODO Auto-generated method stub
 	
 		return statementDate.compareTo(o.getStatementDate());
+	}
+	
+	public boolean isInvalidProblemData()
+	{
+		try {
+			Integer.parseInt(this.getSourceId());
+			Integer.parseInt(this.getUserAnswer());
+		}
+		catch(NumberFormatException e)
+		{
+			log.info("This Statement is invalid"
+					+ " SourceId - " + this.getSourceId() 
+					+ " SourceId - " + this.getSourceId() 
+					+ " Answer - "  + this.getUserAnswer());
+			return false;
+		}
+		
+		return true;
 	}
 }
