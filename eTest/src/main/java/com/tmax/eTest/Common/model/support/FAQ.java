@@ -39,4 +39,7 @@ public class FAQ {
 
     @Column(name = "date_edit")
     private Timestamp dateEdit;
+
+    @Column(name = " image_encoding")
+    private String imageEncoding;
 }
