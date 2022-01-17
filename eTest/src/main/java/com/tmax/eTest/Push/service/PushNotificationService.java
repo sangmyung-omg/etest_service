@@ -19,8 +19,7 @@ import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.MulticastMessage;
 import com.google.firebase.messaging.Notification;
-import com.tmax.eTest.Push.dto.AdminPushRequestDTO;
-import com.tmax.eTest.Push.dto.CategoryPushRequestDTO;
+import com.tmax.eTest.Push.dto.PushRequestDTO;
 import com.tmax.eTest.Push.dto.UserNotificationConfigEditDTO;
 import com.tmax.eTest.Push.dto.UserNotificationConfigInfoDTO;
 import com.tmax.eTest.Push.model.UserNotificationConfig;
@@ -148,10 +147,9 @@ public class PushNotificationService {
             return "cannot found requested FCM token";
     }
 
-    private void saveNotificationList(List<String> tokenList, String category, String title,
-            Timestamp currentDateTime) {
+    private void saveNotificationList(List<String> fcmTokenList, String category, String title, Timestamp currentDateTime) {
         List<com.tmax.eTest.Push.model.Notification> notificationList = new ArrayList<>();
-        for (String token : tokenList) {
+        for (String token : fcmTokenList) {
             List<String> userUuidList = userNotificationConfigRepositorySupport.getUserUuidByToken(token);
             String userUuid = (userUuidList.size() == 0) ? null : userUuidList.get(0);
             notificationList.add(
@@ -167,104 +165,63 @@ public class PushNotificationService {
         notificationRepository.saveAll(notificationList);
     }
 
-    public void adminPushRequestByToken(AdminPushRequestDTO data) throws FirebaseMessagingException {
+    private void pushRequest(PushRequestDTO data, List<String> fcmTokenList, Timestamp currentDateTime)
+            throws FirebaseMessagingException {
+        saveNotificationList(fcmTokenList, data.getCategory(), data.getBody(), currentDateTime);
+        logger.info("new notifications inserted.");
+
+        Notification notification = Notification.builder()
+                .setTitle(data.getTitle())
+                .setBody(data.getBody())
+                .setImage(data.getImage())
+                .build();
+
+        for (int i = 0; i < fcmTokenList.size(); i += multicastMessageSize) {
+            MulticastMessage.Builder builder = MulticastMessage.builder();
+            MulticastMessage message = builder
+                    .setNotification(notification)
+                    .putData("url", data.getUrl())
+                    .addAllTokens(fcmTokenList.subList(i, (int) Math.min(i + multicastMessageSize, fcmTokenList.size())))
+                    .build();
+            sendMessage(message);
+        }
+    }
+
+    public void adminPushRequestByToken(PushRequestDTO data) throws FirebaseMessagingException {
         logger.info("admin push request by token received.");
         Timestamp currentDateTime = new Timestamp(System.currentTimeMillis());
-        List<String> tokenList = data.getToken();
-        saveNotificationList(data.getToken(), data.getCategory(), data.getBody(), currentDateTime);
-        logger.info("new notifications inserted.");
-
-        Notification notification = Notification.builder()
-                .setTitle(data.getTitle())
-                .setBody(data.getBody())
-                .setImage(data.getImage())
-                .build();
-
-        for (int i = 0; i < tokenList.size(); i += multicastMessageSize) {
-            MulticastMessage.Builder builder = MulticastMessage.builder();
-            MulticastMessage message = builder
-                    .setNotification(notification)
-                    .addAllTokens(tokenList.subList(i, (int) Math.min(i + multicastMessageSize, tokenList.size())))
-                    .build();
-            sendMessage(message);
-        }
+        List<String> fcmTokenList = data.getToken();
+        pushRequest(data, fcmTokenList, currentDateTime);
         logger.info("admin push successfully sent.");
     }
 
-    public void adminPushRequestByUserUuid(AdminPushRequestDTO data) throws FirebaseMessagingException {
+    public void adminPushRequestByUserUuid(PushRequestDTO data) throws FirebaseMessagingException {
         logger.info("admin push request by userUuid received.");
         Timestamp currentDateTime = new Timestamp(System.currentTimeMillis());
-        List<String> tokenList = new ArrayList<>();
+        List<String> fcmTokenList = new ArrayList<>();
         for (String userUuid : data.getUserUuid())
-            tokenList.addAll(userNotificationConfigRepositorySupport.getTokenByUserUuid(userUuid));
-        saveNotificationList(tokenList, data.getCategory(), data.getBody(), currentDateTime);
-        logger.info("new notifications inserted.");
-
-        Notification notification = Notification.builder()
-                .setTitle(data.getTitle())
-                .setBody(data.getBody())
-                .setImage(data.getImage())
-                .build();
-
-        for (int i = 0; i < tokenList.size(); i += multicastMessageSize) {
-            MulticastMessage.Builder builder = MulticastMessage.builder();
-            MulticastMessage message = builder
-                    .setNotification(notification)
-                    .addAllTokens(tokenList.subList(i, (int) Math.min(i + multicastMessageSize, tokenList.size())))
-                    .build();
-            sendMessage(message);
-        }
+            fcmTokenList.addAll(userNotificationConfigRepositorySupport.getTokenByUserUuid(userUuid));
+        pushRequest(data, fcmTokenList, currentDateTime);
         logger.info("admin push successfully sent.");
     }
 
-    public void categoryPushRequest(CategoryPushRequestDTO data) throws FirebaseMessagingException {
+    public void categoryPushRequest(PushRequestDTO data) throws FirebaseMessagingException {
         logger.info("{} push request received.", data.getCategory());
         Timestamp currentDateTime = new Timestamp(System.currentTimeMillis());
-        List<String> tokenList = userNotificationConfigRepositorySupport.getFilteredTokens(data.getCategory());
-        saveNotificationList(tokenList, data.getCategory(), data.getBody(), currentDateTime);
-        logger.info("new notifications inserted.");
-
-        Notification notification = Notification.builder()
-                .setTitle(data.getTitle())
-                .setBody(data.getBody())
-                .setImage(data.getImage())
-                .build();
-
-        for (int i = 0; i < tokenList.size(); i += multicastMessageSize) {
-            MulticastMessage.Builder builder = MulticastMessage.builder();
-            MulticastMessage message = builder
-                    .setNotification(notification)
-                    .addAllTokens(tokenList.subList(i, (int) Math.min(i + multicastMessageSize, tokenList.size())))
-                    .build();
-            sendMessage(message);
-        }
+        List<String> fcmTokenList = userNotificationConfigRepositorySupport.getFilteredTokens(data.getCategory());
+        pushRequest(data, fcmTokenList, currentDateTime);
         logger.info("{} push successfully sent.", data.getCategory());
     }
 
-    public void categoryPushRequestByUserUuid(CategoryPushRequestDTO data) throws FirebaseMessagingException {
+    public void categoryPushRequestByUserUuid(PushRequestDTO data) throws FirebaseMessagingException {
         logger.info("{} push request to user(s) received.", data.getCategory());
         Timestamp currentDateTime = new Timestamp(System.currentTimeMillis());
-        List<String> tokenList = new ArrayList<>();
+        List<String> fcmTokenList = new ArrayList<>();
         for (String userUuid : data.getUserUuid())
-            tokenList.addAll(
-                    userNotificationConfigRepositorySupport.getFilteredTokensByUserUuid(data.getCategory(), userUuid));
-        saveNotificationList(tokenList, data.getCategory(), data.getBody(), currentDateTime);
-        logger.info("new notifications inserted.");
-
-        Notification notification = Notification.builder()
-                .setTitle(data.getTitle())
-                .setBody(data.getBody())
-                .setImage(data.getImage())
-                .build();
-
-        for (int i = 0; i < tokenList.size(); i += multicastMessageSize) {
-            MulticastMessage.Builder builder = MulticastMessage.builder();
-            MulticastMessage message = builder
-                    .setNotification(notification)
-                    .addAllTokens(tokenList.subList(i, (int) Math.min(i + multicastMessageSize, tokenList.size())))
-                    .build();
-            sendMessage(message);
-        }
+            fcmTokenList.addAll(
+                    userNotificationConfigRepositorySupport.getFilteredTokensByUserUuid(data.getCategory(), userUuid)
+            );
+        pushRequest(data, fcmTokenList, currentDateTime);
         logger.info("{} push successfully sent to user(s).", data.getCategory());
     }
 
@@ -292,8 +249,8 @@ public class PushNotificationService {
     }
 
     public List<com.tmax.eTest.Push.model.Notification> getNotificationListByJwtToken(String jwtToken) {
-        String userUuid = Jwts.parser().setSigningKey(secret).parseClaimsJws(jwtToken.substring(7)).getBody()
-                .get("userUuid").toString();
+        String userUuid
+                = Jwts.parser().setSigningKey(secret).parseClaimsJws(jwtToken.substring(7)).getBody().get("userUuid").toString();
         return getNotificationListByUserUuid(userUuid);
     }
 
@@ -306,10 +263,10 @@ public class PushNotificationService {
     }
 
     public UserNotificationConfigInfoDTO getUserNotificationConfigByJwtToken(String jwtToken) {
-        String userUuid = Jwts.parser().setSigningKey(secret).parseClaimsJws(jwtToken.substring(7)).getBody()
-                .get("userUuid").toString();
-        UserNotificationConfig userNotificationConfig = userNotificationConfigRepositorySupport
-                .getUserNotificationConfigByUserUuid(userUuid).get(0);
+        String userUuid
+                = Jwts.parser().setSigningKey(secret).parseClaimsJws(jwtToken.substring(7)).getBody().get("userUuid").toString();
+        UserNotificationConfig userNotificationConfig
+                = userNotificationConfigRepositorySupport.getUserNotificationConfigByUserUuid(userUuid).get(0);
         return UserNotificationConfigInfoDTO.builder()
                 .global(userNotificationConfig.getGlobal())
                 .notice(userNotificationConfig.getNotice())

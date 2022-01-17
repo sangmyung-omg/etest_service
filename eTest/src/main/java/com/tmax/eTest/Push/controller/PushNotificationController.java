@@ -1,8 +1,7 @@
 package com.tmax.eTest.Push.controller;
 
 import com.google.firebase.messaging.FirebaseMessagingException;
-import com.tmax.eTest.Push.dto.AdminPushRequestDTO;
-import com.tmax.eTest.Push.dto.CategoryPushRequestDTO;
+import com.tmax.eTest.Push.dto.PushRequestDTO;
 import com.tmax.eTest.Push.dto.UserNotificationConfigEditDTO;
 import com.tmax.eTest.Push.service.PushNotificationService;
 import lombok.RequiredArgsConstructor;
@@ -18,24 +17,24 @@ public class PushNotificationController {
     private final PushNotificationService pushNotificationService;
 
     @PostMapping("push/admin/token")
-    public ResponseEntity<?> adminPushRequestByToken(@RequestBody AdminPushRequestDTO data) throws FirebaseMessagingException {
+    public ResponseEntity<?> adminPushRequestByToken(@RequestBody PushRequestDTO data) throws FirebaseMessagingException {
         pushNotificationService.adminPushRequestByToken(data);
         return new ResponseEntity<>("admin push sent", HttpStatus.OK);
     }
 
     @PostMapping("push/admin/user")
-    public ResponseEntity<?> adminPushRequestByUserUuid(@RequestBody AdminPushRequestDTO data) throws FirebaseMessagingException {
+    public ResponseEntity<?> adminPushRequestByUserUuid(@RequestBody PushRequestDTO data) throws FirebaseMessagingException {
         pushNotificationService.adminPushRequestByUserUuid(data);
         return new ResponseEntity<>("admin push sent", HttpStatus.OK);
     }
 
     @PostMapping("push/category")
-    public void categoryPushToAll(@RequestBody CategoryPushRequestDTO data) throws FirebaseMessagingException {
+    public void categoryPushToAll(@RequestBody PushRequestDTO data) throws FirebaseMessagingException {
         pushNotificationService.categoryPushRequest(data);
     }
 
     @PostMapping("push/category/user")
-    public void categoryPushToUser(@RequestBody CategoryPushRequestDTO data) throws FirebaseMessagingException {
+    public void categoryPushToUser(@RequestBody PushRequestDTO data) throws FirebaseMessagingException {
         pushNotificationService.categoryPushRequestByUserUuid(data);
     }
 
