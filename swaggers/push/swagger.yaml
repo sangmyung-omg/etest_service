@@ -33,6 +33,7 @@ paths:
                 category: admin
                 title: push title
                 body: push body
+                url: https://ktest.kofia.or.kr/
       responses:
         '200':
           description: OK
@@ -58,6 +59,7 @@ paths:
                 category: admin
                 title: push title
                 body: push body
+                url: https://ktest.kofia.or.kr/
       responses:
         '200':
           description: OK
@@ -80,6 +82,7 @@ paths:
                 category: notice
                 title: test push title
                 body: test push body
+                url: https://ktest.kofia.or.kr/
       responses:
         '200':
           description: Successful response
@@ -100,6 +103,7 @@ paths:
                 category: notice
                 title: test push title
                 body: test push body
+                url: https://ktest.kofia.or.kr/
       responses:
         '200':
           description: Successful response
