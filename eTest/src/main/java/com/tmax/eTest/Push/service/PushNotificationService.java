@@ -147,27 +147,34 @@ public class PushNotificationService {
             return "cannot found requested FCM token";
     }
 
-    private void saveNotificationList(List<String> fcmTokenList, String category, String title, Timestamp currentDateTime) {
+    private void saveNotificationList(List<String> userUuidList, String category, String title, Timestamp currentDateTime) {
         List<com.tmax.eTest.Push.model.Notification> notificationList = new ArrayList<>();
-        for (String token : fcmTokenList) {
-            List<String> userUuidList = userNotificationConfigRepositorySupport.getUserUuidByToken(token);
-            String userUuid = (userUuidList.size() == 0) ? null : userUuidList.get(0);
+        for (String userUuid : userUuidList)
             notificationList.add(
                     com.tmax.eTest.Push.model.Notification.builder()
-                            .token(token)
                             .userUuid(userUuid)
                             .read("N")
                             .category(category)
                             .title(title)
                             .timestamp(currentDateTime)
                             .build());
-        }
         notificationRepository.saveAll(notificationList);
     }
 
     private void pushRequest(PushRequestDTO data, List<String> fcmTokenList, Timestamp currentDateTime)
             throws FirebaseMessagingException {
-        saveNotificationList(fcmTokenList, data.getCategory(), data.getBody(), currentDateTime);
+        List<String> userUuidList = new ArrayList<>();
+        for (String token : fcmTokenList) {
+            String userUuid = userNotificationConfigRepositorySupport.getUserUuidByToken(token).get(0);
+            if (userUuidList.size() == 0)
+                userUuidList.add(userUuid);
+            for (int i = 0; i < userUuidList.size(); i++){
+                String userUuidInList = userUuidList.get(i);
+                if (!userUuidInList.equals(userUuid))
+                    userUuidList.add(userUuid);
+            }
+        }
+        saveNotificationList(userUuidList, data.getCategory(), data.getBody(), currentDateTime);
         logger.info("new notifications inserted.");
 
         Notification notification = Notification.builder()
@@ -258,9 +265,6 @@ public class PushNotificationService {
         return notificationRepository.findAllByUserUuid(userUuid);
     }
 
-    public List<com.tmax.eTest.Push.model.Notification> getNotificationListByToken(String token) {
-        return notificationRepository.findAllByToken(token);
-    }
 
     public UserNotificationConfigInfoDTO getUserNotificationConfigByJwtToken(String jwtToken) {
         String userUuid

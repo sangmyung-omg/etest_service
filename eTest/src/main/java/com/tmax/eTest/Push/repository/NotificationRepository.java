@@ -9,5 +9,4 @@ import java.util.List;
 @Repository
 public interface NotificationRepository extends JpaRepository<Notification, Long> {
     List<Notification> findAllByUserUuid(String userUuid);
-    List<Notification> findAllByToken(String token);
 }

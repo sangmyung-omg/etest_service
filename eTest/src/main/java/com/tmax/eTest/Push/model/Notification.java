@@ -23,9 +23,6 @@ public class Notification {
     @Column(name = "USER_UUID")
     private String userUuid;
 
-    @Column(name = "TOKEN")
-    private String token;
-
     @Column(name = "READ")
     private String read;
 
