@@ -103,7 +103,7 @@ public class InquiryController {
 
     @PostMapping("/user/inquiry/modify")
     @Transactional
-    public CMRespDto<?> modify(@AuthenticationPrincipal PrincipalDetails principalDetails, @ModelAttribute ModifyInquiryDto modifyInquiryDto) {
+    public CMRespDto<?> modify(@AuthenticationPrincipal PrincipalDetails principalDetails, @ModelAttribute ModifyInquiryDto modifyInquiryDto) throws IOException {
 
 
         String result = inquiryService.modify(principalDetails, modifyInquiryDto);

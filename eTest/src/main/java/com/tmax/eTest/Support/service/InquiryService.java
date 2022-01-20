@@ -86,7 +86,7 @@ public class InquiryService {
 
 
     @Transactional
-    public String modify(@AuthenticationPrincipal PrincipalDetails principalDetails, ModifyInquiryDto modifyInquiryDto) {
+    public String modify(@AuthenticationPrincipal PrincipalDetails principalDetails, ModifyInquiryDto modifyInquiryDto) throws IOException {
 
         List<Long> inquiryIdList = inquiryRepository.findAllIdByUserUuid(principalDetails.getUserUuid());
         if (!inquiryIdList.contains(modifyInquiryDto.getId())) {
@@ -132,22 +132,17 @@ public class InquiryService {
         // 새로 만들기
         if (!(modifyInquiryDto.getFileList() == null)) {
             for (int i = 0; i < modifyInquiryDto.getFileList().size(); i++) {
-                String fileName = UUID.randomUUID().toString() + "_" + modifyInquiryDto.getFileList().get(i).getOriginalFilename();
-                Path imageFilePath = Paths.get(uploadFolder + fileName);
+
+                byte[] byteArray = org.apache.tomcat.util.codec.binary.Base64.encodeBase64(modifyInquiryDto.getFileList().get(i).getBytes());
+                String imageEncoding = new String(byteArray);
 
                 Inquiry_file inquiry_file = Inquiry_file.builder()
                         .name(modifyInquiryDto.getFileList().get(i).getOriginalFilename().replaceFirst("[.][^.]+$", ""))
                         .size(modifyInquiryDto.getFileList().get(i).getSize())
-                        .imageEncoding(fileName)
+                        .imageEncoding(imageEncoding)
                         .type(modifyInquiryDto.getFileList().get(i).getContentType())
                         .inquiry(inquiry)
                         .build();
-                try {
-                    Files.write(imageFilePath, modifyInquiryDto.getFileList().get(i).getBytes());
-
-                } catch (IOException e) {
-                    logger.debug("file write error");
-                }
                 inquiryFileRepository.save(inquiry_file);
             }
         }
