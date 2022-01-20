@@ -2,10 +2,7 @@ package com.tmax.eTest.Push.service;
 
 import java.io.IOException;
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityNotFoundException;
@@ -163,17 +160,13 @@ public class PushNotificationService {
 
     private void pushRequest(PushRequestDTO data, List<String> fcmTokenList, Timestamp currentDateTime)
             throws FirebaseMessagingException {
-        List<String> userUuidList = new ArrayList<>();
+        HashSet<String> userUuidSet = new HashSet<>();
         for (String token : fcmTokenList) {
             String userUuid = userNotificationConfigRepositorySupport.getUserUuidByToken(token).get(0);
-            if (userUuidList.size() == 0)
-                userUuidList.add(userUuid);
-            for (int i = 0; i < userUuidList.size(); i++){
-                String userUuidInList = userUuidList.get(i);
-                if (!userUuidInList.equals(userUuid))
-                    userUuidList.add(userUuid);
-            }
+            if (userUuid != null)
+                userUuidSet.add(userUuid);
         }
+        List<String> userUuidList = new ArrayList<>(userUuidSet);
         saveNotificationList(userUuidList, data.getCategory(), data.getBody(), currentDateTime);
         logger.info("new notifications inserted.");
 
