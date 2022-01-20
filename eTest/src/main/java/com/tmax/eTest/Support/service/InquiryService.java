@@ -65,9 +65,9 @@ public class InquiryService {
         if (!(createInquiryDto.getFileList() == null)) {
             List<Inquiry_file> inquiry_files = new ArrayList<>();
             for (int i = 0; i < createInquiryDto.getFileList().size(); i++) {
-                String fileName = UUID.randomUUID().toString() + "_" + createInquiryDto.getFileList().get(i).getOriginalFilename();
                 byte[] byteArray = org.apache.tomcat.util.codec.binary.Base64.encodeBase64(createInquiryDto.getFileList().get(i).getBytes());
-                String imageEncoding = org.apache.tomcat.util.codec.binary.Base64.encodeBase64String(byteArray);
+                String imageEncoding = new String(byteArray);
+//                String imageEncoding = org.apache.tomcat.util.codec.binary.Base64.encodeBase64String(byteArray);
                 Inquiry_file inquiry_file = Inquiry_file.builder()
                         .name(createInquiryDto.getFileList().get(i).getOriginalFilename().replaceFirst("[.][^.]+$", "")) // 확장자 지우기
                         .size(createInquiryDto.getFileList().get(i).getSize())
