@@ -25,8 +25,8 @@ public class Inquiry_file {
     @Column(name = "INQUIRY_FILE_ID")
     private Long id;
 
-    @Column(name = "INQUIRY_FILE_URL")
-    private String url;
+    @Column(name = "INQUIRY_FILE_ENCODING")
+    private String imageEncoding;
 
     @Column(name = "INQUIRY_FILE_TYPE")
     private String type;

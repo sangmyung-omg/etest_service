@@ -9,9 +9,7 @@ import com.tmax.eTest.Support.dto.CreateInquiryDto;
 import com.tmax.eTest.Support.dto.ModifyInquiryDto;
 import com.tmax.eTest.Support.repository.InquiryFileRepository;
 import com.tmax.eTest.Support.repository.InquiryRepository;
-import java.io.IOException;
-import java.nio.file.Files;
-
+import org.apache.commons.codec.binary.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,8 +19,17 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.nio.file.*;
-import java.util.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class InquiryService {
@@ -43,9 +50,9 @@ public class InquiryService {
     private String filePath;
 
     @Transactional
-    public Inquiry createInquiry(CreateInquiryDto createInquiryDto, PrincipalDetails principalDetails) {
+    public Inquiry createInquiry(CreateInquiryDto createInquiryDto, PrincipalDetails principalDetails) throws IOException {
         Optional<UserMaster> userMasterOptional = userRepository.findByEmail(principalDetails.getEmail());
-        UserMaster userMasterEntity= userMasterOptional.get();
+        UserMaster userMasterEntity = userMasterOptional.get();
         Inquiry inquiry =
                 Inquiry.builder()
                         .userMaster(userMasterEntity)
@@ -57,24 +64,18 @@ public class InquiryService {
 
         if (!(createInquiryDto.getFileList() == null)) {
             List<Inquiry_file> inquiry_files = new ArrayList<>();
-            for(int i=0; i<createInquiryDto.getFileList().size(); i++){
+            for (int i = 0; i < createInquiryDto.getFileList().size(); i++) {
                 String fileName = UUID.randomUUID().toString() + "_" + createInquiryDto.getFileList().get(i).getOriginalFilename();
-                String uploadFolder = filePath + "inquiry/";
-                Path imageFilePath = Paths.get(uploadFolder + fileName);
+                byte[] byteArray = org.apache.tomcat.util.codec.binary.Base64.encodeBase64(createInquiryDto.getFileList().get(i).getBytes());
+                String imageEncoding = org.apache.tomcat.util.codec.binary.Base64.encodeBase64String(byteArray);
                 Inquiry_file inquiry_file = Inquiry_file.builder()
                         .name(createInquiryDto.getFileList().get(i).getOriginalFilename().replaceFirst("[.][^.]+$", "")) // 확장자 지우기
                         .size(createInquiryDto.getFileList().get(i).getSize())
-                        .url(fileName)
+                        .imageEncoding(imageEncoding)
                         .type(createInquiryDto.getFileList().get(i).getContentType())
                         .inquiry(inquiry)
                         .build();
                 inquiry_files.add(inquiry_file);
-                try {
-                    System.out.println(imageFilePath);
-                    Files.write(imageFilePath, createInquiryDto.getFileList().get(i).getBytes());
-                } catch (IOException e) {
-                    logger.debug("File write IOException");
-                }
                 inquiryFileRepository.save(inquiry_file);
             }
             inquiry.setInquiry_file(inquiry_files);
@@ -85,7 +86,7 @@ public class InquiryService {
 
 
     @Transactional
-    public String modify(@AuthenticationPrincipal PrincipalDetails principalDetails, ModifyInquiryDto modifyInquiryDto ) {
+    public String modify(@AuthenticationPrincipal PrincipalDetails principalDetails, ModifyInquiryDto modifyInquiryDto) {
 
         List<Long> inquiryIdList = inquiryRepository.findAllIdByUserUuid(principalDetails.getUserUuid());
         if (!inquiryIdList.contains(modifyInquiryDto.getId())) {
@@ -106,21 +107,20 @@ public class InquiryService {
          * inquiry는 update
          */
         // 기존의 파일 스토리지에서 delete
-        for(int i =0; i < inquiry.getInquiry_file().size(); i++) {
-            String url = inquiry.getInquiry_file().get(i).getUrl();
+        for (int i = 0; i < inquiry.getInquiry_file().size(); i++) {
+            String url = inquiry.getInquiry_file().get(i).getImageEncoding();
             Path filePath = Paths.get(uploadFolder + url);
             try {
                 Files.delete(filePath);
             } catch (NoSuchFileException e) {
                 logger.debug("해당 파일이 없습니다.");
-            }
-            catch (IOException e) {
+            } catch (IOException e) {
                 logger.debug("해당 파일이 없습니다.");
             }
         }
         // 기존의 파일 db에서 delete
         List<Long> inquiryFileNumberList = new ArrayList<>();
-        for(int i =0; i < inquiry.getInquiry_file().size(); i++) {
+        for (int i = 0; i < inquiry.getInquiry_file().size(); i++) {
             inquiryFileNumberList.add(inquiry.getInquiry_file().get(i).getId());
         }
         for (int i = 0; i < inquiryFileNumberList.size(); i++) {
@@ -129,17 +129,16 @@ public class InquiryService {
         }
 
 
-
         // 새로 만들기
-        if (!(modifyInquiryDto.getFileList() == null)){
-            for(int i=0; i<modifyInquiryDto.getFileList().size(); i++){
+        if (!(modifyInquiryDto.getFileList() == null)) {
+            for (int i = 0; i < modifyInquiryDto.getFileList().size(); i++) {
                 String fileName = UUID.randomUUID().toString() + "_" + modifyInquiryDto.getFileList().get(i).getOriginalFilename();
                 Path imageFilePath = Paths.get(uploadFolder + fileName);
 
                 Inquiry_file inquiry_file = Inquiry_file.builder()
                         .name(modifyInquiryDto.getFileList().get(i).getOriginalFilename().replaceFirst("[.][^.]+$", ""))
                         .size(modifyInquiryDto.getFileList().get(i).getSize())
-                        .url(fileName)
+                        .imageEncoding(fileName)
                         .type(modifyInquiryDto.getFileList().get(i).getContentType())
                         .inquiry(inquiry)
                         .build();

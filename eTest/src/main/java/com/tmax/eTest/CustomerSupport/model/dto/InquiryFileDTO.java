@@ -7,7 +7,7 @@ import lombok.Data;
 @Builder
 public class InquiryFileDTO {
     Long id;
-    String url;
+    String imageEncoding;
     String type;
     String name;
     Long size;

@@ -53,7 +53,7 @@ public class InquiryController {
 
     @PostMapping(value="/user/inquiry/create")
     @Transactional
-    public CMRespDto<?> Inquiry(@AuthenticationPrincipal PrincipalDetails principalDetails, @ModelAttribute CreateInquiryDto createInquiryDto) {
+    public CMRespDto<?> Inquiry(@AuthenticationPrincipal PrincipalDetails principalDetails, @ModelAttribute CreateInquiryDto createInquiryDto) throws IOException {
         return new CMRespDto<>(200,"1대1 질문 생성 성공",inquiryService.createInquiry(createInquiryDto,principalDetails));
     }
 
