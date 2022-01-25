@@ -6,10 +6,10 @@ import com.tmax.eTest.Common.model.support.Inquiry;
 import com.tmax.eTest.Common.model.support.Inquiry_file;
 import com.tmax.eTest.Common.model.user.UserMaster;
 import com.tmax.eTest.Support.dto.CreateInquiryDto;
+import com.tmax.eTest.Support.dto.CreateInquiryResponseDto;
 import com.tmax.eTest.Support.dto.ModifyInquiryDto;
 import com.tmax.eTest.Support.repository.InquiryFileRepository;
 import com.tmax.eTest.Support.repository.InquiryRepository;
-import org.apache.commons.codec.binary.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,10 +26,7 @@ import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class InquiryService {
@@ -50,7 +47,7 @@ public class InquiryService {
     private String filePath;
 
     @Transactional
-    public Inquiry createInquiry(CreateInquiryDto createInquiryDto, PrincipalDetails principalDetails) throws IOException {
+    public CreateInquiryResponseDto createInquiry(CreateInquiryDto createInquiryDto, PrincipalDetails principalDetails) throws IOException {
         Optional<UserMaster> userMasterOptional = userRepository.findByEmail(principalDetails.getEmail());
         UserMaster userMasterEntity = userMasterOptional.get();
         Inquiry inquiry =
@@ -65,9 +62,9 @@ public class InquiryService {
         if (!(createInquiryDto.getFileList() == null)) {
             List<Inquiry_file> inquiry_files = new ArrayList<>();
             for (int i = 0; i < createInquiryDto.getFileList().size(); i++) {
-                byte[] byteArray = org.apache.tomcat.util.codec.binary.Base64.encodeBase64(createInquiryDto.getFileList().get(i).getBytes());
-                String imageEncoding = new String(byteArray);
-//                String imageEncoding = org.apache.tomcat.util.codec.binary.Base64.encodeBase64String(byteArray);
+                java.util.Base64.Encoder encoder = Base64.getEncoder();
+                byte[] encodedBytes = encoder.encode(createInquiryDto.getFileList().get(i).getBytes());
+                String imageEncoding = new String(encodedBytes);
                 Inquiry_file inquiry_file = Inquiry_file.builder()
                         .name(createInquiryDto.getFileList().get(i).getOriginalFilename().replaceFirst("[.][^.]+$", "")) // 확장자 지우기
                         .size(createInquiryDto.getFileList().get(i).getSize())
@@ -81,7 +78,10 @@ public class InquiryService {
             inquiry.setInquiry_file(inquiry_files);
         }
         inquiryRepository.save(inquiry);
-        return inquiry;
+        CreateInquiryResponseDto createInquiryResponseDto = CreateInquiryResponseDto.builder()
+                .id(inquiry.getId())
+                .build();
+        return createInquiryResponseDto;
     }
 
 
@@ -101,23 +101,18 @@ public class InquiryService {
         inquiry.setContent(modifyInquiryDto.getContent());
         inquiry.setTitle(modifyInquiryDto.getTitle());
         inquiry.setType(modifyInquiryDto.getType());
-        String uploadFolder = filePath + "inquiry/";
-        /***
-         * inquiry file은 db/storage 전부 지웠다가 새로 만들고
-         * inquiry는 update
-         */
-        // 기존의 파일 스토리지에서 delete
-        for (int i = 0; i < inquiry.getInquiry_file().size(); i++) {
-            String url = inquiry.getInquiry_file().get(i).getImageEncoding();
-            Path filePath = Paths.get(uploadFolder + url);
-            try {
-                Files.delete(filePath);
-            } catch (NoSuchFileException e) {
-                logger.debug("해당 파일이 없습니다.");
-            } catch (IOException e) {
-                logger.debug("해당 파일이 없습니다.");
-            }
-        }
+//        String uploadFolder = filePath + "inquiry/";
+//        for (int i = 0; i < inquiry.getInquiry_file().size(); i++) {
+//            String url = inquiry.getInquiry_file().get(i).getImageEncoding();
+//            Path filePath = Paths.get(uploadFolder + url);
+//            try {
+//                Files.delete(filePath);
+//            } catch (NoSuchFileException e) {
+//                logger.debug("해당 파일이 없습니다.");
+//            } catch (IOException e) {
+//                logger.debug("해당 파일이 없습니다.");
+//            }
+//        }
         // 기존의 파일 db에서 delete
         List<Long> inquiryFileNumberList = new ArrayList<>();
         for (int i = 0; i < inquiry.getInquiry_file().size(); i++) {
@@ -132,9 +127,9 @@ public class InquiryService {
         // 새로 만들기
         if (!(modifyInquiryDto.getFileList() == null)) {
             for (int i = 0; i < modifyInquiryDto.getFileList().size(); i++) {
-
-                byte[] byteArray = org.apache.tomcat.util.codec.binary.Base64.encodeBase64(modifyInquiryDto.getFileList().get(i).getBytes());
-                String imageEncoding = new String(byteArray);
+                java.util.Base64.Encoder encoder = Base64.getEncoder();
+                byte[] encodedBytes = encoder.encode(modifyInquiryDto.getFileList().get(i).getBytes());
+                String imageEncoding = new String(encodedBytes);
 
                 Inquiry_file inquiry_file = Inquiry_file.builder()
                         .name(modifyInquiryDto.getFileList().get(i).getOriginalFilename().replaceFirst("[.][^.]+$", ""))
