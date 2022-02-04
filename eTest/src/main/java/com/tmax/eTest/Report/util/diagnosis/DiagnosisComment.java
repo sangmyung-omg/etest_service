@@ -185,7 +185,7 @@ public class DiagnosisComment {
 				.main(CommentMapper.getComment(Type.INVEST_PROFILE_MAIN, profileIdx))
 				.detail("")
 				.score(stretchProfileScore)
-				.detailScoreList(tracingDetailScore)
+				.detailScoreList(profileDetailScore)
 				.build();
 		CommentInfoDTO tracingCommentInfo = CommentInfoDTO.builder()
 				.name("투자원칙")
