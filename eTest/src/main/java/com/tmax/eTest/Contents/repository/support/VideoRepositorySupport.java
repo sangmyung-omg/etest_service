@@ -8,7 +8,7 @@ import static com.tmax.eTest.Common.model.video.QVideoBookmark.videoBookmark;
 import static com.tmax.eTest.Common.model.video.QVideoHashtag.videoHashtag;
 import static com.tmax.eTest.Common.model.video.QVideoUkRel.videoUkRel;
 
-import java.sql.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -17,7 +17,6 @@ import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.CaseBuilder;
-import com.querydsl.core.types.dsl.DateExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.jpa.JPAExpressions;
@@ -117,17 +116,17 @@ public class VideoRepositorySupport extends QuerydslRepositorySupport {
 
   public OrderSpecifier<?>[] getVideoSortedColumn(SortType sort) {
     switch (sort.name()) {
-    case "DATE":
-      return new OrderSpecifier[] { querydslUtils.getSortedColumn(Order.DESC, video, "registerDate"),
-          querydslUtils.getSortedColumn(Order.DESC, video, "createDate"),
-          querydslUtils.getSortedColumn(Order.ASC, video, "sequence") };
-    case "HIT":
-      return new OrderSpecifier[] { querydslUtils.getSortedColumn(Order.DESC, video, "videoHit.hit") };
-    case "RECOMMEND":
-    case "SEQUENCE":
-      return new OrderSpecifier[] { querydslUtils.getSortedColumn(Order.ASC, video, "sequence") };
-    default:
-      throw new ContentsException(ErrorCode.TYPE_ERROR, sort.name() + ": type not provided!");
+      case "DATE":
+        return new OrderSpecifier[] { querydslUtils.getSortedColumn(Order.DESC, video, "registerDate"),
+            querydslUtils.getSortedColumn(Order.DESC, video, "createDate"),
+            querydslUtils.getSortedColumn(Order.ASC, video, "sequence") };
+      case "HIT":
+        return new OrderSpecifier[] { querydslUtils.getSortedColumn(Order.DESC, video, "videoHit.hit") };
+      case "RECOMMEND":
+      case "SEQUENCE":
+        return new OrderSpecifier[] { querydslUtils.getSortedColumn(Order.ASC, video, "sequence") };
+      default:
+        throw new ContentsException(ErrorCode.TYPE_ERROR, sort.name() + ": type not provided!");
     }
   }
 
@@ -169,8 +168,16 @@ public class VideoRepositorySupport extends QuerydslRepositorySupport {
   }
 
   private BooleanExpression checkShow() {
+    final String TIME_FORMAT = "TO_DATE({0},'YYYY/MM/DD')";
     return video.show.eq(Show.TRUE.value())
-        .and(DateExpression.currentDate(Date.class).between(video.registerDate, video.endDate));
+        .and(Expressions
+            .dateTimeTemplate(LocalDateTime.class, TIME_FORMAT,
+                Expressions.currentDate())
+            .between(
+                Expressions.dateTimeTemplate(LocalDateTime.class, TIME_FORMAT,
+                    video.registerDate),
+                Expressions.dateTimeTemplate(LocalDateTime.class, TIME_FORMAT,
+                    video.endDate)));
   }
 
   private VideoJoin tupleToJoin(Tuple tuple) {
