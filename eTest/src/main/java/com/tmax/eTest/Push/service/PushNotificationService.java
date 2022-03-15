@@ -168,7 +168,6 @@ public class PushNotificationService {
         }
         List<String> userUuidList = new ArrayList<>(userUuidSet);
         saveNotificationList(userUuidList, data.getCategory(), data.getBody(), currentDateTime);
-        logger.info("new notifications inserted.");
 
         Notification notification = Notification.builder()
                 .setTitle(data.getTitle())
@@ -188,33 +187,26 @@ public class PushNotificationService {
     }
 
     public void adminPushRequestByToken(PushRequestDTO data) throws FirebaseMessagingException {
-        logger.info("admin push request by token received.");
         Timestamp currentDateTime = new Timestamp(System.currentTimeMillis());
         List<String> fcmTokenList = data.getToken();
         pushRequest(data, fcmTokenList, currentDateTime);
-        logger.info("admin push successfully sent.");
     }
 
     public void adminPushRequestByUserUuid(PushRequestDTO data) throws FirebaseMessagingException {
-        logger.info("admin push request by userUuid received.");
         Timestamp currentDateTime = new Timestamp(System.currentTimeMillis());
         List<String> fcmTokenList = new ArrayList<>();
         for (String userUuid : data.getUserUuid())
             fcmTokenList.addAll(userNotificationConfigRepositorySupport.getTokenByUserUuid(userUuid));
         pushRequest(data, fcmTokenList, currentDateTime);
-        logger.info("admin push successfully sent.");
     }
 
     public void categoryPushRequest(PushRequestDTO data) throws FirebaseMessagingException {
-        logger.info("{} push request received.", data.getCategory());
         Timestamp currentDateTime = new Timestamp(System.currentTimeMillis());
         List<String> fcmTokenList = userNotificationConfigRepositorySupport.getFilteredTokens(data.getCategory());
         pushRequest(data, fcmTokenList, currentDateTime);
-        logger.info("{} push successfully sent.", data.getCategory());
     }
 
     public void categoryPushRequestByUserUuid(PushRequestDTO data) throws FirebaseMessagingException {
-        logger.info("{} push request to user(s) received.", data.getCategory());
         Timestamp currentDateTime = new Timestamp(System.currentTimeMillis());
         List<String> fcmTokenList = new ArrayList<>();
         for (String userUuid : data.getUserUuid())
@@ -222,7 +214,6 @@ public class PushNotificationService {
                     userNotificationConfigRepositorySupport.getFilteredTokensByUserUuid(data.getCategory(), userUuid)
             );
         pushRequest(data, fcmTokenList, currentDateTime);
-        logger.info("{} push successfully sent to user(s).", data.getCategory());
     }
 
     public void editNotificationConfig(String jwtToken, UserNotificationConfigEditDTO editData) {
